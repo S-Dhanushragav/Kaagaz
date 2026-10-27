@@ -6,7 +6,7 @@ and the provider + task decide the model, reasoning effort, and max tokens.
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, Mapping
 
 from pydantic import BaseModel, Field, SecretStr, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -15,6 +15,8 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 Provider = Literal["meta", "baseten"]
 Task = Literal["vision", "agent", "text"]
+
+OVERRIDABLE = frozenset({"provider", "model", "reasoning_effort", "max_tokens"})
 
 
 class ResolvedModel(BaseModel):
@@ -98,11 +100,23 @@ class Settings(BaseSettings):
         """Cache directory; relative paths are resolved against the repo root."""
         return self.cache_dir if self.cache_dir.is_absolute() else REPO_ROOT / self.cache_dir
 
-    def resolve(self, task: Task) -> ResolvedModel:
-        """Resolve provider, model, and call settings for a task, or raise naming what's missing."""
-        provider: Provider | None = getattr(self, f"{task}_provider")
+    def resolve(self, task: Task, overrides: Mapping[str, Any] | None = None) -> ResolvedModel:
+        """Resolve provider, model, and call settings for a task, or raise naming what's missing.
+
+        `overrides` replaces any of provider, model, reasoning_effort, max_tokens for this call
+        only (e.g. model comparisons). A key that is present wins even if its value is None,
+        so {"reasoning_effort": None} means "don't send it".
+        """
+        overrides = dict(overrides or {})
+        unknown = overrides.keys() - OVERRIDABLE
+        if unknown:
+            raise ValueError(f"Unknown override(s): {', '.join(sorted(unknown))}")
+
+        provider: Provider | None = overrides.get("provider", getattr(self, f"{task}_provider"))
         if provider is None:
             raise ValueError(f"Task '{task}': {task.upper()}_PROVIDER is not set in .env (meta | baseten)")
+        if provider not in ("meta", "baseten"):
+            raise ValueError(f"Unknown provider override: {provider!r}")
 
         if provider == "meta":
             base_url, api_key = self.meta_base_url, self.meta_api_key
@@ -110,6 +124,7 @@ class Settings(BaseSettings):
         else:
             base_url, api_key = self.baseten_base_url, self.baseten_api_key
             model, model_var = self.baseten_model, "BASETEN_MODEL"
+        model = overrides.get("model", model)
 
         prefix = provider.upper()
         missing = [
@@ -133,8 +148,8 @@ class Settings(BaseSettings):
             base_url=base_url,
             api_key=api_key,
             model=model,
-            reasoning_effort=getattr(self, f"{task}_reasoning_effort"),
-            max_tokens=getattr(self, f"{task}_max_tokens"),
+            reasoning_effort=overrides.get("reasoning_effort", getattr(self, f"{task}_reasoning_effort")),
+            max_tokens=overrides.get("max_tokens", getattr(self, f"{task}_max_tokens")),
         )
 
 

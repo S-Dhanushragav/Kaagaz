@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block kind %}card{% endblock %}
+{% block content %}
+<div class="card-head">
+  <div class="mr">ओळखपत्र (नमुना)</div>
+  <div class="en">Identity Card (Aadhaar-style) — SPECIMEN</div>
+</div>
+<div class="card-body">
+  <div class="photo-box">फोटो<br>Photo</div>
+  <div class="card-fields">
+    <div class="name-mr">{{ f.name_mr }}</div>
+    <div class="name-en">{{ f.name_en }}</div>
+    <div class="row">जन्म तारीख / DOB: <b>{{ f.dob }}</b></div>
+    <div class="row">{{ f.gender_mr }} / {{ f.gender_en }}</div>
+  </div>
+</div>
+<div class="idnum">{{ f.id_number|id_groups }}</div>
+{% endblock %}

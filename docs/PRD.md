@@ -231,7 +231,7 @@ Every rule must link to an official source and record the date it was last check
 ```python
 class Issue(BaseModel):
     type: Literal["name_mismatch", "dob_mismatch", "expired", "missing_document",
-                  "unreadable", "ineligible", "rejection_reason"]
+                  "not_on_ration_card", "unreadable", "ineligible", "rejection_reason"]
     severity: Literal["blocker", "warning"]
     member_id: str | None
     documents: list[str]

@@ -1,0 +1,238 @@
+{
+  "id": "HH003",
+  "seed": 42,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "ज्ञानेश्वर",
+        "en": "Dnyaneshwar"
+      },
+      "middle": {
+        "mr": "सचिन",
+        "en": "Sachin"
+      },
+      "surname": {
+        "mr": "काळे",
+        "en": "Kale"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1967-02-13",
+      "age": 59,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "अश्विनी",
+        "en": "Ashwini"
+      },
+      "middle": {
+        "mr": "ज्ञानेश्वर",
+        "en": "Dnyaneshwar"
+      },
+      "surname": {
+        "mr": "काळे",
+        "en": "Kale"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1970-07-05",
+      "age": 56,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-63306453",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "ज्ञानेश्वर सचिन काळे",
+        "head_name_en": "Dnyaneshwar Sachin Kale",
+        "address_mr": "घर क्र. 69, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 69, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "ज्ञानेश्वर सचिन काळे",
+            "name_en": "Dnyaneshwar Sachin Kale",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 59
+          },
+          {
+            "name_mr": "अश्विनी ज्ञानेश्वर काळे",
+            "name_en": "Ashwini Dnyaneshwar Kale",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 56
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 3.0,
+        "scale": 0.998,
+        "lighting": [
+          0.64,
+          1.1
+        ],
+        "blur": "gaussian",
+        "sigma": 1.73,
+        "noise_sigma": 4.58,
+        "jpeg_quality": 75
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "ज्ञानेश्वर सचिन काळे",
+        "name_en": "Dnyaneshwar Sachin Kale",
+        "dob": "13/02/1967",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "086427065984"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -0.8,
+        "scale": 0.898,
+        "lighting": [
+          0.83,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 1.52,
+        "noise_sigma": 3.26,
+        "jpeg_quality": 70
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/121421",
+        "name_mr": "ज्ञानेश्वर सचिन काळे",
+        "name_en": "Dnyaneshwar Sachin Kale",
+        "address_mr": "घर क्र. 69, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 69, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 279000,
+        "issue_date": "13/09/2023",
+        "financial_year": "2022-23",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 4.01,
+        "scale": 0.911,
+        "lighting": [
+          0.85,
+          1.1
+        ],
+        "blur": "gaussian",
+        "sigma": 0.95,
+        "noise_sigma": 3.01,
+        "jpeg_quality": 75
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/884151",
+        "name_mr": "ज्ञानेश्वर सचिन काळे",
+        "name_en": "Dnyaneshwar Sachin Kale",
+        "dob": "13/02/1967",
+        "category_mr": "इतर मागास वर्ग (OBC)",
+        "category_en": "Other Backward Class (OBC)",
+        "address_mr": "घर क्र. 69, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 69, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "04/01/2017",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -2.37,
+        "scale": 0.926,
+        "lighting": [
+          0.79,
+          1.03
+        ],
+        "blur": "gaussian",
+        "sigma": 1.25,
+        "noise_sigma": 4.63,
+        "jpeg_quality": 81
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "expired",
+      "member_id": "m1",
+      "documents": [
+        "income_certificate_m1"
+      ],
+      "field": "issue_date",
+      "expected": null,
+      "printed": "13/09/2023",
+      "note": "Issued 3-5 years before reference_date; expiry is decided by the rules engine."
+    },
+    {
+      "type": "missing_document",
+      "member_id": "m2",
+      "documents": [
+        "identity_card_m2"
+      ],
+      "field": null,
+      "expected": "identity_card",
+      "printed": null,
+      "note": "Document intentionally not generated."
+    }
+  ]
+}

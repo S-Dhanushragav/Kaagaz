@@ -9,12 +9,12 @@ Images must already be prepared (see `vision.images.encode_for_llm`).
 import base64
 import logging
 from functools import lru_cache
-from typing import Any
+from typing import Any, Mapping
 
 from openai import BadRequestError, OpenAI, UnprocessableEntityError
 from pydantic import BaseModel
 
-from app.config import Task, get_settings
+from app.config import ResolvedModel, Task, get_settings
 from clients.cache import DiskCache, make_key
 
 logger = logging.getLogger(__name__)
@@ -78,38 +78,21 @@ def _reasoning_text(message: Any) -> str | None:
     return None
 
 
-def complete(
-    prompt: str,
+def cache_key(
+    resolved: ResolvedModel,
     *,
-    task: Task,
-    image: bytes | None = None,
-    image_mime: str = "image/jpeg",
-    system: str | None = None,
-    temperature: float = 0.0,
-    max_tokens: int | None = None,
-    response_format: dict[str, Any] | None = None,
-) -> LLMResponse:
-    """Send a prompt (plus optional prepared image) using the model configured for `task`.
-
-    `max_tokens` overrides the task's configured budget; it includes reasoning tokens.
-    """
-    if image is not None and task == "text":
-        raise ValueError("task='text' does not take an image; use task='vision'")
-    if image is not None and len(image) > MAX_IMAGE_BYTES:
-        raise ValueError(
-            f"Image is {len(image)} bytes (limit {MAX_IMAGE_BYTES}); "
-            "run it through vision.images.encode_for_llm first"
-        )
-
-    settings = get_settings()
-    resolved = settings.resolve(task)
-    if max_tokens is None:
-        max_tokens = resolved.max_tokens
-    cache = DiskCache(settings.cache_path)
-
-    key = make_key(
+    prompt: str,
+    image: bytes | None,
+    image_mime: str,
+    system: str | None,
+    temperature: float,
+    max_tokens: int,
+    response_format: dict[str, Any] | None,
+) -> str:
+    """Cache key from the *resolved* call settings, so overrides never share a cached reply."""
+    return make_key(
         {
-            "task": task,
+            "task": resolved.task,
             "provider": resolved.provider,
             "model": resolved.model,
             "reasoning_effort": resolved.reasoning_effort,
@@ -121,6 +104,49 @@ def complete(
             "max_tokens": max_tokens,
             "response_format": response_format,
         }
+    )
+
+
+def complete(
+    prompt: str,
+    *,
+    task: Task,
+    image: bytes | None = None,
+    image_mime: str = "image/jpeg",
+    system: str | None = None,
+    temperature: float = 0.0,
+    max_tokens: int | None = None,
+    response_format: dict[str, Any] | None = None,
+    overrides: Mapping[str, Any] | None = None,
+) -> LLMResponse:
+    """Send a prompt (plus optional prepared image) using the model configured for `task`.
+
+    `max_tokens` overrides the task's configured budget; it includes reasoning tokens.
+    `overrides` is passed to `Settings.resolve` (provider/model/reasoning_effort/max_tokens).
+    """
+    if image is not None and task == "text":
+        raise ValueError("task='text' does not take an image; use task='vision'")
+    if image is not None and len(image) > MAX_IMAGE_BYTES:
+        raise ValueError(
+            f"Image is {len(image)} bytes (limit {MAX_IMAGE_BYTES}); "
+            "run it through vision.images.encode_for_llm first"
+        )
+
+    settings = get_settings()
+    resolved = settings.resolve(task, overrides)
+    if max_tokens is None:
+        max_tokens = resolved.max_tokens
+    cache = DiskCache(settings.cache_path)
+
+    key = cache_key(
+        resolved,
+        prompt=prompt,
+        image=image,
+        image_mime=image_mime,
+        system=system,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        response_format=response_format,
     )
     hit = cache.get(key)
     if hit is not None:

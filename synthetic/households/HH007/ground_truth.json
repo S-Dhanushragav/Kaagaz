@@ -1,0 +1,327 @@
+{
+  "id": "HH007",
+  "seed": 42,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "योगेश",
+        "en": "Yogesh"
+      },
+      "middle": {
+        "mr": "पांडुरंग",
+        "en": "Pandurang"
+      },
+      "surname": {
+        "mr": "पाटील",
+        "en": "Patil"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1980-12-31",
+      "age": 45,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "संगीता",
+        "en": "Sangita"
+      },
+      "middle": {
+        "mr": "योगेश",
+        "en": "Yogesh"
+      },
+      "surname": {
+        "mr": "पाटील",
+        "en": "Patil"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1987-07-11",
+      "age": 39,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "सुवर्णा",
+        "en": "Suvarna"
+      },
+      "middle": {
+        "mr": "पांडुरंग",
+        "en": "Pandurang"
+      },
+      "surname": {
+        "mr": "पाटील",
+        "en": "Patil"
+      },
+      "relation": {
+        "mr": "आई",
+        "en": "Mother"
+      },
+      "gender": "F",
+      "dob": "1952-02-22",
+      "age": 74,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-74954718",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "योगेश पांडुरंग पाटील",
+        "head_name_en": "Yogesh Pandurang Patil",
+        "address_mr": "घर क्र. 14, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 14, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "योगेश पांडुरंग पाटील",
+            "name_en": "Yogesh Pandurang Patil",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 45
+          },
+          {
+            "name_mr": "संगीता योगेश पाटील",
+            "name_en": "Sangita Yogesh Patil",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 39
+          },
+          {
+            "name_mr": "सुवर्णा पांडुरंग पाटील",
+            "name_en": "Suvarna Pandurang Patil",
+            "relation_mr": "आई",
+            "relation_en": "Mother",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 74
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -1.08,
+        "scale": 0.987,
+        "lighting": [
+          0.84,
+          1.11
+        ],
+        "blur": "gaussian",
+        "sigma": 1.66,
+        "noise_sigma": 2.19,
+        "jpeg_quality": 88
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "योगेश पांडुरंग पाटील",
+        "name_en": "Yogesh Pandurang Patil",
+        "dob": "31/12/1980",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "119310459711"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 0.24,
+        "scale": 0.901,
+        "lighting": [
+          0.84,
+          1.05
+        ],
+        "blur": "gaussian",
+        "sigma": 1.77,
+        "noise_sigma": 4.06,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "संगीता योगेश पाटील",
+        "name_en": "Sangita Yogesh Patil",
+        "dob": "11/07/1987",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "124636941937"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 0.49,
+        "scale": 0.977,
+        "lighting": [
+          0.67,
+          1.07
+        ],
+        "blur": "gaussian",
+        "sigma": 0.67,
+        "noise_sigma": 5.01,
+        "jpeg_quality": 70
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "सुवर्णा पांडुरंग पाटील",
+        "name_en": "Suvarna Pandurang Patil",
+        "dob": "22/02/1952",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "059160531690"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -6.4,
+        "scale": 0.946,
+        "lighting": [
+          0.82,
+          1.09
+        ],
+        "blur": "gaussian",
+        "sigma": 0.98,
+        "noise_sigma": 4.73,
+        "jpeg_quality": 70
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/622284",
+        "name_mr": "योगेश पांडुरंग पाटील",
+        "name_en": "Yogesh Pandurang Patil",
+        "address_mr": "घर क्र. 14, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 14, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 115000,
+        "issue_date": "18/10/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 7.41,
+        "scale": 0.941,
+        "lighting": [
+          0.82,
+          1.04
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 90.6,
+        "noise_sigma": 3.52,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/708450",
+        "name_mr": "योगेश पांडुरंग पाटील",
+        "name_en": "Yogesh Pandurang Patil",
+        "dob": "30/12/1980",
+        "category_mr": "विमुक्त जाती व भटक्या जमाती (VJNT)",
+        "category_en": "Vimukta Jati and Nomadic Tribes (VJNT)",
+        "address_mr": "घर क्र. 14, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 14, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "18/03/2020",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -1.91,
+        "scale": 0.993,
+        "lighting": [
+          0.72,
+          1.04
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 152.4,
+        "noise_sigma": 3.75,
+        "jpeg_quality": 77
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "dob_mismatch",
+      "member_id": "m1",
+      "documents": [
+        "caste_certificate_m1",
+        "identity_card_m1"
+      ],
+      "field": "dob",
+      "expected": "31/12/1980",
+      "printed": "30/12/1980",
+      "note": null
+    }
+  ]
+}

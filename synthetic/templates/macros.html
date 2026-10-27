@@ -1,0 +1,10 @@
+{% macro field(label_mr, label_en, value_mr=None, value_en=None, num=None) -%}
+<div class="field">
+  <div class="label"><span class="mr">{{ label_mr }}</span><span class="en">{{ label_en }}</span></div>
+  <div class="value">
+    {%- if num is not none %}<span class="num">{{ num }}</span>{% endif -%}
+    {%- if value_mr is not none %}<span class="mr">{{ value_mr }}</span>{% endif -%}
+    {%- if value_en is not none %}<span class="en">{{ value_en }}</span>{% endif -%}
+  </div>
+</div>
+{%- endmacro %}

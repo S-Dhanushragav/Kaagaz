@@ -68,3 +68,35 @@ def test_values_are_stripped() -> None:
 def test_invalid_provider_rejected() -> None:
     with pytest.raises(ValueError):
         make(text_provider="openai")
+
+
+def test_overrides() -> None:
+    s = make(vision_reasoning_effort="low")
+    r = s.resolve("vision", {"model": "other-model", "reasoning_effort": None, "max_tokens": 9000})
+    assert (r.model, r.reasoning_effort, r.max_tokens) == ("other-model", None, 9000)
+    assert s.resolve("vision").reasoning_effort == "low"  # overrides don't stick
+    r = s.resolve("text", {"provider": "meta"})
+    assert (r.provider, r.model) == ("meta", "meta-text")
+
+
+def test_bad_overrides_rejected() -> None:
+    with pytest.raises(ValueError, match="Unknown override"):
+        make().resolve("vision", {"temperature": 1})
+    with pytest.raises(ValueError, match="provider override"):
+        make().resolve("vision", {"provider": "openai"})
+
+
+def test_comparison_cells_never_share_cache_key() -> None:
+    from clients.llm import cache_key
+
+    s = make()
+    keys = {
+        cache_key(
+            s.resolve("vision", {"model": model, "reasoning_effort": effort}),
+            prompt="p", image=b"img", image_mime="image/jpeg", system=None,
+            temperature=0.0, max_tokens=8000, response_format=None,
+        )
+        for model in ("muse-spark-1.3", "muse-spark-1.1")
+        for effort in (None, "low")
+    }
+    assert len(keys) == 4

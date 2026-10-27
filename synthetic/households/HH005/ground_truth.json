@@ -1,0 +1,326 @@
+{
+  "id": "HH005",
+  "seed": 42,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "दत्तात्रय",
+        "en": "Dattatray"
+      },
+      "middle": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "surname": {
+        "mr": "कदम",
+        "en": "Kadam"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1983-03-06",
+      "age": 43,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "अनिता",
+        "en": "Anita"
+      },
+      "middle": {
+        "mr": "दत्तात्रय",
+        "en": "Dattatray"
+      },
+      "surname": {
+        "mr": "कदम",
+        "en": "Kadam"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1991-04-19",
+      "age": 35,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "ज्ञानेश्वर",
+        "en": "Dnyaneshwar"
+      },
+      "middle": {
+        "mr": "दत्तात्रय",
+        "en": "Dattatray"
+      },
+      "surname": {
+        "mr": "कदम",
+        "en": "Kadam"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2011-10-29",
+      "age": 14,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-66636357",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "दत्तात्रय विठ्ठल कदम",
+        "head_name_en": "Dattatray Vitthal Kadam",
+        "address_mr": "घर क्र. 233, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 233, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "दत्तात्रय विठ्ठल कदम",
+            "name_en": "Dattatray Vitthal Kadam",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 43
+          },
+          {
+            "name_mr": "अनिता दत्तात्रय कदम",
+            "name_en": "Anita Dattatray Kadam",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 35
+          },
+          {
+            "name_mr": "ज्ञानेश्वर दत्तात्रय कदम",
+            "name_en": "Dnyaneshwar Dattatray Kadam",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 14
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -5.4,
+        "scale": 0.958,
+        "lighting": [
+          0.72,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 1.09,
+        "noise_sigma": 5.57,
+        "jpeg_quality": 85
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "दत्तात्रय विठ्ठल कदम",
+        "name_en": "Dattatray Vitthal Kadam",
+        "dob": "06/03/1983",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "161594708902"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 1.5,
+        "scale": 0.886,
+        "lighting": [
+          0.83,
+          1.0
+        ],
+        "blur": "gaussian",
+        "sigma": 1.25,
+        "noise_sigma": 3.33,
+        "jpeg_quality": 87
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "अनिता दत्तात्रय कदम",
+        "name_en": "Anita Dattatray Kadam",
+        "dob": "19/04/1991",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "162335292452"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -0.9,
+        "scale": 0.895,
+        "lighting": [
+          0.75,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 1.49,
+        "noise_sigma": 5.52,
+        "jpeg_quality": 71
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "ज्ञानेश्वर दत्तात्रय कदम",
+        "name_en": "Dnyaneshwar Dattatray Kadam",
+        "dob": "29/10/2011",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "184443355673"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -7.2,
+        "scale": 0.974,
+        "lighting": [
+          0.69,
+          1.01
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 10.3,
+        "noise_sigma": 3.49,
+        "jpeg_quality": 84
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/935678",
+        "name_mr": "दत्तात्रय विठ्ठल कदम",
+        "name_en": "Dattatray Vitthal Kadam",
+        "address_mr": "घर क्र. 233, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 233, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 283000,
+        "issue_date": "11/01/2023",
+        "financial_year": "2021-22",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -1.01,
+        "scale": 0.896,
+        "lighting": [
+          0.65,
+          1.02
+        ],
+        "blur": "gaussian",
+        "sigma": 0.96,
+        "noise_sigma": 2.5,
+        "jpeg_quality": 76
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/337267",
+        "name_mr": "दत्तात्रय विठ्ठल कदम",
+        "name_en": "Dattatray Vitthal Kadam",
+        "dob": "06/03/1983",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 233, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 233, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "07/03/2015",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -7.07,
+        "scale": 0.896,
+        "lighting": [
+          0.76,
+          1.1
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 141.9,
+        "noise_sigma": 2.3,
+        "jpeg_quality": 73
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "expired",
+      "member_id": "m1",
+      "documents": [
+        "income_certificate_m1"
+      ],
+      "field": "issue_date",
+      "expected": null,
+      "printed": "11/01/2023",
+      "note": "Issued 3-5 years before reference_date; expiry is decided by the rules engine."
+    }
+  ]
+}

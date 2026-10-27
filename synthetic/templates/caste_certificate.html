@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "macros.html" import field %}
+{% block kind %}certificate{% endblock %}
+{% block content %}
+<div class="title">
+  <div class="mr">जात प्रमाणपत्र (नमुना)</div>
+  <div class="en">Caste Certificate — SPECIMEN</div>
+</div>
+<div class="intro">
+  <div class="mr">खाली नमूद व्यक्ती खालील प्रवर्गातील असल्याचे प्रमाणित करण्यात येते.</div>
+  <div class="en">This is to certify that the person named below belongs to the category stated.</div>
+</div>
+{{ field("प्रमाणपत्र क्रमांक", "Certificate No.", num=f.certificate_number) }}
+{{ field("नाव", "Name", f.name_mr, f.name_en) }}
+{{ field("जन्म तारीख", "Date of birth", num=f.dob) }}
+{{ field("प्रवर्ग", "Category", f.category_mr, f.category_en) }}
+{{ field("पत्ता", "Address", f.address_mr, f.address_en) }}
+{{ field("दिनांक", "Date of issue", num=f.issue_date) }}
+{{ field("कार्यालय", "Issuing office", f.office_mr, f.office_en) }}
+<div class="signature"><div class="box">स्वाक्षरी (नमुना)<br>Signature (SPECIMEN)</div></div>
+{% endblock %}

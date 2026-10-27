@@ -1,0 +1,419 @@
+{
+  "id": "HH008",
+  "seed": 42,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "प्रकाश",
+        "en": "Prakash"
+      },
+      "middle": {
+        "mr": "अनिल",
+        "en": "Anil"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1982-01-15",
+      "age": 44,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "कविता",
+        "en": "Kavita"
+      },
+      "middle": {
+        "mr": "प्रकाश",
+        "en": "Prakash"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1986-10-08",
+      "age": 40,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "रेखा",
+        "en": "Rekha"
+      },
+      "middle": {
+        "mr": "अनिल",
+        "en": "Anil"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "आई",
+        "en": "Mother"
+      },
+      "gender": "F",
+      "dob": "1956-11-20",
+      "age": 69,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "मीरा",
+        "en": "Meera"
+      },
+      "middle": {
+        "mr": "प्रकाश",
+        "en": "Prakash"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2019-05-04",
+      "age": 7,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m4"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-41010761",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "प्रकाश अनिल कुलकर्णी",
+        "head_name_en": "Prakash Anil Kulkarni",
+        "address_mr": "घर क्र. 108, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 108, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "प्रकाश अनिल कुलकर्णी",
+            "name_en": "Prakash Anil Kulkarni",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 44
+          },
+          {
+            "name_mr": "कविता प्रकाश कुलकर्णी",
+            "name_en": "Kavita Prakash Kulkarni",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 40
+          },
+          {
+            "name_mr": "रेखा अनिल कुलकर्णी",
+            "name_en": "Rekha Anil Kulkarni",
+            "relation_mr": "आई",
+            "relation_en": "Mother",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 69
+          },
+          {
+            "name_mr": "मीरा प्रकाश कुलकर्णी",
+            "name_en": "Meera Prakash Kulkarni",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 7
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -5.18,
+        "scale": 0.978,
+        "lighting": [
+          0.78,
+          1.04
+        ],
+        "blur": "motion",
+        "length": 4,
+        "angle": 124.1,
+        "noise_sigma": 2.87,
+        "jpeg_quality": 84
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "प्रकाश अनिल कुलकर्णी",
+        "name_en": "Prakash Anil Kulkarni",
+        "dob": "15/01/1982",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "010737120775"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 7.75,
+        "scale": 0.933,
+        "lighting": [
+          0.74,
+          1.03
+        ],
+        "blur": "gaussian",
+        "sigma": 0.87,
+        "noise_sigma": 2.66,
+        "jpeg_quality": 75
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "कविता प्रकाश कुलकर्णी",
+        "name_en": "Kavita Prakash Kulkarni",
+        "dob": "08/10/1986",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "150819050143"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -5.22,
+        "scale": 0.999,
+        "lighting": [
+          0.66,
+          1.05
+        ],
+        "blur": "motion",
+        "length": 4,
+        "angle": 122.6,
+        "noise_sigma": 5.52,
+        "jpeg_quality": 80
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "रेखा अनिल कुलकर्णी",
+        "name_en": "Rekha Anil Kulkarni",
+        "dob": "20/11/1956",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "025113073933"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -3.93,
+        "scale": 0.963,
+        "lighting": [
+          0.74,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 1.22,
+        "noise_sigma": 2.03,
+        "jpeg_quality": 86
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "मीरा प्रकाश कुलकर्णी",
+        "name_en": "Meera Prakash Kulkarni",
+        "dob": "04/05/2019",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "084560269306"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -1.0,
+        "scale": 0.968,
+        "lighting": [
+          0.73,
+          1.04
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 69.1,
+        "noise_sigma": 3.5,
+        "jpeg_quality": 85
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/069693",
+        "name_mr": "प्रकाश अनिल कुलकर्णी",
+        "name_en": "Prakash Anil Kulkarni",
+        "address_mr": "घर क्र. 108, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 108, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 135000,
+        "issue_date": "04/10/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 2.11,
+        "scale": 0.997,
+        "lighting": [
+          0.65,
+          1.01
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 79.5,
+        "noise_sigma": 2.59,
+        "jpeg_quality": 85
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/753091",
+        "name_mr": "प्रकाश अनिल कुलकर्णी",
+        "name_en": "Prakash Anil Kulkarni",
+        "dob": "15/01/1982",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 108, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 108, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "23/01/2012",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -3.09,
+        "scale": 0.93,
+        "lighting": [
+          0.69,
+          1.08
+        ],
+        "blur": "gaussian",
+        "sigma": 0.93,
+        "noise_sigma": 5.85,
+        "jpeg_quality": 80
+      }
+    },
+    {
+      "id": "caste_certificate_m4",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/710788",
+        "name_mr": "मीरा प्रकाश कुलकर्णी",
+        "name_en": "Meera Prakash Kulkarni",
+        "dob": "04/05/2019",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 108, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 108, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "31/08/2026",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m4.png",
+        "photo": "caste_certificate_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 3.1,
+        "scale": 0.897,
+        "lighting": [
+          0.66,
+          1.06
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 175.4,
+        "noise_sigma": 4.54,
+        "jpeg_quality": 83
+      }
+    }
+  ],
+  "planted_errors": []
+}

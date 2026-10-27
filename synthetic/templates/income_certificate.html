@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "macros.html" import field %}
+{% block kind %}certificate{% endblock %}
+{% block content %}
+<div class="title">
+  <div class="mr">उत्पन्नाचा दाखला (नमुना)</div>
+  <div class="en">Income Certificate — SPECIMEN</div>
+</div>
+<div class="intro">
+  <div class="mr">खाली नमूद व्यक्तीचे सर्व स्रोतांतून मिळणारे वार्षिक कौटुंबिक उत्पन्न खालीलप्रमाणे असल्याचे प्रमाणित करण्यात येते.</div>
+  <div class="en">This is to certify that the annual family income from all sources of the person named below is as stated.</div>
+</div>
+{{ field("दाखला क्रमांक", "Certificate No.", num=f.certificate_number) }}
+{{ field("नाव", "Name", f.name_mr, f.name_en) }}
+{{ field("पत्ता", "Address", f.address_mr, f.address_en) }}
+{{ field("वार्षिक उत्पन्न", "Annual income", num="Rs. " ~ (f.annual_income|rupees)) }}
+{{ field("आर्थिक वर्ष", "Financial year", num=f.financial_year) }}
+{{ field("दिनांक", "Date of issue", num=f.issue_date) }}
+{{ field("कार्यालय", "Issuing office", f.office_mr, f.office_en) }}
+<div class="signature"><div class="box">स्वाक्षरी (नमुना)<br>Signature (SPECIMEN)</div></div>
+{% endblock %}

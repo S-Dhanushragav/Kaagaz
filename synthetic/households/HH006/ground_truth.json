@@ -1,0 +1,247 @@
+{
+  "id": "HH006",
+  "seed": 42,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "नामदेव",
+        "en": "Namdev"
+      },
+      "middle": {
+        "mr": "अमोल",
+        "en": "Amol"
+      },
+      "surname": {
+        "mr": "खरात",
+        "en": "Kharat"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1991-02-19",
+      "age": 35,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "रुक्मिणी",
+        "en": "Rukmini"
+      },
+      "middle": {
+        "mr": "नामदेव",
+        "en": "Namdev"
+      },
+      "surname": {
+        "mr": "खरात",
+        "en": "Kharat"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1993-01-22",
+      "age": 33,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-82501082",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "नामदेव अमोल खरात",
+        "head_name_en": "Namdev Amol Kharat",
+        "address_mr": "घर क्र. 152, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 152, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "नामदेव अमोल खरात",
+            "name_en": "Namdev Amol Kharat",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 35
+          },
+          {
+            "name_mr": "रुक्मिणी नामदेव खरात",
+            "name_en": "Rukmini Namdev Kharat",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 33
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -4.72,
+        "scale": 0.971,
+        "lighting": [
+          0.63,
+          1.03
+        ],
+        "blur": "motion",
+        "length": 6,
+        "angle": 156.4,
+        "noise_sigma": 3.82,
+        "jpeg_quality": 86
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "नामदेव अमोल खरात",
+        "name_en": "Namadev Amol Kharat",
+        "dob": "19/02/1991",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "164428367026"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 1.04,
+        "scale": 0.964,
+        "lighting": [
+          0.69,
+          1.09
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 142.0,
+        "noise_sigma": 4.39,
+        "jpeg_quality": 85
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/856152",
+        "name_mr": "नामदेव अमोल खरात",
+        "name_en": "Namdev Amol Kharat",
+        "address_mr": "घर क्र. 152, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 152, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 106000,
+        "issue_date": "01/09/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 1.19,
+        "scale": 0.941,
+        "lighting": [
+          0.74,
+          1.05
+        ],
+        "blur": "gaussian",
+        "sigma": 1.17,
+        "noise_sigma": 3.49,
+        "jpeg_quality": 85
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/226434",
+        "name_mr": "नामदेव अमोल खरात",
+        "name_en": "Namdev Amol Kharat",
+        "dob": "19/02/1991",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 152, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 152, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "15/12/2014",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 2.46,
+        "scale": 0.931,
+        "lighting": [
+          0.76,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 0.85,
+        "noise_sigma": 3.86,
+        "jpeg_quality": 70
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "name_mismatch",
+      "member_id": "m1",
+      "documents": [
+        "identity_card_m1",
+        "ration_card"
+      ],
+      "field": "name",
+      "expected": {
+        "mr": "नामदेव अमोल खरात",
+        "en": "Namdev Amol Kharat"
+      },
+      "printed": {
+        "mr": "नामदेव अमोल खरात",
+        "en": "Namadev Amol Kharat"
+      },
+      "note": "given spelled differently"
+    },
+    {
+      "type": "missing_document",
+      "member_id": "m2",
+      "documents": [
+        "identity_card_m2"
+      ],
+      "field": null,
+      "expected": "identity_card",
+      "printed": null,
+      "note": "Document intentionally not generated."
+    }
+  ]
+}

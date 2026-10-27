@@ -1,0 +1,361 @@
+{
+  "id": "HH010",
+  "seed": 42,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "विजय",
+        "en": "Vijay"
+      },
+      "middle": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "surname": {
+        "mr": "खरात",
+        "en": "Kharat"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1975-05-05",
+      "age": 51,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "रुक्मिणी",
+        "en": "Rukmini"
+      },
+      "middle": {
+        "mr": "विजय",
+        "en": "Vijay"
+      },
+      "surname": {
+        "mr": "खरात",
+        "en": "Kharat"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1983-01-14",
+      "age": 43,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "सविता",
+        "en": "Savita"
+      },
+      "middle": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "surname": {
+        "mr": "खरात",
+        "en": "Kharat"
+      },
+      "relation": {
+        "mr": "आई",
+        "en": "Mother"
+      },
+      "gender": "F",
+      "dob": "1947-04-19",
+      "age": 79,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "जयश्री",
+        "en": "Jayashree"
+      },
+      "middle": {
+        "mr": "विजय",
+        "en": "Vijay"
+      },
+      "surname": {
+        "mr": "खरात",
+        "en": "Kharat"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2017-02-20",
+      "age": 9,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m4"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-30020896",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "विजय किरण खरात",
+        "head_name_en": "Vijay Kiran Kharat",
+        "address_mr": "घर क्र. 62, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 62, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "विजय किरण खरात",
+            "name_en": "Vijay Kiran Kharat",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 51
+          },
+          {
+            "name_mr": "रुक्मिणी विजय खरात",
+            "name_en": "Rukmini Vijay Kharat",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 43
+          },
+          {
+            "name_mr": "सविता किरण खरात",
+            "name_en": "Savita Kiran Kharat",
+            "relation_mr": "आई",
+            "relation_en": "Mother",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 79
+          },
+          {
+            "name_mr": "जयश्री विजय खरात",
+            "name_en": "Jayashree Vijay Kharat",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 9
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -1.8,
+        "scale": 0.987,
+        "lighting": [
+          0.85,
+          1.01
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 164.6,
+        "noise_sigma": 5.13,
+        "jpeg_quality": 85
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "विजय किरण खरात",
+        "name_en": "Vijay Kiran Kharat",
+        "dob": "05/05/1975",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "155599104366"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -2.84,
+        "scale": 0.997,
+        "lighting": [
+          0.69,
+          1.09
+        ],
+        "blur": "gaussian",
+        "sigma": 1.28,
+        "noise_sigma": 2.16,
+        "jpeg_quality": 72
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "सविता किरण खरात",
+        "name_en": "Savita Kiran Kharat",
+        "dob": "19/04/1947",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "170350803565"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 2.53,
+        "scale": 0.948,
+        "lighting": [
+          0.84,
+          1.08
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 89.4,
+        "noise_sigma": 2.15,
+        "jpeg_quality": 75
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "जयश्री विजय खरात",
+        "name_en": "Jayashree Vijay Kharat",
+        "dob": "20/02/2017",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "175369249293"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -6.72,
+        "scale": 0.979,
+        "lighting": [
+          0.63,
+          1.08
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 109.4,
+        "noise_sigma": 5.01,
+        "jpeg_quality": 71
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/849636",
+        "name_mr": "विजय किरण खरात",
+        "name_en": "Vijay Kiran Kharat",
+        "address_mr": "घर क्र. 62, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 62, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 168000,
+        "issue_date": "10/09/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -2.15,
+        "scale": 0.945,
+        "lighting": [
+          0.84,
+          1.09
+        ],
+        "blur": "gaussian",
+        "sigma": 0.74,
+        "noise_sigma": 4.45,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/026461",
+        "name_mr": "विजय किरण खरात",
+        "name_en": "Vijay Kiran Kharat",
+        "dob": "05/05/1975",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 62, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 62, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "21/01/2016",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 0.61,
+        "scale": 0.99,
+        "lighting": [
+          0.71,
+          1.1
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 97.3,
+        "noise_sigma": 4.75,
+        "jpeg_quality": 73
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "missing_document",
+      "member_id": "m2",
+      "documents": [
+        "identity_card_m2"
+      ],
+      "field": null,
+      "expected": "identity_card",
+      "printed": null,
+      "note": "Document intentionally not generated."
+    }
+  ]
+}

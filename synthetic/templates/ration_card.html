@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% from "macros.html" import field %}
+{% block kind %}ration{% endblock %}
+{% block content %}
+<div class="title">
+  <div class="mr">शिधापत्रिका (नमुना)</div>
+  <div class="en">Ration Card — SPECIMEN</div>
+</div>
+{{ field("शिधापत्रिका क्रमांक", "Card No.", num=f.card_number) }}
+{{ field("प्रकार", "Category", f.category_mr, f.category_en) }}
+{{ field("कुटुंब प्रमुख", "Head of family", f.head_name_mr, f.head_name_en) }}
+{{ field("पत्ता", "Address", f.address_mr, f.address_en) }}
+<table class="members">
+  <thead>
+    <tr>
+      <th>अ. क्र.<span class="en">No.</span></th>
+      <th>सदस्याचे नाव<span class="en">Member name</span></th>
+      <th>नाते<span class="en">Relation</span></th>
+      <th>लिंग<span class="en">Gender</span></th>
+      <th>वय<span class="en">Age</span></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for m in f.members %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td><span class="mr">{{ m.name_mr }}</span><span class="en">{{ m.name_en }}</span></td>
+      <td><span class="mr">{{ m.relation_mr }}</span><span class="en">{{ m.relation_en }}</span></td>
+      <td><span class="mr">{{ m.gender_mr }}</span><span class="en">{{ m.gender_en }}</span></td>
+      <td>{{ m.age }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

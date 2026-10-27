@@ -1,0 +1,327 @@
+{
+  "id": "HH002",
+  "seed": 42,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "स्नेहा",
+        "en": "Sneha"
+      },
+      "middle": {
+        "mr": "ओंकार",
+        "en": "Omkar"
+      },
+      "surname": {
+        "mr": "शिंदे",
+        "en": "Shinde"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "F",
+      "dob": "1984-09-22",
+      "age": 42,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "अश्विनी",
+        "en": "Ashwini"
+      },
+      "middle": {
+        "mr": "संतोष",
+        "en": "Santosh"
+      },
+      "surname": {
+        "mr": "शिंदे",
+        "en": "Shinde"
+      },
+      "relation": {
+        "mr": "सासू",
+        "en": "Mother-in-law"
+      },
+      "gender": "F",
+      "dob": "1956-03-14",
+      "age": 70,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "तुकाराम",
+        "en": "Tukaram"
+      },
+      "middle": {
+        "mr": "ओंकार",
+        "en": "Omkar"
+      },
+      "surname": {
+        "mr": "शिंदे",
+        "en": "Shinde"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2022-12-14",
+      "age": 3,
+      "on_ration_card": false
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-81724341",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "स्नेहा ओंकार शिंदे",
+        "head_name_en": "Sneha Omkar Shinde",
+        "address_mr": "घर क्र. 159, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 159, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "स्नेहा ओंकार शिंदे",
+            "name_en": "Sneha Omkar Shinde",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 42
+          },
+          {
+            "name_mr": "अश्विनी संतोष शिंदे",
+            "name_en": "Ashwini Santosh Shinde",
+            "relation_mr": "सासू",
+            "relation_en": "Mother-in-law",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 70
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -3.23,
+        "scale": 0.892,
+        "lighting": [
+          0.76,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 1.32,
+        "noise_sigma": 3.04,
+        "jpeg_quality": 77
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "स्नेहा ओंकार शिंदे",
+        "name_en": "Sneha Omkar Shinde",
+        "dob": "22/09/1984",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "073734264690"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 4.17,
+        "scale": 0.917,
+        "lighting": [
+          0.65,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 0.88,
+        "noise_sigma": 5.34,
+        "jpeg_quality": 87
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "अश्विनी संतोष शिंदे",
+        "name_en": "Ashwini Santosh Shinde",
+        "dob": "14/03/1956",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "136176611841"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -1.97,
+        "scale": 0.897,
+        "lighting": [
+          0.68,
+          1.07
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 66.5,
+        "noise_sigma": 3.68,
+        "jpeg_quality": 81
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "तुकाराम ओंकार शिंदे",
+        "name_en": "Tukaram Omkar Shinde",
+        "dob": "14/12/2022",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "092793452289"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -3.25,
+        "scale": 0.897,
+        "lighting": [
+          0.82,
+          1.04
+        ],
+        "blur": "gaussian",
+        "sigma": 1.4,
+        "noise_sigma": 3.87,
+        "jpeg_quality": 84
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/671591",
+        "name_mr": "स्नेहा ओंकार शिंदे",
+        "name_en": "Sneha Omkar Shinde",
+        "address_mr": "घर क्र. 159, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 159, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 143000,
+        "issue_date": "18/02/2022",
+        "financial_year": "2020-21",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 6.77,
+        "scale": 0.899,
+        "lighting": [
+          0.65,
+          1.05
+        ],
+        "blur": "gaussian",
+        "sigma": 0.71,
+        "noise_sigma": 5.31,
+        "jpeg_quality": 83
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/181763",
+        "name_mr": "स्नेहा ओंकार शिंदे",
+        "name_en": "Sneha Omkar Shinde",
+        "dob": "22/09/1984",
+        "category_mr": "इतर मागास वर्ग (OBC)",
+        "category_en": "Other Backward Class (OBC)",
+        "address_mr": "घर क्र. 159, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 159, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "05/07/2017",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 3.77,
+        "scale": 0.976,
+        "lighting": [
+          0.79,
+          1.02
+        ],
+        "blur": "gaussian",
+        "sigma": 1.3,
+        "noise_sigma": 5.74,
+        "jpeg_quality": 76
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "expired",
+      "member_id": "m1",
+      "documents": [
+        "income_certificate_m1"
+      ],
+      "field": "issue_date",
+      "expected": null,
+      "printed": "18/02/2022",
+      "note": "Issued 3-5 years before reference_date; expiry is decided by the rules engine."
+    },
+    {
+      "type": "not_on_ration_card",
+      "member_id": "m3",
+      "documents": [
+        "ration_card",
+        "identity_card_m3"
+      ],
+      "field": null,
+      "expected": null,
+      "printed": null,
+      "note": null
+    }
+  ]
+}

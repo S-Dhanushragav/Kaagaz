@@ -228,3 +228,9 @@ tmp/
 *.mov
 eval/results/raw/
 docs/meta_api_notes.md
+
+# Synthetic renders are reproducible from the seed; keep ground truth everywhere, images for HH001 only
+synthetic/households/*/*.png
+synthetic/households/*/*.jpg
+!synthetic/households/HH001/*.png
+!synthetic/households/HH001/*.jpg
