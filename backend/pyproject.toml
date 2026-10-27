@@ -1,1 +1,28 @@
-﻿
+[project]
+name = "kaagaz-backend"
+version = "0.1.0"
+description = "Kaagaz backend: voice-first welfare document checker"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "pydantic>=2",
+    "pydantic-settings>=2",
+    "openai>=1",
+    "python-dotenv",
+    "opencv-python-headless",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*", "agents*", "clients*", "graph*", "matching*", "rules*", "schemas*", "vision*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
