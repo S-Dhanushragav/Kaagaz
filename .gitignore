@@ -218,3 +218,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Kaagaz
+.env
+.cache/
+node_modules/
+tmp/
+*.mp4
+*.mov
+eval/results/raw/
