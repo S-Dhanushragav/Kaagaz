@@ -227,3 +227,4 @@ tmp/
 *.mp4
 *.mov
 eval/results/raw/
+docs/meta_api_notes.md

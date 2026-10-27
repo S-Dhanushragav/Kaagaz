@@ -6,5 +6,9 @@ app = FastAPI(title="Kaagaz")
 
 
 @app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok", "llm_provider": get_settings().llm_provider}
+def health() -> dict[str, object]:
+    s = get_settings()
+    return {
+        "status": "ok",
+        "providers": {"vision": s.vision_provider, "agent": s.agent_provider, "text": s.text_provider},
+    }

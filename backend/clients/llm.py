@@ -1,7 +1,8 @@
-"""The single entry point for LLM calls (Muse Spark via Meta Model API or Baseten).
+"""The single entry point for LLM calls (Muse Spark via Meta Model API, Muse Spark Open via Baseten).
 
-Both providers are OpenAI-compatible, so one `openai` client is pointed at the
-configured base URL. Every call goes through the disk cache; errors are never cached.
+Both providers are OpenAI-compatible, so Chat Completions is called through one `openai`
+client pointed at the base URL resolved for the task. Every call goes through the disk
+cache; errors and truncated replies are never cached.
 Images must already be prepared (see `vision.images.encode_for_llm`).
 """
 
@@ -10,10 +11,10 @@ import logging
 from functools import lru_cache
 from typing import Any
 
-from openai import OpenAI
+from openai import BadRequestError, OpenAI, UnprocessableEntityError
 from pydantic import BaseModel
 
-from app.config import get_settings
+from app.config import Task, get_settings
 from clients.cache import DiskCache, make_key
 
 logger = logging.getLogger(__name__)
@@ -33,6 +34,8 @@ class TokenUsage(BaseModel):
 
 class LLMResponse(BaseModel):
     text: str
+    reasoning: str | None = None  # reasoning_content, when the provider returns it
+    task: Task
     provider: str
     model: str
     usage: TokenUsage
@@ -66,9 +69,19 @@ def _build_messages(
     return messages
 
 
+def _reasoning_text(message: Any) -> str | None:
+    extra = message.model_extra or {}
+    for field in ("reasoning_content", "reasoning"):
+        value = extra.get(field)
+        if isinstance(value, str) and value:
+            return value
+    return None
+
+
 def complete(
     prompt: str,
     *,
+    task: Task,
     image: bytes | None = None,
     image_mime: str = "image/jpeg",
     system: str | None = None,
@@ -76,7 +89,12 @@ def complete(
     max_tokens: int | None = None,
     response_format: dict[str, Any] | None = None,
 ) -> LLMResponse:
-    """Send a text prompt, optionally with one prepared image, and return the reply."""
+    """Send a prompt (plus optional prepared image) using the model configured for `task`.
+
+    `max_tokens` overrides the task's configured budget; it includes reasoning tokens.
+    """
+    if image is not None and task == "text":
+        raise ValueError("task='text' does not take an image; use task='vision'")
     if image is not None and len(image) > MAX_IMAGE_BYTES:
         raise ValueError(
             f"Image is {len(image)} bytes (limit {MAX_IMAGE_BYTES}); "
@@ -84,13 +102,17 @@ def complete(
         )
 
     settings = get_settings()
-    provider = settings.active_provider()
+    resolved = settings.resolve(task)
+    if max_tokens is None:
+        max_tokens = resolved.max_tokens
     cache = DiskCache(settings.cache_path)
 
     key = make_key(
         {
-            "provider": provider.name,
-            "model": provider.model,
+            "task": task,
+            "provider": resolved.provider,
+            "model": resolved.model,
+            "reasoning_effort": resolved.reasoning_effort,
             "system": system,
             "prompt": prompt,
             "image": image,
@@ -106,34 +128,42 @@ def complete(
         return LLMResponse.model_validate({**hit, "cached": True})
 
     params: dict[str, Any] = {
-        "model": provider.model,
+        "model": resolved.model,
         "messages": _build_messages(prompt, system, image, image_mime),
         "temperature": temperature,
+        "max_tokens": max_tokens,
     }
-    if max_tokens is not None:
-        params["max_tokens"] = max_tokens
+    if resolved.reasoning_effort is not None:
+        params["reasoning_effort"] = resolved.reasoning_effort
     if response_format is not None:
         params["response_format"] = response_format
 
-    client = _client(provider.base_url, provider.api_key.get_secret_value())
-    resp = client.chat.completions.create(**params)
+    label = f"{resolved.provider}/{resolved.model}"
+    client = _client(resolved.base_url, resolved.api_key.get_secret_value())
+    try:
+        resp = client.chat.completions.create(**params)
+    except (BadRequestError, UnprocessableEntityError) as e:
+        if resolved.reasoning_effort is not None and "reasoning" in str(e).lower():
+            raise LLMError(
+                f"Provider '{resolved.provider}' rejected parameter "
+                f"reasoning_effort={resolved.reasoning_effort!r} for model {resolved.model}; "
+                f"fix or unset {task.upper()}_REASONING_EFFORT. Provider said: {e}"
+            ) from e
+        raise
 
     if not resp.choices:
-        raise LLMError(f"No choices in response from {provider.name}/{provider.model}")
+        raise LLMError(f"No choices in response from {label}")
     choice = resp.choices[0]
     # Reasoning tokens count toward max_tokens; running out mid-reasoning gives
     # finish_reason="length" with content=None. Truncated output is never cached.
     if choice.finish_reason == "length":
         raise LLMError(
-            f"{provider.name}/{provider.model} hit max_tokens={max_tokens} "
+            f"{label} hit max_tokens={max_tokens} "
             f"(content {'empty' if choice.message.content is None else 'truncated'}); "
-            "raise max_tokens"
+            f"raise {task.upper()}_MAX_TOKENS"
         )
     if choice.message.content is None:
-        raise LLMError(
-            f"Empty response from {provider.name}/{provider.model} "
-            f"(finish_reason={choice.finish_reason})"
-        )
+        raise LLMError(f"Empty response from {label} (finish_reason={choice.finish_reason})")
 
     usage = TokenUsage()
     if resp.usage is not None:
@@ -144,15 +174,17 @@ def complete(
         )
     result = LLMResponse(
         text=choice.message.content,
-        provider=provider.name,
-        model=provider.model,
+        reasoning=_reasoning_text(choice.message),
+        task=task,
+        provider=resolved.provider,
+        model=resolved.model,
         usage=usage,
     )
     cache.set(key, result.model_dump())
     logger.info(
-        "LLM call %s/%s: %d prompt + %d completion tokens",
-        provider.name,
-        provider.model,
+        "LLM call [%s] %s: %d prompt + %d completion tokens",
+        task,
+        label,
         usage.prompt_tokens,
         usage.completion_tokens,
     )
