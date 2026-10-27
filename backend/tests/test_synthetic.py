@@ -133,6 +133,8 @@ def test_scoring() -> None:
     assert matches(35, "३५")
     assert not matches("Sunil", None)
     assert not matches("सुनील", "सुनिल")
+    assert matches("स्वतः", "स्वत:")  # visarga misread as ASCII colon
+    assert not matches("स्वतः", "स्वत")
     expected = {"name_en": "Sunil Patil", "members": [{"age": 30}, {"age": 5}]}
     correct, total, wrong = score(expected, {"name_en": "sunil patil", "members": [{"age": "30"}]})
     assert (correct, total) == (2, 3)

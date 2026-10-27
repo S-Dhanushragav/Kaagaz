@@ -1,17 +1,21 @@
-"""2x2 vision comparison on one photo-like synthetic document: model x reasoning effort.
+"""Vision comparison on photo-like synthetic documents, scored against ground_truth.json.
 
 Usage (from backend/):
-    python scripts/compare_vision.py                      # ration card of the largest household
+    python scripts/compare_vision.py                      # 2x2 (model x effort) on the largest ration card
     python scripts/compare_vision.py --household HH008 --doc ration_card
+    python scripts/compare_vision.py --all                # low-effort cells on every photo-like document
+    python scripts/compare_vision.py --all --dry-run      # list what would be sent; no API calls
 
-Scores each reply field by field against ground_truth.json (synthetic/scoring.py).
-Each cell uses resolve() overrides, so the cells never share a cached reply.
+Each cell uses resolve() overrides, so cells never share a cached reply.
 """
 
 import argparse
 import json
 import sys
 import time
+from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -24,12 +28,29 @@ from vision.images import encode_for_llm, read_image  # noqa: E402
 
 HOUSEHOLDS = BACKEND.parent / "synthetic" / "households"
 PROMPT = (BACKEND / "prompts" / "smoke_extract.md").read_text(encoding="utf-8")
-CELLS = [
+CELLS_2X2 = [
     ("muse-spark-1.3", None),
     ("muse-spark-1.3", "low"),
     ("muse-spark-1.1", None),
     ("muse-spark-1.1", "low"),
 ]
+CELLS_ALL = [("muse-spark-1.3", "low"), ("muse-spark-1.1", "low")]
+MAX_PARALLEL = 4
+
+
+@dataclass
+class Result:
+    hh_id: str
+    doc: dict[str, Any]
+    model: str
+    effort: str | None
+    correct: int = 0
+    total: int = 0
+    wrong: list[tuple[str, Any, Any]] = field(default_factory=list)
+    completion_tokens: int = 0
+    elapsed: float = 0.0
+    cached: bool = False
+    error: str | None = None
 
 
 def skeleton(value: Any) -> Any:
@@ -51,14 +72,104 @@ def parse_json(text: str) -> dict[str, Any] | None:
         return None
 
 
-def default_household() -> str:
-    def rows(p: Path) -> int:
-        gt = json.loads(p.read_text(encoding="utf-8"))
+def load_households() -> dict[str, dict[str, Any]]:
+    return {
+        p.parent.name: json.loads(p.read_text(encoding="utf-8"))
+        for p in sorted(HOUSEHOLDS.glob("HH*/ground_truth.json"))
+    }
+
+
+def default_household(households: dict[str, dict[str, Any]]) -> str:
+    def rows(gt: dict[str, Any]) -> int:
         card = next(d for d in gt["documents"] if d["type"] == "ration_card")
         return len(card["fields"]["members"])
 
-    paths = sorted(HOUSEHOLDS.glob("HH*/ground_truth.json"))
-    return max(paths, key=lambda p: (rows(p), -paths.index(p))).parent.name
+    return max(households, key=lambda hh: (rows(households[hh]), [-ord(c) for c in hh]))
+
+
+def run_cell(hh_id: str, doc: dict[str, Any], model: str, effort: str | None, max_tokens: int) -> Result:
+    result = Result(hh_id, doc, model, effort)
+    image = encode_for_llm(read_image(HOUSEHOLDS / hh_id / doc["files"]["photo"]))
+    prompt = PROMPT.replace("{schema}", json.dumps(skeleton(doc["fields"]), ensure_ascii=False, indent=2))
+    overrides = {"provider": "meta", "model": model, "reasoning_effort": effort}
+    start = time.perf_counter()
+    try:
+        resp = complete(prompt, task="vision", image=image, max_tokens=max_tokens, overrides=overrides)
+    except LLMError as e:
+        result.error = str(e)
+        result.elapsed = time.perf_counter() - start
+        return result
+    result.elapsed = time.perf_counter() - start
+    result.cached = resp.cached
+    result.completion_tokens = resp.usage.completion_tokens
+    predicted = parse_json(resp.text)
+    if predicted is None:
+        result.error = "reply was not JSON"
+    result.correct, result.total, result.wrong = score(doc["fields"], predicted or {})
+    return result
+
+
+def run_all(jobs: list[tuple[str, dict[str, Any], str, str | None]], max_tokens: int) -> list[Result]:
+    with ThreadPoolExecutor(max_workers=MAX_PARALLEL) as pool:
+        futures = [pool.submit(run_cell, *job, max_tokens) for job in jobs]
+        return [f.result() for f in futures]
+
+
+def _pct(correct: int, total: int) -> str:
+    return f"{correct}/{total} ({100 * correct / total:.0f}%)" if total else "-"
+
+
+def _effort(effort: str | None) -> str:
+    return effort or "default"
+
+
+def report_2x2(results: list[Result]) -> None:
+    print("| Model | Effort | Accuracy | Completion tokens | Time (s) |")
+    print("|---|---|---|---|---|")
+    for r in results:
+        if r.error and not r.total:
+            print(f"| {r.model} | {_effort(r.effort)} | ERROR | - | {r.elapsed:.1f} |")
+            continue
+        t = "cached" if r.cached else f"{r.elapsed:.1f}"
+        print(f"| {r.model} | {_effort(r.effort)} | {_pct(r.correct, r.total)} | {r.completion_tokens} | {t} |")
+    for r in results:
+        print(f"\n## {r.model} / {_effort(r.effort)}")
+        if r.error:
+            print(f"  {r.error}")
+        for path, expected, got in r.wrong:
+            print(f"  {path}: expected {expected!r}, got {got!r}")
+        if r.total and not r.wrong:
+            print("  all fields correct")
+
+
+def report_all(results: list[Result]) -> None:
+    by_model: dict[str, list[Result]] = defaultdict(list)
+    for r in results:
+        by_model[f"{r.model} / {_effort(r.effort)}"].append(r)
+    doc_types = sorted({r.doc["type"] for r in results})
+
+    print("| Model | Overall | " + " | ".join(doc_types) + " | Avg time (s) | Avg completion tokens | Errors |")
+    print("|---|---|" + "---|" * len(doc_types) + "---|---|---|")
+    for name, rs in by_model.items():
+        overall = _pct(sum(r.correct for r in rs), sum(r.total for r in rs))
+        per_type = [
+            _pct(sum(r.correct for r in rs if r.doc["type"] == t), sum(r.total for r in rs if r.doc["type"] == t))
+            for t in doc_types
+        ]
+        fresh = [r.elapsed for r in rs if not r.cached and not r.error]
+        avg_time = f"{sum(fresh) / len(fresh):.1f}" if fresh else "cached"
+        ok = [r for r in rs if not r.error]
+        avg_tokens = f"{sum(r.completion_tokens for r in ok) / len(ok):.0f}" if ok else "-"
+        errors = sum(1 for r in rs if r.error)
+        print(f"| {name} | {overall} | " + " | ".join(per_type) + f" | {avg_time} | {avg_tokens} | {errors} |")
+
+    for name, rs in by_model.items():
+        print(f"\n## {name}: wrong fields")
+        for r in rs:
+            if r.error:
+                print(f"  {r.hh_id}/{r.doc['id']}: {r.error}")
+            for path, expected, got in r.wrong:
+                print(f"  {r.hh_id}/{r.doc['id']} {path}: expected {expected!r}, got {got!r}")
 
 
 def main() -> None:
@@ -66,52 +177,34 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--household")
     parser.add_argument("--doc", default="ration_card")
+    parser.add_argument("--all", action="store_true", help="low-effort cells on every photo-like document")
+    parser.add_argument("--dry-run", action="store_true", help="list the calls that would be made; no API calls")
     parser.add_argument("--max-tokens", type=int, default=8000)
     args = parser.parse_args()
 
-    hh_id = args.household or default_household()
-    gt = json.loads((HOUSEHOLDS / hh_id / "ground_truth.json").read_text(encoding="utf-8"))
-    doc = next(d for d in gt["documents"] if d["id"] == args.doc)
-    photo = HOUSEHOLDS / hh_id / doc["files"]["photo"]
-    image = encode_for_llm(read_image(photo))
-    prompt = PROMPT.replace("{schema}", json.dumps(skeleton(doc["fields"]), ensure_ascii=False, indent=2))
-    print(f"Document: {hh_id}/{photo.name}  ({len(image) / 1024:.0f} KB sent)  photo: {doc['photo']}\n")
+    households = load_households()
+    if args.all:
+        jobs = [
+            (hh_id, doc, model, effort)
+            for hh_id, gt in households.items()
+            for doc in gt["documents"]
+            for model, effort in CELLS_ALL
+        ]
+    else:
+        hh_id = args.household or default_household(households)
+        doc = next(d for d in households[hh_id]["documents"] if d["id"] == args.doc)
+        print(f"Document: {hh_id}/{doc['files']['photo']}  photo: {doc['photo']}\n")
+        jobs = [(hh_id, doc, model, effort) for model, effort in CELLS_2X2]
 
-    results = []
-    for model, effort in CELLS:
-        overrides = {"provider": "meta", "model": model, "reasoning_effort": effort}
-        start = time.perf_counter()
-        try:
-            resp = complete(prompt, task="vision", image=image, max_tokens=args.max_tokens, overrides=overrides)
-        except LLMError as e:
-            results.append((model, effort, None, None, time.perf_counter() - start, str(e)))
-            continue
-        elapsed = time.perf_counter() - start
-        predicted = parse_json(resp.text)
-        scored = score(doc["fields"], predicted or {})
-        results.append((model, effort, scored, resp, elapsed, None if predicted else "reply was not JSON"))
+    if args.dry_run:
+        docs = {(hh, d["id"]) for hh, d, _, _ in jobs}
+        print(f"{len(jobs)} calls over {len(docs)} documents, at most {MAX_PARALLEL} in parallel:")
+        for hh_id, doc, model, effort in jobs:
+            print(f"  {hh_id}/{doc['files']['photo']}  {model} / {_effort(effort)}")
+        return
 
-    print("| Model | Effort | Accuracy | Completion tokens | Time (s) |")
-    print("|---|---|---|---|---|")
-    for model, effort, scored, resp, elapsed, error in results:
-        if scored is None:
-            print(f"| {model} | {effort or 'default'} | ERROR | - | {elapsed:.1f} |")
-            continue
-        correct, total, _ = scored
-        t = "cached" if resp.cached else f"{elapsed:.1f}"
-        print(
-            f"| {model} | {effort or 'default'} | {correct}/{total} ({100 * correct / total:.0f}%) "
-            f"| {resp.usage.completion_tokens} | {t} |"
-        )
-
-    for model, effort, scored, _, _, error in results:
-        print(f"\n## {model} / {effort or 'default'}")
-        if error:
-            print(f"  {error}")
-        for path, expected, got in (scored[2] if scored else []):
-            print(f"  {path}: expected {expected!r}, got {got!r}")
-        if scored and not scored[2]:
-            print("  all fields correct")
+    results = run_all(jobs, args.max_tokens)
+    (report_all if args.all else report_2x2)(results)
 
 
 if __name__ == "__main__":

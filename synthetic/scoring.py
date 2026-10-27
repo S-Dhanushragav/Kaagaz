@@ -3,12 +3,15 @@
 import unicodedata
 from typing import Any, Iterator
 
+from vision.text import normalize_text  # backend/ must be on sys.path
+
 _DEVANAGARI_DIGITS = str.maketrans("०१२३४५६७८९", "0123456789")
 
 
 def normalize(value: Any) -> str:
-    """NFC, Devanagari digits -> ASCII, casefold, drop whitespace and punctuation (incl. danda)."""
-    s = unicodedata.normalize("NFC", str(value)).translate(_DEVANAGARI_DIGITS).casefold()
+    """normalize_text (NFC, colon->visarga), Devanagari digits -> ASCII, casefold,
+    drop whitespace and punctuation (incl. danda)."""
+    s = normalize_text(str(value)).translate(_DEVANAGARI_DIGITS).casefold()
     return "".join(ch for ch in s if not ch.isspace() and not unicodedata.category(ch).startswith("P"))
 
 
