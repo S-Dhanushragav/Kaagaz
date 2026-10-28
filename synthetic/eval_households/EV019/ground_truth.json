@@ -1,0 +1,527 @@
+{
+  "id": "EV019",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "ज्ञानेश्वर",
+        "en": "Dnyaneshwar"
+      },
+      "middle": {
+        "mr": "विजय",
+        "en": "Vijay"
+      },
+      "surname": {
+        "mr": "घोडके",
+        "en": "Ghodke"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1992-08-29",
+      "age": 34,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "तृप्ती",
+        "en": "Trupti"
+      },
+      "middle": {
+        "mr": "ज्ञानेश्वर",
+        "en": "Dnyaneshwar"
+      },
+      "surname": {
+        "mr": "घोडके",
+        "en": "Ghodke"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1996-07-20",
+      "age": 30,
+      "on_ration_card": false
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "ज्ञानदा",
+        "en": "Dnyanada"
+      },
+      "middle": {
+        "mr": "ज्ञानेश्वर",
+        "en": "Dnyaneshwar"
+      },
+      "surname": {
+        "mr": "घोडके",
+        "en": "Ghodke"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2022-01-16",
+      "age": 4,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "हृषीकेश",
+        "en": "Hrishikesh"
+      },
+      "middle": {
+        "mr": "ज्ञानेश्वर",
+        "en": "Dnyaneshwar"
+      },
+      "surname": {
+        "mr": "घोडके",
+        "en": "Ghodke"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2021-07-18",
+      "age": 5,
+      "on_ration_card": true
+    },
+    {
+      "id": "m5",
+      "given": {
+        "mr": "साईराज",
+        "en": "Sairaj"
+      },
+      "middle": {
+        "mr": "ज्ञानेश्वर",
+        "en": "Dnyaneshwar"
+      },
+      "surname": {
+        "mr": "घोडके",
+        "en": "Ghodke"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2015-08-01",
+      "age": 11,
+      "on_ration_card": true
+    },
+    {
+      "id": "m6",
+      "given": {
+        "mr": "लता",
+        "en": "Lata"
+      },
+      "middle": {
+        "mr": "ज्ञानेश्वर",
+        "en": "Dnyaneshwar"
+      },
+      "surname": {
+        "mr": "घोडके",
+        "en": "Ghodke"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2017-02-28",
+      "age": 9,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m3",
+        "m4",
+        "m5",
+        "m6"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-52356767",
+        "card_colour": "yellow",
+        "category_mr": "अंत्योदय अन्न योजना (AAY)",
+        "category_en": "Antyodaya Anna Yojana (AAY)",
+        "head_name_mr": "ज्ञानेश्वर विजय घोडके",
+        "head_name_en": "Dnyaneshwar Vijay Ghodke",
+        "address_mr": "घर क्र. 192, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 192, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "ज्ञानेश्वर विजय घोडके",
+            "name_en": "Dnyaneshwar Vijay Ghodke",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 34
+          },
+          {
+            "name_mr": "ज्ञानदा ज्ञानेश्वर घोडके",
+            "name_en": "Dnyanada Dnyaneshwar Ghodke",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 4
+          },
+          {
+            "name_mr": "हृषीकेश ज्ञानेश्वर घोडके",
+            "name_en": "Hrishikesh Dnyaneshwar Ghodke",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 5
+          },
+          {
+            "name_mr": "साईराज ज्ञानेश्वर घोडके",
+            "name_en": "Sairaj Dnyaneshwar Ghodke",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 11
+          },
+          {
+            "name_mr": "लता ज्ञानेश्वर घोडके",
+            "name_en": "Lata Dnyaneshwar Ghodke",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 9
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 0.15,
+        "scale": 0.991,
+        "lighting": [
+          0.83,
+          1.02
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 72.8,
+        "noise_sigma": 3.88,
+        "jpeg_quality": 81
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "ज्ञानेश्वर विजय घोडके",
+        "name_en": "Dnyaneshwar Vijay Ghodke",
+        "dob": "29/08/1992",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "173613487531"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 0.91,
+        "scale": 0.966,
+        "lighting": [
+          0.63,
+          1.02
+        ],
+        "blur": "gaussian",
+        "sigma": 0.96,
+        "noise_sigma": 3.58,
+        "jpeg_quality": 75
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "तृप्ती ज्ञानेश्वर घोडके",
+        "name_en": "Trupti Dnyaneshwar Ghodke",
+        "dob": "20/07/1996",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "000256774461"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -4.66,
+        "scale": 0.996,
+        "lighting": [
+          0.84,
+          1.12
+        ],
+        "blur": "gaussian",
+        "sigma": 0.74,
+        "noise_sigma": 3.42,
+        "jpeg_quality": 77
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "ज्ञानदा ज्ञानेश्वर घोडके",
+        "name_en": "Dnyanada Dnyaneshwar Ghodke",
+        "dob": "16/01/2022",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "092649995219"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 0.89,
+        "scale": 0.91,
+        "lighting": [
+          0.67,
+          1.0
+        ],
+        "blur": "gaussian",
+        "sigma": 1.35,
+        "noise_sigma": 2.83,
+        "jpeg_quality": 87
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "हृषीकेश ज्ञानेश्वर घोडके",
+        "name_en": "Hrishikesh Dnyaneshwar Ghodke",
+        "dob": "18/07/2021",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "055274778906"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -4.85,
+        "scale": 0.914,
+        "lighting": [
+          0.8,
+          1.0
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 63.1,
+        "noise_sigma": 3.45,
+        "jpeg_quality": 79
+      }
+    },
+    {
+      "id": "identity_card_m5",
+      "type": "identity_card",
+      "member_ids": [
+        "m5"
+      ],
+      "fields": {
+        "name_mr": "साईराज ज्ञानेश्वर घोडके",
+        "name_en": "Sairaj Dnyaneshwar Ghodke",
+        "dob": "01/08/2015",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "118134701344"
+      },
+      "files": {
+        "clean": "identity_card_m5.png",
+        "photo": "identity_card_m5_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -3.47,
+        "scale": 0.892,
+        "lighting": [
+          0.71,
+          1.02
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 155.4,
+        "noise_sigma": 2.81,
+        "jpeg_quality": 81
+      }
+    },
+    {
+      "id": "identity_card_m6",
+      "type": "identity_card",
+      "member_ids": [
+        "m6"
+      ],
+      "fields": {
+        "name_mr": "लता ज्ञानेश्वर घोडके",
+        "name_en": "Lata Dnyaneshwar Ghodke",
+        "dob": "28/02/2017",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "165318662713"
+      },
+      "files": {
+        "clean": "identity_card_m6.png",
+        "photo": "identity_card_m6_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 5.7,
+        "scale": 0.916,
+        "lighting": [
+          0.73,
+          1.03
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 127.4,
+        "noise_sigma": 2.54,
+        "jpeg_quality": 70
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/899964",
+        "name_mr": "ज्ञानेश्वर विजय घोडके",
+        "name_en": "Dnyaneshwar Vijay Ghodke",
+        "dob": "29/08/1992",
+        "category_mr": "अनुसूचित जाती (SC)",
+        "category_en": "Scheduled Caste (SC)",
+        "address_mr": "घर क्र. 192, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 192, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "07/05/2022",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -4.04,
+        "scale": 0.941,
+        "lighting": [
+          0.84,
+          1.0
+        ],
+        "blur": "gaussian",
+        "sigma": 1.23,
+        "noise_sigma": 3.23,
+        "jpeg_quality": 70
+      }
+    },
+    {
+      "id": "caste_certificate_m4",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/442631",
+        "name_mr": "हृषीकेश ज्ञानेश्वर घोडके",
+        "name_en": "Hrishikesh Dnyaneshwar Ghodke",
+        "dob": "18/07/2021",
+        "category_mr": "अनुसूचित जाती (SC)",
+        "category_en": "Scheduled Caste (SC)",
+        "address_mr": "घर क्र. 192, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 192, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "13/08/2022",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m4.png",
+        "photo": "caste_certificate_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 5.45,
+        "scale": 0.952,
+        "lighting": [
+          0.68,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 0.88,
+        "noise_sigma": 5.73,
+        "jpeg_quality": 74
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "not_on_ration_card",
+      "member_id": "m2",
+      "documents": [
+        "ration_card",
+        "identity_card_m2"
+      ],
+      "field": null,
+      "expected": null,
+      "printed": null,
+      "note": null
+    },
+    {
+      "type": "missing_document",
+      "member_id": "m1",
+      "documents": [
+        "income_certificate_m1"
+      ],
+      "field": null,
+      "expected": "income_certificate",
+      "printed": null,
+      "note": "Document intentionally not generated."
+    }
+  ]
+}

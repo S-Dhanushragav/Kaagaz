@@ -1,0 +1,409 @@
+{
+  "id": "EV013",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "हृषीकेश",
+        "en": "Hrishikesh"
+      },
+      "middle": {
+        "mr": "चैतन्य",
+        "en": "Chaitanya"
+      },
+      "surname": {
+        "mr": "कदम",
+        "en": "Kadam"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1986-04-27",
+      "age": 40,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "प्रियांका",
+        "en": "Priyanka"
+      },
+      "middle": {
+        "mr": "हृषीकेश",
+        "en": "Hrishikesh"
+      },
+      "surname": {
+        "mr": "कदम",
+        "en": "Kadam"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1988-01-16",
+      "age": 38,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "चैतन्य",
+        "en": "Chaitanya"
+      },
+      "middle": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "surname": {
+        "mr": "कदम",
+        "en": "Kadam"
+      },
+      "relation": {
+        "mr": "वडील",
+        "en": "Father"
+      },
+      "gender": "M",
+      "dob": "1961-10-27",
+      "age": 65,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "साईराज",
+        "en": "Sairaj"
+      },
+      "middle": {
+        "mr": "हृषीकेश",
+        "en": "Hrishikesh"
+      },
+      "surname": {
+        "mr": "कदम",
+        "en": "Kadam"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2008-10-27",
+      "age": 18,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m4"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-58182328",
+        "card_colour": "yellow",
+        "category_mr": "अंत्योदय अन्न योजना (AAY)",
+        "category_en": "Antyodaya Anna Yojana (AAY)",
+        "head_name_mr": "हृषीकेश चैतन्य कदम",
+        "head_name_en": "Hrishikesh Chaitanya Kadam",
+        "address_mr": "घर क्र. 162, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 162, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "हृषीकेश चैतन्य कदम",
+            "name_en": "Hrishikesh Chaitanya Kadam",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 40
+          },
+          {
+            "name_mr": "प्रियांका हृषीकेश कदम",
+            "name_en": "Priyanka Hrishikesh Kadam",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 38
+          },
+          {
+            "name_mr": "चैतन्य विठ्ठल कदम",
+            "name_en": "Chaitanya Vitthal Kadam",
+            "relation_mr": "वडील",
+            "relation_en": "Father",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 65
+          },
+          {
+            "name_mr": "साईराज हृषीकेश कदम",
+            "name_en": "Sairaj Hrishikesh Kadam",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 18
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 1.37,
+        "scale": 0.995,
+        "lighting": [
+          0.74,
+          1.08
+        ],
+        "blur": "gaussian",
+        "sigma": 1.72,
+        "noise_sigma": 3.92,
+        "jpeg_quality": 83
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "हृषीकेश चैतन्य कदम",
+        "name_en": "Hrishikesh Chaitanya Kadam",
+        "dob": "27/04/1986",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "068860889854"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 3.35,
+        "scale": 0.993,
+        "lighting": [
+          0.69,
+          1.03
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 56.3,
+        "noise_sigma": 5.87,
+        "jpeg_quality": 74
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "प्रियांका हृषीकेश कदम",
+        "name_en": "Priyanka Hrishikesh Kadam",
+        "dob": "16/01/1988",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "079109371312"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -1.35,
+        "scale": 0.986,
+        "lighting": [
+          0.75,
+          1.04
+        ],
+        "blur": "gaussian",
+        "sigma": 1.35,
+        "noise_sigma": 3.93,
+        "jpeg_quality": 86
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "चैतन्य विठ्ठल कदम",
+        "name_en": "Chaitanya Vitthal Kadam",
+        "dob": "27/10/1961",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "067442900960"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -0.3,
+        "scale": 0.886,
+        "lighting": [
+          0.77,
+          1.09
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 67.8,
+        "noise_sigma": 4.72,
+        "jpeg_quality": 79
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/287790",
+        "name_mr": "हृषीकेश चैतन्य कदम",
+        "name_en": "Hrishikesh Chaitanya Kadam",
+        "address_mr": "घर क्र. 162, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 162, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 21001,
+        "issue_date": "16/07/2023",
+        "financial_year": "2022-23",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -0.08,
+        "scale": 0.951,
+        "lighting": [
+          0.69,
+          1.04
+        ],
+        "blur": "motion",
+        "length": 6,
+        "angle": 138.2,
+        "noise_sigma": 2.14,
+        "jpeg_quality": 86
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/688080",
+        "name_mr": "हृषीकेश चैतन्य कदम",
+        "name_en": "Hrishikesh Chaitanya Kadam",
+        "dob": "27/04/1986",
+        "category_mr": "अनुसूचित जाती (SC)",
+        "category_en": "Scheduled Caste (SC)",
+        "address_mr": "घर क्र. 162, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 162, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "19/07/2021",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 1.32,
+        "scale": 0.943,
+        "lighting": [
+          0.68,
+          1.07
+        ],
+        "blur": "gaussian",
+        "sigma": 1.55,
+        "noise_sigma": 3.71,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "caste_certificate_m3",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/703529",
+        "name_mr": "चैतन्य विठ्ठल कदम",
+        "name_en": "Chaitanya Vitthal Kadam",
+        "dob": "27/10/1961",
+        "category_mr": "अनुसूचित जाती (SC)",
+        "category_en": "Scheduled Caste (SC)",
+        "address_mr": "घर क्र. 162, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 162, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "02/08/2024",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m3.png",
+        "photo": "caste_certificate_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -4.38,
+        "scale": 0.91,
+        "lighting": [
+          0.79,
+          1.07
+        ],
+        "blur": "gaussian",
+        "sigma": 1.1,
+        "noise_sigma": 3.49,
+        "jpeg_quality": 79
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "expired",
+      "member_id": "m1",
+      "documents": [
+        "income_certificate_m1"
+      ],
+      "field": "issue_date",
+      "expected": null,
+      "printed": "16/07/2023",
+      "note": "Issued 3-5 years before reference_date; expiry is decided by the rules engine."
+    },
+    {
+      "type": "missing_document",
+      "member_id": "m4",
+      "documents": [
+        "identity_card_m4"
+      ],
+      "field": null,
+      "expected": "identity_card",
+      "printed": null,
+      "note": "Document intentionally not generated."
+    }
+  ]
+}

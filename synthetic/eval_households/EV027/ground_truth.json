@@ -1,0 +1,433 @@
+{
+  "id": "EV027",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "कमल",
+        "en": "Kamal"
+      },
+      "middle": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "surname": {
+        "mr": "क्षीरसागर",
+        "en": "Kshirsagar"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "F",
+      "dob": "1980-09-28",
+      "age": 46,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "मनीषा",
+        "en": "Manisha"
+      },
+      "middle": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "surname": {
+        "mr": "क्षीरसागर",
+        "en": "Kshirsagar"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2012-01-15",
+      "age": 14,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "सविता",
+        "en": "Savita"
+      },
+      "middle": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "surname": {
+        "mr": "क्षीरसागर",
+        "en": "Kshirsagar"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2012-02-17",
+      "age": 14,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "ऋग्वेद",
+        "en": "Rugved"
+      },
+      "middle": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "surname": {
+        "mr": "क्षीरसागर",
+        "en": "Kshirsagar"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2003-06-29",
+      "age": 23,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m4"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-39579074",
+        "card_colour": "white",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "कमल विठ्ठल क्षीरसागर",
+        "head_name_en": "Kamal Vitthal Kshirsagar",
+        "address_mr": "घर क्र. 178, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 178, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "कमल विठ्ठल क्षीरसागर",
+            "name_en": "Kamal Vitthal Kshirsagar",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 46
+          },
+          {
+            "name_mr": "मनीषा विठ्ठल क्षीरसागर",
+            "name_en": "Manisha Vitthal Kshirsagar",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 14
+          },
+          {
+            "name_mr": "सविता विठ्ठल क्षीरसागर",
+            "name_en": "Savita Vitthal Kshirsagar",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 14
+          },
+          {
+            "name_mr": "ऋग्वेद विठ्ठल क्षीरसागर",
+            "name_en": "Rugved Vitthal Kshirsagar",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 23
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 1.69,
+        "scale": 0.889,
+        "lighting": [
+          0.79,
+          1.07
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 40.6,
+        "noise_sigma": 3.5,
+        "jpeg_quality": 72
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "कमल विठ्ठल क्षीरसागर",
+        "name_en": "Kamal Vitthal Kshirsagar",
+        "dob": "28/09/1980",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "020574940123"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -3.78,
+        "scale": 0.986,
+        "lighting": [
+          0.7,
+          1.07
+        ],
+        "blur": "gaussian",
+        "sigma": 0.68,
+        "noise_sigma": 3.92,
+        "jpeg_quality": 79
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "मनीषा विठ्ठल क्षीरसागर",
+        "name_en": "Manisha Vitthal Kshirsagar",
+        "dob": "15/01/2012",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "068706737138"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -7.67,
+        "scale": 0.905,
+        "lighting": [
+          0.7,
+          1.02
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 67.4,
+        "noise_sigma": 2.81,
+        "jpeg_quality": 75
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "सविता विठ्ठल क्षीरसागर",
+        "name_en": "Savita Vitthal Kshirsagar",
+        "dob": "17/02/2012",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "110803968170"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -5.56,
+        "scale": 0.986,
+        "lighting": [
+          0.78,
+          1.01
+        ],
+        "blur": "motion",
+        "length": 6,
+        "angle": 33.2,
+        "noise_sigma": 2.02,
+        "jpeg_quality": 83
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "ऋग्वेद विठ्ठल क्षीरसागर",
+        "name_en": "Rugved Vitthal Kshirsagar",
+        "dob": "29/06/2003",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "098366589173"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -0.24,
+        "scale": 0.94,
+        "lighting": [
+          0.64,
+          1.12
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 137.9,
+        "noise_sigma": 3.9,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/158416",
+        "name_mr": "कमल विठ्ठल क्षीरसागर",
+        "name_en": "Kamal Vitthal Kshirsagar",
+        "address_mr": "घर क्र. 178, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 178, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 150000,
+        "issue_date": "07/01/2023",
+        "financial_year": "2021-22",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 4.33,
+        "scale": 0.938,
+        "lighting": [
+          0.83,
+          1.09
+        ],
+        "blur": "motion",
+        "length": 6,
+        "angle": 91.6,
+        "noise_sigma": 2.11,
+        "jpeg_quality": 78
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/885574",
+        "name_mr": "कमल विठ्ठल क्षीरसागर",
+        "name_en": "Kamal Vitthal Kshirsagar",
+        "dob": "28/09/1980",
+        "category_mr": "इतर मागास वर्ग (OBC)",
+        "category_en": "Other Backward Class (OBC)",
+        "address_mr": "घर क्र. 178, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 178, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "13/12/2016",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 6.7,
+        "scale": 0.914,
+        "lighting": [
+          0.83,
+          1.02
+        ],
+        "blur": "motion",
+        "length": 4,
+        "angle": 165.4,
+        "noise_sigma": 3.58,
+        "jpeg_quality": 75
+      }
+    },
+    {
+      "id": "caste_certificate_m3",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/016681",
+        "name_mr": "सविता विठ्ठल क्षीरसागर",
+        "name_en": "Savita Vitthal Kshirsagar",
+        "dob": "17/02/2012",
+        "category_mr": "इतर मागास वर्ग (OBC)",
+        "category_en": "Other Backward Class (OBC)",
+        "address_mr": "घर क्र. 178, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 178, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "10/11/2023",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m3.png",
+        "photo": "caste_certificate_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 7.77,
+        "scale": 0.889,
+        "lighting": [
+          0.77,
+          1.03
+        ],
+        "blur": "gaussian",
+        "sigma": 1.42,
+        "noise_sigma": 3.1,
+        "jpeg_quality": 72
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "expired",
+      "member_id": "m1",
+      "documents": [
+        "income_certificate_m1"
+      ],
+      "field": "issue_date",
+      "expected": null,
+      "printed": "07/01/2023",
+      "note": "Issued 3-5 years before reference_date; expiry is decided by the rules engine."
+    }
+  ]
+}

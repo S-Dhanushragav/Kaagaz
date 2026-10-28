@@ -15,6 +15,7 @@ Step 2. Extract the fields for that type, exactly as printed.
 - Dates as DD/MM/YYYY. Ages and amounts as digits only. Financial year as YYYY-YY.
 - `id_number`: write ONLY the last 4 digits, as `XXXX XXXX 1234`. Never write the other digits.
 - `members`: one entry per printed row of the member table, in printed order.
+- `card_colour` (ration card): the card colour printed on it, as `yellow`, `orange`, or `white`. Null if no colour is printed.
 - If a field cannot be read with certainty, use null. Never guess, and never fill a value from another document or from what seems likely.
 
 Return only the JSON object.

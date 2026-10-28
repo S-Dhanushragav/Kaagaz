@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% from "macros.html" import field %}
-{% block kind %}ration{% endblock %}
+{% block kind %}ration{% if f.card_colour is defined %} ration--{{ f.card_colour }}{% endif %}{% endblock %}
 {% block content %}
 <div class="title">
   <div class="mr">शिधापत्रिका (नमुना)</div>
   <div class="en">Ration Card — SPECIMEN</div>
 </div>
 {{ field("शिधापत्रिका क्रमांक", "Card No.", num=f.card_number) }}
+{% if f.card_colour is defined %}{% set c = card_colours[f.card_colour] %}{{ field("शिधापत्रिकेचा रंग", "Card colour", c.mr, c.en) }}{% endif %}
 {{ field("प्रकार", "Category", f.category_mr, f.category_en) }}
 {{ field("कुटुंब प्रमुख", "Head of family", f.head_name_mr, f.head_name_en) }}
 {{ field("पत्ता", "Address", f.address_mr, f.address_en) }}
@@ -32,4 +33,7 @@
   {% endfor %}
   </tbody>
 </table>
+{% if f.card_colour is defined and f.card_colour == "orange" %}
+<div class="stamp">प्राधान्य कुटुंब<br>Priority Household</div>
+{% endif %}
 {% endblock %}

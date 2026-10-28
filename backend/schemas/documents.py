@@ -54,8 +54,9 @@ def _mask_id(v: Any) -> Any:
 
 Text = str | None
 DateStr = Annotated[str | None, AfterValidator(_check_date), Field(description="DD/MM/YYYY")]
-Age = Annotated[int | None, Field(ge=0, le=120)]
-Rupees = Annotated[int | None, BeforeValidator(_parse_rupees), Field(ge=0, description="rupees, digits only")]
+# Constraints go on the int inside the Optional: on `int | None` they would also run on None and crash.
+Age = Annotated[int, Field(ge=0, le=120)] | None
+Rupees = Annotated[Annotated[int, Field(ge=0)] | None, BeforeValidator(_parse_rupees), Field(description="rupees, digits only")]
 FinancialYear = Annotated[str | None, AfterValidator(_check_fy), Field(description="YYYY-YY")]
 MaskedId = Annotated[
     str | None, BeforeValidator(_mask_id), Field(description="only the last 4 digits, as 'XXXX XXXX 1234'")
@@ -76,8 +77,12 @@ class RationCardMember(_Fields):
     age: Age
 
 
+CardColour = Literal["yellow", "orange", "white"]
+
+
 class RationCardFields(_Fields):
     card_number: Text
+    card_colour: CardColour | None  # printed colour of the card (card type); null on cards without one
     category_mr: Text
     category_en: Text
     head_name_mr: Text
@@ -136,11 +141,11 @@ FIELD_MODELS: dict[str, type[_Fields]] = {
 # Fields that drive decisions (matching, eligibility). When a document has several frames, each
 # frame is read separately and these are accepted only if at least 2 frames agree; otherwise null.
 # Other fields (addresses, offices, numbers, relation, age) are display-only: read from the best frame.
-# Paths use "members." for every ration-card member row. The ration card's category is its card type
-# (AAY / PHH / NPHH), i.e. the card "colour".
+# Paths use "members." for every ration-card member row. card_colour is the printed card colour
+# (yellow / orange / white), which the scheme rules use.
 DECISION_FIELDS: dict[str, frozenset[str]] = {
     "ration_card": frozenset({
-        "head_name_mr", "head_name_en", "category_mr", "category_en",
+        "card_colour", "head_name_mr", "head_name_en", "category_mr", "category_en",
         "members.name_mr", "members.name_en", "members.gender_mr", "members.gender_en",
     }),
     "identity_card": frozenset({"name_mr", "name_en", "dob", "gender_mr", "gender_en", "id_number"}),

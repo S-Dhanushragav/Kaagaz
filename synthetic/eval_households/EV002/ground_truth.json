@@ -1,0 +1,370 @@
+{
+  "id": "EV002",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "सौरभ",
+        "en": "Saurabh"
+      },
+      "middle": {
+        "mr": "हृषीकेश",
+        "en": "Hrishikesh"
+      },
+      "surname": {
+        "mr": "वाघमारे",
+        "en": "Waghmare"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1975-11-03",
+      "age": 50,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "प्रियांका",
+        "en": "Priyanka"
+      },
+      "middle": {
+        "mr": "सौरभ",
+        "en": "Saurabh"
+      },
+      "surname": {
+        "mr": "वाघमारे",
+        "en": "Waghmare"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1978-02-14",
+      "age": 48,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "गौरी",
+        "en": "Gauri"
+      },
+      "middle": {
+        "mr": "हृषीकेश",
+        "en": "Hrishikesh"
+      },
+      "surname": {
+        "mr": "वाघमारे",
+        "en": "Waghmare"
+      },
+      "relation": {
+        "mr": "आई",
+        "en": "Mother"
+      },
+      "gender": "F",
+      "dob": "1954-09-30",
+      "age": 72,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-54794602",
+        "card_colour": "orange",
+        "category_mr": "प्राधान्य कुटुंब (PHH)",
+        "category_en": "Priority Household (PHH)",
+        "head_name_mr": "सौरभ हृषीकेश वाघमारे",
+        "head_name_en": "Saurabh Hrishikesh Waghmare",
+        "address_mr": "घर क्र. 184, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 184, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "सौरभ हृषीकेश वाघमारे",
+            "name_en": "Saurabh Hrishikesh Waghmare",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 50
+          },
+          {
+            "name_mr": "प्रियांका सौरभ वाघमारे",
+            "name_en": "Priyanka Saurabh Waghmare",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 48
+          },
+          {
+            "name_mr": "गौरी हृषीकेश वाघमारे",
+            "name_en": "Gauri Hrishikesh Waghmare",
+            "relation_mr": "आई",
+            "relation_en": "Mother",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 72
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -1.62,
+        "scale": 0.929,
+        "lighting": [
+          0.7,
+          1.06
+        ],
+        "blur": "gaussian",
+        "sigma": 1.71,
+        "noise_sigma": 2.98,
+        "jpeg_quality": 85
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "सौरभ हृषीकेश वाघमारे",
+        "name_en": "Saurabh Hrishikesh Waghmare",
+        "dob": "03/11/1975",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "003623785404"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 5.37,
+        "scale": 0.95,
+        "lighting": [
+          0.83,
+          1.05
+        ],
+        "blur": "gaussian",
+        "sigma": 1.53,
+        "noise_sigma": 4.65,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "प्रियांका सौरभ वाघमारे",
+        "name_en": "Priyanka Saurabh Waghmare",
+        "dob": "14/02/1978",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "092545414125"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -0.82,
+        "scale": 0.926,
+        "lighting": [
+          0.82,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 1.74,
+        "noise_sigma": 2.78,
+        "jpeg_quality": 88
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "गौरी हृषीकेश वाघमारे",
+        "name_en": "Gauri Hrishikesh Vaghmare",
+        "dob": "30/09/1954",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "007351311950"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -3.91,
+        "scale": 0.961,
+        "lighting": [
+          0.65,
+          1.04
+        ],
+        "blur": "gaussian",
+        "sigma": 1.74,
+        "noise_sigma": 2.44,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/934092",
+        "name_mr": "सौरभ हृषीकेश वाघमारे",
+        "name_en": "Saurabh Hrishikesh Waghmare",
+        "address_mr": "घर क्र. 184, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 184, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 21000,
+        "issue_date": "22/09/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 0.15,
+        "scale": 0.937,
+        "lighting": [
+          0.78,
+          1.09
+        ],
+        "blur": "motion",
+        "length": 6,
+        "angle": 136.6,
+        "noise_sigma": 3.51,
+        "jpeg_quality": 86
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/632841",
+        "name_mr": "सौरभ हृषीकेश वाघमारे",
+        "name_en": "Saurabh Hrishikesh Waghmare",
+        "dob": "03/11/1975",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 184, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 184, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "22/09/2015",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 6.67,
+        "scale": 0.991,
+        "lighting": [
+          0.78,
+          1.08
+        ],
+        "blur": "gaussian",
+        "sigma": 1.12,
+        "noise_sigma": 3.83,
+        "jpeg_quality": 87
+      }
+    },
+    {
+      "id": "caste_certificate_m2",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/050533",
+        "name_mr": "प्रियांका सौरभ वाघमारे",
+        "name_en": "Priyanka Saurabh Waghmare",
+        "dob": "14/02/1978",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 184, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 184, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "16/04/2025",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m2.png",
+        "photo": "caste_certificate_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -5.13,
+        "scale": 0.985,
+        "lighting": [
+          0.75,
+          1.04
+        ],
+        "blur": "gaussian",
+        "sigma": 0.81,
+        "noise_sigma": 5.04,
+        "jpeg_quality": 83
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "name_mismatch",
+      "member_id": "m3",
+      "documents": [
+        "identity_card_m3",
+        "ration_card"
+      ],
+      "field": "name",
+      "expected": {
+        "mr": "गौरी हृषीकेश वाघमारे",
+        "en": "Gauri Hrishikesh Waghmare"
+      },
+      "printed": {
+        "mr": "गौरी हृषीकेश वाघमारे",
+        "en": "Gauri Hrishikesh Vaghmare"
+      },
+      "note": "surname spelled differently"
+    }
+  ]
+}

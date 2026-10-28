@@ -1,0 +1,378 @@
+{
+  "id": "EV022",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "हृषीकेश",
+        "en": "Hrishikesh"
+      },
+      "middle": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "surname": {
+        "mr": "सावंत",
+        "en": "Sawant"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1981-02-20",
+      "age": 45,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "वैशाली",
+        "en": "Vaishali"
+      },
+      "middle": {
+        "mr": "हृषीकेश",
+        "en": "Hrishikesh"
+      },
+      "surname": {
+        "mr": "सावंत",
+        "en": "Sawant"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1983-02-12",
+      "age": 43,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "middle": {
+        "mr": "राहुल",
+        "en": "Rahul"
+      },
+      "surname": {
+        "mr": "सावंत",
+        "en": "Sawant"
+      },
+      "relation": {
+        "mr": "वडील",
+        "en": "Father"
+      },
+      "gender": "M",
+      "dob": "1954-03-22",
+      "age": 72,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-65495637",
+        "card_colour": "yellow",
+        "category_mr": "अंत्योदय अन्न योजना (AAY)",
+        "category_en": "Antyodaya Anna Yojana (AAY)",
+        "head_name_mr": "हृषीकेश विठ्ठल सावंत",
+        "head_name_en": "Hrishikesh Vitthal Sawant",
+        "address_mr": "घर क्र. 160, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 160, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "हृषीकेश विठ्ठल सावंत",
+            "name_en": "Hrishikesh Vitthal Sawant",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 45
+          },
+          {
+            "name_mr": "वैशाली हृषीकेश सावंत",
+            "name_en": "Vaishali Hrishikesh Sawant",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 43
+          },
+          {
+            "name_mr": "विठ्ठल राहुल सावंत",
+            "name_en": "Vitthal Rahul Sawant",
+            "relation_mr": "वडील",
+            "relation_en": "Father",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 72
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 5.86,
+        "scale": 0.976,
+        "lighting": [
+          0.81,
+          1.06
+        ],
+        "blur": "gaussian",
+        "sigma": 0.64,
+        "noise_sigma": 2.46,
+        "jpeg_quality": 86
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "हृषीकेश विठ्ठल सावंत",
+        "name_en": "Hrishikesh Vitthal Sawant",
+        "dob": "20/02/1981",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "027392651066"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -6.49,
+        "scale": 0.913,
+        "lighting": [
+          0.72,
+          1.09
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 22.5,
+        "noise_sigma": 5.72,
+        "jpeg_quality": 88
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "वैशाली हृषीकेश सावंत",
+        "name_en": "Vaishali Hrishikesh Sawant",
+        "dob": "12/02/1983",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "017532736208"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -4.35,
+        "scale": 0.896,
+        "lighting": [
+          0.73,
+          1.0
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 9.1,
+        "noise_sigma": 5.71,
+        "jpeg_quality": 73
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "विठ्ठल राहुल सावंत",
+        "name_en": "Vitthal Rahul Sawant",
+        "dob": "22/03/1954",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "152084887865"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 7.16,
+        "scale": 0.928,
+        "lighting": [
+          0.62,
+          1.08
+        ],
+        "blur": "motion",
+        "length": 6,
+        "angle": 160.1,
+        "noise_sigma": 5.97,
+        "jpeg_quality": 81
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/006537",
+        "name_mr": "हृषीकेश विठ्ठल सावंत",
+        "name_en": "Hrishikesh Vitthal Sawant",
+        "address_mr": "घर क्र. 160, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 160, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 21000,
+        "issue_date": "10/03/2022",
+        "financial_year": "2020-21",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 0.73,
+        "scale": 0.939,
+        "lighting": [
+          0.69,
+          1.03
+        ],
+        "blur": "gaussian",
+        "sigma": 1.51,
+        "noise_sigma": 5.59,
+        "jpeg_quality": 88
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/796726",
+        "name_mr": "हृषीकेश विठ्ठल सावंत",
+        "name_en": "Hrishikesh Vitthal Sawant",
+        "dob": "20/02/1981",
+        "category_mr": "नवबौद्ध",
+        "category_en": "Neo-Buddhist",
+        "address_mr": "घर क्र. 160, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 160, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "26/11/2020",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -4.02,
+        "scale": 0.934,
+        "lighting": [
+          0.62,
+          1.08
+        ],
+        "blur": "gaussian",
+        "sigma": 0.76,
+        "noise_sigma": 4.24,
+        "jpeg_quality": 80
+      }
+    },
+    {
+      "id": "caste_certificate_m2",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/561938",
+        "name_mr": "वैशाली हृषीकेश सावंत",
+        "name_en": "Vaishali Hrishikesh Sawant",
+        "dob": "02/12/1983",
+        "category_mr": "नवबौद्ध",
+        "category_en": "Neo-Buddhist",
+        "address_mr": "घर क्र. 160, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 160, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "14/11/2021",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m2.png",
+        "photo": "caste_certificate_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -3.28,
+        "scale": 0.931,
+        "lighting": [
+          0.82,
+          1.0
+        ],
+        "blur": "motion",
+        "length": 6,
+        "angle": 159.8,
+        "noise_sigma": 5.18,
+        "jpeg_quality": 74
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "dob_mismatch",
+      "member_id": "m2",
+      "documents": [
+        "caste_certificate_m2",
+        "identity_card_m2"
+      ],
+      "field": "dob",
+      "expected": "12/02/1983",
+      "printed": "02/12/1983",
+      "note": null
+    },
+    {
+      "type": "expired",
+      "member_id": "m1",
+      "documents": [
+        "income_certificate_m1"
+      ],
+      "field": "issue_date",
+      "expected": null,
+      "printed": "10/03/2022",
+      "note": "Issued 3-5 years before reference_date; expiry is decided by the rules engine."
+    }
+  ]
+}

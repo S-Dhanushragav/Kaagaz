@@ -30,7 +30,8 @@ def test_ground_truth_fields_validate_against_schemas() -> None:
     """Field names match ground_truth.json: every synthetic document validates."""
     for i in range(1, 30):
         for doc in build_household(42, i).documents:
-            FIELD_MODELS[doc.type].model_validate(doc.fields)
+            fields = {"card_colour": None, **doc.fields} if doc.type == "ration_card" else doc.fields  # v1: no colour
+            FIELD_MODELS[doc.type].model_validate(fields)
 
 
 def test_full_identity_number_is_masked() -> None:
@@ -57,7 +58,7 @@ def test_rupees_and_financial_year() -> None:
 def test_age_bounds() -> None:
     row = {"name_mr": "अ", "name_en": "A", "relation_mr": "र", "relation_en": "R",
            "gender_mr": "ग", "gender_en": "G", "age": 150}
-    card = {"card_number": "1", "category_mr": None, "category_en": None, "head_name_mr": None,
+    card = {"card_number": "1", "card_colour": None, "category_mr": None, "category_en": None, "head_name_mr": None,
             "head_name_en": None, "address_mr": None, "address_en": None, "members": [row]}
     with pytest.raises(ValidationError):
         RationCardFields(**card)
@@ -122,3 +123,15 @@ def test_reply_schema_pairs_each_doc_type_with_its_own_fields() -> None:
     assert pairs["other"] == {"type": "null"}
     for doc_type, model in FIELD_MODELS.items():
         assert set(pairs[doc_type]["properties"]) == set(model.model_fields), doc_type
+
+
+def test_null_income_and_null_age_are_allowed() -> None:
+    """Regression: constraints on int | None used to raise TypeError on null (crashing the reader)."""
+    assert IncomeCertificateFields(**{**INCOME, "annual_income": None}).annual_income is None
+    row = {"name_mr": None, "name_en": None, "relation_mr": None, "relation_en": None,
+           "gender_mr": None, "gender_en": None, "age": None}
+    card = {"card_number": None, "card_colour": None, "category_mr": None, "category_en": None, "head_name_mr": None,
+            "head_name_en": None, "address_mr": None, "address_en": None, "members": [row]}
+    assert RationCardFields(**card).members[0].age is None
+    with pytest.raises(ValidationError):
+        IncomeCertificateFields(**{**INCOME, "annual_income": -5})

@@ -1,0 +1,250 @@
+{
+  "id": "EV001",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "middle": {
+        "mr": "आदित्य",
+        "en": "Aditya"
+      },
+      "surname": {
+        "mr": "झोडगे",
+        "en": "Zodge"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1994-05-26",
+      "age": 32,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "लता",
+        "en": "Lata"
+      },
+      "middle": {
+        "mr": "आदित्य",
+        "en": "Aditya"
+      },
+      "surname": {
+        "mr": "झोडगे",
+        "en": "Zodge"
+      },
+      "relation": {
+        "mr": "आई",
+        "en": "Mother"
+      },
+      "gender": "F",
+      "dob": "1961-10-27",
+      "age": 65,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-66384016",
+        "card_colour": "yellow",
+        "category_mr": "अंत्योदय अन्न योजना (AAY)",
+        "category_en": "Antyodaya Anna Yojana (AAY)",
+        "head_name_mr": "किरण आदित्य झोडगे",
+        "head_name_en": "Kiran Aditya Zodge",
+        "address_mr": "घर क्र. 162, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 162, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "किरण आदित्य झोडगे",
+            "name_en": "Kiran Aditya Zodge",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 32
+          },
+          {
+            "name_mr": "लता आदित्य झोडगे",
+            "name_en": "Lata Aditya Zodge",
+            "relation_mr": "आई",
+            "relation_en": "Mother",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 65
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -1.94,
+        "scale": 0.979,
+        "lighting": [
+          0.71,
+          1.09
+        ],
+        "blur": "gaussian",
+        "sigma": 1.8,
+        "noise_sigma": 2.89,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "किरण आदित्य झोडगे",
+        "name_en": "Kiran Aditya Zodge",
+        "dob": "26/05/1994",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "029985300112"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -6.98,
+        "scale": 0.991,
+        "lighting": [
+          0.76,
+          1.03
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 169.2,
+        "noise_sigma": 4.37,
+        "jpeg_quality": 88
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "लता आदित्य झोडगे",
+        "name_en": "Lata Aditya Zodge",
+        "dob": "27/10/1961",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "135505952601"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -6.92,
+        "scale": 0.942,
+        "lighting": [
+          0.77,
+          1.07
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 142.7,
+        "noise_sigma": 3.48,
+        "jpeg_quality": 70
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/016269",
+        "name_mr": "किरण आदित्य झोडगे",
+        "name_en": "Kiran Aditya Zodge",
+        "address_mr": "घर क्र. 162, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 162, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 12000,
+        "issue_date": "29/08/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 2.87,
+        "scale": 0.898,
+        "lighting": [
+          0.65,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 0.88,
+        "noise_sigma": 4.53,
+        "jpeg_quality": 88
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/955993",
+        "name_mr": "किरण आदित्य झोडगे",
+        "name_en": "Kiran Aditya Zodge",
+        "dob": "26/05/1994",
+        "category_mr": "अनुसूचित जाती (SC)",
+        "category_en": "Scheduled Caste (SC)",
+        "address_mr": "घर क्र. 162, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 162, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "15/02/2016",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -5.5,
+        "scale": 0.971,
+        "lighting": [
+          0.64,
+          1.04
+        ],
+        "blur": "gaussian",
+        "sigma": 1.08,
+        "noise_sigma": 3.58,
+        "jpeg_quality": 70
+      }
+    }
+  ],
+  "planted_errors": []
+}

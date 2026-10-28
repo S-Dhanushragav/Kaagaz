@@ -200,7 +200,7 @@ def test_agreement_ignores_unreadable_frames() -> None:
 def test_agreement_on_ration_card_member_rows() -> None:
     row = {"name_mr": "अ", "name_en": "Anil", "relation_mr": "र", "relation_en": "Son",
            "gender_mr": "पुरुष", "gender_en": "Male", "age": 9}
-    card = {"card_number": "1", "category_mr": "प", "category_en": "PHH", "head_name_mr": "ह",
+    card = {"card_number": "1", "card_colour": "orange", "category_mr": "प", "category_en": "PHH", "head_name_mr": "ह",
             "head_name_en": "Head", "address_mr": None, "address_en": None}
 
     def frame(name: str) -> DocumentExtraction:

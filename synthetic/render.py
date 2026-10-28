@@ -7,6 +7,8 @@ from typing import Any
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 from playwright.sync_api import sync_playwright
 
+from synthetic.names_eval import CARD_COLOURS
+
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 FONT_PATH = TEMPLATES_DIR / "fonts" / "NotoSansDevanagari.ttf"
 
@@ -46,6 +48,8 @@ class Renderer:
         self.base_context = {
             "font_b64": base64.b64encode(FONT_PATH.read_bytes()).decode("ascii"),
             "css": (TEMPLATES_DIR / "base.css").read_text(encoding="utf-8"),
+            # v2 ration card colour labels (unused by v1 cards)
+            "card_colours": {k: v["colour"]._asdict() for k, v in CARD_COLOURS.items()},
         }
 
     def __enter__(self) -> "Renderer":

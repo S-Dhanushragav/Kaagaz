@@ -1,0 +1,517 @@
+{
+  "id": "EV005",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "सुनील",
+        "en": "Sunil"
+      },
+      "middle": {
+        "mr": "क्षितिज",
+        "en": "Kshitij"
+      },
+      "surname": {
+        "mr": "मोरे",
+        "en": "More"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1983-02-17",
+      "age": 43,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "स्मिता",
+        "en": "Smita"
+      },
+      "middle": {
+        "mr": "सुनील",
+        "en": "Sunil"
+      },
+      "surname": {
+        "mr": "मोरे",
+        "en": "More"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1984-11-22",
+      "age": 41,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "क्षितिज",
+        "en": "Kshitij"
+      },
+      "middle": {
+        "mr": "सचिन",
+        "en": "Sachin"
+      },
+      "surname": {
+        "mr": "मोरे",
+        "en": "More"
+      },
+      "relation": {
+        "mr": "वडील",
+        "en": "Father"
+      },
+      "gender": "M",
+      "dob": "1961-10-27",
+      "age": 65,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "जयश्री",
+        "en": "Jayashree"
+      },
+      "middle": {
+        "mr": "सुनील",
+        "en": "Sunil"
+      },
+      "surname": {
+        "mr": "मोरे",
+        "en": "More"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2007-07-23",
+      "age": 19,
+      "on_ration_card": true
+    },
+    {
+      "id": "m5",
+      "given": {
+        "mr": "लता",
+        "en": "Lata"
+      },
+      "middle": {
+        "mr": "सुनील",
+        "en": "Sunil"
+      },
+      "surname": {
+        "mr": "मोरे",
+        "en": "More"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2024-12-19",
+      "age": 1,
+      "on_ration_card": false
+    },
+    {
+      "id": "m6",
+      "given": {
+        "mr": "अनिल",
+        "en": "Anil"
+      },
+      "middle": {
+        "mr": "सुनील",
+        "en": "Sunil"
+      },
+      "surname": {
+        "mr": "मोरे",
+        "en": "More"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2009-09-14",
+      "age": 17,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m6"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-52840508",
+        "card_colour": "orange",
+        "category_mr": "प्राधान्य कुटुंब (PHH)",
+        "category_en": "Priority Household (PHH)",
+        "head_name_mr": "सुनील क्षितिज मोरे",
+        "head_name_en": "Sunil Kshitij More",
+        "address_mr": "घर क्र. 214, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 214, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "सुनील क्षितिज मोरे",
+            "name_en": "Sunil Kshitij More",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 43
+          },
+          {
+            "name_mr": "स्मिता सुनील मोरे",
+            "name_en": "Smita Sunil More",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 41
+          },
+          {
+            "name_mr": "क्षितिज सचिन मोरे",
+            "name_en": "Kshitij Sachin More",
+            "relation_mr": "वडील",
+            "relation_en": "Father",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 65
+          },
+          {
+            "name_mr": "जयश्री सुनील मोरे",
+            "name_en": "Jayashree Sunil More",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 19
+          },
+          {
+            "name_mr": "अनिल सुनील मोरे",
+            "name_en": "Anil Sunil More",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 17
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 1.73,
+        "scale": 0.9,
+        "lighting": [
+          0.62,
+          1.02
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 85.6,
+        "noise_sigma": 3.16,
+        "jpeg_quality": 70
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "सुनील क्षितिज मोरे",
+        "name_en": "Sunil Kshitij More",
+        "dob": "17/02/1983",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "168718791020"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 5.5,
+        "scale": 0.952,
+        "lighting": [
+          0.7,
+          1.04
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 136.7,
+        "noise_sigma": 3.93,
+        "jpeg_quality": 77
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "स्मिता सुनील मोरे",
+        "name_en": "Smita Sunil More",
+        "dob": "22/11/1984",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "108414708849"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 2.16,
+        "scale": 0.97,
+        "lighting": [
+          0.8,
+          1.11
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 172.5,
+        "noise_sigma": 4.34,
+        "jpeg_quality": 80
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "क्षितिज सचिन मोरे",
+        "name_en": "Kshitij Sachin More",
+        "dob": "27/10/1961",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "194954677692"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -7.83,
+        "scale": 0.91,
+        "lighting": [
+          0.74,
+          1.08
+        ],
+        "blur": "gaussian",
+        "sigma": 1.22,
+        "noise_sigma": 5.43,
+        "jpeg_quality": 76
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "जयश्री सुनील मोरे",
+        "name_en": "Jayashree Sunil More",
+        "dob": "23/07/2007",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "049124793487"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 1.65,
+        "scale": 0.968,
+        "lighting": [
+          0.63,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 1.29,
+        "noise_sigma": 2.69,
+        "jpeg_quality": 73
+      }
+    },
+    {
+      "id": "identity_card_m5",
+      "type": "identity_card",
+      "member_ids": [
+        "m5"
+      ],
+      "fields": {
+        "name_mr": "लता सुनील मोरे",
+        "name_en": "Lata Sunil More",
+        "dob": "19/12/2024",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "160539102579"
+      },
+      "files": {
+        "clean": "identity_card_m5.png",
+        "photo": "identity_card_m5_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 5.97,
+        "scale": 0.932,
+        "lighting": [
+          0.67,
+          1.1
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 64.6,
+        "noise_sigma": 5.13,
+        "jpeg_quality": 86
+      }
+    },
+    {
+      "id": "identity_card_m6",
+      "type": "identity_card",
+      "member_ids": [
+        "m6"
+      ],
+      "fields": {
+        "name_mr": "अनिल सुनील मोरे",
+        "name_en": "Anil Sunil More",
+        "dob": "14/09/2009",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "130022402380"
+      },
+      "files": {
+        "clean": "identity_card_m6.png",
+        "photo": "identity_card_m6_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 0.52,
+        "scale": 0.923,
+        "lighting": [
+          0.71,
+          1.0
+        ],
+        "blur": "motion",
+        "length": 6,
+        "angle": 6.6,
+        "noise_sigma": 5.9,
+        "jpeg_quality": 78
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/415531",
+        "name_mr": "सुनील क्षितिज मोरे",
+        "name_en": "Sunil Kshitij More",
+        "address_mr": "घर क्र. 214, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 214, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 100000,
+        "issue_date": "04/09/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -2.74,
+        "scale": 0.966,
+        "lighting": [
+          0.8,
+          1.04
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 32.3,
+        "noise_sigma": 3.13,
+        "jpeg_quality": 76
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/574443",
+        "name_mr": "सुनील क्षितिज मोरे",
+        "name_en": "Sunil Kshitij More",
+        "dob": "17/02/1983",
+        "category_mr": "विमुक्त जाती व भटक्या जमाती (VJNT)",
+        "category_en": "Vimukta Jati and Nomadic Tribes (VJNT)",
+        "address_mr": "घर क्र. 214, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 214, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "27/09/2021",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 3.59,
+        "scale": 0.9,
+        "lighting": [
+          0.69,
+          1.08
+        ],
+        "blur": "gaussian",
+        "sigma": 1.6,
+        "noise_sigma": 4.51,
+        "jpeg_quality": 70
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "not_on_ration_card",
+      "member_id": "m5",
+      "documents": [
+        "ration_card",
+        "identity_card_m5"
+      ],
+      "field": null,
+      "expected": null,
+      "printed": null,
+      "note": null
+    }
+  ]
+}

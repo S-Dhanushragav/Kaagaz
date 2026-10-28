@@ -1,0 +1,249 @@
+{
+  "id": "EV011",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "चैतन्य",
+        "en": "Chaitanya"
+      },
+      "middle": {
+        "mr": "यज्ञेश",
+        "en": "Yadnyesh"
+      },
+      "surname": {
+        "mr": "माने",
+        "en": "Mane"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1984-01-25",
+      "age": 42,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "प्रियांका",
+        "en": "Priyanka"
+      },
+      "middle": {
+        "mr": "यज्ञेश",
+        "en": "Yadnyesh"
+      },
+      "surname": {
+        "mr": "माने",
+        "en": "Mane"
+      },
+      "relation": {
+        "mr": "आई",
+        "en": "Mother"
+      },
+      "gender": "F",
+      "dob": "1962-10-27",
+      "age": 64,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-41715404",
+        "card_colour": "orange",
+        "category_mr": "प्राधान्य कुटुंब (PHH)",
+        "category_en": "Priority Household (PHH)",
+        "head_name_mr": "चैतन्य यज्ञेश माने",
+        "head_name_en": "Chaitanya Yadnyesh Mane",
+        "address_mr": "घर क्र. 37, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 37, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "चैतन्य यज्ञेश माने",
+            "name_en": "Chaitanya Yadnyesh Mane",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 42
+          },
+          {
+            "name_mr": "प्रियांका यज्ञेश माने",
+            "name_en": "Priyanka Yadnyesh Mane",
+            "relation_mr": "आई",
+            "relation_en": "Mother",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 64
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 1.86,
+        "scale": 0.883,
+        "lighting": [
+          0.74,
+          1.09
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 147.4,
+        "noise_sigma": 5.94,
+        "jpeg_quality": 87
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "चैतन्य यज्ञेश माने",
+        "name_en": "Chaitanya Yadnyesh Mane",
+        "dob": "25/01/1984",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "143861027058"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 5.8,
+        "scale": 0.893,
+        "lighting": [
+          0.64,
+          1.07
+        ],
+        "blur": "gaussian",
+        "sigma": 1.15,
+        "noise_sigma": 5.2,
+        "jpeg_quality": 83
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "प्रियांका यज्ञेश माने",
+        "name_en": "Priyanka Yadnyesh Mane",
+        "dob": "27/10/1962",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "160519272093"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 0.7,
+        "scale": 0.887,
+        "lighting": [
+          0.63,
+          1.02
+        ],
+        "blur": "gaussian",
+        "sigma": 1.75,
+        "noise_sigma": 2.26,
+        "jpeg_quality": 73
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/395642",
+        "name_mr": "चैतन्य यज्ञेश माने",
+        "name_en": "Chaitanya Yadnyesh Mane",
+        "address_mr": "घर क्र. 37, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 37, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 12000,
+        "issue_date": "18/10/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 5.8,
+        "scale": 0.889,
+        "lighting": [
+          0.76,
+          1.0
+        ],
+        "blur": "gaussian",
+        "sigma": 1.38,
+        "noise_sigma": 4.33,
+        "jpeg_quality": 88
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/127270",
+        "name_mr": "चैतन्य यज्ञेश माने",
+        "name_en": "Chaitanya Yadnyesh Mane",
+        "dob": "25/01/1984",
+        "category_mr": "विमुक्त जाती व भटक्या जमाती (VJNT)",
+        "category_en": "Vimukta Jati and Nomadic Tribes (VJNT)",
+        "address_mr": "घर क्र. 37, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 37, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "02/04/2015",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -3.92,
+        "scale": 0.963,
+        "lighting": [
+          0.67,
+          1.07
+        ],
+        "blur": "gaussian",
+        "sigma": 1.56,
+        "noise_sigma": 4.73,
+        "jpeg_quality": 87
+      }
+    }
+  ],
+  "planted_errors": []
+}

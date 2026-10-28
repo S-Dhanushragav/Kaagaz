@@ -1,0 +1,354 @@
+{
+  "id": "EV026",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "सौरभ",
+        "en": "Saurabh"
+      },
+      "middle": {
+        "mr": "हृषीकेश",
+        "en": "Hrishikesh"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1995-07-10",
+      "age": 31,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "संगीता",
+        "en": "Sangita"
+      },
+      "middle": {
+        "mr": "सौरभ",
+        "en": "Saurabh"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1998-09-16",
+      "age": 28,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "नामदेव",
+        "en": "Namdev"
+      },
+      "middle": {
+        "mr": "सौरभ",
+        "en": "Saurabh"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2023-06-12",
+      "age": 3,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-17572986",
+        "card_colour": "orange",
+        "category_mr": "प्राधान्य कुटुंब (PHH)",
+        "category_en": "Priority Household (PHH)",
+        "head_name_mr": "सौरभ हृषीकेश कुलकर्णी",
+        "head_name_en": "Saurabh Hrishikesh Kulkarni",
+        "address_mr": "घर क्र. 31, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 31, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "सौरभ हृषीकेश कुलकर्णी",
+            "name_en": "Saurabh Hrishikesh Kulkarni",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 31
+          },
+          {
+            "name_mr": "संगीता सौरभ कुलकर्णी",
+            "name_en": "Sangita Saurabh Kulkarni",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 28
+          },
+          {
+            "name_mr": "नामदेव सौरभ कुलकर्णी",
+            "name_en": "Namdev Saurabh Kulkarni",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 3
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 6.2,
+        "scale": 0.911,
+        "lighting": [
+          0.73,
+          1.11
+        ],
+        "blur": "gaussian",
+        "sigma": 1.78,
+        "noise_sigma": 2.13,
+        "jpeg_quality": 73
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "सौरभ हृषीकेश कुलकर्णी",
+        "name_en": "Saurabh Hrishikesh Kulkarni",
+        "dob": "10/07/1995",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "010457655884"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 4.83,
+        "scale": 1.0,
+        "lighting": [
+          0.71,
+          1.04
+        ],
+        "blur": "gaussian",
+        "sigma": 1.37,
+        "noise_sigma": 3.41,
+        "jpeg_quality": 84
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "संगीता सौरभ कुलकर्णी",
+        "name_en": "Sangita Saurabh Kulkarni",
+        "dob": "16/09/1998",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "194185372022"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -4.79,
+        "scale": 0.884,
+        "lighting": [
+          0.69,
+          1.03
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 49.7,
+        "noise_sigma": 4.66,
+        "jpeg_quality": 88
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "नामदेव सौरभ कुलकर्णी",
+        "name_en": "Namdev Saurabh Kulkarni",
+        "dob": "12/06/2023",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "009910199069"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -5.35,
+        "scale": 0.97,
+        "lighting": [
+          0.82,
+          1.02
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 23.7,
+        "noise_sigma": 5.79,
+        "jpeg_quality": 81
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/980307",
+        "name_mr": "सौरभ हृषीकेश कुलकर्णी",
+        "name_en": "Saurabh Hrishikesh Kulkarni",
+        "address_mr": "घर क्र. 31, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 31, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 100001,
+        "issue_date": "09/10/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -5.34,
+        "scale": 0.884,
+        "lighting": [
+          0.65,
+          1.01
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 57.4,
+        "noise_sigma": 4.1,
+        "jpeg_quality": 72
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/527078",
+        "name_mr": "सौरभ हृषीकेश कुलकर्णी",
+        "name_en": "Saurabh Hrishikesh Kulkarni",
+        "dob": "10/07/1995",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 31, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 31, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "29/09/2015",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 1.95,
+        "scale": 0.889,
+        "lighting": [
+          0.69,
+          1.01
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 36.0,
+        "noise_sigma": 4.38,
+        "jpeg_quality": 84
+      }
+    },
+    {
+      "id": "caste_certificate_m2",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/911947",
+        "name_mr": "संगीता सौरभ कुलकर्णी",
+        "name_en": "Sangita Saurabh Kulkarni",
+        "dob": "16/09/1998",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 31, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 31, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "25/06/2021",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m2.png",
+        "photo": "caste_certificate_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -7.62,
+        "scale": 0.903,
+        "lighting": [
+          0.77,
+          1.1
+        ],
+        "blur": "gaussian",
+        "sigma": 0.96,
+        "noise_sigma": 4.27,
+        "jpeg_quality": 87
+      }
+    }
+  ],
+  "planted_errors": []
+}

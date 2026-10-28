@@ -1,0 +1,459 @@
+{
+  "id": "EV008",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "सौरभ",
+        "en": "Saurabh"
+      },
+      "middle": {
+        "mr": "तुकाराम",
+        "en": "Tukaram"
+      },
+      "surname": {
+        "mr": "माने",
+        "en": "Mane"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1973-03-02",
+      "age": 53,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "ज्योत्स्ना",
+        "en": "Jyotsna"
+      },
+      "middle": {
+        "mr": "सौरभ",
+        "en": "Saurabh"
+      },
+      "surname": {
+        "mr": "माने",
+        "en": "Mane"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1975-03-03",
+      "age": 51,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "साईराज",
+        "en": "Sairaj"
+      },
+      "middle": {
+        "mr": "सौरभ",
+        "en": "Saurabh"
+      },
+      "surname": {
+        "mr": "माने",
+        "en": "Mane"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2010-06-25",
+      "age": 16,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "हृषीकेश",
+        "en": "Hrishikesh"
+      },
+      "middle": {
+        "mr": "सौरभ",
+        "en": "Saurabh"
+      },
+      "surname": {
+        "mr": "माने",
+        "en": "Mane"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2001-01-11",
+      "age": 25,
+      "on_ration_card": true
+    },
+    {
+      "id": "m5",
+      "given": {
+        "mr": "श्रीनिवास",
+        "en": "Shrinivas"
+      },
+      "middle": {
+        "mr": "सौरभ",
+        "en": "Saurabh"
+      },
+      "surname": {
+        "mr": "माने",
+        "en": "Mane"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2013-07-22",
+      "age": 13,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-38481776",
+        "card_colour": "orange",
+        "category_mr": "प्राधान्य कुटुंब (PHH)",
+        "category_en": "Priority Household (PHH)",
+        "head_name_mr": "सौरभ तुकाराम माने",
+        "head_name_en": "Saurabh Tukaram Mane",
+        "address_mr": "घर क्र. 108, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 108, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "सौरभ तुकाराम माने",
+            "name_en": "Saurabh Tukaram Mane",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 53
+          },
+          {
+            "name_mr": "ज्योत्स्ना सौरभ माने",
+            "name_en": "Jyotsna Saurabh Mane",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 51
+          },
+          {
+            "name_mr": "साईराज सौरभ माने",
+            "name_en": "Sairaj Saurabh Mane",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 16
+          },
+          {
+            "name_mr": "हृषीकेश सौरभ माने",
+            "name_en": "Hrishikesh Saurabh Mane",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 25
+          },
+          {
+            "name_mr": "श्रीनिवास सौरभ माने",
+            "name_en": "Shrinivas Saurabh Mane",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 13
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 4.15,
+        "scale": 0.996,
+        "lighting": [
+          0.82,
+          1.0
+        ],
+        "blur": "gaussian",
+        "sigma": 0.68,
+        "noise_sigma": 5.05,
+        "jpeg_quality": 79
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "सौरभ तुकाराम माने",
+        "name_en": "Saurabh Tukaram Mane",
+        "dob": "02/03/1973",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "115817911059"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -5.77,
+        "scale": 0.947,
+        "lighting": [
+          0.76,
+          1.1
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 31.2,
+        "noise_sigma": 4.23,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "ज्योत्स्ना सौरभ माने",
+        "name_en": "Jyotsna Saurabh Mane",
+        "dob": "03/03/1975",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "044378300295"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -1.54,
+        "scale": 0.939,
+        "lighting": [
+          0.67,
+          1.05
+        ],
+        "blur": "gaussian",
+        "sigma": 1.46,
+        "noise_sigma": 2.07,
+        "jpeg_quality": 86
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "साईराज सौरभ माने",
+        "name_en": "Sairaj Saurabh Mane",
+        "dob": "25/06/2010",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "101435047461"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 2.67,
+        "scale": 0.929,
+        "lighting": [
+          0.77,
+          1.06
+        ],
+        "blur": "gaussian",
+        "sigma": 1.25,
+        "noise_sigma": 4.11,
+        "jpeg_quality": 87
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "हृषीकेश सौरभ माने",
+        "name_en": "Hrishikesh Saurabh Mane",
+        "dob": "11/01/2001",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "100611841630"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -0.16,
+        "scale": 0.899,
+        "lighting": [
+          0.81,
+          1.1
+        ],
+        "blur": "gaussian",
+        "sigma": 0.98,
+        "noise_sigma": 5.5,
+        "jpeg_quality": 73
+      }
+    },
+    {
+      "id": "identity_card_m5",
+      "type": "identity_card",
+      "member_ids": [
+        "m5"
+      ],
+      "fields": {
+        "name_mr": "श्रीनिवास सौरभ माने",
+        "name_en": "Shrinivas Saurabh Mane",
+        "dob": "22/07/2013",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "013885001030"
+      },
+      "files": {
+        "clean": "identity_card_m5.png",
+        "photo": "identity_card_m5_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -5.1,
+        "scale": 0.904,
+        "lighting": [
+          0.76,
+          1.0
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 126.7,
+        "noise_sigma": 3.07,
+        "jpeg_quality": 73
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/772404",
+        "name_mr": "सौरभ तुकाराम माने",
+        "name_en": "Saurabh Tukaram Mane",
+        "address_mr": "घर क्र. 108, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 108, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 150001,
+        "issue_date": "16/10/2022",
+        "financial_year": "2021-22",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 3.88,
+        "scale": 0.911,
+        "lighting": [
+          0.65,
+          1.07
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 83.3,
+        "noise_sigma": 4.3,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/096433",
+        "name_mr": "सौरभ तुकाराम माने",
+        "name_en": "Saurabh Tukaram Mane",
+        "dob": "02/03/1973",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 108, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 108, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "14/05/2022",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 5.34,
+        "scale": 0.984,
+        "lighting": [
+          0.83,
+          1.09
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 148.6,
+        "noise_sigma": 3.4,
+        "jpeg_quality": 78
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "expired",
+      "member_id": "m1",
+      "documents": [
+        "income_certificate_m1"
+      ],
+      "field": "issue_date",
+      "expected": null,
+      "printed": "16/10/2022",
+      "note": "Issued 3-5 years before reference_date; expiry is decided by the rules engine."
+    }
+  ]
+}

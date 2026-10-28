@@ -1,0 +1,434 @@
+{
+  "id": "EV003",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "तृप्ती",
+        "en": "Trupti"
+      },
+      "middle": {
+        "mr": "ओजस",
+        "en": "Ojas"
+      },
+      "surname": {
+        "mr": "वाघमारे",
+        "en": "Waghmare"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "F",
+      "dob": "1984-08-22",
+      "age": 42,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "ऐश्वर्या",
+        "en": "Aishwarya"
+      },
+      "middle": {
+        "mr": "तुकाराम",
+        "en": "Tukaram"
+      },
+      "surname": {
+        "mr": "वाघमारे",
+        "en": "Waghmare"
+      },
+      "relation": {
+        "mr": "सासू",
+        "en": "Mother-in-law"
+      },
+      "gender": "F",
+      "dob": "1962-10-27",
+      "age": 64,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "middle": {
+        "mr": "ओजस",
+        "en": "Ojas"
+      },
+      "surname": {
+        "mr": "वाघमारे",
+        "en": "Waghmare"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2018-03-26",
+      "age": 8,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "शंकर",
+        "en": "Shankar"
+      },
+      "middle": {
+        "mr": "ओजस",
+        "en": "Ojas"
+      },
+      "surname": {
+        "mr": "वाघमारे",
+        "en": "Waghmare"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2004-08-20",
+      "age": 22,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m4"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-55774586",
+        "card_colour": "white",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "तृप्ती ओजस वाघमारे",
+        "head_name_en": "Trupti Ojas Waghmare",
+        "address_mr": "घर क्र. 211, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 211, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "तृप्ती ओजस वाघमारे",
+            "name_en": "Trupti Ojas Waghmare",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 42
+          },
+          {
+            "name_mr": "ऐश्वर्या तुकाराम वाघमारे",
+            "name_en": "Aishwarya Tukaram Waghmare",
+            "relation_mr": "सासू",
+            "relation_en": "Mother-in-law",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 64
+          },
+          {
+            "name_mr": "किरण ओजस वाघमारे",
+            "name_en": "Kiran Ojas Waghmare",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 8
+          },
+          {
+            "name_mr": "शंकर ओजस वाघमारे",
+            "name_en": "Shankar Ojas Waghmare",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 22
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -4.99,
+        "scale": 0.909,
+        "lighting": [
+          0.66,
+          1.07
+        ],
+        "blur": "motion",
+        "length": 4,
+        "angle": 100.2,
+        "noise_sigma": 2.97,
+        "jpeg_quality": 84
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "तृप्ती ओजस वाघमारे",
+        "name_en": "Trupti Ojas Waghmare",
+        "dob": "22/08/1984",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "067971754048"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 2.32,
+        "scale": 0.889,
+        "lighting": [
+          0.74,
+          1.09
+        ],
+        "blur": "gaussian",
+        "sigma": 1.28,
+        "noise_sigma": 3.16,
+        "jpeg_quality": 71
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "ऐश्वर्या तुकाराम वाघमारे",
+        "name_en": "Aishwarya Tukaram Waghmare",
+        "dob": "27/10/1962",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "092639141112"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 5.85,
+        "scale": 0.992,
+        "lighting": [
+          0.71,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 1.28,
+        "noise_sigma": 2.01,
+        "jpeg_quality": 78
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "किरण ओजस वाघमारे",
+        "name_en": "Kiran Ojas Waghmare",
+        "dob": "26/03/2018",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "008796628730"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 4.31,
+        "scale": 0.98,
+        "lighting": [
+          0.83,
+          1.04
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 70.7,
+        "noise_sigma": 4.32,
+        "jpeg_quality": 83
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "शंकर ओजस वाघमारे",
+        "name_en": "Shankar Ojas Waghmare",
+        "dob": "20/08/2004",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "154580658346"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -6.18,
+        "scale": 0.91,
+        "lighting": [
+          0.73,
+          1.09
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 169.7,
+        "noise_sigma": 2.61,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/674733",
+        "name_mr": "तृप्ती ओजस वाघमारे",
+        "name_en": "Trupti Ojas Waghmare",
+        "address_mr": "घर क्र. 211, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 211, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 21001,
+        "issue_date": "29/09/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -2.03,
+        "scale": 0.985,
+        "lighting": [
+          0.84,
+          1.02
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 54.7,
+        "noise_sigma": 5.27,
+        "jpeg_quality": 87
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/514639",
+        "name_mr": "तृप्ती ओजस वाघमारे",
+        "name_en": "Trupti Ojas Waghmare",
+        "dob": "24/08/1984",
+        "category_mr": "इतर मागास वर्ग (OBC)",
+        "category_en": "Other Backward Class (OBC)",
+        "address_mr": "घर क्र. 211, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 211, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "21/04/2017",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -6.66,
+        "scale": 0.963,
+        "lighting": [
+          0.72,
+          1.01
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 100.4,
+        "noise_sigma": 5.12,
+        "jpeg_quality": 74
+      }
+    },
+    {
+      "id": "caste_certificate_m2",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/209376",
+        "name_mr": "ऐश्वर्या तुकाराम वाघमारे",
+        "name_en": "Aishwarya Tukaram Waghmare",
+        "dob": "27/10/1962",
+        "category_mr": "इतर मागास वर्ग (OBC)",
+        "category_en": "Other Backward Class (OBC)",
+        "address_mr": "घर क्र. 211, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 211, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "01/10/2017",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m2.png",
+        "photo": "caste_certificate_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -6.95,
+        "scale": 0.937,
+        "lighting": [
+          0.74,
+          1.01
+        ],
+        "blur": "motion",
+        "length": 4,
+        "angle": 169.1,
+        "noise_sigma": 5.4,
+        "jpeg_quality": 73
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "dob_mismatch",
+      "member_id": "m1",
+      "documents": [
+        "caste_certificate_m1",
+        "identity_card_m1"
+      ],
+      "field": "dob",
+      "expected": "22/08/1984",
+      "printed": "24/08/1984",
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,568 @@
+{
+  "id": "EV029",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "आदित्य",
+        "en": "Aditya"
+      },
+      "middle": {
+        "mr": "ऋग्वेद",
+        "en": "Rugved"
+      },
+      "surname": {
+        "mr": "क्षीरसागर",
+        "en": "Kshirsagar"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1983-07-29",
+      "age": 43,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "संगीता",
+        "en": "Sangita"
+      },
+      "middle": {
+        "mr": "आदित्य",
+        "en": "Aditya"
+      },
+      "surname": {
+        "mr": "क्षीरसागर",
+        "en": "Kshirsagar"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1987-07-13",
+      "age": 39,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "ऋचा",
+        "en": "Rucha"
+      },
+      "middle": {
+        "mr": "ऋग्वेद",
+        "en": "Rugved"
+      },
+      "surname": {
+        "mr": "क्षीरसागर",
+        "en": "Kshirsagar"
+      },
+      "relation": {
+        "mr": "आई",
+        "en": "Mother"
+      },
+      "gender": "F",
+      "dob": "1961-10-27",
+      "age": 65,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "सुवर्णा",
+        "en": "Suvarna"
+      },
+      "middle": {
+        "mr": "आदित्य",
+        "en": "Aditya"
+      },
+      "surname": {
+        "mr": "क्षीरसागर",
+        "en": "Kshirsagar"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2009-08-31",
+      "age": 17,
+      "on_ration_card": true
+    },
+    {
+      "id": "m5",
+      "given": {
+        "mr": "अद्वैत",
+        "en": "Advait"
+      },
+      "middle": {
+        "mr": "आदित्य",
+        "en": "Aditya"
+      },
+      "surname": {
+        "mr": "क्षीरसागर",
+        "en": "Kshirsagar"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2023-02-11",
+      "age": 3,
+      "on_ration_card": true
+    },
+    {
+      "id": "m6",
+      "given": {
+        "mr": "सविता",
+        "en": "Savita"
+      },
+      "middle": {
+        "mr": "आदित्य",
+        "en": "Aditya"
+      },
+      "surname": {
+        "mr": "क्षीरसागर",
+        "en": "Kshirsagar"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2020-11-17",
+      "age": 5,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5",
+        "m6"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-09054681",
+        "card_colour": "orange",
+        "category_mr": "प्राधान्य कुटुंब (PHH)",
+        "category_en": "Priority Household (PHH)",
+        "head_name_mr": "आदित्य ऋग्वेद क्षीरसागर",
+        "head_name_en": "Aditya Rugved Kshirsagar",
+        "address_mr": "घर क्र. 212, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 212, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "आदित्य ऋग्वेद क्षीरसागर",
+            "name_en": "Aditya Rugved Kshirsagar",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 43
+          },
+          {
+            "name_mr": "संगीता आदित्य क्षीरसागर",
+            "name_en": "Sangita Aditya Kshirsagar",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 39
+          },
+          {
+            "name_mr": "ऋचा ऋग्वेद क्षीरसागर",
+            "name_en": "Rucha Rugved Kshirsagar",
+            "relation_mr": "आई",
+            "relation_en": "Mother",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 65
+          },
+          {
+            "name_mr": "सुवर्णा आदित्य क्षीरसागर",
+            "name_en": "Suvarna Aditya Kshirsagar",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 17
+          },
+          {
+            "name_mr": "अद्वैत आदित्य क्षीरसागर",
+            "name_en": "Advait Aditya Kshirsagar",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 3
+          },
+          {
+            "name_mr": "सविता आदित्य क्षीरसागर",
+            "name_en": "Savita Aditya Kshirsagar",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 5
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -0.46,
+        "scale": 0.957,
+        "lighting": [
+          0.64,
+          1.05
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 140.4,
+        "noise_sigma": 4.59,
+        "jpeg_quality": 71
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "आदित्य ऋग्वेद क्षीरसागर",
+        "name_en": "Aditya Rugved Kshirsagar",
+        "dob": "29/07/1983",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "094614335132"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 4.49,
+        "scale": 0.978,
+        "lighting": [
+          0.77,
+          1.03
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 46.6,
+        "noise_sigma": 3.24,
+        "jpeg_quality": 73
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "संगीता आदित्य क्षीरसागर",
+        "name_en": "Sangita Aditya Kshirsagar",
+        "dob": "13/07/1987",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "026544795516"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -0.19,
+        "scale": 0.916,
+        "lighting": [
+          0.67,
+          1.04
+        ],
+        "blur": "motion",
+        "length": 4,
+        "angle": 0.0,
+        "noise_sigma": 2.97,
+        "jpeg_quality": 74
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "ऋचा ऋग्वेद क्षीरसागर",
+        "name_en": "Rucha Rugved Kshirsagar",
+        "dob": "27/10/1961",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "152988651158"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 3.25,
+        "scale": 0.938,
+        "lighting": [
+          0.8,
+          1.03
+        ],
+        "blur": "gaussian",
+        "sigma": 1.1,
+        "noise_sigma": 4.7,
+        "jpeg_quality": 83
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "सुवर्णा आदित्य क्षीरसागर",
+        "name_en": "Suvarna Aditya Kshirsagar",
+        "dob": "31/08/2009",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "083383788737"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -5.35,
+        "scale": 0.998,
+        "lighting": [
+          0.66,
+          1.05
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 178.1,
+        "noise_sigma": 2.19,
+        "jpeg_quality": 84
+      }
+    },
+    {
+      "id": "identity_card_m5",
+      "type": "identity_card",
+      "member_ids": [
+        "m5"
+      ],
+      "fields": {
+        "name_mr": "अद्वैत आदित्य क्षीरसागर",
+        "name_en": "Advait Aditya Kshirsagar",
+        "dob": "11/02/2023",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "074471639654"
+      },
+      "files": {
+        "clean": "identity_card_m5.png",
+        "photo": "identity_card_m5_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 0.74,
+        "scale": 0.992,
+        "lighting": [
+          0.66,
+          1.0
+        ],
+        "blur": "gaussian",
+        "sigma": 0.94,
+        "noise_sigma": 5.61,
+        "jpeg_quality": 76
+      }
+    },
+    {
+      "id": "identity_card_m6",
+      "type": "identity_card",
+      "member_ids": [
+        "m6"
+      ],
+      "fields": {
+        "name_mr": "सविता आदित्य क्षीरसागर",
+        "name_en": "Savita Aditya Kshirsagar",
+        "dob": "17/11/2020",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "137528135122"
+      },
+      "files": {
+        "clean": "identity_card_m6.png",
+        "photo": "identity_card_m6_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 6.6,
+        "scale": 0.993,
+        "lighting": [
+          0.67,
+          1.05
+        ],
+        "blur": "gaussian",
+        "sigma": 1.29,
+        "noise_sigma": 3.69,
+        "jpeg_quality": 73
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/736293",
+        "name_mr": "आदित्य ऋग्वेद क्षीरसागर",
+        "name_en": "Aditya Rugved Kshirsagar",
+        "address_mr": "घर क्र. 212, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 212, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 250000,
+        "issue_date": "10/10/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 1.49,
+        "scale": 0.96,
+        "lighting": [
+          0.69,
+          1.02
+        ],
+        "blur": "gaussian",
+        "sigma": 1.75,
+        "noise_sigma": 3.44,
+        "jpeg_quality": 80
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/537292",
+        "name_mr": "आदित्य ऋग्वेद क्षीरसागर",
+        "name_en": "Aditya Rugved Kshirsagar",
+        "dob": "29/07/1983",
+        "category_mr": "विमुक्त जाती व भटक्या जमाती (VJNT)",
+        "category_en": "Vimukta Jati and Nomadic Tribes (VJNT)",
+        "address_mr": "घर क्र. 212, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 212, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "28/02/2022",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 6.97,
+        "scale": 0.98,
+        "lighting": [
+          0.66,
+          1.03
+        ],
+        "blur": "gaussian",
+        "sigma": 1.33,
+        "noise_sigma": 4.49,
+        "jpeg_quality": 71
+      }
+    },
+    {
+      "id": "caste_certificate_m4",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/425604",
+        "name_mr": "सुवर्णा आदित्य क्षिरसागर",
+        "name_en": "Suvarna Aditya Ksheersagar",
+        "dob": "31/08/2009",
+        "category_mr": "विमुक्त जाती व भटक्या जमाती (VJNT)",
+        "category_en": "Vimukta Jati and Nomadic Tribes (VJNT)",
+        "address_mr": "घर क्र. 212, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 212, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "26/10/2012",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m4.png",
+        "photo": "caste_certificate_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 3.92,
+        "scale": 0.912,
+        "lighting": [
+          0.64,
+          1.11
+        ],
+        "blur": "gaussian",
+        "sigma": 1.55,
+        "noise_sigma": 3.62,
+        "jpeg_quality": 79
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "name_mismatch",
+      "member_id": "m4",
+      "documents": [
+        "caste_certificate_m4",
+        "ration_card"
+      ],
+      "field": "name",
+      "expected": {
+        "mr": "सुवर्णा आदित्य क्षीरसागर",
+        "en": "Suvarna Aditya Kshirsagar"
+      },
+      "printed": {
+        "mr": "सुवर्णा आदित्य क्षिरसागर",
+        "en": "Suvarna Aditya Ksheersagar"
+      },
+      "note": "surname spelled differently"
+    }
+  ]
+}

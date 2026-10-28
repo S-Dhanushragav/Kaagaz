@@ -1,0 +1,527 @@
+{
+  "id": "EV009",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "शारदा",
+        "en": "Sharada"
+      },
+      "middle": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "surname": {
+        "mr": "ठोंबरे",
+        "en": "Thombre"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "F",
+      "dob": "1983-02-26",
+      "age": 43,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "प्रियांका",
+        "en": "Priyanka"
+      },
+      "middle": {
+        "mr": "ऋग्वेद",
+        "en": "Rugved"
+      },
+      "surname": {
+        "mr": "ठोंबरे",
+        "en": "Thombre"
+      },
+      "relation": {
+        "mr": "सासू",
+        "en": "Mother-in-law"
+      },
+      "gender": "F",
+      "dob": "1961-10-27",
+      "age": 65,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "अनिल",
+        "en": "Anil"
+      },
+      "middle": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "surname": {
+        "mr": "ठोंबरे",
+        "en": "Thombre"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2008-10-27",
+      "age": 18,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "स्नेहा",
+        "en": "Sneha"
+      },
+      "middle": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "surname": {
+        "mr": "ठोंबरे",
+        "en": "Thombre"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2017-07-28",
+      "age": 9,
+      "on_ration_card": true
+    },
+    {
+      "id": "m5",
+      "given": {
+        "mr": "रुक्मिणी",
+        "en": "Rukmini"
+      },
+      "middle": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "surname": {
+        "mr": "ठोंबरे",
+        "en": "Thombre"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2008-10-27",
+      "age": 18,
+      "on_ration_card": true
+    },
+    {
+      "id": "m6",
+      "given": {
+        "mr": "मीरा",
+        "en": "Meera"
+      },
+      "middle": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "surname": {
+        "mr": "ठोंबरे",
+        "en": "Thombre"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2019-12-30",
+      "age": 6,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5",
+        "m6"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-09902029",
+        "card_colour": "white",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "शारदा किरण ठोंबरे",
+        "head_name_en": "Sharada Kiran Thombre",
+        "address_mr": "घर क्र. 122, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 122, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "शारदा किरण ठोंबरे",
+            "name_en": "Sharada Kiran Thombre",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 43
+          },
+          {
+            "name_mr": "प्रियांका ऋग्वेद ठोंबरे",
+            "name_en": "Priyanka Rugved Thombre",
+            "relation_mr": "सासू",
+            "relation_en": "Mother-in-law",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 65
+          },
+          {
+            "name_mr": "अनिल किरण ठोंबरे",
+            "name_en": "Anil Kiran Thombre",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 18
+          },
+          {
+            "name_mr": "स्नेहा किरण ठोंबरे",
+            "name_en": "Sneha Kiran Thombre",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 9
+          },
+          {
+            "name_mr": "रुक्मिणी किरण ठोंबरे",
+            "name_en": "Rukmini Kiran Thombre",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 18
+          },
+          {
+            "name_mr": "मीरा किरण ठोंबरे",
+            "name_en": "Meera Kiran Thombre",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 6
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -3.61,
+        "scale": 0.887,
+        "lighting": [
+          0.77,
+          1.03
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 112.2,
+        "noise_sigma": 5.35,
+        "jpeg_quality": 86
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "शारदा किरण ठोंबरे",
+        "name_en": "Sharada Kiran Thombre",
+        "dob": "26/02/1983",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "051757626229"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -2.33,
+        "scale": 0.947,
+        "lighting": [
+          0.74,
+          1.08
+        ],
+        "blur": "gaussian",
+        "sigma": 1.21,
+        "noise_sigma": 3.06,
+        "jpeg_quality": 73
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "प्रियांका ऋग्वेद ठोंबरे",
+        "name_en": "Priyanka Rugved Thombre",
+        "dob": "27/10/1961",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "049426919543"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -4.16,
+        "scale": 0.897,
+        "lighting": [
+          0.67,
+          1.05
+        ],
+        "blur": "gaussian",
+        "sigma": 1.12,
+        "noise_sigma": 5.18,
+        "jpeg_quality": 81
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "अनिल किरण ठोंबरे",
+        "name_en": "Anil Kiran Thombre",
+        "dob": "27/10/2008",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "143107535886"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 3.75,
+        "scale": 0.988,
+        "lighting": [
+          0.79,
+          1.03
+        ],
+        "blur": "gaussian",
+        "sigma": 1.04,
+        "noise_sigma": 3.46,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "स्नेहा किरण ठोंबरे",
+        "name_en": "Sneha Kiran Thombre",
+        "dob": "28/07/2017",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "074257095858"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 1.73,
+        "scale": 0.999,
+        "lighting": [
+          0.79,
+          1.11
+        ],
+        "blur": "gaussian",
+        "sigma": 1.67,
+        "noise_sigma": 5.25,
+        "jpeg_quality": 77
+      }
+    },
+    {
+      "id": "identity_card_m6",
+      "type": "identity_card",
+      "member_ids": [
+        "m6"
+      ],
+      "fields": {
+        "name_mr": "मीरा किरण ठोंबरे",
+        "name_en": "Meera Kiran Thombre",
+        "dob": "30/12/2019",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "076095625156"
+      },
+      "files": {
+        "clean": "identity_card_m6.png",
+        "photo": "identity_card_m6_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -7.5,
+        "scale": 0.966,
+        "lighting": [
+          0.65,
+          1.08
+        ],
+        "blur": "gaussian",
+        "sigma": 0.98,
+        "noise_sigma": 4.14,
+        "jpeg_quality": 70
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/295922",
+        "name_mr": "शारदा किरण ठोंबरे",
+        "name_en": "Sharada Kiran Thombre",
+        "address_mr": "घर क्र. 122, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 122, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 250000,
+        "issue_date": "21/09/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 0.89,
+        "scale": 0.924,
+        "lighting": [
+          0.84,
+          1.03
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 30.3,
+        "noise_sigma": 4.84,
+        "jpeg_quality": 71
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/498837",
+        "name_mr": "शारदा किरण ठोंबरे",
+        "name_en": "Sharada Kiran Thombre",
+        "dob": "26/02/1983",
+        "category_mr": "इतर मागास वर्ग (OBC)",
+        "category_en": "Other Backward Class (OBC)",
+        "address_mr": "घर क्र. 122, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 122, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "09/05/2016",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -4.23,
+        "scale": 0.983,
+        "lighting": [
+          0.83,
+          1.07
+        ],
+        "blur": "gaussian",
+        "sigma": 0.96,
+        "noise_sigma": 2.18,
+        "jpeg_quality": 85
+      }
+    },
+    {
+      "id": "caste_certificate_m3",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/105608",
+        "name_mr": "अनिल किरण ठोंबरे",
+        "name_en": "Anil Kiran Thombre",
+        "dob": "27/10/2008",
+        "category_mr": "इतर मागास वर्ग (OBC)",
+        "category_en": "Other Backward Class (OBC)",
+        "address_mr": "घर क्र. 122, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 122, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "02/03/2022",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m3.png",
+        "photo": "caste_certificate_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 3.57,
+        "scale": 0.981,
+        "lighting": [
+          0.71,
+          1.1
+        ],
+        "blur": "gaussian",
+        "sigma": 1.77,
+        "noise_sigma": 3.7,
+        "jpeg_quality": 87
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "missing_document",
+      "member_id": "m5",
+      "documents": [
+        "identity_card_m5"
+      ],
+      "field": null,
+      "expected": "identity_card",
+      "printed": null,
+      "note": "Document intentionally not generated."
+    }
+  ]
+}

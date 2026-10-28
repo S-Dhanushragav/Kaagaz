@@ -1,0 +1,487 @@
+{
+  "id": "EV014",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "योगेश",
+        "en": "Yogesh"
+      },
+      "middle": {
+        "mr": "सुनील",
+        "en": "Sunil"
+      },
+      "surname": {
+        "mr": "माने",
+        "en": "Mane"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1973-05-31",
+      "age": 53,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "सविता",
+        "en": "Savita"
+      },
+      "middle": {
+        "mr": "योगेश",
+        "en": "Yogesh"
+      },
+      "surname": {
+        "mr": "माने",
+        "en": "Mane"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1976-12-17",
+      "age": 49,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "मृणाल",
+        "en": "Mrunal"
+      },
+      "middle": {
+        "mr": "योगेश",
+        "en": "Yogesh"
+      },
+      "surname": {
+        "mr": "माने",
+        "en": "Mane"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2002-01-21",
+      "age": 24,
+      "on_ration_card": false
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "ऋतुजा",
+        "en": "Rutuja"
+      },
+      "middle": {
+        "mr": "योगेश",
+        "en": "Yogesh"
+      },
+      "surname": {
+        "mr": "माने",
+        "en": "Mane"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "1997-04-14",
+      "age": 29,
+      "on_ration_card": true
+    },
+    {
+      "id": "m5",
+      "given": {
+        "mr": "हृषीकेश",
+        "en": "Hrishikesh"
+      },
+      "middle": {
+        "mr": "योगेश",
+        "en": "Yogesh"
+      },
+      "surname": {
+        "mr": "माने",
+        "en": "Mane"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2023-11-14",
+      "age": 2,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m4",
+        "m5"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-09209718",
+        "card_colour": "orange",
+        "category_mr": "प्राधान्य कुटुंब (PHH)",
+        "category_en": "Priority Household (PHH)",
+        "head_name_mr": "योगेश सुनील माने",
+        "head_name_en": "Yogesh Sunil Mane",
+        "address_mr": "घर क्र. 232, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 232, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "योगेश सुनील माने",
+            "name_en": "Yogesh Sunil Mane",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 53
+          },
+          {
+            "name_mr": "सविता योगेश माने",
+            "name_en": "Savita Yogesh Mane",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 49
+          },
+          {
+            "name_mr": "ऋतुजा योगेश माने",
+            "name_en": "Rutuja Yogesh Mane",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 29
+          },
+          {
+            "name_mr": "हृषीकेश योगेश माने",
+            "name_en": "Hrishikesh Yogesh Mane",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 2
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -1.47,
+        "scale": 0.897,
+        "lighting": [
+          0.71,
+          1.02
+        ],
+        "blur": "gaussian",
+        "sigma": 1.49,
+        "noise_sigma": 4.26,
+        "jpeg_quality": 77
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "योगेश सुनील माने",
+        "name_en": "Yogesh Sunil Mane",
+        "dob": "31/05/1973",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "011037360627"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 7.59,
+        "scale": 0.931,
+        "lighting": [
+          0.79,
+          1.05
+        ],
+        "blur": "motion",
+        "length": 6,
+        "angle": 92.7,
+        "noise_sigma": 5.06,
+        "jpeg_quality": 78
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "सविता योगेश माने",
+        "name_en": "Savita Yogesh Mane",
+        "dob": "17/12/1976",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "009975497237"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 4.2,
+        "scale": 0.975,
+        "lighting": [
+          0.66,
+          1.11
+        ],
+        "blur": "gaussian",
+        "sigma": 1.28,
+        "noise_sigma": 3.65,
+        "jpeg_quality": 83
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "मृणाल योगेश माने",
+        "name_en": "Mrunal Yogesh Mane",
+        "dob": "21/01/2002",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "075199123990"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 2.11,
+        "scale": 0.983,
+        "lighting": [
+          0.64,
+          1.1
+        ],
+        "blur": "gaussian",
+        "sigma": 1.24,
+        "noise_sigma": 2.92,
+        "jpeg_quality": 76
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "ऋतुजा योगेश माने",
+        "name_en": "Rutuja Yogesh Mane",
+        "dob": "14/04/1997",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "019927314591"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 5.94,
+        "scale": 0.94,
+        "lighting": [
+          0.62,
+          1.01
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 74.8,
+        "noise_sigma": 4.46,
+        "jpeg_quality": 80
+      }
+    },
+    {
+      "id": "identity_card_m5",
+      "type": "identity_card",
+      "member_ids": [
+        "m5"
+      ],
+      "fields": {
+        "name_mr": "हृषीकेश योगेश माने",
+        "name_en": "Hrishikesh Yogesh Mane",
+        "dob": "14/11/2023",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "065724174432"
+      },
+      "files": {
+        "clean": "identity_card_m5.png",
+        "photo": "identity_card_m5_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 6.21,
+        "scale": 0.995,
+        "lighting": [
+          0.73,
+          1.04
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 117.3,
+        "noise_sigma": 2.11,
+        "jpeg_quality": 74
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/766059",
+        "name_mr": "योगेश सुनील माने",
+        "name_en": "Yogesh Sunil Mane",
+        "address_mr": "घर क्र. 232, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 232, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 60000,
+        "issue_date": "02/09/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -0.2,
+        "scale": 0.963,
+        "lighting": [
+          0.66,
+          1.04
+        ],
+        "blur": "gaussian",
+        "sigma": 0.84,
+        "noise_sigma": 3.69,
+        "jpeg_quality": 72
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/335263",
+        "name_mr": "योगेश सुनील माने",
+        "name_en": "Yogesh Sunil Mane",
+        "dob": "31/05/1973",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 232, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 232, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "23/02/2023",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -2.87,
+        "scale": 0.974,
+        "lighting": [
+          0.84,
+          1.02
+        ],
+        "blur": "gaussian",
+        "sigma": 1.24,
+        "noise_sigma": 3.97,
+        "jpeg_quality": 88
+      }
+    },
+    {
+      "id": "caste_certificate_m3",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/678424",
+        "name_mr": "मृणाल योगेश माने",
+        "name_en": "Mrunal Yogesh Mane",
+        "dob": "21/01/2002",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 232, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 232, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "02/10/2012",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m3.png",
+        "photo": "caste_certificate_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -5.98,
+        "scale": 0.888,
+        "lighting": [
+          0.83,
+          1.04
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 4.2,
+        "noise_sigma": 2.59,
+        "jpeg_quality": 72
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "not_on_ration_card",
+      "member_id": "m3",
+      "documents": [
+        "ration_card",
+        "identity_card_m3"
+      ],
+      "field": null,
+      "expected": null,
+      "printed": null,
+      "note": null
+    }
+  ]
+}

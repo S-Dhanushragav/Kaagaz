@@ -1,0 +1,411 @@
+{
+  "id": "EV024",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "middle": {
+        "mr": "बाळासाहेब",
+        "en": "Balasaheb"
+      },
+      "surname": {
+        "mr": "ढमढेरे",
+        "en": "Dhamdhere"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1986-06-02",
+      "age": 40,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "ऐश्वर्या",
+        "en": "Aishwarya"
+      },
+      "middle": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "surname": {
+        "mr": "ढमढेरे",
+        "en": "Dhamdhere"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1988-04-04",
+      "age": 38,
+      "on_ration_card": false
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "कमल",
+        "en": "Kamal"
+      },
+      "middle": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "surname": {
+        "mr": "ढमढेरे",
+        "en": "Dhamdhere"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2009-11-20",
+      "age": 16,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "middle": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "surname": {
+        "mr": "ढमढेरे",
+        "en": "Dhamdhere"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2006-11-02",
+      "age": 19,
+      "on_ration_card": true
+    },
+    {
+      "id": "m5",
+      "given": {
+        "mr": "ज्योत्स्ना",
+        "en": "Jyotsna"
+      },
+      "middle": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "surname": {
+        "mr": "ढमढेरे",
+        "en": "Dhamdhere"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2022-10-13",
+      "age": 4,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m3",
+        "m4",
+        "m5"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-13554649",
+        "card_colour": "white",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "किरण बाळासाहेब ढमढेरे",
+        "head_name_en": "Kiran Balasaheb Dhamdhere",
+        "address_mr": "घर क्र. 82, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 82, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "किरण बाळासाहेब ढमढेरे",
+            "name_en": "Kiran Balasaheb Dhamdhere",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 40
+          },
+          {
+            "name_mr": "कमल किरण ढमढेरे",
+            "name_en": "Kamal Kiran Dhamdhere",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 16
+          },
+          {
+            "name_mr": "विठ्ठल किरण ढमढेरे",
+            "name_en": "Vitthal Kiran Dhamdhere",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 19
+          },
+          {
+            "name_mr": "ज्योत्स्ना किरण ढमढेरे",
+            "name_en": "Jyotsna Kiran Dhamdhere",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 4
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -2.09,
+        "scale": 0.971,
+        "lighting": [
+          0.64,
+          1.1
+        ],
+        "blur": "gaussian",
+        "sigma": 1.5,
+        "noise_sigma": 3.46,
+        "jpeg_quality": 72
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "किरण बाळासाहेब ढमढेरे",
+        "name_en": "Kiran Balasaheb Dhamdhere",
+        "dob": "02/06/1986",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "155752620028"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 4.32,
+        "scale": 0.925,
+        "lighting": [
+          0.72,
+          1.08
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 6.6,
+        "noise_sigma": 2.66,
+        "jpeg_quality": 73
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "ऐश्वर्या किरण ढमढेरे",
+        "name_en": "Aishwarya Kiran Dhamdhere",
+        "dob": "04/04/1988",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "141412273509"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 1.86,
+        "scale": 0.994,
+        "lighting": [
+          0.81,
+          1.03
+        ],
+        "blur": "gaussian",
+        "sigma": 1.07,
+        "noise_sigma": 4.04,
+        "jpeg_quality": 74
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "कमल किरण ढमढेरे",
+        "name_en": "Kamal Kiran Dhamdhere",
+        "dob": "20/11/2009",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "019400923184"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -4.05,
+        "scale": 0.885,
+        "lighting": [
+          0.76,
+          1.0
+        ],
+        "blur": "gaussian",
+        "sigma": 1.63,
+        "noise_sigma": 3.61,
+        "jpeg_quality": 88
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "विठ्ठल किरण ढमढेरे",
+        "name_en": "Vitthal Kiran Dhamdhere",
+        "dob": "02/11/2006",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "196231923080"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -5.12,
+        "scale": 0.991,
+        "lighting": [
+          0.72,
+          1.02
+        ],
+        "blur": "gaussian",
+        "sigma": 0.9,
+        "noise_sigma": 2.16,
+        "jpeg_quality": 84
+      }
+    },
+    {
+      "id": "identity_card_m5",
+      "type": "identity_card",
+      "member_ids": [
+        "m5"
+      ],
+      "fields": {
+        "name_mr": "ज्योत्स्ना किरण ढमढेरे",
+        "name_en": "Jyotsna Kiran Dhamdhere",
+        "dob": "13/10/2022",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "004519891069"
+      },
+      "files": {
+        "clean": "identity_card_m5.png",
+        "photo": "identity_card_m5_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -0.21,
+        "scale": 0.957,
+        "lighting": [
+          0.82,
+          1.08
+        ],
+        "blur": "gaussian",
+        "sigma": 0.7,
+        "noise_sigma": 3.14,
+        "jpeg_quality": 79
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/892055",
+        "name_mr": "किरण बाळासाहेब ढमढेरे",
+        "name_en": "Kiran Balasaheb Dhamdhere",
+        "address_mr": "घर क्र. 82, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 82, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 60000,
+        "issue_date": "03/09/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -5.81,
+        "scale": 0.911,
+        "lighting": [
+          0.8,
+          1.06
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 139.6,
+        "noise_sigma": 3.66,
+        "jpeg_quality": 72
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "not_on_ration_card",
+      "member_id": "m2",
+      "documents": [
+        "ration_card",
+        "identity_card_m2"
+      ],
+      "field": null,
+      "expected": null,
+      "printed": null,
+      "note": null
+    }
+  ]
+}

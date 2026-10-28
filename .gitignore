@@ -234,3 +234,7 @@ synthetic/households/*/*.png
 synthetic/households/*/*.jpg
 !synthetic/households/HH001/*.png
 !synthetic/households/HH001/*.jpg
+
+# v2 evaluation renders: reproducible from the seed; ground truth is committed
+synthetic/eval_households/*/*.png
+synthetic/eval_households/*/*.jpg

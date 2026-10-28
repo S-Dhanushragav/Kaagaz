@@ -1,0 +1,465 @@
+{
+  "id": "EV028",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "महेश",
+        "en": "Mahesh"
+      },
+      "middle": {
+        "mr": "रमेश",
+        "en": "Ramesh"
+      },
+      "surname": {
+        "mr": "जाधव",
+        "en": "Jadhav"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1988-03-30",
+      "age": 38,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "ज्ञानदा",
+        "en": "Dnyanada"
+      },
+      "middle": {
+        "mr": "महेश",
+        "en": "Mahesh"
+      },
+      "surname": {
+        "mr": "जाधव",
+        "en": "Jadhav"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1990-09-12",
+      "age": 36,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "वैशाली",
+        "en": "Vaishali"
+      },
+      "middle": {
+        "mr": "महेश",
+        "en": "Mahesh"
+      },
+      "surname": {
+        "mr": "जाधव",
+        "en": "Jadhav"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2014-11-16",
+      "age": 11,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "मृणाल",
+        "en": "Mrunal"
+      },
+      "middle": {
+        "mr": "महेश",
+        "en": "Mahesh"
+      },
+      "surname": {
+        "mr": "जाधव",
+        "en": "Jadhav"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2011-07-18",
+      "age": 15,
+      "on_ration_card": false
+    },
+    {
+      "id": "m5",
+      "given": {
+        "mr": "प्रियांका",
+        "en": "Priyanka"
+      },
+      "middle": {
+        "mr": "महेश",
+        "en": "Mahesh"
+      },
+      "surname": {
+        "mr": "जाधव",
+        "en": "Jadhav"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2014-02-16",
+      "age": 12,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m5"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-87301510",
+        "card_colour": "yellow",
+        "category_mr": "अंत्योदय अन्न योजना (AAY)",
+        "category_en": "Antyodaya Anna Yojana (AAY)",
+        "head_name_mr": "महेश रमेश जाधव",
+        "head_name_en": "Mahesh Ramesh Jadhav",
+        "address_mr": "घर क्र. 35, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 35, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "महेश रमेश जाधव",
+            "name_en": "Mahesh Ramesh Jadhav",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 38
+          },
+          {
+            "name_mr": "ज्ञानदा महेश जाधव",
+            "name_en": "Dnyanada Mahesh Jadhav",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 36
+          },
+          {
+            "name_mr": "वैशाली महेश जाधव",
+            "name_en": "Vaishali Mahesh Jadhav",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 11
+          },
+          {
+            "name_mr": "प्रियांका महेश जाधव",
+            "name_en": "Priyanka Mahesh Jadhav",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 12
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 4.14,
+        "scale": 0.889,
+        "lighting": [
+          0.71,
+          1.07
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 22.7,
+        "noise_sigma": 3.24,
+        "jpeg_quality": 73
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "ज्ञानदा महेश जाधव",
+        "name_en": "Dnyanada Mahesh Jadhav",
+        "dob": "12/09/1990",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "083198396637"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -1.92,
+        "scale": 0.963,
+        "lighting": [
+          0.64,
+          1.02
+        ],
+        "blur": "motion",
+        "length": 6,
+        "angle": 31.8,
+        "noise_sigma": 2.72,
+        "jpeg_quality": 72
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "वैशाली महेश जाधव",
+        "name_en": "Vaishali Mahesh Jadhav",
+        "dob": "16/11/2014",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "065600754810"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 4.91,
+        "scale": 0.966,
+        "lighting": [
+          0.74,
+          1.07
+        ],
+        "blur": "gaussian",
+        "sigma": 1.26,
+        "noise_sigma": 4.88,
+        "jpeg_quality": 87
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "मृणाल महेश जाधव",
+        "name_en": "Mrunal Mahesh Jadhav",
+        "dob": "18/07/2011",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "068186279544"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -3.02,
+        "scale": 0.903,
+        "lighting": [
+          0.76,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 0.69,
+        "noise_sigma": 3.18,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "identity_card_m5",
+      "type": "identity_card",
+      "member_ids": [
+        "m5"
+      ],
+      "fields": {
+        "name_mr": "प्रियांका महेश जाधव",
+        "name_en": "Priyanka Mahesh Jadhav",
+        "dob": "16/02/2014",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "023590767528"
+      },
+      "files": {
+        "clean": "identity_card_m5.png",
+        "photo": "identity_card_m5_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 7.28,
+        "scale": 0.96,
+        "lighting": [
+          0.83,
+          1.06
+        ],
+        "blur": "motion",
+        "length": 4,
+        "angle": 123.6,
+        "noise_sigma": 2.92,
+        "jpeg_quality": 83
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/177813",
+        "name_mr": "महेश रमेश जाधव",
+        "name_en": "Mahesh Ramesh Jadhav",
+        "address_mr": "घर क्र. 35, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 35, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 150001,
+        "issue_date": "07/10/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 2.9,
+        "scale": 0.995,
+        "lighting": [
+          0.72,
+          1.03
+        ],
+        "blur": "gaussian",
+        "sigma": 1.4,
+        "noise_sigma": 2.09,
+        "jpeg_quality": 86
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/908097",
+        "name_mr": "महेश रमेश जाधव",
+        "name_en": "Mahesh Ramesh Jadhav",
+        "dob": "30/03/1988",
+        "category_mr": "नवबौद्ध",
+        "category_en": "Neo-Buddhist",
+        "address_mr": "घर क्र. 35, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 35, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "02/11/2017",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 6.89,
+        "scale": 0.981,
+        "lighting": [
+          0.66,
+          1.02
+        ],
+        "blur": "gaussian",
+        "sigma": 1.58,
+        "noise_sigma": 3.19,
+        "jpeg_quality": 71
+      }
+    },
+    {
+      "id": "caste_certificate_m2",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/662460",
+        "name_mr": "ज्ञानदा महेश जाधव",
+        "name_en": "Dnyanada Mahesh Jadhav",
+        "dob": "12/09/1990",
+        "category_mr": "नवबौद्ध",
+        "category_en": "Neo-Buddhist",
+        "address_mr": "घर क्र. 35, मु. पो. कल्पितवाडी, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 35, At/Post Kalpitwadi, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "07/08/2018",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m2.png",
+        "photo": "caste_certificate_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -6.6,
+        "scale": 0.942,
+        "lighting": [
+          0.77,
+          1.06
+        ],
+        "blur": "gaussian",
+        "sigma": 1.64,
+        "noise_sigma": 2.6,
+        "jpeg_quality": 73
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "not_on_ration_card",
+      "member_id": "m4",
+      "documents": [
+        "ration_card",
+        "identity_card_m4"
+      ],
+      "field": null,
+      "expected": null,
+      "printed": null,
+      "note": null
+    },
+    {
+      "type": "missing_document",
+      "member_id": "m1",
+      "documents": [
+        "identity_card_m1"
+      ],
+      "field": null,
+      "expected": "identity_card",
+      "printed": null,
+      "note": "Document intentionally not generated."
+    }
+  ]
+}

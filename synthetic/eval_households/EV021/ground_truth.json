@@ -1,0 +1,252 @@
+{
+  "id": "EV021",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "स्मिता",
+        "en": "Smita"
+      },
+      "middle": {
+        "mr": "अनिल",
+        "en": "Anil"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "F",
+      "dob": "1983-03-04",
+      "age": 43,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "जयश्री",
+        "en": "Jayashree"
+      },
+      "middle": {
+        "mr": "गणेश",
+        "en": "Ganesh"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "सासू",
+        "en": "Mother-in-law"
+      },
+      "gender": "F",
+      "dob": "1961-10-27",
+      "age": 65,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-30885605",
+        "card_colour": "white",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "स्मिता अनिल कुलकर्णी",
+        "head_name_en": "Smita Anil Kulkarni",
+        "address_mr": "घर क्र. 83, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 83, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "स्मिता अनिल कुलकर्णी",
+            "name_en": "Smita Anil Kulkarni",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 43
+          },
+          {
+            "name_mr": "जयश्री गणेश कुलकर्णी",
+            "name_en": "Jayashree Ganesh Kulkarni",
+            "relation_mr": "सासू",
+            "relation_en": "Mother-in-law",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 65
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -4.19,
+        "scale": 0.963,
+        "lighting": [
+          0.68,
+          1.11
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 40.2,
+        "noise_sigma": 2.14,
+        "jpeg_quality": 77
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "स्मिता अनिल कुलकर्णी",
+        "name_en": "Smita Anil Kulkarni",
+        "dob": "04/03/1983",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "111670298182"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -5.49,
+        "scale": 0.972,
+        "lighting": [
+          0.83,
+          1.01
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 1.7,
+        "noise_sigma": 4.91,
+        "jpeg_quality": 76
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "जयश्री गणेश कुलकर्णी",
+        "name_en": "Jayashree Ganesh Kulkarni",
+        "dob": "27/10/1961",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "113821236069"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -2.74,
+        "scale": 0.973,
+        "lighting": [
+          0.7,
+          1.07
+        ],
+        "blur": "gaussian",
+        "sigma": 1.21,
+        "noise_sigma": 4.5,
+        "jpeg_quality": 86
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/552101",
+        "name_mr": "स्मिता अनिल कुलकर्णी",
+        "name_en": "Smita Anil Kulkarni",
+        "address_mr": "घर क्र. 83, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 83, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 12000,
+        "issue_date": "01/10/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -1.71,
+        "scale": 0.897,
+        "lighting": [
+          0.76,
+          1.09
+        ],
+        "blur": "motion",
+        "length": 4,
+        "angle": 168.6,
+        "noise_sigma": 3.59,
+        "jpeg_quality": 87
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/946707",
+        "name_mr": "स्मिता अनिल कुलकर्णी",
+        "name_en": "Smita Anil Kulkarni",
+        "dob": "04/03/1983",
+        "category_mr": "इतर मागास वर्ग (OBC)",
+        "category_en": "Other Backward Class (OBC)",
+        "address_mr": "घर क्र. 83, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 83, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "29/03/2012",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 1.28,
+        "scale": 0.987,
+        "lighting": [
+          0.85,
+          1.08
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 8.5,
+        "noise_sigma": 4.91,
+        "jpeg_quality": 86
+      }
+    }
+  ],
+  "planted_errors": []
+}

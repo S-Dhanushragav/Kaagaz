@@ -1,0 +1,430 @@
+{
+  "id": "EV030",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "middle": {
+        "mr": "दत्तात्रय",
+        "en": "Dattatray"
+      },
+      "surname": {
+        "mr": "कदम",
+        "en": "Kadam"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1973-07-28",
+      "age": 53,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "मनीषा",
+        "en": "Manisha"
+      },
+      "middle": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "surname": {
+        "mr": "कदम",
+        "en": "Kadam"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1975-11-24",
+      "age": 50,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "जयश्री",
+        "en": "Jayashree"
+      },
+      "middle": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "surname": {
+        "mr": "कदम",
+        "en": "Kadam"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2008-10-27",
+      "age": 18,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "ऋग्वेद",
+        "en": "Rugved"
+      },
+      "middle": {
+        "mr": "विठ्ठल",
+        "en": "Vitthal"
+      },
+      "surname": {
+        "mr": "कदम",
+        "en": "Kadam"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "1997-03-06",
+      "age": 29,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m4"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-35019650",
+        "card_colour": "white",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "विठ्ठल दत्तात्रय कदम",
+        "head_name_en": "Vitthal Dattatray Kadam",
+        "address_mr": "घर क्र. 33, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 33, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "विठ्ठल दत्तात्रय कदम",
+            "name_en": "Vitthal Dattatray Kadam",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 53
+          },
+          {
+            "name_mr": "मनीषा विठ्ठल कदम",
+            "name_en": "Manisha Vitthal Kadam",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 50
+          },
+          {
+            "name_mr": "जयश्री विठ्ठल कदम",
+            "name_en": "Jayashree Vitthal Kadam",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 18
+          },
+          {
+            "name_mr": "ऋग्वेद विठ्ठल कदम",
+            "name_en": "Rugved Vitthal Kadam",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 29
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -2.99,
+        "scale": 0.897,
+        "lighting": [
+          0.75,
+          1.09
+        ],
+        "blur": "gaussian",
+        "sigma": 0.82,
+        "noise_sigma": 5.81,
+        "jpeg_quality": 87
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "विठ्ठल दत्तात्रय कदम",
+        "name_en": "Vitthal Dattatray Kadam",
+        "dob": "28/07/1973",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "134591026451"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 4.51,
+        "scale": 0.977,
+        "lighting": [
+          0.7,
+          1.0
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 178.8,
+        "noise_sigma": 3.85,
+        "jpeg_quality": 77
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "मनीषा विठ्ठल कदम",
+        "name_en": "Manisha Vitthal Kadam",
+        "dob": "24/11/1975",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "049711002107"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -4.82,
+        "scale": 0.995,
+        "lighting": [
+          0.63,
+          1.05
+        ],
+        "blur": "gaussian",
+        "sigma": 1.38,
+        "noise_sigma": 4.12,
+        "jpeg_quality": 82
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "जयश्री विठ्ठल कदम",
+        "name_en": "Jayashree Vitthal Kadam",
+        "dob": "27/10/2008",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "196554909528"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -5.26,
+        "scale": 0.906,
+        "lighting": [
+          0.73,
+          1.1
+        ],
+        "blur": "gaussian",
+        "sigma": 0.85,
+        "noise_sigma": 5.88,
+        "jpeg_quality": 84
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "ऋग्वेद विठ्ठल कदम",
+        "name_en": "Rugved Vitthal Kadam",
+        "dob": "06/03/1997",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "043073754538"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -4.08,
+        "scale": 0.965,
+        "lighting": [
+          0.78,
+          1.02
+        ],
+        "blur": "gaussian",
+        "sigma": 0.63,
+        "noise_sigma": 3.26,
+        "jpeg_quality": 77
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/934126",
+        "name_mr": "विठ्ठल दत्तात्रय कदम",
+        "name_en": "Vitthal Dattatray Kadam",
+        "address_mr": "घर क्र. 33, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 33, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 250001,
+        "issue_date": "04/09/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -4.1,
+        "scale": 0.99,
+        "lighting": [
+          0.67,
+          1.05
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 9.9,
+        "noise_sigma": 5.08,
+        "jpeg_quality": 88
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/512200",
+        "name_mr": "विठ्ठल दत्तात्रय कदम",
+        "name_en": "Vitthal Dattatray Kadam",
+        "dob": "28/07/1973",
+        "category_mr": "अनुसूचित जाती (SC)",
+        "category_en": "Scheduled Caste (SC)",
+        "address_mr": "घर क्र. 33, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 33, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "11/12/2014",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 7.01,
+        "scale": 0.972,
+        "lighting": [
+          0.75,
+          1.08
+        ],
+        "blur": "gaussian",
+        "sigma": 1.72,
+        "noise_sigma": 3.13,
+        "jpeg_quality": 86
+      }
+    },
+    {
+      "id": "caste_certificate_m2",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/881339",
+        "name_mr": "मनीषा विठ्ठल कदम",
+        "name_en": "Manisha Vitthal Kadam",
+        "dob": "21/11/1975",
+        "category_mr": "अनुसूचित जाती (SC)",
+        "category_en": "Scheduled Caste (SC)",
+        "address_mr": "घर क्र. 33, मु. पो. चाचणीनगर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 33, At/Post Chachaninagar, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "07/02/2019",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m2.png",
+        "photo": "caste_certificate_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 0.31,
+        "scale": 0.941,
+        "lighting": [
+          0.74,
+          1.1
+        ],
+        "blur": "gaussian",
+        "sigma": 0.99,
+        "noise_sigma": 4.05,
+        "jpeg_quality": 87
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "dob_mismatch",
+      "member_id": "m2",
+      "documents": [
+        "caste_certificate_m2",
+        "identity_card_m2"
+      ],
+      "field": "dob",
+      "expected": "24/11/1975",
+      "printed": "21/11/1975",
+      "note": null
+    }
+  ]
+}

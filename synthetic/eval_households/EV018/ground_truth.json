@@ -1,0 +1,422 @@
+{
+  "id": "EV018",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "यज्ञेश",
+        "en": "Yadnyesh"
+      },
+      "middle": {
+        "mr": "श्रीनिवास",
+        "en": "Shrinivas"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1971-03-19",
+      "age": 55,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "पूजा",
+        "en": "Pooja"
+      },
+      "middle": {
+        "mr": "यज्ञेश",
+        "en": "Yadnyesh"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1973-03-10",
+      "age": 53,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "अनिता",
+        "en": "Anita"
+      },
+      "middle": {
+        "mr": "यज्ञेश",
+        "en": "Yadnyesh"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2005-10-27",
+      "age": 21,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "मीरा",
+        "en": "Meera"
+      },
+      "middle": {
+        "mr": "यज्ञेश",
+        "en": "Yadnyesh"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2002-03-05",
+      "age": 24,
+      "on_ration_card": true
+    },
+    {
+      "id": "m5",
+      "given": {
+        "mr": "लता",
+        "en": "Lata"
+      },
+      "middle": {
+        "mr": "यज्ञेश",
+        "en": "Yadnyesh"
+      },
+      "surname": {
+        "mr": "कुलकर्णी",
+        "en": "Kulkarni"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2018-02-08",
+      "age": 8,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-39402311",
+        "card_colour": "white",
+        "category_mr": "अप्राधान्य कुटुंब (NPHH)",
+        "category_en": "Non-Priority Household (NPHH)",
+        "head_name_mr": "यज्ञेश श्रीनिवास कुलकर्णी",
+        "head_name_en": "Yadnyesh Shrinivas Kulkarni",
+        "address_mr": "घर क्र. 213, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 213, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "यज्ञेश श्रीनिवास कुलकर्णी",
+            "name_en": "Yadnyesh Shrinivas Kulkarni",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 55
+          },
+          {
+            "name_mr": "पूजा यज्ञेश कुलकर्णी",
+            "name_en": "Pooja Yadnyesh Kulkarni",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 53
+          },
+          {
+            "name_mr": "अनिता यज्ञेश कुलकर्णी",
+            "name_en": "Anita Yadnyesh Kulkarni",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 21
+          },
+          {
+            "name_mr": "मीरा यज्ञेश कुलकर्णी",
+            "name_en": "Meera Yadnyesh Kulkarni",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 24
+          },
+          {
+            "name_mr": "लता यज्ञेश कुलकर्णी",
+            "name_en": "Lata Yadnyesh Kulkarni",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 8
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -0.09,
+        "scale": 0.998,
+        "lighting": [
+          0.85,
+          1.06
+        ],
+        "blur": "motion",
+        "length": 4,
+        "angle": 158.6,
+        "noise_sigma": 2.87,
+        "jpeg_quality": 74
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "यज्ञेश श्रीनिवास कुलकर्णी",
+        "name_en": "Yadnyesh Shrinivas Kulkarni",
+        "dob": "19/03/1971",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "190666759961"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 3.82,
+        "scale": 0.957,
+        "lighting": [
+          0.82,
+          1.03
+        ],
+        "blur": "motion",
+        "length": 8,
+        "angle": 13.9,
+        "noise_sigma": 3.93,
+        "jpeg_quality": 83
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "पूजा यज्ञेश कुलकर्णी",
+        "name_en": "Pooja Yadnyesh Kulkarni",
+        "dob": "10/03/1973",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "024982028361"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -0.16,
+        "scale": 0.979,
+        "lighting": [
+          0.79,
+          1.08
+        ],
+        "blur": "motion",
+        "length": 4,
+        "angle": 165.8,
+        "noise_sigma": 2.48,
+        "jpeg_quality": 79
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "अनिता यज्ञेश कुलकर्णी",
+        "name_en": "Anita Yadnyesh Kulkarni",
+        "dob": "27/10/2005",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "095153592460"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -5.18,
+        "scale": 0.891,
+        "lighting": [
+          0.81,
+          1.04
+        ],
+        "blur": "gaussian",
+        "sigma": 1.42,
+        "noise_sigma": 2.27,
+        "jpeg_quality": 83
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "मीरा यज्ञेश कुलकर्णी",
+        "name_en": "Meera Yadnyesh Kulkarni",
+        "dob": "05/03/2002",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "026672656216"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 1.76,
+        "scale": 0.939,
+        "lighting": [
+          0.83,
+          1.01
+        ],
+        "blur": "gaussian",
+        "sigma": 0.86,
+        "noise_sigma": 3.03,
+        "jpeg_quality": 73
+      }
+    },
+    {
+      "id": "identity_card_m5",
+      "type": "identity_card",
+      "member_ids": [
+        "m5"
+      ],
+      "fields": {
+        "name_mr": "लता यज्ञेश कुलकर्णी",
+        "name_en": "Lata Yadnyesh Kulkarni",
+        "dob": "08/02/2018",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "148003667649"
+      },
+      "files": {
+        "clean": "identity_card_m5.png",
+        "photo": "identity_card_m5_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -5.37,
+        "scale": 0.973,
+        "lighting": [
+          0.84,
+          1.03
+        ],
+        "blur": "motion",
+        "length": 4,
+        "angle": 141.9,
+        "noise_sigma": 2.1,
+        "jpeg_quality": 80
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/790620",
+        "name_mr": "यज्ञेश श्रीनिवास कुलकर्णी",
+        "name_en": "Yadnyesh Shrinivas Kulkarni",
+        "address_mr": "घर क्र. 213, मु. पो. नमुनापूर, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 213, At/Post Namunapur, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 150001,
+        "issue_date": "05/04/2023",
+        "financial_year": "2022-23",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": 3.81,
+        "scale": 0.928,
+        "lighting": [
+          0.67,
+          1.08
+        ],
+        "blur": "gaussian",
+        "sigma": 0.92,
+        "noise_sigma": 2.63,
+        "jpeg_quality": 77
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "expired",
+      "member_id": "m1",
+      "documents": [
+        "income_certificate_m1"
+      ],
+      "field": "issue_date",
+      "expected": null,
+      "printed": "05/04/2023",
+      "note": "Issued 3-5 years before reference_date; expiry is decided by the rules engine."
+    }
+  ]
+}

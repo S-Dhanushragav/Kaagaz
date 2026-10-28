@@ -1,0 +1,439 @@
+{
+  "id": "EV020",
+  "seed": 2029,
+  "reference_date": "2026-10-27",
+  "members": [
+    {
+      "id": "m1",
+      "given": {
+        "mr": "राहुल",
+        "en": "Rahul"
+      },
+      "middle": {
+        "mr": "किरण",
+        "en": "Kiran"
+      },
+      "surname": {
+        "mr": "पवार",
+        "en": "Pawar"
+      },
+      "relation": {
+        "mr": "स्वतः",
+        "en": "Self"
+      },
+      "gender": "M",
+      "dob": "1980-07-19",
+      "age": 46,
+      "on_ration_card": true
+    },
+    {
+      "id": "m2",
+      "given": {
+        "mr": "तृप्ती",
+        "en": "Trupti"
+      },
+      "middle": {
+        "mr": "राहुल",
+        "en": "Rahul"
+      },
+      "surname": {
+        "mr": "पवार",
+        "en": "Pawar"
+      },
+      "relation": {
+        "mr": "पत्नी",
+        "en": "Wife"
+      },
+      "gender": "F",
+      "dob": "1983-02-04",
+      "age": 43,
+      "on_ration_card": true
+    },
+    {
+      "id": "m3",
+      "given": {
+        "mr": "रमेश",
+        "en": "Ramesh"
+      },
+      "middle": {
+        "mr": "राहुल",
+        "en": "Rahul"
+      },
+      "surname": {
+        "mr": "पवार",
+        "en": "Pawar"
+      },
+      "relation": {
+        "mr": "मुलगा",
+        "en": "Son"
+      },
+      "gender": "M",
+      "dob": "2017-12-30",
+      "age": 8,
+      "on_ration_card": true
+    },
+    {
+      "id": "m4",
+      "given": {
+        "mr": "गौरी",
+        "en": "Gauri"
+      },
+      "middle": {
+        "mr": "राहुल",
+        "en": "Rahul"
+      },
+      "surname": {
+        "mr": "पवार",
+        "en": "Pawar"
+      },
+      "relation": {
+        "mr": "मुलगी",
+        "en": "Daughter"
+      },
+      "gender": "F",
+      "dob": "2015-11-01",
+      "age": 10,
+      "on_ration_card": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "ration_card",
+      "type": "ration_card",
+      "member_ids": [
+        "m1",
+        "m2",
+        "m3",
+        "m4"
+      ],
+      "fields": {
+        "card_number": "SPEC-RC-70541327",
+        "card_colour": "orange",
+        "category_mr": "प्राधान्य कुटुंब (PHH)",
+        "category_en": "Priority Household (PHH)",
+        "head_name_mr": "राहुल किरण पवार",
+        "head_name_en": "Rahul Kiran Pawar",
+        "address_mr": "घर क्र. 28, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 28, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "members": [
+          {
+            "name_mr": "राहुल किरण पवार",
+            "name_en": "Rahul Kiran Pawar",
+            "relation_mr": "स्वतः",
+            "relation_en": "Self",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 46
+          },
+          {
+            "name_mr": "तृप्ती राहुल पवार",
+            "name_en": "Trupti Rahul Pawar",
+            "relation_mr": "पत्नी",
+            "relation_en": "Wife",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 43
+          },
+          {
+            "name_mr": "रमेश राहुल पवार",
+            "name_en": "Ramesh Rahul Pawar",
+            "relation_mr": "मुलगा",
+            "relation_en": "Son",
+            "gender_mr": "पुरुष",
+            "gender_en": "Male",
+            "age": 8
+          },
+          {
+            "name_mr": "गौरी राहुल पवार",
+            "name_en": "Gauri Rahul Pawar",
+            "relation_mr": "मुलगी",
+            "relation_en": "Daughter",
+            "gender_mr": "स्त्री",
+            "gender_en": "Female",
+            "age": 10
+          }
+        ]
+      },
+      "files": {
+        "clean": "ration_card.png",
+        "photo": "ration_card_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": 0.01,
+        "scale": 0.916,
+        "lighting": [
+          0.73,
+          1.12
+        ],
+        "blur": "gaussian",
+        "sigma": 0.78,
+        "noise_sigma": 4.33,
+        "jpeg_quality": 87
+      }
+    },
+    {
+      "id": "identity_card_m1",
+      "type": "identity_card",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "name_mr": "राहुल किरण पवार",
+        "name_en": "Rahul Kiran Pawar",
+        "dob": "19/07/1980",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "007308608302"
+      },
+      "files": {
+        "clean": "identity_card_m1.png",
+        "photo": "identity_card_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -1.0,
+        "scale": 0.906,
+        "lighting": [
+          0.8,
+          1.06
+        ],
+        "blur": "gaussian",
+        "sigma": 1.1,
+        "noise_sigma": 4.81,
+        "jpeg_quality": 84
+      }
+    },
+    {
+      "id": "identity_card_m2",
+      "type": "identity_card",
+      "member_ids": [
+        "m2"
+      ],
+      "fields": {
+        "name_mr": "तृप्ती राहुल पवार",
+        "name_en": "Trupti Rahul Pawar",
+        "dob": "04/02/1983",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "116906747308"
+      },
+      "files": {
+        "clean": "identity_card_m2.png",
+        "photo": "identity_card_m2_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -5.25,
+        "scale": 0.919,
+        "lighting": [
+          0.73,
+          1.05
+        ],
+        "blur": "gaussian",
+        "sigma": 0.74,
+        "noise_sigma": 5.97,
+        "jpeg_quality": 87
+      }
+    },
+    {
+      "id": "identity_card_m3",
+      "type": "identity_card",
+      "member_ids": [
+        "m3"
+      ],
+      "fields": {
+        "name_mr": "रमेश राहुल पवार",
+        "name_en": "Ramesh Rahul Pawar",
+        "dob": "30/12/2017",
+        "gender_mr": "पुरुष",
+        "gender_en": "Male",
+        "id_number": "133876778082"
+      },
+      "files": {
+        "clean": "identity_card_m3.png",
+        "photo": "identity_card_m3_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -7.52,
+        "scale": 0.889,
+        "lighting": [
+          0.64,
+          1.04
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 175.6,
+        "noise_sigma": 3.46,
+        "jpeg_quality": 71
+      }
+    },
+    {
+      "id": "identity_card_m4",
+      "type": "identity_card",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "name_mr": "गौरी राहुल पवार",
+        "name_en": "Gauri Rahul Pawar",
+        "dob": "01/11/2015",
+        "gender_mr": "स्त्री",
+        "gender_en": "Female",
+        "id_number": "053663618295"
+      },
+      "files": {
+        "clean": "identity_card_m4.png",
+        "photo": "identity_card_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "laminate",
+        "rotation_deg": -6.5,
+        "scale": 0.905,
+        "lighting": [
+          0.76,
+          1.1
+        ],
+        "blur": "motion",
+        "length": 3,
+        "angle": 119.0,
+        "noise_sigma": 3.91,
+        "jpeg_quality": 78
+      }
+    },
+    {
+      "id": "income_certificate_m1",
+      "type": "income_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/INC/330267",
+        "name_mr": "राहुल किरण पवार",
+        "name_en": "Rahul Kiran Pawar",
+        "address_mr": "घर क्र. 28, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 28, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "annual_income": 250001,
+        "issue_date": "28/08/2026",
+        "financial_year": "2025-26",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "income_certificate_m1.png",
+        "photo": "income_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": -5.07,
+        "scale": 0.997,
+        "lighting": [
+          0.7,
+          1.12
+        ],
+        "blur": "motion",
+        "length": 5,
+        "angle": 71.8,
+        "noise_sigma": 2.61,
+        "jpeg_quality": 77
+      }
+    },
+    {
+      "id": "caste_certificate_m1",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m1"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/816305",
+        "name_mr": "राहुल किरण पवार",
+        "name_en": "Rahul Kiran Powar",
+        "dob": "19/07/1980",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 28, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 28, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "09/03/2017",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m1.png",
+        "photo": "caste_certificate_m1_photo.jpg"
+      },
+      "photo": {
+        "background": "cloth",
+        "rotation_deg": 2.48,
+        "scale": 0.994,
+        "lighting": [
+          0.68,
+          1.11
+        ],
+        "blur": "motion",
+        "length": 6,
+        "angle": 103.7,
+        "noise_sigma": 3.78,
+        "jpeg_quality": 83
+      }
+    },
+    {
+      "id": "caste_certificate_m4",
+      "type": "caste_certificate",
+      "member_ids": [
+        "m4"
+      ],
+      "fields": {
+        "certificate_number": "SPEC/CC/322162",
+        "name_mr": "गौरी राहुल पवार",
+        "name_en": "Gauri Rahul Pawar",
+        "dob": "01/11/2015",
+        "category_mr": "अनुसूचित जमाती (ST)",
+        "category_en": "Scheduled Tribe (ST)",
+        "address_mr": "घर क्र. 28, मु. पो. उदाहरणगाव, ता. नमुना, जि. कल्पित",
+        "address_en": "House No. 28, At/Post Udaharangaon, Tal. Namuna, Dist. Kalpit",
+        "issue_date": "03/07/2024",
+        "office_mr": "तहसीलदार कार्यालय, नमुना तालुका",
+        "office_en": "Tahsildar Office, Namuna Taluka"
+      },
+      "files": {
+        "clean": "caste_certificate_m4.png",
+        "photo": "caste_certificate_m4_photo.jpg"
+      },
+      "photo": {
+        "background": "wood",
+        "rotation_deg": -3.17,
+        "scale": 0.96,
+        "lighting": [
+          0.8,
+          1.05
+        ],
+        "blur": "motion",
+        "length": 7,
+        "angle": 140.9,
+        "noise_sigma": 3.7,
+        "jpeg_quality": 82
+      }
+    }
+  ],
+  "planted_errors": [
+    {
+      "type": "name_mismatch",
+      "member_id": "m1",
+      "documents": [
+        "caste_certificate_m1",
+        "ration_card"
+      ],
+      "field": "name",
+      "expected": {
+        "mr": "राहुल किरण पवार",
+        "en": "Rahul Kiran Pawar"
+      },
+      "printed": {
+        "mr": "राहुल किरण पवार",
+        "en": "Rahul Kiran Powar"
+      },
+      "note": "surname spelled differently"
+    }
+  ]
+}
