@@ -1,0 +1,43 @@
+# Values provided by the developer from official sources. Do not edit from memory.
+id: pm_ujjwala
+name: {en: "PM Ujjwala"}
+rules:
+  - id: applicant_gender
+    check: gender
+    value: female
+    status: verified
+    source: pmuy.gov.in
+    source_url: https://pmuy.gov.in
+    last_checked: 2026-10-29
+  - id: applicant_min_age
+    check: age_min
+    value: 18
+    status: verified
+    source: pmuy.gov.in
+    source_url: https://pmuy.gov.in
+    last_checked: 2026-10-29
+  - id: household_category
+    check: caste_household
+    value: {qualifying: [SC, ST], otherwise: needs_other_proof}
+    status: verified
+    source: MoPNG SOP
+    source_url: null  # TODO(developer): link to the MoPNG SOP document
+    last_checked: 2026-10-29
+    interpretation: >-
+      Our reading, not the source's text: an SC or ST caste certificate of ANY household member
+      qualifies the household. Without one, the household may still qualify through other
+      categories, which the documents cannot show (needs other proof).
+  - id: required_documents
+    check: documents
+    value: {ration_card: true, identity_card: every_adult_on_ration_card}
+    status: verified
+    source: MoPNG SOP
+    source_url: null  # TODO(developer): link to the MoPNG SOP document
+    last_checked: 2026-10-29
+needs_other_proof:
+  - id: no_lpg_connection
+    text: No existing LPG connection in the household
+    status: unverified
+    source: developer
+    source_url: null
+    last_checked: 2026-10-29

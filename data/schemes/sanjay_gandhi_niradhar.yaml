@@ -1,0 +1,25 @@
+# Values provided by the developer from official sources. Do not edit from memory.
+id: sanjay_gandhi_niradhar
+name: {en: "Sanjay Gandhi Niradhar"}
+rules:
+  - id: applicant_age_below
+    check: age_below  # strictly below
+    value: 65
+    status: verified
+    source: amravati.gov.in
+    source_url: https://amravati.gov.in
+    last_checked: 2026-10-29
+  - id: family_income
+    check: income_max  # inclusive
+    value: 21000
+    status: verified
+    source: gadchiroli.gov.in
+    source_url: https://gadchiroli.gov.in
+    last_checked: 2026-10-29
+needs_other_proof:
+  - id: covered_group
+    text: Belongs to a covered group (orphan, disability of 40% or more, serious illness, etc.)
+    status: unverified
+    source: developer
+    source_url: null
+    last_checked: 2026-10-29

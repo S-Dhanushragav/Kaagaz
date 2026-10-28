@@ -1,0 +1,46 @@
+# Values provided by the developer from official sources. Do not edit from memory.
+id: ramai_awas
+name: {en: "Ramai Awas"}
+rules:
+  - id: applicant_category
+    check: caste_applicant
+    value: {qualifying: [SC, NB], other_member_only: check_at_office}
+    status: verified
+    source: zpsatara.gov.in
+    source_url: https://zpsatara.gov.in
+    last_checked: 2026-10-29
+    interpretation: >-
+      Our reading, not the source's text: the applicant's own SC or Neo-Buddhist caste
+      certificate passes. If only another household member has one, check at the office.
+  - id: required_documents
+    check: documents
+    value: {caste_certificate: true, income_certificate: true}
+    status: verified
+    source: zpsatara.gov.in
+    source_url: https://zpsatara.gov.in
+    last_checked: 2026-10-29
+  - id: family_income
+    check: income_bands
+    value: {pass_max: 100000, fail_above: 150000}
+    status: conflict
+    source: scheme directory; zpsatara.gov.in
+    source_url: null  # TODO(developer): links for each reported limit
+    last_checked: 2026-10-29
+    reported:
+      - {value: 100000, area: rural, source: scheme directory, source_url: null}
+      - {value: 120000, area: rural, source: zpsatara.gov.in, source_url: https://zpsatara.gov.in}
+      - {value: 150000, area: municipal, source: scheme directory, source_url: null}
+    note: Income <= 100000 passes; above 150000 fails; anything between -> check at the office.
+needs_other_proof:
+  - id: residence_15_years
+    text: 15 years of residence
+    status: unverified
+    source: developer
+    source_url: null
+    last_checked: 2026-10-29
+  - id: land_and_house
+    text: Land and house conditions
+    status: unverified
+    source: developer
+    source_url: null
+    last_checked: 2026-10-29

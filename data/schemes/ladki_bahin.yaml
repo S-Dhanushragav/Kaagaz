@@ -1,0 +1,51 @@
+# Values provided by the developer from official sources. Do not edit from memory.
+id: ladki_bahin
+name: {en: "Ladki Bahin"}
+rules:
+  - id: applicant_gender
+    check: gender
+    value: female
+    status: verified
+    source: myscheme.gov.in
+    source_url: https://myscheme.gov.in
+    last_checked: 2026-10-29
+  - id: applicant_min_age
+    check: age_min  # inclusive
+    value: 21
+    status: verified
+    source: myscheme.gov.in
+    source_url: https://myscheme.gov.in
+    last_checked: 2026-10-29
+  - id: applicant_max_age
+    check: age_max  # inclusive
+    value: 65
+    status: verified
+    source: myscheme.gov.in
+    source_url: https://myscheme.gov.in
+    last_checked: 2026-10-29
+  - id: family_income
+    check: income_max  # inclusive
+    value: 250000
+    status: verified
+    source: myscheme.gov.in
+    source_url: https://myscheme.gov.in
+    last_checked: 2026-10-29
+  - id: income_certificate
+    check: income_certificate_unless_card
+    value: {not_required_for_cards: [yellow, orange]}
+    status: verified
+    source: myscheme.gov.in
+    source_url: https://myscheme.gov.in
+    last_checked: 2026-10-29
+    interpretation: >-
+      Our reading, not the source's text: a Yellow or Orange ration card satisfies the income
+      requirement when there is no income certificate. If an income certificate is present and
+      shows income above the limit, the result is not eligible regardless of card colour.
+      White card or no ration card: the income certificate is required.
+needs_other_proof:
+  - id: no_income_tax_payer
+    text: No income-tax payer in the family
+    status: unverified
+    source: developer
+    source_url: null
+    last_checked: 2026-10-29

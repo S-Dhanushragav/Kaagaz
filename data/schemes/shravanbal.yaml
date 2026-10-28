@@ -1,0 +1,19 @@
+# Values provided by the developer from official sources. Do not edit from memory.
+id: shravanbal
+name: {en: "Shravanbal"}
+rules:
+  - id: applicant_min_age
+    check: age_min  # inclusive
+    value: 65
+    status: verified
+    source: gadchiroli.gov.in
+    source_url: https://gadchiroli.gov.in
+    last_checked: 2026-10-29
+  - id: family_income
+    check: income_max  # inclusive
+    value: 21000
+    status: verified
+    source: gadchiroli.gov.in
+    source_url: https://gadchiroli.gov.in
+    last_checked: 2026-10-29
+needs_other_proof: []

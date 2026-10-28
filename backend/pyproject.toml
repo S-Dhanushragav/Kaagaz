@@ -12,6 +12,9 @@ dependencies = [
     "python-dotenv",
     "opencv-python-headless",
     "meta-sam-parser==0.1.0",  # Meta's official SAM 3.1 output/mask parser (pure Python)
+    "rapidfuzz",  # fuzzy name matching
+    "indic-transliteration",  # Devanagari -> Latin for cross-script name matching
+    "PyYAML",  # scheme rules in data/schemes/
 ]
 
 [project.optional-dependencies]

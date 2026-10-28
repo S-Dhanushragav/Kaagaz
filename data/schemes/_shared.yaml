@@ -1,0 +1,14 @@
+# Rules shared by all schemes. Values provided by the developer. Do not edit from memory.
+id: _shared
+rules:
+  - id: income_certificate_validity
+    check: issued_this_financial_year
+    value: {financial_year_starts: "04-01", severity: warning, message: "may need renewal, check at the office"}
+    status: unverified
+    source: developer
+    source_url: null
+    last_checked: 2026-10-29
+    interpretation: >-
+      Our reading, not a source's text: an income certificate issued before the start of the
+      current financial year (1 April before the household's reference date) may need renewal.
+      This is only ever a warning, never a blocker.
