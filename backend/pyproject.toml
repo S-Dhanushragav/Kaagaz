@@ -11,6 +11,7 @@ dependencies = [
     "openai>=1",
     "python-dotenv",
     "opencv-python-headless",
+    "meta-sam-parser==0.1.0",  # Meta's official SAM 3.1 output/mask parser (pure Python)
 ]
 
 [project.optional-dependencies]

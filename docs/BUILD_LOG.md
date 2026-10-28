@@ -12,3 +12,4 @@ All code in this repository was written during the Meta Global AI Developer Hack
 - Reader schema: doc_type paired with its own fields (wrapped in "document"; Meta rejects top-level anyOf). 1.3 re-run: retries 4 -> 0, wrong values 4 -> 4 (place-name "corrections" persist), worst time 9.0 -> 8.9 s.
 - Phase 4A: synthetic hand-held sweep videos (1080x1920, 30 fps, ~20 s) with per-frame document corners and visibility truth; HH001, HH008, HH009, HH008_hard (1.6x faster, two documents touching).
 - Phase 4C (offline): segmenter interface, frame resampling (H.264/HEVC), sharpness/edge checks, mask->quad deskew with min-area-rect fallback, track cleanup, find_documents with tmp cleanup and --debug contact sheet.
+- Phase 4B: SAM 3.1 client (Files API upload, Responses API, meta-sam-parser, cached, uploaded file deleted after). Probe: 50 frames 720p, upload 4.9 s + segment 6.8 s, $0.01.
