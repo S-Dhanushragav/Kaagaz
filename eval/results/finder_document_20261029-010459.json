@@ -1,0 +1,345 @@
+[
+  {
+    "video": "HH001",
+    "prompts": [
+      "document"
+    ],
+    "present": 6,
+    "found": 6,
+    "duplicates": 0,
+    "false_detections": 0,
+    "crop_iou_mean": 0.962,
+    "crop_iou_min": 0.946,
+    "missed": [],
+    "tracks_raw": 7,
+    "dropped": {
+      "split": 0,
+      "short": 0,
+      "small": 0,
+      "duplicate": 0,
+      "partial": 1
+    },
+    "deskew_methods": {
+      "quad": 10
+    },
+    "billed_frames": 100,
+    "timings": {
+      "resample_s": 6.758,
+      "segmenter_wall_s": 0.102,
+      "upload_s": 5.057,
+      "segment_s": 7.866,
+      "cleanup_s": 0.021,
+      "select_s": 1.183,
+      "decode_deskew_s": 8.552,
+      "find_total_s": 16.7,
+      "read_after_find_s": 6.55,
+      "upload_to_answer_s": 29.31
+    },
+    "reading": {
+      "classified": 3,
+      "needs_retake": 4,
+      "needs_retake_docs": [
+        "caste_certificate_m2",
+        "identity_card_m2",
+        "identity_card_m1",
+        "income_certificate_m1"
+      ],
+      "model_calls": 10,
+      "fields": {
+        "correct": 24,
+        "wrong": 1,
+        "null": 33,
+        "total": 58
+      },
+      "per_type": {
+        "caste_certificate": {
+          "correct": 11,
+          "wrong": 0,
+          "null": 11,
+          "total": 22
+        },
+        "identity_card": {
+          "correct": 2,
+          "wrong": 0,
+          "null": 10,
+          "total": 12
+        },
+        "income_certificate": {
+          "correct": 0,
+          "wrong": 0,
+          "null": 10,
+          "total": 10
+        },
+        "ration_card": {
+          "correct": 11,
+          "wrong": 1,
+          "null": 2,
+          "total": 14
+        }
+      },
+      "tokens": {
+        "prompt": 8677,
+        "completion": 9304
+      }
+    },
+    "cost_usd": 0.0704
+  },
+  {
+    "video": "HH008",
+    "prompts": [
+      "document"
+    ],
+    "present": 8,
+    "found": 8,
+    "duplicates": 0,
+    "false_detections": 0,
+    "crop_iou_mean": 0.956,
+    "crop_iou_min": 0.944,
+    "missed": [],
+    "tracks_raw": 8,
+    "dropped": {
+      "split": 3,
+      "short": 1,
+      "small": 0,
+      "duplicate": 0,
+      "partial": 2
+    },
+    "deskew_methods": {
+      "quad": 18
+    },
+    "billed_frames": 100,
+    "timings": {
+      "resample_s": 6.778,
+      "segmenter_wall_s": 0.078,
+      "upload_s": 8.012,
+      "segment_s": 8.4,
+      "cleanup_s": 0.002,
+      "select_s": 1.535,
+      "decode_deskew_s": 10.056,
+      "find_total_s": 18.54,
+      "read_after_find_s": 8.75,
+      "upload_to_answer_s": 36.85
+    },
+    "reading": {
+      "classified": 7,
+      "needs_retake": 4,
+      "needs_retake_docs": [
+        "income_certificate_m1",
+        "identity_card_m3",
+        "identity_card_m1",
+        "identity_card_m2"
+      ],
+      "model_calls": 18,
+      "fields": {
+        "correct": 74,
+        "wrong": 0,
+        "null": 17,
+        "total": 91
+      },
+      "per_type": {
+        "caste_certificate": {
+          "correct": 22,
+          "wrong": 0,
+          "null": 0,
+          "total": 22
+        },
+        "identity_card": {
+          "correct": 17,
+          "wrong": 0,
+          "null": 7,
+          "total": 24
+        },
+        "income_certificate": {
+          "correct": 0,
+          "wrong": 0,
+          "null": 10,
+          "total": 10
+        },
+        "ration_card": {
+          "correct": 35,
+          "wrong": 0,
+          "null": 0,
+          "total": 35
+        }
+      },
+      "tokens": {
+        "prompt": 13402,
+        "completion": 14665
+      }
+    },
+    "cost_usd": 0.0991
+  },
+  {
+    "video": "HH009",
+    "prompts": [
+      "document"
+    ],
+    "present": 7,
+    "found": 7,
+    "duplicates": 0,
+    "false_detections": 0,
+    "crop_iou_mean": 0.957,
+    "crop_iou_min": 0.941,
+    "missed": [],
+    "tracks_raw": 8,
+    "dropped": {
+      "split": 1,
+      "short": 0,
+      "small": 0,
+      "duplicate": 0,
+      "partial": 2
+    },
+    "deskew_methods": {
+      "quad": 14
+    },
+    "billed_frames": 100,
+    "timings": {
+      "resample_s": 6.734,
+      "segmenter_wall_s": 17.994,
+      "upload_s": 7.065,
+      "segment_s": 7.998,
+      "cleanup_s": 0.003,
+      "select_s": 1.536,
+      "decode_deskew_s": 9.568,
+      "find_total_s": 35.94,
+      "read_after_find_s": 4.49,
+      "upload_to_answer_s": 30.76
+    },
+    "reading": {
+      "classified": 5,
+      "needs_retake": 4,
+      "needs_retake_docs": [
+        "identity_card_m2",
+        "caste_certificate_m3",
+        "income_certificate_m1",
+        "identity_card_m1"
+      ],
+      "model_calls": 14,
+      "fields": {
+        "correct": 53,
+        "wrong": 0,
+        "null": 25,
+        "total": 78
+      },
+      "per_type": {
+        "caste_certificate": {
+          "correct": 11,
+          "wrong": 0,
+          "null": 11,
+          "total": 22
+        },
+        "identity_card": {
+          "correct": 14,
+          "wrong": 0,
+          "null": 4,
+          "total": 18
+        },
+        "income_certificate": {
+          "correct": 0,
+          "wrong": 0,
+          "null": 10,
+          "total": 10
+        },
+        "ration_card": {
+          "correct": 28,
+          "wrong": 0,
+          "null": 0,
+          "total": 28
+        }
+      },
+      "tokens": {
+        "prompt": 10996,
+        "completion": 9459
+      }
+    },
+    "cost_usd": 0.0739
+  },
+  {
+    "video": "HH008_hard",
+    "prompts": [
+      "document"
+    ],
+    "present": 8,
+    "found": 8,
+    "duplicates": 1,
+    "false_detections": 0,
+    "crop_iou_mean": 0.958,
+    "crop_iou_min": 0.938,
+    "missed": [],
+    "tracks_raw": 8,
+    "dropped": {
+      "split": 3,
+      "short": 0,
+      "small": 0,
+      "duplicate": 0,
+      "partial": 2
+    },
+    "deskew_methods": {
+      "quad": 17
+    },
+    "billed_frames": 63,
+    "timings": {
+      "resample_s": 4.192,
+      "segmenter_wall_s": 0.09,
+      "upload_s": 5.101,
+      "segment_s": 7.269,
+      "cleanup_s": 0.002,
+      "select_s": 1.205,
+      "decode_deskew_s": 10.883,
+      "find_total_s": 16.46,
+      "read_after_find_s": 10.77,
+      "upload_to_answer_s": 35.32
+    },
+    "reading": {
+      "classified": 5,
+      "needs_retake": 8,
+      "needs_retake_docs": [
+        "caste_certificate_m1",
+        "identity_card_m4",
+        "identity_card_m2",
+        "identity_card_m3",
+        "ration_card",
+        "identity_card_m1",
+        "caste_certificate_m4"
+      ],
+      "model_calls": 17,
+      "fields": {
+        "correct": 39,
+        "wrong": 0,
+        "null": 52,
+        "total": 91
+      },
+      "per_type": {
+        "caste_certificate": {
+          "correct": 0,
+          "wrong": 0,
+          "null": 22,
+          "total": 22
+        },
+        "identity_card": {
+          "correct": 2,
+          "wrong": 0,
+          "null": 22,
+          "total": 24
+        },
+        "income_certificate": {
+          "correct": 10,
+          "wrong": 0,
+          "null": 0,
+          "total": 10
+        },
+        "ration_card": {
+          "correct": 27,
+          "wrong": 0,
+          "null": 8,
+          "total": 35
+        }
+      },
+      "tokens": {
+        "prompt": 12474,
+        "completion": 13177
+      }
+    },
+    "cost_usd": 0.0842
+  }
+]

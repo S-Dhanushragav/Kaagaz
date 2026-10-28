@@ -133,6 +133,36 @@ FIELD_MODELS: dict[str, type[_Fields]] = {
 }
 
 
+# Fields that drive decisions (matching, eligibility). When a document has several frames, each
+# frame is read separately and these are accepted only if at least 2 frames agree; otherwise null.
+# Other fields (addresses, offices, numbers, relation, age) are display-only: read from the best frame.
+# Paths use "members." for every ration-card member row. The ration card's category is its card type
+# (AAY / PHH / NPHH), i.e. the card "colour".
+DECISION_FIELDS: dict[str, frozenset[str]] = {
+    "ration_card": frozenset({
+        "head_name_mr", "head_name_en", "category_mr", "category_en",
+        "members.name_mr", "members.name_en", "members.gender_mr", "members.gender_en",
+    }),
+    "identity_card": frozenset({"name_mr", "name_en", "dob", "gender_mr", "gender_en", "id_number"}),
+    "income_certificate": frozenset({"name_mr", "name_en", "annual_income", "issue_date"}),
+    "caste_certificate": frozenset({"name_mr", "name_en", "dob", "category_mr", "category_en", "issue_date"}),
+}
+
+# Fields without which a document is not usable. Each group is satisfied if any of its fields is
+# non-null (e.g. the name in Marathi or English). If a group stays null, ask for a close-up.
+KEY_FIELDS: dict[str, list[tuple[str, ...]]] = {
+    "ration_card": [("head_name_mr", "head_name_en"), ("members.name_mr", "members.name_en")],
+    "identity_card": [("name_mr", "name_en"), ("dob",), ("id_number",)],
+    "income_certificate": [("name_mr", "name_en"), ("annual_income",), ("issue_date",)],
+    "caste_certificate": [("name_mr", "name_en"), ("category_mr", "category_en"), ("issue_date",)],
+}
+
+
+def field_pattern(path: str) -> str:
+    """'members[2].name_mr' -> 'members.name_mr' (the form used in DECISION_FIELDS / KEY_FIELDS)."""
+    return re.sub(r"\[\d+\]", "", path)
+
+
 def null_paths(value: Any, prefix: str = "") -> Iterator[str]:
     """Paths of null values, e.g. 'members[2].age'."""
     if isinstance(value, BaseModel):
@@ -156,6 +186,9 @@ class DocumentExtraction(BaseModel):
     unreadable_fields: list[str] = []
     unreadable: bool = False
     error: str | None = None
+    disagreed_fields: list[str] = []  # decision fields nulled because frames did not agree
+    needs_retake: bool = False  # key fields still null: the app should ask for a close-up of this document
+    retake_reasons: list[str] = []
 
     @model_validator(mode="before")
     @classmethod

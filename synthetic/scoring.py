@@ -1,19 +1,14 @@
 """Field-by-field scoring of extracted values against ground_truth.json document fields."""
 
-import unicodedata
 from dataclasses import dataclass, field
 from typing import Any, Iterator
 
-from vision.text import normalize_text  # backend/ must be on sys.path
-
-_DEVANAGARI_DIGITS = str.maketrans("०१२३४५६७८९", "0123456789")
+from vision.text import comparison_key  # backend/ must be on sys.path
 
 
 def normalize(value: Any) -> str:
-    """normalize_text (NFC, colon->visarga), Devanagari digits -> ASCII, casefold,
-    drop whitespace and punctuation (incl. danda)."""
-    s = normalize_text(str(value)).translate(_DEVANAGARI_DIGITS).casefold()
-    return "".join(ch for ch in s if not ch.isspace() and not unicodedata.category(ch).startswith("P"))
+    """Same rule the reader uses for frame agreement (vision.text.comparison_key)."""
+    return comparison_key(value)
 
 
 def flatten(fields: Any, prefix: str = "") -> Iterator[tuple[str, Any]]:

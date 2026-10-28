@@ -67,7 +67,8 @@ class Placement:
 
 @dataclass
 class Scene:
-    table: np.ndarray  # uint8 BGR
+    table: np.ndarray  # uint8 BGR, with the documents
+    texture: np.ndarray  # the same table surface without documents; repeated beyond the table edge
     placements: list[Placement]
     rows: list[tuple[float, float, float]]  # (y_center, x_min, x_max) in table px
     touching: list[str] | None
@@ -141,15 +142,19 @@ def build_scene(
 
     W, H = int(np.ceil(width)), int(np.ceil(height))
     bg, kind = make_background(H, W, _rng(spec, "background"))
-    table = np.clip(bg, 0, 255).astype(np.uint8)
+    texture = np.clip(bg, 0, 255).astype(np.uint8)
     del bg
+    table = texture.copy()
 
     for it, corners in placements:
         _paste(table, it["img"], corners)
-    table = cv2.GaussianBlur(table, (0, 0), 0.6)  # pre-filter so downscaling in warps doesn't alias
+    # pre-filter so downscaling in warps doesn't alias
+    table = cv2.GaussianBlur(table, (0, 0), 0.6)
+    texture = cv2.GaussianBlur(texture, (0, 0), 0.6)
 
     return Scene(
         table=table,
+        texture=texture,
         placements=[Placement(it["id"], it["type"], c) for it, c in placements],
         rows=row_info,
         touching=touching,
@@ -249,6 +254,22 @@ def visible_fraction(corners: np.ndarray, size: tuple[int, int]) -> float:
     return float(np.clip(inter / area, 0, 1))
 
 
+def warp_view(scene: Scene, H: np.ndarray, size: tuple[int, int], table_ones: np.ndarray | None = None) -> np.ndarray:
+    """Camera view through table->frame homography H.
+
+    Inside the table: the table with documents. Beyond its edge: the document-free texture,
+    repeated. (Mirroring the table would also mirror documents and create phantom ones.)
+    """
+    if table_ones is None:
+        table_ones = np.ones(scene.table.shape[:2], np.uint8)
+    frame = cv2.warpPerspective(scene.table, H, size, flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
+    inside = cv2.warpPerspective(table_ones, H, size, flags=cv2.INTER_NEAREST, borderMode=cv2.BORDER_CONSTANT)
+    if inside.all():
+        return frame
+    beyond = cv2.warpPerspective(scene.texture, H, size, flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_WRAP)
+    return np.where(inside[..., None] > 0, frame, beyond)
+
+
 def iter_frames(spec: VideoSpec, scene: Scene, *, effects: bool = True, px_per_mm: float = PX_PER_MM,
                 fov_w_mm: float = FOV_W_MM) -> Iterator[tuple[np.ndarray, dict[str, Any]]]:
     """Yield (BGR frame, truth record) for every frame."""
@@ -260,10 +281,11 @@ def iter_frames(spec: VideoSpec, scene: Scene, *, effects: bool = True, px_per_m
     yy, xx = np.mgrid[0:fh, 0:fw].astype(np.float32)
     xx, yy = (xx - fw / 2) / (fh / 2), (yy - fh / 2) / (fh / 2)
     phase = rng.uniform(0, 2 * np.pi, 3)
+    table_ones = np.ones(scene.table.shape[:2], np.uint8)
 
     for i, H in enumerate(homs):
         t = i / spec.fps
-        frame = cv2.warpPerspective(scene.table, H, (fw, fh), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+        frame = warp_view(scene, H, (fw, fh), table_ones)
         # Camera speed at the frame centre (frame px per frame) -> motion blur length.
         centre = cv2.perspectiveTransform(np.float64([[[fw / 2, fh / 2]]]), np.linalg.inv(H)).reshape(1, 2)
         prev_H = homs[i - 1] if i else H

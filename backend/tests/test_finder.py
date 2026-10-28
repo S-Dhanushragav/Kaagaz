@@ -211,10 +211,13 @@ def test_find_documents_offline(tmp_path: Path) -> None:
         truth.append(record)
     writer.release()
 
+    handed_over = []
     result = find_documents(video, segmenter=ColourSegmenter(), segmenter_fps=5, segmenter_long_side=192,
-                            tmp_root=tmp_path / "tmp", debug=True)
+                            tmp_root=tmp_path / "tmp", debug=True, on_document=handed_over.append)
     seen = {d for r in truth for d, v in r["docs"].items() if v["visible"] >= 0.999}
     assert {f.track_id.split(":")[1] for f in result.documents} == seen
+    # every document is handed over (for reading) as soon as it is ready, exactly once
+    assert sorted(d.document.id for d in handed_over) == [d.document.id for d in result.documents]
     for f in result.documents:
         doc = f.track_id.split(":")[1]
         assert 1 <= len(f.document.images) <= 3
@@ -226,7 +229,7 @@ def test_find_documents_offline(tmp_path: Path) -> None:
     # frames deleted; only the debug contact sheet stays
     leftovers = [p.name for p in (tmp_path / "tmp").rglob("*") if p.is_file()]
     assert leftovers == ["contact_sheet.jpg"]
-    assert set(result.timings) >= {"resample_s", "cleanup_s", "deskew_s"}
+    assert set(result.timings) >= {"resample_s", "cleanup_s", "select_s", "decode_deskew_s"}
 
 
 def test_find_documents_cleans_tmp_without_debug(tmp_path: Path) -> None:

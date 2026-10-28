@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from synthetic.video import VideoSpec, build_scene, iter_frames, visible_fraction
+from synthetic.video import VideoSpec, build_scene, iter_frames, visible_fraction, warp_view
 
 COLORS = {"a": (0, 0, 255), "b": (0, 255, 0), "c": (255, 0, 0), "d": (0, 255, 255)}
 PXMM = 1.0  # tiny table
@@ -70,6 +70,23 @@ def test_truth_corners_match_rendered_pixels() -> None:
                 assert np.abs(frame[y, x].astype(int) - COLORS[doc_id]).max() < 40, (truth["i"], doc_id)
             checked += 1
     assert checked > 0
+
+
+def test_no_phantom_documents_beyond_the_table_edge() -> None:
+    """A view aimed past the table's top-left corner shows table texture only, never a mirrored document."""
+    import cv2
+
+    scene = build_scene(_spec(), _docs(), PXMM)
+    # The view covers table x, y in [-250, 50): mostly beyond the edge, where mirroring would copy
+    # the nearest documents (they start at the 80 mm margin).
+    H = cv2.getPerspectiveTransform(np.float32([[-250, -250], [50, -250], [50, 50], [-250, 50]]),
+                                    np.float32([[0, 0], [300, 0], [300, 300], [0, 300]]))
+    frame = warp_view(scene, H, (300, 300))
+    for colour in COLORS.values():
+        assert (np.abs(frame.astype(int) - colour).max(axis=2) < 30).sum() == 0
+    # mirroring (the old behaviour) would show a document here: the test can tell the difference
+    mirrored = cv2.warpPerspective(scene.table, H, (300, 300), borderMode=cv2.BORDER_REFLECT)
+    assert any((np.abs(mirrored.astype(int) - c).max(axis=2) < 30).sum() > 0 for c in COLORS.values())
 
 
 def test_visible_fraction() -> None:

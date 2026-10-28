@@ -16,9 +16,9 @@ import os
 import shutil
 import time
 import uuid
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
-from typing import Sequence
+from typing import Callable, Sequence
 
 import cv2
 import numpy as np
@@ -75,14 +75,6 @@ def _box_crop(image: np.ndarray, box: tuple[float, float, float, float], scale: 
     return image[int(y1 * sy) : int(np.ceil(y2 * sy)), int(x1 * sx) : int(np.ceil(x2 * sx))]
 
 
-def _decode_masks(frames: list[TrackFrame]) -> list[np.ndarray]:
-    specs = [f.mask_spec for f in frames]
-    if len(frames) >= PARALLEL_DECODE_MIN and all(s is not None for s in specs):
-        with ProcessPoolExecutor(max_workers=min(len(frames), os.cpu_count() or 2)) as pool:
-            return list(pool.map(decode_mask_spec, specs))
-    return [f.mask() for f in frames]
-
-
 def _contact_sheet(crops: list[list[np.ndarray]], path: Path, height: int = 320) -> None:
     rows = []
     for doc_crops in crops:
@@ -104,7 +96,9 @@ def find_documents(
     min_gap_s: float = 0.5,
     debug: bool = False,
     tmp_root: Path = TMP,
+    on_document: Callable[[FoundDocument], None] | None = None,
 ) -> FindResult:
+    """`on_document` is called with each document as soon as its crops are ready (any order)."""
     run_dir = tmp_root / f"find_{uuid.uuid4().hex[:8]}"
     frames_dir = run_dir / "frames"
     timings: dict[str, float] = {}
@@ -114,8 +108,10 @@ def find_documents(
                             target_fps=segmenter_fps, long_side=segmenter_long_side)
         timings["resample_s"] = time.perf_counter() - t0
 
+        t0 = time.perf_counter()
         seg = segmenter.segment_video(Path(rs.path), prompts)
-        timings.update(seg.timings)
+        timings["segmenter_wall_s"] = time.perf_counter() - t0  # ~0 when the SAM result is cached
+        timings.update(seg.timings)  # upload_s / segment_s of the original call
 
         t0 = time.perf_counter()
         report = clean_tracks(seg.tracks, seg.frame_size)
@@ -154,36 +150,55 @@ def find_documents(
                 plans.append((track, fully_visible, [(c, by_src[c.frame]) for c in chosen]))
         timings["select_s"] = time.perf_counter() - t0
 
-        # Decode only the chosen masks, then deskew from full resolution.
+        # Decode only the chosen masks; as soon as all of one document's masks are decoded, deskew it
+        # from full resolution and hand it to `on_document` (e.g. start reading it).
         t0 = time.perf_counter()
         chosen_frames = [tf for _, _, picks in plans for _, tf in picks]
-        masks = iter(_decode_masks(chosen_frames))
-        timings["mask_decode_s"] = time.perf_counter() - t0
+        found_by_plan: dict[int, FoundDocument] = {}
+        crops_by_plan: dict[int, list[np.ndarray]] = {}
 
-        t0 = time.perf_counter()
-        found, sheet_crops = [], []
-        for track, fully_visible, picks in plans:
+        def finish(pi: int, masks: list[np.ndarray]) -> None:
+            track, fully_visible, picks = plans[pi]
             kept = []
-            for cand, _ in picks:
-                mask = next(masks)
+            for (cand, _), mask in zip(picks, masks):
                 try:
                     kept.append((cand, deskew(image(cand.frame), mask)))
                 except ValueError:
                     continue
             if not kept:
-                continue
+                return
             crops = [res.crop for _, res in kept]
-            found.append(FoundDocument(
-                document=DocumentInput(id=f"doc{len(found) + 1:02d}", images=[encode_for_llm(c) for c in crops]),
+            doc = FoundDocument(
+                document=DocumentInput(id=f"doc{pi + 1:02d}", images=[encode_for_llm(c) for c in crops]),
                 track_id=track.track_id,
                 source_frames=[c.frame for c, _ in kept],
                 quads=[np.round(res.quad, 1).tolist() for _, res in kept],
                 methods=[res.method for _, res in kept],
                 sharpness=[round(c.sharpness, 1) for c, _ in kept],
                 fully_visible=fully_visible,
-            ))
-            sheet_crops.append(crops)
-        timings["deskew_s"] = time.perf_counter() - t0
+            )
+            found_by_plan[pi], crops_by_plan[pi] = doc, crops
+            if on_document is not None:
+                on_document(doc)
+
+        specs = [tf.mask_spec for tf in chosen_frames]
+        if len(chosen_frames) >= PARALLEL_DECODE_MIN and all(s is not None for s in specs):
+            pending = {pi: [None] * len(picks) for pi, (_, _, picks) in enumerate(plans)}
+            with ProcessPoolExecutor(max_workers=min(len(chosen_frames), os.cpu_count() or 2)) as pool:
+                futures = {pool.submit(decode_mask_spec, tf.mask_spec): (pi, ci)
+                           for pi, (_, _, picks) in enumerate(plans) for ci, (_, tf) in enumerate(picks)}
+                for fut in as_completed(futures):
+                    pi, ci = futures[fut]
+                    pending[pi][ci] = fut.result()
+                    if all(m is not None for m in pending[pi]):
+                        finish(pi, pending.pop(pi))
+        else:
+            for pi, (_, _, picks) in enumerate(plans):
+                finish(pi, [tf.mask() for _, tf in picks])
+        timings["decode_deskew_s"] = time.perf_counter() - t0
+
+        found = [found_by_plan[pi] for pi in sorted(found_by_plan)]
+        sheet_crops = [crops_by_plan[pi] for pi in sorted(crops_by_plan)]
 
         sheet = None
         if debug and sheet_crops:

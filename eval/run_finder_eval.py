@@ -30,7 +30,7 @@ sys.path[:0] = [str(ROOT / "backend"), str(ROOT)]
 from clients.segmenter import Sam31ApiSegmenter  # noqa: E402
 from eval.run_reader_eval import expected_fields  # noqa: E402
 from graph.nodes.find_documents import FindResult, find_documents  # noqa: E402
-from graph.nodes.read_documents import read_documents  # noqa: E402
+from graph.nodes.read_documents import StreamingReader  # noqa: E402
 from synthetic.scoring import FieldScore, score_fields  # noqa: E402
 
 VIDEOS = ROOT / "synthetic" / "videos"
@@ -88,9 +88,17 @@ def evaluate_video(video_id: str, prompts: list[str], read: bool, debug: bool) -
     present = [d["id"] for d in truth["documents"]
                if any(fr["docs"].get(d["id"], {}).get("visible", 0) >= 0.999 for fr in truth["frames"])]
 
+    # Reading starts per document as soon as the finder hands it over (frame agreement on).
+    reader = StreamingReader(overrides=READ_OVERRIDES, agreement=True) if read else None
     t0 = time.perf_counter()
-    result = find_documents(VIDEOS / video_id / "sweep.mp4", segmenter=Sam31ApiSegmenter(), prompts=prompts, debug=debug)
+    result = find_documents(VIDEOS / video_id / "sweep.mp4", segmenter=Sam31ApiSegmenter(), prompts=prompts,
+                            debug=debug, on_document=(lambda d: reader.submit(d.document)) if reader else None)
     find_s = time.perf_counter() - t0
+    reads_by_id = {}
+    if reader:
+        with reader:
+            reads_by_id = reader.results()
+    wall_s = time.perf_counter() - t0
     matches = match_documents(result, truth)
     primary = {m["truth"]: m for m in matches if m["truth"] and "duplicate_of" not in m}
 
@@ -114,10 +122,9 @@ def evaluate_video(video_id: str, prompts: list[str], read: bool, debug: bool) -
     cost = result.billed_frames * SAM_PER_FRAME
 
     if read:
-        t0 = time.perf_counter()
-        reads = read_documents([f.document for f in result.documents], overrides=READ_OVERRIDES)
-        row["timings"]["read_s"] = round(time.perf_counter() - t0, 2)
-        by_found = {f.document.id: r for f, r in zip(result.documents, reads)}
+        row["timings"]["read_after_find_s"] = round(wall_s - find_s, 2)  # reading that did not overlap
+        by_found = reads_by_id
+        reads = list(reads_by_id.values())
         fields, per_type, classified, details = FieldScore(), defaultdict(FieldScore), 0, []
         for doc_id in present:
             doc = gt_docs[doc_id]
@@ -131,6 +138,10 @@ def evaluate_video(video_id: str, prompts: list[str], read: bool, debug: bool) -
             per_type[doc["type"]].add(s)
             details.append({"doc": doc_id, "found": m["found"] if m else None,
                             "predicted_type": ex.doc_type if ex else None,
+                            "frames": len(by_found[m["found"]].frame_reads) if m else 0,
+                            "needs_retake": ex.needs_retake if ex else None,
+                            "retake_reasons": ex.retake_reasons if ex else [],
+                            "disagreed": ex.disagreed_fields if ex else [],
                             "wrong": [{"field": p, "expected": e, "got": g} for p, e, g in s.wrong],
                             "null": [p for p, _ in s.null]})
         tokens_in = sum(r.usage.prompt_tokens for r in reads)
@@ -138,14 +149,20 @@ def evaluate_video(video_id: str, prompts: list[str], read: bool, debug: bool) -
         cost += tokens_in * LLM_INPUT_PER_TOKEN + tokens_out * LLM_OUTPUT_PER_TOKEN
         row["reading"] = {
             "classified": classified,
+            "needs_retake": sum(r.extraction.needs_retake for r in reads),
+            "needs_retake_docs": [d["doc"] for d in details if d["needs_retake"]],
+            "model_calls": sum(len(r.frame_reads) or 1 for r in reads),
             "fields": {"correct": fields.correct, "wrong": len(fields.wrong), "null": len(fields.null), "total": fields.total},
             "per_type": {t: {"correct": s.correct, "wrong": len(s.wrong), "null": len(s.null), "total": s.total}
                          for t, s in sorted(per_type.items())},
             "tokens": {"prompt": tokens_in, "completion": tokens_out},
             "details": details,
         }
+    # Upload-to-answer: real wall time after resampling, with the segmenter's actual (possibly cached)
+    # time replaced by the original upload + SAM time, so cached and uncached runs compare fairly.
     t = row["timings"]
-    row["timings"]["upload_to_answer_s"] = round(sum(t.get(k, 0.0) for k in ("upload_s", "segment_s", "cleanup_s", "select_s", "mask_decode_s", "deskew_s", "read_s")), 2)
+    row["timings"]["upload_to_answer_s"] = round(
+        wall_s - t.get("resample_s", 0.0) - t.get("segmenter_wall_s", 0.0) + t.get("upload_s", 0.0) + t.get("segment_s", 0.0), 2)
     row["cost_usd"] = round(cost, 4)
     return row
 
@@ -160,21 +177,21 @@ def print_rows(rows: list[dict[str, Any]]) -> None:
     for r in rows:
         print(f"| {r['video']} | {'+'.join(r['prompts'])} | {r['found']}/{r['present']} | {r['duplicates']} | "
               f"{r['false_detections']} | {r['crop_iou_mean']} / {r['crop_iou_min']} | {r['tracks_raw']} | {r['deskew_methods']} |")
-    print("\n| Video | Resample | Upload | SAM | Select | Mask decode | Deskew | Read | Upload->answer | Cost |")
-    print("|---|---|---|---|---|---|---|---|---|---|")
+    print("\n| Video | Resample | Upload | SAM | Select | Decode+deskew (reading overlaps) | Read after find | Upload->answer | Cost |")
+    print("|---|---|---|---|---|---|---|---|---|")
     for r in rows:
         t = r["timings"]
         print(f"| {r['video']} | {t.get('resample_s', 0):.1f} | {t.get('upload_s', 0):.1f} | {t.get('segment_s', 0):.1f} | "
-              f"{t.get('select_s', 0):.1f} | {t.get('mask_decode_s', 0):.1f} | {t.get('deskew_s', 0):.1f} | {t.get('read_s', 0):.1f} | "
+              f"{t.get('select_s', 0):.1f} | {t.get('decode_deskew_s', 0):.1f} | {t.get('read_after_find_s', 0):.1f} | "
               f"{t['upload_to_answer_s']:.1f} | ${r['cost_usd']:.3f} |")
     reading = [r for r in rows if "reading" in r]
     if reading:
-        print("\n| Video | Classified | Correct | Wrong value | Null |")
-        print("|---|---|---|---|---|")
+        print("\n| Video | Classified | Correct | Wrong value | Null | needs_retake | Model calls |")
+        print("|---|---|---|---|---|---|---|")
         for r in reading:
-            f = r["reading"]["fields"]
-            print(f"| {r['video']} | {r['reading']['classified']}/{r['present']} | {_pct(f['correct'], f['total'])} | "
-                  f"{_pct(f['wrong'], f['total'])} | {_pct(f['null'], f['total'])} |")
+            f, rd = r["reading"]["fields"], r["reading"]
+            print(f"| {r['video']} | {rd['classified']}/{r['present']} | {_pct(f['correct'], f['total'])} | "
+                  f"{_pct(f['wrong'], f['total'])} | {_pct(f['null'], f['total'])} | {rd['needs_retake']} | {rd['model_calls']} |")
     for r in rows:
         if r["missed"] or r["duplicates"] or r["false_detections"]:
             print(f"\n{r['video']} ({'+'.join(r['prompts'])}): missed {r['missed']}; "

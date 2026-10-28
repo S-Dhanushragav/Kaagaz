@@ -1,23 +1,37 @@
 """Document reader: classify + extract each document in one structured-output LLM call.
 
-Plain function for now; it becomes a LangGraph node later. Per document:
+Plain function for now; it becomes a LangGraph node later. Per call:
 call -> parse JSON -> normalize text -> validate (Pydantic). On a parse/validation error,
 retry once with the errors; if that fails too, the document is marked unreadable.
 Identity numbers are masked by the LLM client before the reply is cached or returned.
+
+For video crops (2-3 frames per document), each frame is read separately and decision fields
+(names, dates, gender, ID last 4, income, category) are kept only where frames agree; see
+`agree_extractions`. Documents start reading as soon as they are submitted (`StreamingReader`).
 """
 
 import json
+import re
 import time
-from concurrent.futures import ThreadPoolExecutor
+from collections import Counter
+from concurrent.futures import Future, ThreadPoolExecutor
 from pathlib import Path
-from typing import Any, Callable, Mapping
+from typing import Any, Callable, Iterator, Mapping
 
 from openai import APIError
 from pydantic import BaseModel, Field, ValidationError
 
 from clients.llm import LLMError, LLMResponse, TokenUsage, complete
-from schemas.documents import FIELD_MODELS, DocumentExtraction, null_paths, reply_json_schema
-from vision.text import normalize_text, redact_identity_numbers
+from schemas.documents import (
+    DECISION_FIELDS,
+    FIELD_MODELS,
+    KEY_FIELDS,
+    DocumentExtraction,
+    field_pattern,
+    null_paths,
+    reply_json_schema,
+)
+from vision.text import comparison_key, normalize_text, redact_identity_numbers
 
 PROMPTS = Path(__file__).resolve().parents[2] / "prompts"
 EXTRACT_PROMPT = (PROMPTS / "extract.md").read_text(encoding="utf-8")
@@ -27,7 +41,7 @@ RESPONSE_FORMAT: dict[str, Any] = {
     "type": "json_schema",
     "json_schema": {"name": "document_extraction", "strict": True, "schema": reply_json_schema()},
 }
-MAX_PARALLEL = 4
+MAX_PARALLEL = 8
 
 LLM = Callable[..., LLMResponse]
 
@@ -39,10 +53,11 @@ class DocumentInput(BaseModel):
 
 class ReadResult(BaseModel):
     extraction: DocumentExtraction
-    usage: TokenUsage  # summed over attempts
+    usage: TokenUsage  # summed over attempts (and frames, with agreement)
     elapsed_s: float
     attempts: int
     cached: bool  # every attempt was served from the cache
+    frame_reads: list[DocumentExtraction] = []  # per-frame extractions, with agreement
 
 
 class _ReplyError(ValueError):
@@ -151,7 +166,158 @@ def read_documents(
     overrides: Mapping[str, Any] | None = None,
     llm: LLM = complete,
     max_workers: int = MAX_PARALLEL,
+    agreement: bool = False,
 ) -> list[ReadResult]:
-    """Read documents in parallel (at most `max_workers` at once); results keep input order."""
-    with ThreadPoolExecutor(max_workers=max_workers) as pool:
-        return list(pool.map(lambda d: read_document(d, overrides=overrides, llm=llm), docs))
+    """Read documents in parallel (at most `max_workers` model calls at once); results keep input order.
+
+    agreement=True reads each image of a document separately and keeps decision fields only where
+    at least 2 frames agree (see `agree_extractions`). Use it for video crops, not single photos.
+    """
+    with StreamingReader(overrides=overrides, llm=llm, max_workers=max_workers, agreement=agreement) as reader:
+        for d in docs:
+            reader.submit(d)
+        results = reader.results()
+    return [results[d.id] for d in docs]
+
+
+# ---------- frame agreement ----------
+
+def _flatten(value: Any, prefix: str = "") -> Iterator[tuple[str, Any]]:
+    if isinstance(value, dict):
+        for k, v in value.items():
+            yield from _flatten(v, f"{prefix}.{k}" if prefix else k)
+    elif isinstance(value, list):
+        for i, v in enumerate(value):
+            yield from _flatten(v, f"{prefix}[{i}]")
+    else:
+        yield prefix, value
+
+
+def _set_path(data: dict[str, Any], path: str, value: Any) -> None:
+    parts = re.findall(r"[^.\[\]]+|\[\d+\]", path)
+    node: Any = data
+    for part in parts[:-1]:
+        node = node[int(part[1:-1])] if part.startswith("[") else node[part]
+    last = parts[-1]
+    if last.startswith("["):
+        node[int(last[1:-1])] = value
+    else:
+        node[last] = value
+
+
+def _agreed_value(values: list[Any], min_agree: int) -> tuple[Any, bool]:
+    """(value, agreed): the value at least `min_agree` frames share after normalization, else None."""
+    groups: dict[str, list[Any]] = {}
+    for v in values:
+        if v is not None:
+            groups.setdefault(comparison_key(v), []).append(v)
+    best = max(groups.values(), key=len, default=[])
+    return (best[0], True) if len(best) >= min_agree else (None, False)
+
+
+def _retake_reasons(doc_type: str, fields: Any) -> list[str]:
+    flat = dict(_flatten(fields.model_dump()))
+    reasons = []
+    for group in KEY_FIELDS[doc_type]:
+        if group[0].startswith("members."):
+            rows = fields.model_dump()["members"]
+            keys = [g.split(".", 1)[1] for g in group]
+            if not rows or any(all(row.get(k) is None for k in keys) for row in rows):
+                reasons.append(f"{'/'.join(group)} missing")
+        elif all(flat.get(k) is None for k in group):
+            reasons.append(f"{'/'.join(group)} missing")
+    return reasons
+
+
+def agree_extractions(document_id: str, frames: list[DocumentExtraction], min_agree: int = 2) -> DocumentExtraction:
+    """Combine per-frame reads of one document (best frame first).
+
+    The document type needs `min_agree` frames. Decision fields (DECISION_FIELDS) keep a value only if
+    `min_agree` frames agree after normalization; display-only fields come from the best frame that
+    has the agreed type. needs_retake is set when key fields (KEY_FIELDS) end up null.
+    """
+    readable = [e for e in frames if not e.unreadable and e.doc_type is not None]
+    types = Counter(e.doc_type for e in readable)
+    doc_type, votes = types.most_common(1)[0] if types else (None, 0)
+    if doc_type is None or votes < min_agree:
+        why = (f"only {len(frames)} frame(s); need {min_agree} that agree" if len(frames) < min_agree
+               else f"frames do not agree on the document type ({dict(types) or 'none readable'})")
+        return DocumentExtraction(document_id=document_id, unreadable=True, error=why,
+                                  needs_retake=True, retake_reasons=[why])
+    if doc_type == "other":
+        return DocumentExtraction(document_id=document_id, doc_type="other")
+
+    same = [e for e in readable if e.doc_type == doc_type]
+    per_frame = [dict(_flatten(e.fields.model_dump())) for e in same]
+    data = same[0].fields.model_dump()
+    disagreed = []
+    for path, _ in _flatten(data):
+        if field_pattern(path) not in DECISION_FIELDS[doc_type]:
+            continue
+        value, agreed = _agreed_value([f.get(path) for f in per_frame], min_agree)
+        if not agreed and any(f.get(path) is not None for f in per_frame):
+            disagreed.append(path)
+        _set_path(data, path, value)
+
+    fields = FIELD_MODELS[doc_type].model_validate(data)
+    reasons = _retake_reasons(doc_type, fields)
+    return DocumentExtraction(
+        document_id=document_id, doc_type=doc_type, fields=fields,
+        unreadable_fields=list(null_paths(fields)), disagreed_fields=disagreed,
+        needs_retake=bool(reasons), retake_reasons=reasons,
+    )
+
+
+def _sum_usage(results: list[ReadResult]) -> TokenUsage:
+    return TokenUsage(
+        prompt_tokens=sum(r.usage.prompt_tokens for r in results),
+        completion_tokens=sum(r.usage.completion_tokens for r in results),
+        total_tokens=sum(r.usage.total_tokens for r in results),
+    )
+
+
+class StreamingReader:
+    """Starts reading each document as soon as it is submitted (e.g. as the finder produces it).
+
+    Model calls run on one pool (`max_workers` at once). With agreement, each image of a document is
+    a separate call, and a lightweight coordinator per document combines the frame reads.
+    """
+
+    def __init__(self, *, overrides: Mapping[str, Any] | None = None, llm: LLM = complete,
+                 max_workers: int = MAX_PARALLEL, agreement: bool = True) -> None:
+        self.overrides, self.llm, self.agreement = overrides, llm, agreement
+        self._calls = ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="read-call")
+        self._docs = ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="read-doc")
+        self._futures: dict[str, Future[ReadResult]] = {}
+
+    def __enter__(self) -> "StreamingReader":
+        return self
+
+    def __exit__(self, *exc: object) -> None:
+        self._docs.shutdown(wait=True)
+        self._calls.shutdown(wait=True)
+
+    def _read_one(self, doc: DocumentInput) -> ReadResult:
+        return read_document(doc, overrides=self.overrides, llm=self.llm)
+
+    def _read_agreed(self, doc: DocumentInput) -> ReadResult:
+        start = time.perf_counter()
+        singles = [DocumentInput(id=f"{doc.id}#f{i + 1}", images=[img]) for i, img in enumerate(doc.images)]
+        frame_results = [f.result() for f in [self._calls.submit(self._read_one, s) for s in singles]]
+        return ReadResult(
+            extraction=agree_extractions(doc.id, [r.extraction for r in frame_results]),
+            usage=_sum_usage(frame_results),
+            elapsed_s=time.perf_counter() - start,
+            attempts=sum(r.attempts for r in frame_results),
+            cached=all(r.cached for r in frame_results),
+            frame_reads=[r.extraction for r in frame_results],
+        )
+
+    def submit(self, doc: DocumentInput) -> None:
+        if self.agreement:
+            self._futures[doc.id] = self._docs.submit(self._read_agreed, doc)
+        else:
+            self._futures[doc.id] = self._calls.submit(self._read_one, doc)
+
+    def results(self) -> dict[str, ReadResult]:
+        return {doc_id: f.result() for doc_id, f in self._futures.items()}

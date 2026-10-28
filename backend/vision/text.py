@@ -23,6 +23,13 @@ def normalize_text(text: str) -> str:
     return _COLON_AS_VISARGA.sub("ः", unicodedata.normalize("NFC", text))
 
 
+def comparison_key(value: object) -> str:
+    """Key for 'same value?' checks: normalize_text, Devanagari digits -> ASCII, casefold,
+    no whitespace or punctuation (incl. danda). Used for frame agreement and eval scoring."""
+    s = normalize_text(str(value)).translate(_DEVANAGARI_DIGITS).casefold()
+    return "".join(ch for ch in s if not ch.isspace() and not unicodedata.category(ch).startswith("P"))
+
+
 def mask_last4(last4: str) -> str:
     return f"XXXX XXXX {last4.translate(_DEVANAGARI_DIGITS)}"
 

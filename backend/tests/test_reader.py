@@ -140,3 +140,96 @@ def test_document_input_takes_one_to_three_images() -> None:
         DocumentInput(id="a", images=[])
     with pytest.raises(ValidationError):
         DocumentInput(id="a", images=[b"1", b"2", b"3", b"4"])
+
+
+# ---------- frame agreement (video crops: one read per frame) ----------
+
+from graph.nodes.read_documents import StreamingReader, agree_extractions  # noqa: E402
+from schemas.documents import DocumentExtraction, IncomeCertificateFields  # noqa: E402
+
+
+def _id_frame(**changes: Any) -> DocumentExtraction:
+    return DocumentExtraction(document_id="f", doc_type="identity_card",
+                              fields=IdentityCardFields(**{**GOOD["fields"], **changes}))
+
+
+def test_agreement_keeps_values_two_frames_share() -> None:
+    frames = [
+        _id_frame(name_en="Sunil Ramesh Patil", dob="05/03/1990"),
+        _id_frame(name_en="Sunil  Ramesh patil", dob="06/03/1990"),  # same name after normalization
+        _id_frame(name_en="Suneel Ramesh Patil", dob="08/03/1990"),
+    ]
+    ex = agree_extractions("doc01", frames)
+    assert ex.document_id == "doc01" and ex.doc_type == "identity_card"
+    assert ex.fields.name_en == "Sunil Ramesh Patil"  # 2 of 3 agree; value from the best frame
+    assert ex.fields.dob is None and "dob" in ex.disagreed_fields  # all three differ
+    assert ex.needs_retake and "dob missing" in ex.retake_reasons
+
+
+def test_agreement_display_fields_come_from_best_frame() -> None:
+    base = {"certificate_number": "SPEC/INC/1", "name_mr": "अ", "name_en": "A", "address_mr": "प",
+            "annual_income": 120000, "financial_year": "2025-26", "issue_date": "01/10/2026",
+            "office_mr": "क", "office_en": "O"}
+    frames = [DocumentExtraction(document_id="f", doc_type="income_certificate",
+                                 fields=IncomeCertificateFields(**base, address_en=addr))
+              for addr in ("House 1, Namunapur", "House 7, Namunapur")]
+    ex = agree_extractions("doc02", frames)
+    assert ex.fields.address_en == "House 1, Namunapur"  # display-only: single read, best frame
+    assert ex.fields.annual_income == 120000 and not ex.needs_retake
+
+
+def test_agreement_needs_two_frames() -> None:
+    ex = agree_extractions("doc03", [_id_frame()])
+    assert ex.unreadable and ex.needs_retake and ex.fields is None
+
+
+def test_agreement_on_document_type() -> None:
+    other = DocumentExtraction(document_id="f", doc_type="other")
+    ex = agree_extractions("doc04", [_id_frame(), other])
+    assert ex.unreadable and ex.needs_retake and "type" in ex.error
+    ex = agree_extractions("doc05", [_id_frame(), other, _id_frame()])  # 2 of 3 say identity_card
+    assert ex.doc_type == "identity_card" and not ex.needs_retake
+
+
+def test_agreement_ignores_unreadable_frames() -> None:
+    bad = DocumentExtraction(document_id="f", unreadable=True, error="x")
+    ex = agree_extractions("doc06", [_id_frame(), bad, _id_frame()])
+    assert ex.doc_type == "identity_card" and ex.fields.dob == "05/03/1990"
+
+
+def test_agreement_on_ration_card_member_rows() -> None:
+    row = {"name_mr": "अ", "name_en": "Anil", "relation_mr": "र", "relation_en": "Son",
+           "gender_mr": "पुरुष", "gender_en": "Male", "age": 9}
+    card = {"card_number": "1", "category_mr": "प", "category_en": "PHH", "head_name_mr": "ह",
+            "head_name_en": "Head", "address_mr": None, "address_en": None}
+
+    def frame(name: str) -> DocumentExtraction:
+        return DocumentExtraction(document_id="f", doc_type="ration_card",
+                                  fields={**card, "members": [row, {**row, "name_en": name}]})
+
+    ex = agree_extractions("doc07", [frame("Rekha"), frame("Ravita")])
+    assert ex.fields.members[0].name_en == "Anil" and ex.fields.members[1].name_en is None
+    assert ex.fields.members[1].name_mr == "अ"  # Marathi name still agreed: key group satisfied
+    assert not ex.needs_retake
+
+
+def test_streaming_reader_reads_each_frame_and_agrees() -> None:
+    replies = {b"f1": with_fields(dob="05/03/1990"), b"f2": with_fields(dob="05/03/1990"),
+               b"f3": with_fields(dob="09/09/1999")}
+
+    def llm(prompt: str, **kwargs: Any) -> LLMResponse:
+        (img,) = kwargs["images"]  # one frame per call
+        return FakeLLM(replies[img])(prompt, **kwargs)
+
+    with StreamingReader(llm=llm, agreement=True) as reader:
+        reader.submit(DocumentInput(id="doc01", images=[b"f1", b"f2", b"f3"]))
+        results = reader.results()
+    r = results["doc01"]
+    assert r.extraction.fields.dob == "05/03/1990" and not r.extraction.needs_retake
+    assert len(r.frame_reads) == 3 and r.usage.completion_tokens == 30
+
+
+def test_read_documents_without_agreement_reads_all_images_together() -> None:
+    llm = FakeLLM(GOOD)
+    (r,) = read_documents([DocumentInput(id="d", images=[b"a", b"b"])], llm=llm)
+    assert llm.calls[0]["images"] == [b"a", b"b"] and r.attempts == 1
