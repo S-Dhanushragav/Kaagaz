@@ -9,3 +9,4 @@ All code in this repository was written during the Meta Global AI Developer Hack
 - Tested reasoning_effort=low on Meta vision (muse-spark-1.1): accepted, completion tokens 1058 -> 409 on SPECIMEN test image.
 - Phase 2: synthetic SPECIMEN generator (4 bilingual templates, Playwright render, photo-like augmentation, planted errors, ground truth); 10 households at seed 42; 2x2 vision comparison on a photo-like ration card.
 - Phase 3: document reader (one structured-output call per doc: classify + extract, Pydantic validation, one retry, ID masking before cache), reader eval: muse-spark-1.3 99.4% fields correct / 0.6% wrong; 1.1 98.8% / 1.1% wrong; both 58/58 classified.
+- Reader schema: doc_type paired with its own fields (wrapped in "document"; Meta rejects top-level anyOf). 1.3 re-run: retries 4 -> 0, wrong values 4 -> 4 (place-name "corrections" persist), worst time 9.0 -> 8.9 s.

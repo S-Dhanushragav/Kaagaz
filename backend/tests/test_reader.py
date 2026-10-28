@@ -54,6 +54,11 @@ def test_success_first_try() -> None:
     assert call["response_format"]["type"] == "json_schema"
 
 
+def test_wrapped_reply_is_unwrapped() -> None:
+    r = read_document(DOC, llm=FakeLLM({"document": GOOD}))
+    assert r.attempts == 1 and r.extraction.doc_type == "identity_card"
+
+
 def test_text_is_normalized_and_nulls_reported() -> None:
     r = read_document(DOC, llm=FakeLLM(with_fields(name_mr="स्वत:", gender_en=None)))
     assert r.extraction.fields.name_mr == "स्वतः"

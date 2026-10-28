@@ -75,6 +75,8 @@ def parse_reply(document_id: str, text: str) -> DocumentExtraction:
         raise _ReplyError(f"- reply is not valid JSON: {e}") from None
     if not isinstance(data, dict):
         raise _ReplyError("- reply is not a JSON object")
+    if isinstance(data.get("document"), dict):  # structured-output wrapper, see reply_json_schema()
+        data = data["document"]
     data = _normalize(data)
 
     doc_type, raw_fields = data.get("doc_type"), data.get("fields")

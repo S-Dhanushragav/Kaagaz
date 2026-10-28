@@ -183,14 +183,35 @@ def _schema_for(model: type[BaseModel]) -> dict[str, Any]:
     return _inline_refs(schema, schema.get("$defs", {}))
 
 
-def reply_json_schema() -> dict[str, Any]:
-    """JSON schema for the model's reply: {doc_type, fields}. Refs inlined, no extra keys allowed."""
+def _reply_branch(doc_type: str, fields_schema: dict[str, Any]) -> dict[str, Any]:
     return {
         "type": "object",
         "properties": {
-            "doc_type": {"type": "string", "enum": list(DocType.__args__)},
-            "fields": {"anyOf": [*(_schema_for(m) for m in FIELD_MODELS.values()), {"type": "null"}]},
+            "doc_type": {"type": "string", "enum": [doc_type]},
+            "fields": fields_schema,
         },
         "required": ["doc_type", "fields"],
+        "additionalProperties": False,
+    }
+
+
+def reply_json_schema() -> dict[str, Any]:
+    """JSON schema for the model's reply: {"document": one of {doc_type, fields}}.
+
+    Each choice pairs one doc_type with its own field model ('other' with fields null), so a type
+    can't carry another type's fields. The choice is wrapped in a "document" key because the Meta
+    API requires a plain object at the top level (no anyOf there). Refs inlined, no extra keys.
+    """
+    return {
+        "type": "object",
+        "properties": {
+            "document": {
+                "anyOf": [
+                    *(_reply_branch(t, _schema_for(m)) for t, m in FIELD_MODELS.items()),
+                    _reply_branch("other", {"type": "null"}),
+                ]
+            }
+        },
+        "required": ["document"],
         "additionalProperties": False,
     }

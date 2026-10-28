@@ -108,4 +108,17 @@ def test_reply_schema_is_strict_and_self_contained() -> None:
     for obj in objects(schema):
         assert obj["additionalProperties"] is False
         assert set(obj["required"]) == set(obj["properties"])
-    assert set(schema["properties"]["doc_type"]["enum"]) == {*FIELD_MODELS, "other"}
+
+
+def test_reply_schema_pairs_each_doc_type_with_its_own_fields() -> None:
+    """A doc_type can only be combined with its own field model ('other' only with null)."""
+    schema = reply_json_schema()
+    assert schema["type"] == "object" and "anyOf" not in schema  # Meta: plain object at top level
+    assert schema["required"] == ["document"]
+    branches = schema["properties"]["document"]["anyOf"]
+    pairs = {b["properties"]["doc_type"]["enum"][0]: b["properties"]["fields"] for b in branches}
+    assert all(len(b["properties"]["doc_type"]["enum"]) == 1 for b in branches)
+    assert set(pairs) == {*FIELD_MODELS, "other"}
+    assert pairs["other"] == {"type": "null"}
+    for doc_type, model in FIELD_MODELS.items():
+        assert set(pairs[doc_type]["properties"]) == set(model.model_fields), doc_type

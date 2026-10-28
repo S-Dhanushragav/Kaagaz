@@ -11,6 +11,7 @@ Step 2. Extract the fields for that type, exactly as printed.
 - Fields ending in `_mr` hold the Marathi text, copied in Devanagari exactly as printed. Do not transliterate or translate.
 - Fields ending in `_en` hold the English text, copied exactly as printed.
 - Copy spelling exactly as printed, even if it looks wrong or differs from another field. Do not correct names.
+- Names and place names may be unusual. Copy them letter by letter, exactly as printed, even if they look like a misspelling of a more common word.
 - Dates as DD/MM/YYYY. Ages and amounts as digits only. Financial year as YYYY-YY.
 - `id_number`: write ONLY the last 4 digits, as `XXXX XXXX 1234`. Never write the other digits.
 - `members`: one entry per printed row of the member table, in printed order.
