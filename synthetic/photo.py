@@ -8,7 +8,8 @@ import cv2
 import numpy as np
 
 
-def _background(h: int, w: int, rng: np.random.Generator) -> tuple[np.ndarray, str]:
+def make_background(h: int, w: int, rng: np.random.Generator) -> tuple[np.ndarray, str]:
+    """Random table surface (wood, cloth, or laminate) as float32 BGR. Also used by video.py."""
     kind = str(rng.choice(["wood", "cloth", "laminate"]))
     fine = rng.normal(0, 1, (h, w)).astype(np.float32)
     if kind == "wood":
@@ -17,8 +18,8 @@ def _background(h: int, w: int, rng: np.random.Generator) -> tuple[np.ndarray, s
         texture = grain * 16 + fine * 5
     elif kind == "cloth":
         base = rng.uniform(70, 190, 3)
-        yy, xx = np.mgrid[0:h, 0:w]
-        weave = (np.sin(xx * 0.9) + np.sin(yy * 0.9)).astype(np.float32)
+        # Broadcast instead of mgrid: same values, far less memory for table-sized images.
+        weave = (np.sin(np.arange(w) * 0.9)[None, :] + np.sin(np.arange(h) * 0.9)[:, None]).astype(np.float32)
         texture = weave * 5 + fine * 7
     else:
         base = np.full(3, rng.uniform(175, 215))
@@ -41,7 +42,7 @@ def photo_like(png: bytes, rng: np.random.Generator) -> tuple[bytes, dict[str, A
     h, w = doc.shape[:2]
     pad = int(0.16 * max(h, w))
     H, W = h + 2 * pad, w + 2 * pad
-    bg, background = _background(H, W, rng)
+    bg, background = make_background(H, W, rng)
 
     # Rotation + scale + per-corner jitter -> perspective transform.
     angle = float(rng.uniform(-8, 8))
