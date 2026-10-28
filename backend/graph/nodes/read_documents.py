@@ -49,6 +49,7 @@ LLM = Callable[..., LLMResponse]
 class DocumentInput(BaseModel):
     id: str
     images: list[bytes] = Field(min_length=1, max_length=3)  # prepared JPEGs of one document
+    frame_times_s: list[float] | None = None  # capture time of each image (video crops), for agreement strength
 
 
 class ReadResult(BaseModel):
@@ -229,25 +230,42 @@ def _retake_reasons(doc_type: str, fields: Any) -> list[str]:
     return reasons
 
 
-def agree_extractions(document_id: str, frames: list[DocumentExtraction], min_agree: int = 2) -> DocumentExtraction:
+STRONG_AGREEMENT_GAP_S = 0.5
+
+
+def agree_extractions(
+    document_id: str,
+    frames: list[DocumentExtraction],
+    min_agree: int = 2,
+    times_s: list[float] | None = None,
+) -> DocumentExtraction:
     """Combine per-frame reads of one document (best frame first).
 
     The document type needs `min_agree` frames. Decision fields (DECISION_FIELDS) keep a value only if
     `min_agree` frames agree after normalization; display-only fields come from the best frame that
     has the agreed type. needs_retake is set when key fields (KEY_FIELDS) end up null.
+    `times_s` (capture time per frame) gives agreement_gap_s: the time spanned by the frames that
+    agreed on the type; 'strong' if >= 0.5 s, else 'weak'.
     """
-    readable = [e for e in frames if not e.unreadable and e.doc_type is not None]
-    types = Counter(e.doc_type for e in readable)
+    readable = [(i, e) for i, e in enumerate(frames) if not e.unreadable and e.doc_type is not None]
+    types = Counter(e.doc_type for _, e in readable)
     doc_type, votes = types.most_common(1)[0] if types else (None, 0)
     if doc_type is None or votes < min_agree:
         why = (f"only {len(frames)} frame(s); need {min_agree} that agree" if len(frames) < min_agree
                else f"frames do not agree on the document type ({dict(types) or 'none readable'})")
         return DocumentExtraction(document_id=document_id, unreadable=True, error=why,
                                   needs_retake=True, retake_reasons=[why])
+    agreeing = [i for i, e in readable if e.doc_type == doc_type]
+    gap, strength = None, None
+    if times_s is not None and len(times_s) == len(frames):
+        spanned = [times_s[i] for i in agreeing]
+        gap = round(max(spanned) - min(spanned), 3)
+        strength = "strong" if gap >= STRONG_AGREEMENT_GAP_S else "weak"
     if doc_type == "other":
-        return DocumentExtraction(document_id=document_id, doc_type="other")
+        return DocumentExtraction(document_id=document_id, doc_type="other",
+                                  agreement_gap_s=gap, agreement_strength=strength)
 
-    same = [e for e in readable if e.doc_type == doc_type]
+    same = [frames[i] for i in agreeing]
     per_frame = [dict(_flatten(e.fields.model_dump())) for e in same]
     data = same[0].fields.model_dump()
     disagreed = []
@@ -264,6 +282,7 @@ def agree_extractions(document_id: str, frames: list[DocumentExtraction], min_ag
     return DocumentExtraction(
         document_id=document_id, doc_type=doc_type, fields=fields,
         unreadable_fields=list(null_paths(fields)), disagreed_fields=disagreed,
+        agreement_gap_s=gap, agreement_strength=strength,
         needs_retake=bool(reasons), retake_reasons=reasons,
     )
 
@@ -305,7 +324,7 @@ class StreamingReader:
         singles = [DocumentInput(id=f"{doc.id}#f{i + 1}", images=[img]) for i, img in enumerate(doc.images)]
         frame_results = [f.result() for f in [self._calls.submit(self._read_one, s) for s in singles]]
         return ReadResult(
-            extraction=agree_extractions(doc.id, [r.extraction for r in frame_results]),
+            extraction=agree_extractions(doc.id, [r.extraction for r in frame_results], times_s=doc.frame_times_s),
             usage=_sum_usage(frame_results),
             elapsed_s=time.perf_counter() - start,
             attempts=sum(r.attempts for r in frame_results),

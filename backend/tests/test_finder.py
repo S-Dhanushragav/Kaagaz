@@ -237,3 +237,70 @@ def test_find_documents_cleans_tmp_without_debug(tmp_path: Path) -> None:
     _write_video(video, n=30)
     find_documents(video, segmenter=ColourSegmenter(), tmp_root=tmp_path / "tmp")
     assert not any((tmp_path / "tmp").rglob("*"))
+
+
+# ---------- frame-selection fallback and recapture plan ----------
+
+from graph.nodes.find_documents import FindResult, FoundDocument, plan_recapture  # noqa: E402
+from graph.nodes.read_documents import DocumentInput  # noqa: E402
+from schemas.documents import DocumentExtraction  # noqa: E402
+
+
+def _tiny_video(tmp_path: Path) -> Path:
+    spec = VideoSpec("T", "T", duration_s=3.0, fps=10, size=(216, 384))
+    docs = [("a", "identity_card", np.full((54, 86, 3), COLORS["a"], np.uint8)),
+            ("b", "income_certificate", np.full((297, 210, 3), COLORS["b"], np.uint8)),
+            ("c", "identity_card", np.full((54, 86, 3), COLORS["c"], np.uint8))]
+    scene = build_scene(spec, docs, 1.0)
+    video = tmp_path / "sweep.mp4"
+    writer = cv2.VideoWriter(str(video), cv2.VideoWriter_fourcc(*"mp4v"), spec.fps, spec.size)
+    for frame, _ in iter_frames(spec, scene, effects=False, px_per_mm=1.0, fov_w_mm=300):
+        writer.write(frame)
+    writer.release()
+    return video
+
+
+def test_fallback_finds_a_second_frame(tmp_path: Path) -> None:
+    """With an impossible 100 s gap the strict pass finds 1 frame; the fallback (0.2 s) finds more."""
+    result = find_documents(_tiny_video(tmp_path), segmenter=ColourSegmenter(), segmenter_fps=5,
+                            segmenter_long_side=192, min_gap_s=100, tmp_root=tmp_path / "tmp")
+    assert result.documents
+    for f in result.documents:
+        assert f.relaxed_selection and len(f.document.images) >= 2
+        times = f.document.frame_times_s
+        assert len(times) == len(f.document.images)
+        assert all(abs(a - b) >= 0.2 - 1e-9 for i, a in enumerate(times) for b in times[i + 1:])
+
+
+def test_fallback_only_touches_documents_with_fewer_than_two_frames(tmp_path: Path) -> None:
+    video = _tiny_video(tmp_path)
+    kw = dict(segmenter=ColourSegmenter(), segmenter_fps=5, segmenter_long_side=192, tmp_root=tmp_path / "tmp")
+    strict = find_documents(video, fallback_min_gap_s=1000, **kw)  # fallback can never help
+    normal = find_documents(video, **kw)
+    by_track = {f.track_id: f for f in normal.documents}
+    for s in strict.documents:
+        n = by_track[s.track_id]
+        if len(s.source_frames) >= 2:
+            assert not n.relaxed_selection and n.source_frames == s.source_frames
+        else:
+            assert n.relaxed_selection == (len(n.source_frames) > len(s.source_frames))
+
+
+def _found(n: int) -> FindResult:
+    docs = [FoundDocument(document=DocumentInput(id=f"doc{i}", images=[b"x"]), track_id=f"t{i}", source_frames=[0],
+                          quads=[], methods=[], sharpness=[], fully_visible=True) for i in range(n)]
+    return FindResult(documents=docs, tracks_raw=n, dropped={}, segmenter_frames=0, billed_frames=0,
+                      masks_decoded=0, timings={})
+
+
+def _ex(doc_id: str, retake: bool) -> DocumentExtraction:
+    return DocumentExtraction(document_id=doc_id, needs_retake=retake, retake_reasons=["dob missing"] if retake else [])
+
+
+def test_recapture_plan() -> None:
+    result = _found(4)
+    assert plan_recapture(result, {f"doc{i}": _ex(f"doc{i}", False) for i in range(4)}).mode == "none"
+    plan = plan_recapture(result, {f"doc{i}": _ex(f"doc{i}", i < 2) for i in range(4)})  # exactly half
+    assert plan.mode == "close_ups" and plan.documents == ["doc0", "doc1"]
+    assert plan.reasons["doc0"] == ["dob missing"]
+    assert plan_recapture(result, {f"doc{i}": _ex(f"doc{i}", i < 3) for i in range(4)}).mode == "sweep_again"

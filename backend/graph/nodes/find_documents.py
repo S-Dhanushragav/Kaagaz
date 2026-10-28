@@ -18,7 +18,7 @@ import time
 import uuid
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
-from typing import Callable, Sequence
+from typing import Callable, Literal, Mapping, Sequence
 
 import cv2
 import numpy as np
@@ -26,6 +26,7 @@ from pydantic import BaseModel
 
 from clients.segmenter import Segmenter, Track, TrackFrame, decode_mask_spec
 from graph.nodes.read_documents import DocumentInput
+from schemas.documents import DocumentExtraction
 from vision.deskew import deskew
 from vision.frames import full_frame_path, resample_video
 from vision.images import encode_for_llm
@@ -35,6 +36,18 @@ from vision.tracks import box_area, clean_tracks
 TMP = Path(__file__).resolve().parents[3] / "tmp"
 MAX_CANDIDATES_PER_TRACK = 12
 PARALLEL_DECODE_MIN = 4  # below this, process start-up costs more than it saves
+MIN_VISIBLE = 0.9
+# Fallback when fewer than 2 frames are found (reading needs 2 frames that agree).
+FALLBACK_MIN_VISIBLE = 0.8
+FALLBACK_MIN_GAP_S = 0.2
+
+
+class RecapturePlan(BaseModel):
+    """What the app should ask for after reading (used in Phase 7)."""
+
+    mode: Literal["none", "close_ups", "sweep_again"]
+    documents: list[str] = []  # document ids that need a retake (for close_ups)
+    reasons: dict[str, list[str]] = {}
 
 
 class FoundDocument(BaseModel):
@@ -45,6 +58,7 @@ class FoundDocument(BaseModel):
     methods: list[str]  # deskew method per chosen frame
     sharpness: list[float]
     fully_visible: bool  # False if the document was never seen without touching the frame edge
+    relaxed_selection: bool = False  # frames chosen with the fallback (closer in time, 80% visible)
 
 
 class FindResult(BaseModel):
@@ -56,15 +70,28 @@ class FindResult(BaseModel):
     masks_decoded: int
     timings: dict[str, float]
     contact_sheet: str | None = None
+    recapture: RecapturePlan | None = None  # set after reading with plan_recapture()
 
 
-def _candidates(track: Track, size: tuple[int, int]) -> tuple[list[int], bool]:
+def plan_recapture(result: FindResult, extractions: Mapping[str, DocumentExtraction]) -> RecapturePlan:
+    """'sweep_again' if more than half of the found documents need a retake, else 'close_ups' for those
+    documents ('none' if no document needs one). `extractions` maps document id -> extraction."""
+    retake = {d.document.id: extractions[d.document.id].retake_reasons
+              for d in result.documents
+              if d.document.id in extractions and extractions[d.document.id].needs_retake}
+    if not retake:
+        return RecapturePlan(mode="none")
+    mode = "sweep_again" if len(retake) > len(result.documents) / 2 else "close_ups"
+    return RecapturePlan(mode=mode, documents=sorted(retake), reasons=retake)
+
+
+def _candidates(track: Track, size: tuple[int, int], min_visible: float = MIN_VISIBLE) -> tuple[list[int], bool]:
     """Frames worth considering: not touching the edge and near the track's largest unclipped size."""
     inside = [f for f, tf in track.frames.items() if not touches_edge(tf.box, size)]
     fully_visible = bool(inside)
     pool = inside or list(track.frames)
     ref = max(box_area(track.frames[f].box) for f in pool)
-    pool = [f for f in pool if visible_estimate(box_area(track.frames[f].box), ref) >= 0.9]
+    pool = [f for f in pool if visible_estimate(box_area(track.frames[f].box), ref) >= min_visible]
     pool.sort(key=lambda f: box_area(track.frames[f].box), reverse=True)
     return pool[:MAX_CANDIDATES_PER_TRACK], fully_visible
 
@@ -94,6 +121,7 @@ def find_documents(
     segmenter_long_side: int = 1280,
     frames_per_doc: int = 3,
     min_gap_s: float = 0.5,
+    fallback_min_gap_s: float = FALLBACK_MIN_GAP_S,
     debug: bool = False,
     tmp_root: Path = TMP,
     on_document: Callable[[FoundDocument], None] | None = None,
@@ -128,24 +156,38 @@ def find_documents(
             return images[src]
 
         plans = []  # (track, fully_visible, [(Candidate, TrackFrame)])
-        partial = []
+        partial, relaxed = [], []
         for track in report.kept:
-            frames, fully_visible = _candidates(track, seg.frame_size)
+            frames, fully_visible = _candidates(track, seg.frame_size, min_visible=MIN_VISIBLE)
             if not fully_visible:  # only ever seen cut off by the frame edge: can't be read completely
                 partial.append(track.track_id)
                 continue
             by_src: dict[int, TrackFrame] = {}
-            cands = []
-            for f in frames:
-                if f >= len(rs.source_indices):
-                    continue
-                src = rs.source_indices[f]
-                crop = _box_crop(image(src), track.frames[f].box, scale)
-                if crop.size == 0:
-                    continue
-                by_src[src] = track.frames[f]
-                cands.append(Candidate(frame=src, time_s=src / rs.source.fps, sharpness=sharpness(crop)))
-            chosen = select_frames(cands, k=frames_per_doc, min_gap_s=min_gap_s)
+            scored: dict[int, Candidate] = {}
+
+            def candidates(frame_ids: list[int]) -> list[Candidate]:
+                out = []
+                for f in frame_ids:
+                    if f >= len(rs.source_indices):
+                        continue
+                    src = rs.source_indices[f]
+                    if src not in scored:
+                        crop = _box_crop(image(src), track.frames[f].box, scale)
+                        if crop.size == 0:
+                            continue
+                        by_src[src] = track.frames[f]
+                        scored[src] = Candidate(frame=src, time_s=src / rs.source.fps, sharpness=sharpness(crop))
+                    out.append(scored[src])
+                return out
+
+            chosen = select_frames(candidates(frames), k=frames_per_doc, min_gap_s=min_gap_s)
+            if len(chosen) < 2:
+                # Reading needs 2 frames that agree: retry with closer frames and a looser visibility bar.
+                loose, _ = _candidates(track, seg.frame_size, min_visible=FALLBACK_MIN_VISIBLE)
+                retry = select_frames(candidates(loose), k=frames_per_doc, min_gap_s=fallback_min_gap_s)
+                if len(retry) > len(chosen):
+                    chosen = retry
+                    relaxed.append(track.track_id)
             if chosen:
                 plans.append((track, fully_visible, [(c, by_src[c.frame]) for c in chosen]))
         timings["select_s"] = time.perf_counter() - t0
@@ -169,8 +211,10 @@ def find_documents(
                 return
             crops = [res.crop for _, res in kept]
             doc = FoundDocument(
-                document=DocumentInput(id=f"doc{pi + 1:02d}", images=[encode_for_llm(c) for c in crops]),
+                document=DocumentInput(id=f"doc{pi + 1:02d}", images=[encode_for_llm(c) for c in crops],
+                                       frame_times_s=[round(c.time_s, 3) for c, _ in kept]),
                 track_id=track.track_id,
+                relaxed_selection=track.track_id in relaxed,
                 source_frames=[c.frame for c, _ in kept],
                 quads=[np.round(res.quad, 1).tolist() for _, res in kept],
                 methods=[res.method for _, res in kept],

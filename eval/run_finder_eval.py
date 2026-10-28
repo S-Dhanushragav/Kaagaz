@@ -29,7 +29,7 @@ sys.path[:0] = [str(ROOT / "backend"), str(ROOT)]
 
 from clients.segmenter import Sam31ApiSegmenter  # noqa: E402
 from eval.run_reader_eval import expected_fields  # noqa: E402
-from graph.nodes.find_documents import FindResult, find_documents  # noqa: E402
+from graph.nodes.find_documents import FindResult, find_documents, plan_recapture  # noqa: E402
 from graph.nodes.read_documents import StreamingReader  # noqa: E402
 from synthetic.scoring import FieldScore, score_fields  # noqa: E402
 
@@ -142,13 +142,19 @@ def evaluate_video(video_id: str, prompts: list[str], read: bool, debug: bool) -
                             "needs_retake": ex.needs_retake if ex else None,
                             "retake_reasons": ex.retake_reasons if ex else [],
                             "disagreed": ex.disagreed_fields if ex else [],
+                            "agreement_strength": ex.agreement_strength if ex else None,
+                            "agreement_gap_s": ex.agreement_gap_s if ex else None,
                             "wrong": [{"field": p, "expected": e, "got": g} for p, e, g in s.wrong],
                             "null": [p for p, _ in s.null]})
         tokens_in = sum(r.usage.prompt_tokens for r in reads)
         tokens_out = sum(r.usage.completion_tokens for r in reads)
         cost += tokens_in * LLM_INPUT_PER_TOKEN + tokens_out * LLM_OUTPUT_PER_TOKEN
+        plan = plan_recapture(result, {k: r.extraction for k, r in reads_by_id.items()})
         row["reading"] = {
             "classified": classified,
+            "weak_agreements": sum(r.extraction.agreement_strength == "weak" for r in reads),
+            "relaxed_selection": sum(f.relaxed_selection for f in result.documents),
+            "recapture": plan.model_dump(),
             "needs_retake": sum(r.extraction.needs_retake for r in reads),
             "needs_retake_docs": [d["doc"] for d in details if d["needs_retake"]],
             "model_calls": sum(len(r.frame_reads) or 1 for r in reads),
@@ -186,12 +192,16 @@ def print_rows(rows: list[dict[str, Any]]) -> None:
               f"{t['upload_to_answer_s']:.1f} | ${r['cost_usd']:.3f} |")
     reading = [r for r in rows if "reading" in r]
     if reading:
-        print("\n| Video | Classified | Correct | Wrong value | Null | needs_retake | Model calls |")
-        print("|---|---|---|---|---|---|---|")
+        print("\n| Video | Classified | Correct | Wrong value | Null | needs_retake | Weak agreements | "
+              "Relaxed selection | Recapture | Model calls |")
+        print("|---|---|---|---|---|---|---|---|---|---|")
         for r in reading:
             f, rd = r["reading"]["fields"], r["reading"]
+            rc = rd["recapture"]
+            recapture = rc["mode"] + (f" {rc['documents']}" if rc["mode"] == "close_ups" else "")
             print(f"| {r['video']} | {rd['classified']}/{r['present']} | {_pct(f['correct'], f['total'])} | "
-                  f"{_pct(f['wrong'], f['total'])} | {_pct(f['null'], f['total'])} | {rd['needs_retake']} | {rd['model_calls']} |")
+                  f"{_pct(f['wrong'], f['total'])} | {_pct(f['null'], f['total'])} | {rd['needs_retake']} | "
+                  f"{rd['weak_agreements']} | {rd['relaxed_selection']} | {recapture} | {rd['model_calls']} |")
     for r in rows:
         if r["missed"] or r["duplicates"] or r["false_detections"]:
             print(f"\n{r['video']} ({'+'.join(r['prompts'])}): missed {r['missed']}; "

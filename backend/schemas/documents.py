@@ -187,6 +187,10 @@ class DocumentExtraction(BaseModel):
     unreadable: bool = False
     error: str | None = None
     disagreed_fields: list[str] = []  # decision fields nulled because frames did not agree
+    # Time between the frames whose reads agreed on the document type. Frames close together share
+    # more of the same blur, so their agreement is weaker evidence.
+    agreement_gap_s: float | None = None
+    agreement_strength: Literal["strong", "weak"] | None = None  # strong: >= 0.5 s apart
     needs_retake: bool = False  # key fields still null: the app should ask for a close-up of this document
     retake_reasons: list[str] = []
 

@@ -233,3 +233,15 @@ def test_read_documents_without_agreement_reads_all_images_together() -> None:
     llm = FakeLLM(GOOD)
     (r,) = read_documents([DocumentInput(id="d", images=[b"a", b"b"])], llm=llm)
     assert llm.calls[0]["images"] == [b"a", b"b"] and r.attempts == 1
+
+
+def test_agreement_strength_from_frame_times() -> None:
+    frames = [_id_frame(), _id_frame(), _id_frame()]
+    assert agree_extractions("d", frames, times_s=[1.0, 1.2, 1.6]).agreement_strength == "strong"  # 0.6 s
+    weak = agree_extractions("d", frames[:2], times_s=[1.0, 1.2])
+    assert weak.agreement_strength == "weak" and weak.agreement_gap_s == 0.2
+    assert agree_extractions("d", frames[:2]).agreement_strength is None  # no times known
+    # only the frames that agreed on the type count
+    other = DocumentExtraction(document_id="f", doc_type="other")
+    ex = agree_extractions("d", [_id_frame(), other, _id_frame()], times_s=[1.0, 3.0, 1.3])
+    assert ex.agreement_gap_s == 0.3 and ex.agreement_strength == "weak"
