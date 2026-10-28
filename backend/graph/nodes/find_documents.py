@@ -4,14 +4,19 @@ Plain function for now; it becomes a LangGraph node later. Steps:
 1. resample: low-fps 720p copy for the segmenter + full-resolution JPEGs of the same frames (tmp/)
 2. segment: tracks from the segmenter (one request per prompt)
 3. clean: drop tiny/short tracks, remove heavy duplicates
-4. per track: frames where the document is fully in view -> deskew from full resolution ->
-   pick the sharpest 2-3, spread apart in time -> DocumentInput for read_documents
+4. select: per track, frames where the document is fully in view; sharpness is measured on the
+   box region of the full-resolution frame, so no mask is decoded yet; keep the sharpest 2-3,
+   spread apart in time
+5. deskew: decode only the chosen masks (in parallel processes; SAM mask decoding is slow pure
+   Python), mask -> 4 corners -> upright crop from full resolution -> DocumentInput
 Frames are deleted after the run. With debug=True a contact sheet of the chosen crops is kept in tmp/.
 """
 
+import os
 import shutil
 import time
 import uuid
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 from typing import Sequence
 
@@ -19,7 +24,7 @@ import cv2
 import numpy as np
 from pydantic import BaseModel
 
-from clients.segmenter import Segmenter, Track
+from clients.segmenter import Segmenter, Track, TrackFrame, decode_mask_spec
 from graph.nodes.read_documents import DocumentInput
 from vision.deskew import deskew
 from vision.frames import full_frame_path, resample_video
@@ -29,6 +34,7 @@ from vision.tracks import box_area, clean_tracks
 
 TMP = Path(__file__).resolve().parents[3] / "tmp"
 MAX_CANDIDATES_PER_TRACK = 12
+PARALLEL_DECODE_MIN = 4  # below this, process start-up costs more than it saves
 
 
 class FoundDocument(BaseModel):
@@ -47,12 +53,13 @@ class FindResult(BaseModel):
     dropped: dict[str, list[str]]
     segmenter_frames: int
     billed_frames: int
+    masks_decoded: int
     timings: dict[str, float]
     contact_sheet: str | None = None
 
 
 def _candidates(track: Track, size: tuple[int, int]) -> tuple[list[int], bool]:
-    """Frames worth deskewing: not touching the edge and near the track's largest unclipped size."""
+    """Frames worth considering: not touching the edge and near the track's largest unclipped size."""
     inside = [f for f, tf in track.frames.items() if not touches_edge(tf.box, size)]
     fully_visible = bool(inside)
     pool = inside or list(track.frames)
@@ -60,6 +67,20 @@ def _candidates(track: Track, size: tuple[int, int]) -> tuple[list[int], bool]:
     pool = [f for f in pool if visible_estimate(box_area(track.frames[f].box), ref) >= 0.9]
     pool.sort(key=lambda f: box_area(track.frames[f].box), reverse=True)
     return pool[:MAX_CANDIDATES_PER_TRACK], fully_visible
+
+
+def _box_crop(image: np.ndarray, box: tuple[float, float, float, float], scale: tuple[float, float]) -> np.ndarray:
+    x1, y1, x2, y2 = box
+    sx, sy = scale
+    return image[int(y1 * sy) : int(np.ceil(y2 * sy)), int(x1 * sx) : int(np.ceil(x2 * sx))]
+
+
+def _decode_masks(frames: list[TrackFrame]) -> list[np.ndarray]:
+    specs = [f.mask_spec for f in frames]
+    if len(frames) >= PARALLEL_DECODE_MIN and all(s is not None for s in specs):
+        with ProcessPoolExecutor(max_workers=min(len(frames), os.cpu_count() or 2)) as pool:
+            return list(pool.map(decode_mask_spec, specs))
+    return [f.mask() for f in frames]
 
 
 def _contact_sheet(crops: list[list[np.ndarray]], path: Path, height: int = 320) -> None:
@@ -100,33 +121,65 @@ def find_documents(
         report = clean_tracks(seg.tracks, seg.frame_size)
         timings["cleanup_s"] = time.perf_counter() - t0
 
+        # Select frames by box-region sharpness (no mask decoding).
         t0 = time.perf_counter()
-        found, sheet_crops = [], []
+        scale = (rs.source.width / seg.frame_size[0], rs.source.height / seg.frame_size[1])
+        images: dict[int, np.ndarray] = {}
+
+        def image(src: int) -> np.ndarray:
+            if src not in images:
+                images[src] = cv2.imread(str(full_frame_path(frames_dir, src)), cv2.IMREAD_COLOR)
+            return images[src]
+
+        plans = []  # (track, fully_visible, [(Candidate, TrackFrame)])
+        partial = []
         for track in report.kept:
             frames, fully_visible = _candidates(track, seg.frame_size)
-            cands, results = [], {}
+            if not fully_visible:  # only ever seen cut off by the frame edge: can't be read completely
+                partial.append(track.track_id)
+                continue
+            by_src: dict[int, TrackFrame] = {}
+            cands = []
             for f in frames:
                 if f >= len(rs.source_indices):
                     continue
                 src = rs.source_indices[f]
-                image = cv2.imread(str(full_frame_path(frames_dir, src)), cv2.IMREAD_COLOR)
+                crop = _box_crop(image(src), track.frames[f].box, scale)
+                if crop.size == 0:
+                    continue
+                by_src[src] = track.frames[f]
+                cands.append(Candidate(frame=src, time_s=src / rs.source.fps, sharpness=sharpness(crop)))
+            chosen = select_frames(cands, k=frames_per_doc, min_gap_s=min_gap_s)
+            if chosen:
+                plans.append((track, fully_visible, [(c, by_src[c.frame]) for c in chosen]))
+        timings["select_s"] = time.perf_counter() - t0
+
+        # Decode only the chosen masks, then deskew from full resolution.
+        t0 = time.perf_counter()
+        chosen_frames = [tf for _, _, picks in plans for _, tf in picks]
+        masks = iter(_decode_masks(chosen_frames))
+        timings["mask_decode_s"] = time.perf_counter() - t0
+
+        t0 = time.perf_counter()
+        found, sheet_crops = [], []
+        for track, fully_visible, picks in plans:
+            kept = []
+            for cand, _ in picks:
+                mask = next(masks)
                 try:
-                    res = deskew(image, track.frames[f].mask())
+                    kept.append((cand, deskew(image(cand.frame), mask)))
                 except ValueError:
                     continue
-                results[src] = res
-                cands.append(Candidate(frame=src, time_s=src / rs.source.fps, sharpness=sharpness(res.crop)))
-            chosen = select_frames(cands, k=frames_per_doc, min_gap_s=min_gap_s)
-            if not chosen:
+            if not kept:
                 continue
-            crops = [results[c.frame].crop for c in chosen]
+            crops = [res.crop for _, res in kept]
             found.append(FoundDocument(
                 document=DocumentInput(id=f"doc{len(found) + 1:02d}", images=[encode_for_llm(c) for c in crops]),
                 track_id=track.track_id,
-                source_frames=[c.frame for c in chosen],
-                quads=[np.round(results[c.frame].quad, 1).tolist() for c in chosen],
-                methods=[results[c.frame].method for c in chosen],
-                sharpness=[round(c.sharpness, 1) for c in chosen],
+                source_frames=[c.frame for c, _ in kept],
+                quads=[np.round(res.quad, 1).tolist() for _, res in kept],
+                methods=[res.method for _, res in kept],
+                sharpness=[round(c.sharpness, 1) for c, _ in kept],
                 fully_visible=fully_visible,
             ))
             sheet_crops.append(crops)
@@ -139,10 +192,11 @@ def find_documents(
         return FindResult(
             documents=found,
             tracks_raw=len(seg.tracks),
-            dropped={"short": report.dropped_short, "small": report.dropped_small,
-                     "duplicate": report.dropped_duplicate},
+            dropped={"split": report.split, "short": report.dropped_short, "small": report.dropped_small,
+                     "duplicate": report.dropped_duplicate, "partial": partial},
             segmenter_frames=len(rs.source_indices),
             billed_frames=seg.billed_frames,
+            masks_decoded=len(chosen_frames),
             timings={k: round(v, 3) for k, v in timings.items()},
             contact_sheet=str(sheet) if sheet else None,
         )

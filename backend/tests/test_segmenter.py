@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from clients.segmenter import Sam3ModalSegmenter, parse_sam_output
+from clients.segmenter import Sam3ModalSegmenter, parse_sam_output, parse_sam_output_official
 
 FIXTURE = Path(__file__).parent / "fixtures" / "sam31_video_output.txt"
 SIZE = (720, 1280)
@@ -46,6 +46,18 @@ def test_masks_decode_to_full_frame_inside_their_box(tracks) -> None:
 
 def test_frames_are_zero_based_indices(tracks) -> None:
     assert {f for t in tracks for f in t.frames} <= {0, 1}
+
+
+def test_matches_official_parser(tracks) -> None:
+    """Our lazy token reader returns exactly what Meta's parser returns: boxes and mask payloads."""
+    official = parse_sam_output_official(FIXTURE.read_text(encoding="utf-8"))
+    ours = {(f.frame, t.track_id.split(":")[1]): f for t in tracks for f in t.frames.values()}
+    assert len(official) == len(ours) > 0
+    for frame, obj, box, mask in official:
+        f = ours[(frame, obj)]
+        assert f.box == box
+        spec = f.mask_spec
+        assert (spec.encoding, spec.payload, spec.width, spec.height) == (mask.encoding, mask.payload, mask.width, mask.height)
 
 
 def test_empty_output_is_no_tracks() -> None:

@@ -12,6 +12,7 @@ Each mask covers its box (H x W of the box), placed at the box's top-left corner
 """
 
 import logging
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Protocol, Sequence
@@ -20,6 +21,7 @@ import numpy as np
 from meta_sam_parser import (
     CompletedOutcome,
     SegmentationBoxRecord,
+    SegmentationMask,
     SegmentationMaskRecord,
     decode_mask_to_raster,
     video_segmentation_format,
@@ -28,14 +30,45 @@ from meta_sam_parser import (
 logger = logging.getLogger(__name__)
 
 
+@dataclass(frozen=True)
+class MaskSpec:
+    """An undecoded SAM mask: picklable, so masks can be decoded in worker processes."""
+
+    encoding: str  # "one_bit" or "lossless"
+    payload: str  # passed to Meta's decoder unchanged
+    width: int
+    height: int
+    left: int  # where the mask's top-left sits in the frame
+    top: int
+    frame_size: tuple[int, int]  # width, height
+
+
+def decode_mask_spec(spec: MaskSpec) -> np.ndarray:
+    """Full-frame bool mask. Uses Meta's decoder; pure Python, ~0.1-3 s per mask depending on size."""
+    raster = decode_mask_to_raster(
+        SegmentationMask(encoding=spec.encoding, payload=spec.payload, width=spec.width, height=spec.height)
+    )
+    local = np.frombuffer(raster, np.uint8).reshape(spec.height, spec.width).astype(bool)
+    fw, fh = spec.frame_size
+    full = np.zeros((fh, fw), bool)
+    h, w = min(spec.height, fh - spec.top), min(spec.width, fw - spec.left)
+    full[spec.top : spec.top + h, spec.left : spec.left + w] = local[:h, :w]
+    return full
+
+
 @dataclass
 class TrackFrame:
     frame: int  # index in the video that was sent to the segmenter
-    box: tuple[float, float, float, float]  # x1, y1, x2, y2 in that video's pixels
+    box: tuple[float, float, float, float]  # x1, y1, x2, y2 (half-open) in that video's pixels
     score: float | None
-    decode_mask: Callable[[], np.ndarray]  # -> bool array (H, W); masks are decoded only when needed
+    decode_mask: Callable[[], np.ndarray] | None = None  # -> bool array (H, W), for non-SAM backends
+    mask_spec: MaskSpec | None = None  # SAM masks: decoded only when needed
 
     def mask(self) -> np.ndarray:
+        if self.mask_spec is not None:
+            return decode_mask_spec(self.mask_spec)
+        if self.decode_mask is None:
+            raise ValueError("track frame has no mask")
         return self.decode_mask()
 
 
@@ -146,46 +179,73 @@ class Sam31ApiSegmenter:
         return SegmentResult(tracks=tracks, frame_size=size, billed_frames=billed, timings=timings)
 
 
-def _mask_decoder(record: SegmentationMaskRecord, size: tuple[int, int]) -> Callable[[], np.ndarray]:
-    def decode() -> np.ndarray:
-        m = record.mask
-        local = np.frombuffer(decode_mask_to_raster(m), np.uint8).reshape(m.height, m.width).astype(bool)
-        full = np.zeros((size[1], size[0]), bool)
-        x0, y0 = record.bounds.left, record.bounds.top
-        h = min(m.height, size[1] - y0)
-        w = min(m.width, size[0] - x0)
-        full[y0 : y0 + h, x0 : x0 + w] = local[:h, :w]
-        return full
+# Wire grammar from Meta's meta-sam-parser README ("Parsing behavior"): one line per frame,
+#   <Nf>id<|box;x1=..;y1=..;x2=..;y2=..;w=..;h=..[;c=..]|><|mask;x=0;y=0;[c=..;]data=H,W,<enc>payload|>,id<|box..
+# Fields are ';'-separated key=value pairs read by name; x2/y2 are inclusive; the mask payload never
+# contains '|'. Meta's parser decodes every mask while parsing (minutes per video in pure Python), so
+# we read the tokens here and decode only the masks the finder needs, with Meta's decoder.
+# tests/test_segmenter.py checks this against the official parser on the probe fixture.
+_FRAME = re.compile(r"^<(\d+)f>")
+_RECORD = re.compile(r"(\d+)<\|box;([^|]*)\|><\|mask;([^|]*)\|>")
 
-    return decode
+
+def _fields(token: str) -> dict[str, str]:
+    out = {}
+    for part in token.split(";"):
+        if "=" in part:
+            k, v = part.split("=", 1)
+            out[k.strip()] = v.strip()
+    return out
 
 
 def parse_sam_output(text: str, prompt: str, size: tuple[int, int]) -> list[Track]:
-    """Parse SAM 3.1 video output text into tracks. `size` is the (width, height) of the video sent."""
+    """Parse SAM 3.1 video output text into tracks without decoding masks.
+
+    `size` is the (width, height) of the video that was sent.
+    """
+    tracks: dict[str, Track] = {}
+    for line in text.splitlines():
+        m = _FRAME.match(line.strip())
+        if not m:
+            continue
+        frame = int(m.group(1))
+        for rec in _RECORD.finditer(line):
+            obj, box, mask = rec.group(1), _fields(rec.group(2)), _fields(rec.group(3))
+            try:
+                x1, y1, x2, y2 = (int(box[k]) for k in ("x1", "y1", "x2", "y2"))
+                h, w, payload = mask["data"].split(",", 2)
+            except (KeyError, ValueError):
+                logger.warning("Malformed SAM record on frame %d: %.80s", frame, rec.group(0))
+                continue
+            encoding = {"~": "lossless", "!": "one_bit"}.get(payload[:1])
+            if encoding is None:
+                logger.warning("Unknown SAM mask encoding on frame %d", frame)
+                continue
+            score = float(box["c"]) if "c" in box else None
+            track = tracks.setdefault(obj, Track(f"{prompt}:{obj}", prompt))
+            # Later lines for the same frame and object replace earlier ones, like the official parser.
+            track.frames[frame] = TrackFrame(
+                frame=frame,
+                box=(float(x1), float(y1), float(x2 + 1), float(y2 + 1)),
+                score=score if score is not None and 0 <= score <= 1 else None,
+                mask_spec=MaskSpec(encoding, payload, int(w), int(h),
+                                   x1 + int(mask.get("x", 0)), y1 + int(mask.get("y", 0)), size),
+            )
+    return list(tracks.values())
+
+
+def parse_sam_output_official(text: str) -> list[tuple[int, str, tuple[int, int, int, int], SegmentationMask]]:
+    """Meta's parser (strict, decodes every mask). Used in tests to check `parse_sam_output`."""
     parser = video_segmentation_format().create_parser()
     parser.push(text)
     result = parser.finish(CompletedOutcome()).result
-    for d in result.diagnostics:
-        logger.warning("SAM output diagnostic: %s", d)
-
-    boxes: dict[tuple[int, str], SegmentationBoxRecord] = {}
-    tracks: dict[str, Track] = {}
+    boxes = {(r.frame.frame_index, r.object_id): r for r in result.records if isinstance(r, SegmentationBoxRecord)}
+    out = []
     for r in result.records:
-        if isinstance(r, SegmentationBoxRecord):
-            boxes[(r.frame.frame_index, r.object_id)] = r
-        elif isinstance(r, SegmentationMaskRecord):
-            frame = r.frame.frame_index
-            box = boxes.get((frame, r.object_id))
-            if box is None:
-                continue
-            track = tracks.setdefault(r.object_id, Track(f"{prompt}:{r.object_id}", prompt))
-            track.frames[frame] = TrackFrame(
-                frame=frame,
-                box=(float(box.left), float(box.top), float(box.right), float(box.bottom)),
-                score=box.confidence,
-                decode_mask=_mask_decoder(r, size),
-            )
-    return list(tracks.values())
+        if isinstance(r, SegmentationMaskRecord):
+            b = boxes[(r.frame.frame_index, r.object_id)]
+            out.append((r.frame.frame_index, r.object_id, (b.left, b.top, b.right, b.bottom), r.mask))
+    return out
 
 
 class Sam3ModalSegmenter:

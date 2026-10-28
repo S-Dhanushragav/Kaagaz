@@ -1,0 +1,116 @@
+[
+  {
+    "video": "HH008",
+    "prompts": [
+      "document"
+    ],
+    "present": 8,
+    "found": 6,
+    "duplicates": 0,
+    "false_detections": 2,
+    "crop_iou_mean": 0.954,
+    "crop_iou_min": 0.944,
+    "missed": [
+      "caste_certificate_m1",
+      "income_certificate_m1"
+    ],
+    "tracks_raw": 8,
+    "dropped": {
+      "short": 0,
+      "small": 0,
+      "duplicate": 0
+    },
+    "deskew_methods": {
+      "quad": 19
+    },
+    "billed_frames": 100,
+    "timings": {
+      "resample_s": 6.41,
+      "upload_s": 8.012,
+      "segment_s": 8.4,
+      "cleanup_s": 0.019,
+      "select_s": 1.672,
+      "mask_decode_s": 9.738,
+      "deskew_s": 0.145,
+      "find_total_s": 18.22,
+      "upload_to_answer_s": 27.99
+    },
+    "cost_usd": 0.02
+  },
+  {
+    "video": "HH008",
+    "prompts": [
+      "paper"
+    ],
+    "present": 8,
+    "found": 6,
+    "duplicates": 0,
+    "false_detections": 2,
+    "crop_iou_mean": 0.953,
+    "crop_iou_min": 0.943,
+    "missed": [
+      "caste_certificate_m1",
+      "income_certificate_m1"
+    ],
+    "tracks_raw": 8,
+    "dropped": {
+      "short": 0,
+      "small": 0,
+      "duplicate": 0
+    },
+    "deskew_methods": {
+      "quad": 19
+    },
+    "billed_frames": 100,
+    "timings": {
+      "resample_s": 6.404,
+      "upload_s": 4.578,
+      "segment_s": 9.297,
+      "cleanup_s": 0.002,
+      "select_s": 1.733,
+      "mask_decode_s": 9.582,
+      "deskew_s": 0.133,
+      "find_total_s": 18.05,
+      "upload_to_answer_s": 25.33
+    },
+    "cost_usd": 0.02
+  },
+  {
+    "video": "HH008",
+    "prompts": [
+      "card"
+    ],
+    "present": 8,
+    "found": 6,
+    "duplicates": 0,
+    "false_detections": 2,
+    "crop_iou_mean": 0.954,
+    "crop_iou_min": 0.944,
+    "missed": [
+      "caste_certificate_m1",
+      "income_certificate_m1"
+    ],
+    "tracks_raw": 8,
+    "dropped": {
+      "short": 0,
+      "small": 0,
+      "duplicate": 0
+    },
+    "deskew_methods": {
+      "quad": 19
+    },
+    "billed_frames": 100,
+    "timings": {
+      "resample_s": 6.375,
+      "upload_s": 7.035,
+      "segment_s": 9.926,
+      "cleanup_s": 0.002,
+      "select_s": 1.63,
+      "mask_decode_s": 9.322,
+      "deskew_s": 0.114,
+      "find_total_s": 17.64,
+      "upload_to_answer_s": 28.03
+    },
+    "cost_usd": 0.02
+  }
+]

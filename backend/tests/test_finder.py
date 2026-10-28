@@ -147,6 +147,19 @@ def test_clean_tracks() -> None:
     assert box_iou(big, beside) == 0
 
 
+def test_tracks_split_at_time_gaps() -> None:
+    """SAM may reuse an id for another document after a gap: the pieces become separate tracks."""
+    first, later = (100, 100, 300, 400), (400, 100, 600, 400)
+    t = _track("document:1", {**{f: first for f in range(0, 6)}, **{f: later for f in range(20, 26)}})
+    r = clean_tracks([t], (720, 1280))
+    assert [k.track_id for k in r.kept] == ["document:1#1", "document:1#2"]
+    assert r.split == ["document:1"]
+    assert sorted(r.kept[1].frames) == list(range(20, 26))
+    # a short gap (one missed frame) does not split
+    t2 = _track("document:2", {f: first for f in [0, 1, 2, 4, 5, 6]})
+    assert [k.track_id for k in clean_tracks([t2], (720, 1280)).kept] == ["document:2"]
+
+
 # ---------- offline end-to-end ----------
 
 COLORS = {"a": (0, 0, 255), "b": (0, 200, 0), "c": (255, 0, 0)}

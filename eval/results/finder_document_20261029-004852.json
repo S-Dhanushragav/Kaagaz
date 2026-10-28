@@ -1,0 +1,39 @@
+[
+  {
+    "video": "HH008",
+    "prompts": [
+      "document"
+    ],
+    "present": 8,
+    "found": 8,
+    "duplicates": 0,
+    "false_detections": 0,
+    "crop_iou_mean": 0.956,
+    "crop_iou_min": 0.944,
+    "missed": [],
+    "tracks_raw": 8,
+    "dropped": {
+      "split": 3,
+      "short": 1,
+      "small": 0,
+      "duplicate": 0,
+      "partial": 2
+    },
+    "deskew_methods": {
+      "quad": 18
+    },
+    "billed_frames": 100,
+    "timings": {
+      "resample_s": 6.402,
+      "upload_s": 8.012,
+      "segment_s": 8.4,
+      "cleanup_s": 0.02,
+      "select_s": 1.407,
+      "mask_decode_s": 9.729,
+      "deskew_s": 0.125,
+      "find_total_s": 17.88,
+      "upload_to_answer_s": 27.69
+    },
+    "cost_usd": 0.02
+  }
+]
