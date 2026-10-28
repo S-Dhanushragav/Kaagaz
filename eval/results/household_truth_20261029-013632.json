@@ -1,0 +1,32 @@
+{
+  "mode": "truth",
+  "model": null,
+  "households": 30,
+  "planted": {
+    "name_mismatch": 7,
+    "dob_mismatch": 7,
+    "expired": 6,
+    "missing_document": 6,
+    "not_on_ration_card": 6
+  },
+  "caught": {
+    "name_mismatch": 7,
+    "dob_mismatch": 7,
+    "expired": 6,
+    "missing_document": 6,
+    "not_on_ration_card": 6
+  },
+  "catch_rate": 1.0,
+  "false_alarms": {},
+  "false_alarm_total": 0,
+  "other_issues": {},
+  "adjudicator_calls": 0,
+  "scheme_outcomes": {
+    "not_eligible": 440,
+    "eligible_on_documents": 74,
+    "check_at_office": 16,
+    "blocked_by_issues": 100
+  },
+  "reader": {},
+  "reader_cost_usd": 0.0
+}
