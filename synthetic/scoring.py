@@ -1,6 +1,7 @@
 """Field-by-field scoring of extracted values against ground_truth.json document fields."""
 
 import unicodedata
+from dataclasses import dataclass, field
 from typing import Any, Iterator
 
 from vision.text import normalize_text  # backend/ must be on sys.path
@@ -35,14 +36,41 @@ def matches(expected: Any, got: Any) -> bool:
     return normalize(expected) == normalize(got)
 
 
-def score(expected: dict[str, Any], predicted: dict[str, Any]) -> tuple[int, int, list[tuple[str, Any, Any]]]:
-    """Return (correct, total, wrong) where wrong lists (path, expected, got). Lists align by index."""
-    got = dict(flatten(predicted))
-    correct, wrong = 0, []
-    pairs = list(flatten(expected))
-    for path, value in pairs:
-        if matches(value, got.get(path)):
-            correct += 1
+@dataclass
+class FieldScore:
+    """Three-way field result. A wrong value is worse than a null: it looks trustworthy."""
+
+    correct: int = 0
+    wrong: list[tuple[str, Any, Any]] = field(default_factory=list)  # (path, expected, got)
+    null: list[tuple[str, Any]] = field(default_factory=list)  # (path, expected): missing or null
+
+    @property
+    def total(self) -> int:
+        return self.correct + len(self.wrong) + len(self.null)
+
+    def add(self, other: "FieldScore") -> None:
+        self.correct += other.correct
+        self.wrong += other.wrong
+        self.null += other.null
+
+
+def score_fields(expected: dict[str, Any], predicted: dict[str, Any] | None) -> FieldScore:
+    """Score every expected field as correct, wrong value, or null. Lists align by index."""
+    got = dict(flatten(predicted or {}))
+    result = FieldScore()
+    for path, value in flatten(expected):
+        g = got.get(path)
+        if g is None:
+            result.null.append((path, value))
+        elif matches(value, g):
+            result.correct += 1
         else:
-            wrong.append((path, value, got.get(path)))
-    return correct, len(pairs), wrong
+            result.wrong.append((path, value, g))
+    return result
+
+
+def score(expected: dict[str, Any], predicted: dict[str, Any]) -> tuple[int, int, list[tuple[str, Any, Any]]]:
+    """Return (correct, total, not_correct) where not_correct lists (path, expected, got)."""
+    s = score_fields(expected, predicted)
+    not_correct = s.wrong + [(path, value, None) for path, value in s.null]
+    return s.correct, s.total, not_correct

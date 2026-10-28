@@ -1,0 +1,54 @@
+{
+  "model": "muse-spark-1.1",
+  "reasoning_effort": "low",
+  "documents": 58,
+  "classification": {
+    "correct": 58,
+    "total": 58
+  },
+  "fields": {
+    "caste_certificate": {
+      "correct": 139,
+      "wrong": 4,
+      "null": 0,
+      "total": 143
+    },
+    "identity_card": {
+      "correct": 148,
+      "wrong": 1,
+      "null": 1,
+      "total": 150
+    },
+    "income_certificate": {
+      "correct": 99,
+      "wrong": 1,
+      "null": 0,
+      "total": 100
+    },
+    "ration_card": {
+      "correct": 251,
+      "wrong": 1,
+      "null": 0,
+      "total": 252
+    },
+    "all": {
+      "correct": 637,
+      "wrong": 7,
+      "null": 1,
+      "total": 645
+    }
+  },
+  "unreadable_documents": 0,
+  "retried_documents": 0,
+  "time_s": {
+    "avg": 3.85,
+    "worst": 7.08,
+    "fresh_calls": 58,
+    "parallel": 4
+  },
+  "tokens": {
+    "avg_completion": 968,
+    "total_prompt": 81085,
+    "total_completion": 56136
+  }
+}

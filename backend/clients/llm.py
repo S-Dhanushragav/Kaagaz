@@ -9,7 +9,7 @@ Images must already be prepared (see `vision.images.encode_for_llm`).
 import base64
 import logging
 from functools import lru_cache
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping, Sequence
 
 from openai import BadRequestError, OpenAI, UnprocessableEntityError
 from pydantic import BaseModel
@@ -20,6 +20,7 @@ from clients.cache import DiskCache, make_key
 logger = logging.getLogger(__name__)
 
 MAX_IMAGE_BYTES = 2 * 1024 * 1024
+MAX_IMAGES = 3
 
 
 class LLMError(RuntimeError):
@@ -48,24 +49,23 @@ def _client(base_url: str, api_key: str) -> OpenAI:
 
 
 def _build_messages(
-    prompt: str, system: str | None, image: bytes | None, image_mime: str
+    prompt: str, system: str | None, images: Sequence[bytes], image_mime: str
 ) -> list[dict[str, Any]]:
     messages: list[dict[str, Any]] = []
     if system:
         messages.append({"role": "system", "content": system})
-    if image is None:
+    if not images:
         messages.append({"role": "user", "content": prompt})
     else:
-        data_url = f"data:{image_mime};base64,{base64.b64encode(image).decode('ascii')}"
-        messages.append(
+        content: list[dict[str, Any]] = [
             {
-                "role": "user",
-                "content": [
-                    {"type": "image_url", "image_url": {"url": data_url}},
-                    {"type": "text", "text": prompt},
-                ],
+                "type": "image_url",
+                "image_url": {"url": f"data:{image_mime};base64,{base64.b64encode(img).decode('ascii')}"},
             }
-        )
+            for img in images
+        ]
+        content.append({"type": "text", "text": prompt})
+        messages.append({"role": "user", "content": content})
     return messages
 
 
@@ -82,7 +82,7 @@ def cache_key(
     resolved: ResolvedModel,
     *,
     prompt: str,
-    image: bytes | None,
+    images: Sequence[bytes],
     image_mime: str,
     system: str | None,
     temperature: float,
@@ -98,7 +98,7 @@ def cache_key(
             "reasoning_effort": resolved.reasoning_effort,
             "system": system,
             "prompt": prompt,
-            "image": image,
+            "images": list(images),
             "image_mime": image_mime,
             "temperature": temperature,
             "max_tokens": max_tokens,
@@ -111,26 +111,32 @@ def complete(
     prompt: str,
     *,
     task: Task,
-    image: bytes | None = None,
+    images: Sequence[bytes] = (),
     image_mime: str = "image/jpeg",
     system: str | None = None,
     temperature: float = 0.0,
     max_tokens: int | None = None,
     response_format: dict[str, Any] | None = None,
     overrides: Mapping[str, Any] | None = None,
+    redact: Callable[[str], str] | None = None,
 ) -> LLMResponse:
-    """Send a prompt (plus optional prepared image) using the model configured for `task`.
+    """Send a prompt (plus up to 3 prepared images of one document) using the model for `task`.
 
     `max_tokens` overrides the task's configured budget; it includes reasoning tokens.
     `overrides` is passed to `Settings.resolve` (provider/model/reasoning_effort/max_tokens).
+    `redact` is applied to the reply and reasoning *before* caching and returning, so sensitive
+    values (e.g. identity numbers) never reach disk or callers.
     """
-    if image is not None and task == "text":
-        raise ValueError("task='text' does not take an image; use task='vision'")
-    if image is not None and len(image) > MAX_IMAGE_BYTES:
-        raise ValueError(
-            f"Image is {len(image)} bytes (limit {MAX_IMAGE_BYTES}); "
-            "run it through vision.images.encode_for_llm first"
-        )
+    if images and task == "text":
+        raise ValueError("task='text' does not take images; use task='vision'")
+    if len(images) > MAX_IMAGES:
+        raise ValueError(f"At most {MAX_IMAGES} images per call, got {len(images)}")
+    for img in images:
+        if len(img) > MAX_IMAGE_BYTES:
+            raise ValueError(
+                f"Image is {len(img)} bytes (limit {MAX_IMAGE_BYTES}); "
+                "run it through vision.images.encode_for_llm first"
+            )
 
     settings = get_settings()
     resolved = settings.resolve(task, overrides)
@@ -141,7 +147,7 @@ def complete(
     key = cache_key(
         resolved,
         prompt=prompt,
-        image=image,
+        images=images,
         image_mime=image_mime,
         system=system,
         temperature=temperature,
@@ -155,7 +161,7 @@ def complete(
 
     params: dict[str, Any] = {
         "model": resolved.model,
-        "messages": _build_messages(prompt, system, image, image_mime),
+        "messages": _build_messages(prompt, system, images, image_mime),
         "temperature": temperature,
         "max_tokens": max_tokens,
     }
@@ -198,9 +204,13 @@ def complete(
             completion_tokens=resp.usage.completion_tokens or 0,
             total_tokens=resp.usage.total_tokens or 0,
         )
+    text, reasoning = choice.message.content, _reasoning_text(choice.message)
+    if redact is not None:
+        text = redact(text)
+        reasoning = redact(reasoning) if reasoning else reasoning
     result = LLMResponse(
-        text=choice.message.content,
-        reasoning=_reasoning_text(choice.message),
+        text=text,
+        reasoning=reasoning,
         task=task,
         provider=resolved.provider,
         model=resolved.model,

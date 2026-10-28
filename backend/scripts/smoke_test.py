@@ -45,7 +45,7 @@ def main() -> None:
         print(f"Image: {original.shape[1]}x{original.shape[0]} -> {len(jpeg) / 1024:.0f} KB JPEG")
     prompt = args.prompt or (DEFAULT_IMAGE_PROMPT if jpeg else DEFAULT_TEXT_PROMPT)
 
-    resp = complete(prompt, task=args.task, image=jpeg, max_tokens=args.max_tokens)
+    resp = complete(prompt, task=args.task, images=[jpeg] if jpeg else (), max_tokens=args.max_tokens)
 
     print(
         f"Cached: {resp.cached}  Tokens: prompt={resp.usage.prompt_tokens} "

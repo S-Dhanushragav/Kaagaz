@@ -93,10 +93,20 @@ def test_comparison_cells_never_share_cache_key() -> None:
     keys = {
         cache_key(
             s.resolve("vision", {"model": model, "reasoning_effort": effort}),
-            prompt="p", image=b"img", image_mime="image/jpeg", system=None,
+            prompt="p", images=[b"img"], image_mime="image/jpeg", system=None,
             temperature=0.0, max_tokens=8000, response_format=None,
         )
         for model in ("muse-spark-1.3", "muse-spark-1.1")
         for effort in (None, "low")
     }
     assert len(keys) == 4
+
+
+def test_cache_key_covers_every_image() -> None:
+    from clients.llm import cache_key
+
+    r = make().resolve("vision")
+    kw = dict(prompt="p", image_mime="image/jpeg", system=None, temperature=0.0, max_tokens=10, response_format=None)
+    one = cache_key(r, images=[b"a"], **kw)
+    assert one != cache_key(r, images=[b"a", b"b"], **kw)
+    assert cache_key(r, images=[b"a", b"b"], **kw) != cache_key(r, images=[b"b", b"a"], **kw)
