@@ -7,35 +7,35 @@ rules:
     value: female
     status: verified
     source: myscheme.gov.in
-    source_url: https://myscheme.gov.in
+    source_url: https://myscheme.gov.in/schemes/mmlby
     last_checked: 2026-10-29
   - id: applicant_min_age
     check: age_min  # inclusive
     value: 21
     status: verified
     source: myscheme.gov.in
-    source_url: https://myscheme.gov.in
+    source_url: https://myscheme.gov.in/schemes/mmlby
     last_checked: 2026-10-29
   - id: applicant_max_age
     check: age_max  # inclusive
     value: 65
     status: verified
     source: myscheme.gov.in
-    source_url: https://myscheme.gov.in
+    source_url: https://myscheme.gov.in/schemes/mmlby
     last_checked: 2026-10-29
   - id: family_income
     check: income_max  # inclusive
     value: 250000
     status: verified
     source: myscheme.gov.in
-    source_url: https://myscheme.gov.in
+    source_url: https://myscheme.gov.in/schemes/mmlby
     last_checked: 2026-10-29
   - id: income_certificate
     check: income_certificate_unless_card
     value: {not_required_for_cards: [yellow, orange]}
     status: verified
     source: myscheme.gov.in
-    source_url: https://myscheme.gov.in
+    source_url: https://myscheme.gov.in/schemes/mmlby
     last_checked: 2026-10-29
     interpretation: >-
       Our reading, not the source's text: a Yellow or Orange ration card satisfies the income

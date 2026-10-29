@@ -7,13 +7,13 @@ rules:
     value: 65
     status: verified
     source: gadchiroli.gov.in
-    source_url: https://gadchiroli.gov.in
+    source_url: https://gadchiroli.gov.in/?p=24007
     last_checked: 2026-10-29
   - id: family_income
     check: income_max  # inclusive
     value: 21000
     status: verified
     source: gadchiroli.gov.in
-    source_url: https://gadchiroli.gov.in
+    source_url: https://gadchiroli.gov.in/?p=24007
     last_checked: 2026-10-29
 needs_other_proof: []

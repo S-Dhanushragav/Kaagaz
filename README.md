@@ -28,7 +28,7 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 | 2 | Synthetic SPECIMEN documents (4 types, Marathi + English), photo-like images, planted errors, ground truth | Done |
 | 3 | Document reader: one structured-output call per document (classify + extract), validation, retry, ID masking | Done |
 | 4 | Document finder: phone-sweep video → SAM 3.1 tracks → best 2–3 upright crops per document → reader | Done |
-| 5 | Household builder + scheme rules engine (5 schemes, deterministic) | Done; **end-to-end eval pending** |
+| 5 | Household builder + scheme rules engine (5 schemes, deterministic) | Done (end-to-end eval done) |
 | 6 | Fix planner agent (tool loop over a curated fix knowledge base) | Not started |
 | 7 | Mobile web app, voice in (Muse Voice Transcribe) and out (MMS-TTS), recapture flow | Not started |
 
@@ -54,6 +54,14 @@ All numbers are on synthetic SPECIMEN data; result files are in [eval/results/](
 
 **Household builder** (EV001–EV030, documents taken from ground truth, i.e. a perfect reader)
 - **32/32 planted errors caught, 0 false alarms**, 0 name-adjudicator calls.
+
+**Household builder, end to end** (EV001–EV030, 226 photo-like documents read by `muse-spark-1.3`, effort low)
+- **32/32 planted errors caught; 12 false alarms** (10 name mismatch, 1 not on ration card, 1 missing document), all
+  12 caused by a misread name. 0 unreadable, 0 misclassified, 0 adjudicator calls; reading took 146 s; cost $0.93.
+- The most common misread is the reader writing a familiar spelling: प्रियांका read as प्रियंका (4 of 12), ठोंबरे → ठॉंबरे,
+  ढमढेरे → धमधेरे. One misread on a ration card (ज्ञानदा → शयनदा) caused 3 false alarms in one household: the
+  member's documents no longer linked to her.
+- The report lists, for every false alarm, the misread field (document, field, expected, read).
 
 **Rules engine**: 51 hand-written unit tests on every boundary (ages 17/18, 20/21, 64/65/66; incomes 21,000/21,001,
 250,000/250,001; each Ramai income band; each ration card colour). These are tests, not an eval: an eval would only
@@ -122,8 +130,8 @@ was written from memory. Each rule records `value`, `status` (`verified` | `conf
 | Ramai Awas | Applicant's own SC/Neo-Buddhist certificate (another member's only → check at office); income limit **conflict**: ≤ 1,00,000 passes, > 1,50,000 fails, between → check at office |
 | Shared | Income certificate issued before 1 April of the current financial year → warning "may need renewal, check at the office" (unverified; never a blocker) |
 
-**Open TODOs for the developer:** add the `source_url` for "MoPNG SOP" and "scheme directory" (currently null), and set
-the status and source of the `needs_other_proof` items (currently `unverified`, source `developer`).
+Every rule links to the exact source page. **Open TODO for the developer:** the `needs_other_proof` items stay
+`unverified` (source `developer`) for now.
 
 ## Synthetic data
 
@@ -174,14 +182,9 @@ details to `eval/results/raw/` (gitignored).
 
 ## Continuing the evals (where we stopped)
 
-1. **Household eval, end to end (next step).** Reads all 226 EV documents (one photo each, `muse-spark-1.3`, effort low),
-   then builds households and matches issues against the planted errors, as in truth mode.
-   ```bash
-   python eval/run_household_eval.py --mode e2e --dry-run   # 226 reader calls, ~$0.90
-   python eval/run_household_eval.py --mode e2e
-   ```
-   Compare with truth mode (32/32 caught, 0 false alarms). Reader mistakes should show up as false alarms, mostly name
-   mismatches. Names in the 70–90 band call the text model on Baseten.
+1. **Household eval, end to end: done** (results above). Re-run with
+   `python eval/run_household_eval.py --mode e2e` (cached reads cost nothing). All 12 false alarms came from misread
+   names, which a one-photo read can't cross-check; in the app, frame agreement over 2–3 frames applies to names.
 2. **Before the final eval run:** the eval-phase notes say to keep ≥ 4 of each error type over 30 households (done in v2),
    include 5–6 member households (done), and rare names and unusual spellings to measure "correction" errors (done in v2).
 

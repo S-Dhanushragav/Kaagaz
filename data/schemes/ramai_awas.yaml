@@ -7,7 +7,7 @@ rules:
     value: {qualifying: [SC, NB], other_member_only: check_at_office}
     status: verified
     source: zpsatara.gov.in
-    source_url: https://zpsatara.gov.in
+    source_url: https://www.zpsatara.gov.in/?p=9134
     last_checked: 2026-10-29
     interpretation: >-
       Our reading, not the source's text: the applicant's own SC or Neo-Buddhist caste
@@ -17,19 +17,19 @@ rules:
     value: {caste_certificate: true, income_certificate: true}
     status: verified
     source: zpsatara.gov.in
-    source_url: https://zpsatara.gov.in
+    source_url: https://www.zpsatara.gov.in/?p=9134
     last_checked: 2026-10-29
   - id: family_income
     check: income_bands
     value: {pass_max: 100000, fail_above: 150000}
     status: conflict
     source: scheme directory; zpsatara.gov.in
-    source_url: null  # TODO(developer): links for each reported limit
+    source_url: null  # two sources; each reported limit below has its own link
     last_checked: 2026-10-29
     reported:
-      - {value: 100000, area: rural, source: scheme directory, source_url: null}
-      - {value: 120000, area: rural, source: zpsatara.gov.in, source_url: https://zpsatara.gov.in}
-      - {value: 150000, area: municipal, source: scheme directory, source_url: null}
+      - {value: 100000, area: rural, source: scheme directory, source_url: "https://www.publicservicesmap.in/schemes/ramai-awas-(gharkul)-scheme-for-sc-%26-nav-buddha-(urban-and-rural)--rassnb?lang=en"}
+      - {value: 120000, area: rural, source: zpsatara.gov.in, source_url: "https://www.zpsatara.gov.in/?p=9134"}
+      - {value: 150000, area: municipal, source: scheme directory, source_url: "https://www.publicservicesmap.in/schemes/ramai-awas-(gharkul)-scheme-for-sc-%26-nav-buddha-(urban-and-rural)--rassnb?lang=en"}
     note: Income <= 100000 passes; above 150000 fails; anything between -> check at the office.
 needs_other_proof:
   - id: residence_15_years

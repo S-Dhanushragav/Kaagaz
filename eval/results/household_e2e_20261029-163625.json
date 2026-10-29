@@ -1,0 +1,46 @@
+{
+  "mode": "e2e",
+  "model": "muse-spark-1.3",
+  "households": 30,
+  "planted": {
+    "name_mismatch": 7,
+    "dob_mismatch": 7,
+    "expired": 6,
+    "missing_document": 6,
+    "not_on_ration_card": 6
+  },
+  "caught": {
+    "name_mismatch": 7,
+    "dob_mismatch": 7,
+    "expired": 6,
+    "missing_document": 6,
+    "not_on_ration_card": 6
+  },
+  "catch_rate": 1.0,
+  "false_alarms": {
+    "name_mismatch": 10,
+    "not_on_ration_card": 1,
+    "missing_document": 1
+  },
+  "false_alarm_total": 12,
+  "false_alarm_causes": {
+    "misread": 12
+  },
+  "other_issues": {},
+  "adjudicator_calls": 0,
+  "scheme_outcomes": {
+    "not_eligible": 428,
+    "eligible_on_documents": 63,
+    "check_at_office": 14,
+    "blocked_by_issues": 130
+  },
+  "reader": {
+    "documents": 226,
+    "prompt_tokens": 331938,
+    "completion_tokens": 120860,
+    "unreadable": 0,
+    "misclassified": 0,
+    "read_s": 146.1
+  },
+  "reader_cost_usd": 0.929
+}

@@ -293,7 +293,7 @@ def test_results_carry_rule_values_status_and_source() -> None:
     r = result(household([WOMAN]), "ladki_bahin")
     by_id = {x.rule_id: x for x in r.rules}
     assert by_id["applicant_min_age"].value == 21 and by_id["applicant_min_age"].status == "verified"
-    assert by_id["applicant_min_age"].source_url == "https://myscheme.gov.in"
+    assert by_id["applicant_min_age"].source_url == "https://myscheme.gov.in/schemes/mmlby"
 
 
 def test_category_codes() -> None:

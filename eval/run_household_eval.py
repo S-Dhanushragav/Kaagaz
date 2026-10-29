@@ -6,7 +6,7 @@ Usage (from the repo root, with the backend venv):
     python eval/run_household_eval.py --mode e2e                # reader on photo-like images (muse-spark-1.3, low)
 
 Reports, per planted error type: caught / planted; false alarms (scored issue types that match no
-planted error); other issues (unreadable, duplicates, info notes); name-adjudicator calls; and the
+planted error), each with the reading errors in its documents (field, expected vs read); other issues (unreadable, duplicates, info notes); name-adjudicator calls; and the
 rules engine's outcomes. Results -> eval/results/household_<mode>_<timestamp>.json.
 """
 
@@ -25,8 +25,10 @@ sys.path[:0] = [str(ROOT / "backend"), str(ROOT)]
 from graph.nodes.build_household import build_household, llm_adjudicator  # noqa: E402
 from graph.nodes.read_documents import DocumentInput, read_documents  # noqa: E402
 from rules.engine import evaluate  # noqa: E402
+from schemas.documents import DocumentExtraction  # noqa: E402
 from synthetic.truth import extractions_from_truth, match_issues  # noqa: E402
 from vision.images import encode_for_llm, read_image  # noqa: E402
+from vision.text import comparison_key, mask_identity_number  # noqa: E402
 
 EVAL = ROOT / "synthetic" / "eval_households"
 RESULTS = ROOT / "eval" / "results"
@@ -73,6 +75,51 @@ def gts_by_id(gts: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     return {gt["id"]: gt for gt in gts}
 
 
+def _flatten(value: Any, prefix: str = "") -> dict[str, Any]:
+    if isinstance(value, dict):
+        return {k: v for key, item in value.items() for k, v in _flatten(item, f"{prefix}.{key}" if prefix else key).items()}
+    if isinstance(value, list):
+        return {k: v for i, item in enumerate(value) for k, v in _flatten(item, f"{prefix}[{i}]").items()}
+    return {prefix: value}
+
+
+def _same(expected: Any, read: Any) -> bool:
+    if isinstance(expected, str) and isinstance(read, str):
+        return comparison_key(expected) == comparison_key(read)
+    return expected == read
+
+
+def misreads(gt: dict[str, Any], issue: Any, extractions: list[DocumentExtraction]) -> list[dict[str, Any]]:
+    """Reading errors in the documents behind a false alarm: (document, field, expected, read).
+
+    Looks at the issue's documents; for a missing document or someone not on the ration card, also at
+    the ration card and every document of the type in question (a misread name can unlink a document).
+    """
+    truth = {d["id"]: d for d in gt["documents"]}
+    read = {ex.document_id: ex for ex in extractions}
+    doc_ids = list(issue.documents)
+    if issue.type in ("missing_document", "not_on_ration_card"):
+        kind = issue.evidence.get("document_type")
+        doc_ids += [d["id"] for d in gt["documents"] if d["type"] == "ration_card" or d["type"] == kind]
+    out = []
+    for doc_id in dict.fromkeys(doc_ids):
+        t, ex = truth.get(doc_id), read.get(doc_id)
+        if t is None or ex is None:
+            continue
+        if ex.doc_type != t["type"]:
+            out.append({"document": doc_id, "field": "doc_type", "expected": t["type"], "read": ex.doc_type})
+            continue
+        expected_fields = dict(t["fields"])
+        if "id_number" in expected_fields:
+            expected_fields["id_number"] = mask_identity_number(expected_fields["id_number"])
+        expected = _flatten(expected_fields)
+        got = _flatten(ex.fields.model_dump()) if ex.fields else {}
+        for path in sorted(set(expected) | set(got)):
+            if path in expected and not _same(expected[path], got.get(path)):
+                out.append({"document": doc_id, "field": path, "expected": expected[path], "read": got.get(path)})
+    return out
+
+
 def run(mode: str, model: str) -> dict[str, Any]:
     gts = load()
     usage: dict[str, Any] = {}
@@ -83,6 +130,7 @@ def run(mode: str, model: str) -> dict[str, Any]:
 
     planted, caught = Counter(), Counter()
     false_alarms: Counter = Counter()
+    alarm_causes: Counter = Counter()
     other: Counter = Counter()
     outcomes: Counter = Counter()
     adjudicator_calls = 0
@@ -96,8 +144,10 @@ def run(mode: str, model: str) -> dict[str, Any]:
             planted[p["type"]] += 1
         for p, _ in m.caught:
             caught[p["type"]] += 1
-        for i in m.false_alarms:
+        alarm_reads = [misreads(gt, i, extractions[gt["id"]]) for i in m.false_alarms]
+        for i, reads in zip(m.false_alarms, alarm_reads):
             false_alarms[i.type] += 1
+            alarm_causes["misread" if reads else "no misread"] += 1
         for i in m.other:
             other[f"{i.type} ({i.severity})"] += 1
         for r in evaluate(hh):
@@ -105,8 +155,8 @@ def run(mode: str, model: str) -> dict[str, Any]:
         details.append({
             "household": gt["id"],
             "missed": [{"type": p["type"], "documents": p["documents"], "member": p["member_id"]} for p in m.missed],
-            "false_alarms": [{"type": i.type, "member": i.member_id, "documents": i.documents, "evidence": i.evidence}
-                             for i in m.false_alarms],
+            "false_alarms": [{"type": i.type, "member": i.member_id, "documents": i.documents, "evidence": i.evidence,
+                              "misreads": reads} for i, reads in zip(m.false_alarms, alarm_reads)],
             "other": [{"type": i.type, "severity": i.severity, "documents": i.documents} for i in m.other],
             "llm_links": [l.model_dump() for l in hh.links if l.method == "llm"],
         })
@@ -123,6 +173,7 @@ def run(mode: str, model: str) -> dict[str, Any]:
         "catch_rate": round(sum(caught.values()) / sum(planted.values()), 3),
         "false_alarms": dict(false_alarms),
         "false_alarm_total": sum(false_alarms.values()),
+        "false_alarm_causes": dict(alarm_causes),
         "other_issues": dict(other),
         "adjudicator_calls": adjudicator_calls,
         "scheme_outcomes": dict(outcomes),
@@ -138,7 +189,7 @@ def print_summary(s: dict[str, Any]) -> None:
     for t in ERROR_TYPES:
         print(f"| {t} | {s['caught'].get(t, 0)}/{s['planted'].get(t, 0)} |")
     print(f"| **all** | **{sum(s['caught'].values())}/{sum(s['planted'].values())}** ({100 * s['catch_rate']:.1f}%) |")
-    print(f"\nFalse alarms: {s['false_alarm_total']} {s['false_alarms']}")
+    print(f"\nFalse alarms: {s['false_alarm_total']} {s['false_alarms']}; causes {s['false_alarm_causes']}")
     print(f"Other issues (not scored): {s['other_issues']}")
     print(f"Name-adjudicator calls (text model): {s['adjudicator_calls']}")
     print(f"Scheme outcomes (members x schemes): {s['scheme_outcomes']}")
@@ -152,6 +203,10 @@ def print_summary(s: dict[str, Any]) -> None:
             print(f"  MISSED {d['household']} {x['type']} {x['documents']}")
         for x in d["false_alarms"]:
             print(f"  FALSE  {d['household']} {x['type']} {x['member']} {x['documents']}")
+            for r in x["misreads"]:
+                print(f"         misread {r['document']} {r['field']}: expected {r['expected']!r}, read {r['read']!r}")
+            if not x["misreads"]:
+                print("         no misread in these documents (builder logic)")
 
 
 def main() -> None:
