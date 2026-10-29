@@ -8,7 +8,7 @@ documents:
   caste_certificate: caste certificate
 values:  # display text where it differs from the knowledge-base value
   "15 days (Maharashtra Right to Public Services Act)": "15 days"
-unverified: "(please confirm at the office)"
+unverified: "Please confirm this at the office."  # said once, at the end, if any fact in the sentence is unverified
 household: "Your family"
 options: {same: same, different: different, not sure: not sure}
 law_sets: "The law sets {time_limit} for this office."
@@ -20,8 +20,15 @@ procedures:
   income_certificate_new: "Apply for a new income certificate on the Aaple Sarkar portal or at an Aaple Sarkar Seva Kendra; the {office} issues it. The law sets {time_limit} for this office."
   caste_certificate_new: "{member}: apply to the {office} for a caste certificate. Start this first; it takes the longest. {caution}"
   aadhaar_enrolment: "{member}: go to the {office} to enrol for an Aadhaar card."
-  self_declaration: "{member}: you can also give a written declaration that the names on the {documents} belong to the same person. {caution}"
-ask_at_office: "{member}: ask at the office what to do about the {documents}."
+  self_declaration: "{member}: {documents}: you can also give a written declaration that the names on these belong to the same person. {caution}"
+ask_at_office: "{member}: {documents}: ask at the office what to do about this."
 questions:
   which_is_correct: "{member}: which one is correct? {documents}"
   compare: "{member}: please compare these: {documents}. Are they the same or different?"
+numbers:  # for speech only (screen text keeps digits)
+  words: [zero, one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty, twenty-one, twenty-two, twenty-three, twenty-four, twenty-five, twenty-six, twenty-seven, twenty-eight, twenty-nine, thirty, thirty-one, thirty-two, thirty-three, thirty-four, thirty-five, thirty-six, thirty-seven, thirty-eight, thirty-nine, forty, forty-one, forty-two, forty-three, forty-four, forty-five, forty-six, forty-seven, forty-eight, forty-nine, fifty, fifty-one, fifty-two, fifty-three, fifty-four, fifty-five, fifty-six, fifty-seven, fifty-eight, fifty-nine, sixty, sixty-one, sixty-two, sixty-three, sixty-four, sixty-five, sixty-six, sixty-seven, sixty-eight, sixty-nine, seventy, seventy-one, seventy-two, seventy-three, seventy-four, seventy-five, seventy-six, seventy-seven, seventy-eight, seventy-nine, eighty, eighty-one, eighty-two, eighty-three, eighty-four, eighty-five, eighty-six, eighty-seven, eighty-eight, eighty-nine, ninety, ninety-one, ninety-two, ninety-three, ninety-four, ninety-five, ninety-six, ninety-seven, ninety-eight, ninety-nine]  # 0-99
+  hundreds: [one hundred, two hundred, three hundred, four hundred, five hundred, six hundred, seven hundred, eight hundred, nine hundred]  # 100, 200, ... 900
+  thousand: thousand
+  century: "{n} hundred"  # years 1100-1999: '<19> hundred <81>'
+  months: [January, February, March, April, May, June, July, August, September, October, November, December]
+  rupees: "{n} rupees"  # 'Rs 75' in English text

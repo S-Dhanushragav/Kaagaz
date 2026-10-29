@@ -227,7 +227,7 @@ details to `eval/results/raw/` (gitignored).
 - Duplicates of the same document across two tracks are kept in the finder output; merging happens in the household
   builder (same ID last 4 + same date of birth).
 - Synthetic documents follow simplified layouts; real documents will need schema adjustments.
-- Hindi and Marathi voice templates (and their wording of offices, documents and cautions) are machine-drafted and
+- Hindi and Marathi voice templates (their wording of offices, documents and cautions, and the number words used for speech) are machine-drafted and
   have not been reviewed by a native speaker.
 
 ## Repository layout

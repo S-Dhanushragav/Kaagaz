@@ -10,7 +10,7 @@ import pytest
 
 from agents.fix_planner import finalize, planner_issues
 from agents.tools import load_fixes
-from agents.voice import LANGUAGES, PLACEHOLDERS, load_voice, question_text, step_voice
+from agents.voice import LANGUAGES, OFFICE_REFERRALS, PLACEHOLDERS, load_voice, question_text, step_voice
 from graph.nodes.build_household import build_household
 from rules.engine import evaluate
 from schemas.fixes import FixStep, PlannerIssue
@@ -93,12 +93,33 @@ def test_filled_sentence_names_the_steps_exact_office_and_no_other(language: str
 
 
 @pytest.mark.parametrize("language", LANGUAGES)
-def test_unverified_facts_are_marked(language: str) -> None:
+def test_confirm_at_the_office_is_said_once_at_the_end_if_anything_is_unverified(language: str) -> None:
     t = load_voice(language)
-    sentence = step_voice(_step("aadhaar_name_correction"), {"i1": ISSUE}, {}, language)
-    assert sentence.count(t.unverified) == 2  # the fee and the lifetime limit are unverified
-    verified = step_voice(_step("ration_card_name_correction"), {"i1": ISSUE}, {}, language)
-    assert t.unverified not in verified
+    for p_id in FIXES:
+        sentence = step_voice(_step(p_id), {"i1": ISSUE}, {}, language)
+        unverified = any(f.status == "unverified" for f in FIXES[p_id].facts().values())
+        refers = any(f.value in OFFICE_REFERRALS for f in FIXES[p_id].cautions)
+        assert sentence.count(t.unverified) == (1 if unverified and not refers else 0), (p_id, sentence)
+        if t.unverified in sentence:
+            assert sentence.endswith(t.unverified), sentence
+    assert t.unverified in step_voice(_step("aadhaar_name_correction"), {"i1": ISSUE}, {}, language)  # fee, limit
+    assert t.unverified not in step_voice(_step("ration_card_name_correction"), {"i1": ISSUE}, {}, language)
+    assert t.unverified not in step_voice(_step("self_declaration"), {"i1": ISSUE}, {}, language)  # no duplicate
+
+
+def test_office_referral_cautions_exist_in_the_knowledge_base() -> None:
+    cautions = {f.value for p in FIXES.values() for f in p.cautions}
+    assert OFFICE_REFERRALS <= cautions
+
+
+@pytest.mark.parametrize("language", LANGUAGES)
+def test_document_names_are_only_ever_a_label(language: str) -> None:
+    """'{documents}' is followed by ':' (a label) or is a stand-alone list in a question (after ':' or '?'):
+    it never needs an inflected form."""
+    for name, template in _all_templates(language).items():
+        for m in re.finditer(r"\{documents\}", template):
+            after, before = template[m.end():m.end() + 1], template[:m.start()].rstrip()
+            assert after == ":" or (name.startswith("questions.") and before.endswith((":", "?"))), (name, template)
 
 
 def _eval_issues() -> list[PlannerIssue]:

@@ -2,8 +2,9 @@
 
 No model writes these sentences. Each is a template filled from a verified plan step: every placeholder
 value is a knowledge-base fact (shown in the language's wording), a member's name, or document display
-names. Unverified facts carry the language's "confirm at the office" marker. Questions show documents by
-their display names (never internal ids) with the values that differ.
+names. A sentence with any unverified fact ends with the language's "please confirm this at the office".
+Questions show documents by their display names (never internal ids) with the values that differ.
+Document names are only ever a label ("{documents}: ..."), so no language needs an inflected form.
 """
 
 import re
@@ -22,11 +23,28 @@ VOICE_DIR = Path(__file__).resolve().parents[2] / "data" / "templates" / "voice"
 LANGUAGES = ("en", "hi", "mr")
 PLACEHOLDERS = frozenset({"office", "bring", "fee", "time_limit", "caution", "member", "documents"})
 DEVANAGARI = re.compile(r"[ऀ-ॿ]")
+# Cautions that already tell the family to check at the office: no extra "confirm at the office" after them.
+OFFICE_REFERRALS = frozenset({"Confirm at the office which documents are needed.",
+                              "Acceptance of the declaration is up to the office."})
+
+
+class NumberWords(BaseModel):
+    """Words for spelling out numbers in speech (screen text keeps digits)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    words: list[str]  # 0-99
+    hundreds: list[str]  # 100, 200, ... 900
+    thousand: str
+    century: str  # years 1100-1999, e.g. '{n} hundred' -> 'nineteen hundred eighty-one'
+    months: list[str]
+    rupees: str | None = None  # 'Rs 75' -> '{n} rupees' (English text only)
 
 
 class VoiceTemplates(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    numbers: NumberWords
     language: str
     documents: dict[str, str]  # document type -> display name
     values: dict[str, str] = {}  # knowledge-base value -> how it is said in this language
@@ -48,10 +66,15 @@ def load_voice(language: str) -> VoiceTemplates:
 
 
 def say(t: VoiceTemplates, fact: Fact | None) -> str:
-    if fact is None:
-        return ""
-    text = t.values.get(fact.value, fact.value)
-    return f"{text} {t.unverified}" if fact.status == "unverified" else text
+    return "" if fact is None else t.values.get(fact.value, fact.value)
+
+
+def with_marker(t: VoiceTemplates, sentence: str, facts: list[Fact]) -> str:
+    """Add 'please confirm this at the office' once, at the end, if any fact in the sentence is unverified
+    (unless the sentence already sends the family to the office for it)."""
+    if any(f.value in OFFICE_REFERRALS for f in facts) or all(f.status == "verified" for f in facts):
+        return sentence
+    return f"{sentence} {t.unverified}"
 
 
 def member_text(issue: PlannerIssue | None, language: str) -> str:
@@ -114,15 +137,22 @@ def step_voice(step: FixStep, issues: dict[str, PlannerIssue], answers: dict[str
         docs = concerned_documents(issue, answers.get(issue.id)) if issue else []
         return t.ask_at_office.format(member=member, documents=document_names(docs, language))
     p = load_fixes()[step.procedure_id]
-    return t.procedures[p.id].format(
+    template = t.procedures[p.id]
+    bring = [f for f in p.bring if f.value in step.bring]
+    cautions = [f for f in p.cautions if f.value in step.cautions]
+    sentence = template.format(
         member=member,
         office=say(t, p.office) if step.office else "",
-        bring="; ".join(say(t, f) for f in p.bring if f.value in step.bring),
+        bring="; ".join(say(t, f) for f in bring),
         fee=say(t, p.fee) if step.fee else "",
         time_limit=say(t, p.time_limit) if step.time_limit else "",
-        caution=" ".join(say(t, f) for f in p.cautions if f.value in step.cautions),
+        caution=" ".join(say(t, f) for f in cautions),
         documents=document_names(list(issue.documents.values()) if issue else [], language),
     )
+    spoken = [f for name, f in (("office", p.office if step.office else None), ("fee", p.fee if step.fee else None),
+                                ("time_limit", p.time_limit if step.time_limit else None)) if f and f"{{{name}}}" in template]
+    spoken += (bring if "{bring}" in template else []) + (cautions if "{caution}" in template else [])
+    return with_marker(t, sentence, spoken)
 
 
 def plan_voice(steps: list[FixStep], issues: list[PlannerIssue], language: str) -> list[str]:
