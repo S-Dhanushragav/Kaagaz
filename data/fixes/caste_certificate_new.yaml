@@ -1,0 +1,18 @@
+# Facts provided by the developer from official sources. Do not edit from memory.
+id: caste_certificate_new
+title: Get a caste certificate
+fixes:
+  - {issue: missing_document, wrong_document: caste_certificate}
+corrects: caste_certificate
+office: {value: "Sub-Divisional Officer / Deputy Collector", status: verified, source_url: null, note: "several district lists"}
+steps:
+  - Apply to the Sub-Divisional Officer / Deputy Collector for a caste certificate.
+bring: []
+fee: null
+time_limit: null
+cautions:
+  - {value: "The time limit is set by the district under the Right to Public Services Act.", status: verified, source_url: null, note: "15, 21 or 45 days in three district lists; never state a number"}
+slowest: true  # plan it first
+status: verified
+source_url: null
+last_checked: 2026-10-29

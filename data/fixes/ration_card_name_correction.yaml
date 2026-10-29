@@ -1,0 +1,17 @@
+# Facts provided by the developer from official sources. Do not edit from memory.
+id: ration_card_name_correction
+title: Correct a name on the ration card
+fixes:
+  - {issue: name_mismatch, wrong_document: ration_card}
+corrects: ration_card
+office: {value: "Ration card / Tahsil supply office", status: verified, source_url: "https://mahafood.gov.in/website/PDF_files/Food Civil Supply and Consumer Protection Department - Services.pdf"}
+steps:
+  - Go to the ration card / Tahsil supply office and ask to correct the name.
+bring:
+  - {value: "Gazette notice of the name change, or birth certificate (whichever applies)", status: verified, source_url: "https://mahafood.gov.in/website/PDF_files/Food Civil Supply and Consumer Protection Department - Services.pdf"}
+fee: {value: "Rs 2", status: verified, source_url: "https://mahafood.gov.in/website/PDF_files/Food Civil Supply and Consumer Protection Department - Services.pdf"}
+time_limit: null
+cautions: []
+status: verified
+source_url: "https://mahafood.gov.in/website/PDF_files/Food Civil Supply and Consumer Protection Department - Services.pdf"
+last_checked: 2026-10-29

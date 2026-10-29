@@ -1,0 +1,18 @@
+# Facts provided by the developer. Do not edit from memory.
+id: ration_card_add_member
+title: Add a person to the ration card
+fixes:
+  - {issue: not_on_ration_card, wrong_document: ration_card}
+corrects: ration_card
+office: {value: "Supply office, or the Ration Card Management System online", status: unverified, source_url: null}
+steps:
+  - Ask the supply office (or use the Ration Card Management System online) to add the person to the ration card.
+bring:
+  - {value: "Proof for the person being added (e.g. birth certificate for a newborn, marriage certificate for a spouse)", status: unverified, source_url: null}
+fee: null
+time_limit: null
+cautions:
+  - {value: "Confirm at the office which documents are needed.", status: unverified, source_url: null}
+status: unverified
+source_url: null
+last_checked: 2026-10-29

@@ -225,3 +225,83 @@ def complete(
         usage.completion_tokens,
     )
     return result
+
+
+# ---------- multi-turn chat with tools (agents) ----------
+
+class ToolCall(BaseModel):
+    id: str
+    name: str
+    arguments: str  # JSON text, as the model wrote it
+
+
+class ChatResponse(BaseModel):
+    content: str | None
+    tool_calls: list[ToolCall] = []
+    reasoning: str | None = None
+    finish_reason: str | None = None
+    task: Task
+    provider: str
+    model: str
+    usage: TokenUsage
+    cached: bool = False
+
+
+def chat(
+    messages: Sequence[Mapping[str, Any]],
+    *,
+    task: Task = "agent",
+    tools: Sequence[Mapping[str, Any]] | None = None,
+    temperature: float = 0.0,
+    max_tokens: int | None = None,
+    overrides: Mapping[str, Any] | None = None,
+) -> ChatResponse:
+    """One turn of a tool-calling conversation (OpenAI Chat Completions `tools`).
+
+    `messages` is the whole conversation so far, in OpenAI format (text only). The cache key is
+    the full conversation plus the tools, so a replayed agent run costs nothing.
+    """
+    settings = get_settings()
+    resolved = settings.resolve(task, overrides)
+    if max_tokens is None:
+        max_tokens = resolved.max_tokens
+    cache = DiskCache(settings.cache_path)
+    key = make_key({
+        "kind": "chat", "task": resolved.task, "provider": resolved.provider, "model": resolved.model,
+        "reasoning_effort": resolved.reasoning_effort, "messages": list(messages), "tools": list(tools or []),
+        "temperature": temperature, "max_tokens": max_tokens,
+    })
+    hit = cache.get(key)
+    if hit is not None:
+        return ChatResponse.model_validate({**hit, "cached": True})
+
+    params: dict[str, Any] = {"model": resolved.model, "messages": list(messages), "temperature": temperature,
+                              "max_tokens": max_tokens}
+    if tools:
+        params["tools"] = list(tools)
+    if resolved.reasoning_effort is not None:
+        params["reasoning_effort"] = resolved.reasoning_effort
+    label = f"{resolved.provider}/{resolved.model}"
+    resp = _client(resolved.base_url, resolved.api_key.get_secret_value()).chat.completions.create(**params)
+    if not resp.choices:
+        raise LLMError(f"No choices in response from {label}")
+    choice = resp.choices[0]
+    if choice.finish_reason == "length":
+        raise LLMError(f"{label} hit max_tokens={max_tokens}; raise {task.upper()}_MAX_TOKENS")
+    message = choice.message
+    calls = [ToolCall(id=c.id, name=c.function.name, arguments=c.function.arguments or "{}")
+             for c in (message.tool_calls or [])]
+    if message.content is None and not calls:
+        raise LLMError(f"Empty response from {label} (finish_reason={choice.finish_reason})")
+    usage = TokenUsage()
+    if resp.usage is not None:
+        usage = TokenUsage(prompt_tokens=resp.usage.prompt_tokens or 0,
+                           completion_tokens=resp.usage.completion_tokens or 0,
+                           total_tokens=resp.usage.total_tokens or 0)
+    result = ChatResponse(content=message.content, tool_calls=calls, reasoning=_reasoning_text(message),
+                          finish_reason=choice.finish_reason, task=task, provider=resolved.provider,
+                          model=resolved.model, usage=usage)
+    cache.set(key, result.model_dump())
+    logger.info("LLM chat [%s] %s: %d prompt + %d completion tokens, %d tool calls", task, label,
+                usage.prompt_tokens, usage.completion_tokens, len(calls))
+    return result

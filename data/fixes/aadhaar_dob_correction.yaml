@@ -1,0 +1,18 @@
+# Facts provided by the developer from official sources. Do not edit from memory.
+id: aadhaar_dob_correction
+title: Correct the date of birth on the Aadhaar card
+fixes:
+  - {issue: dob_mismatch, wrong_document: identity_card}
+corrects: identity_card
+office: {value: "Aadhaar Seva Kendra", status: verified, source_url: "https://uidai.gov.in/contact-support/have-any-question/295-faqs/enrolment-update.html?start=100"}
+steps:
+  - Go to an Aadhaar Seva Kendra and ask to update the date of birth.
+bring:
+  - {value: "Proof of date of birth (e.g. birth certificate)", status: unverified, source_url: null}
+fee: null
+time_limit: null
+cautions:
+  - {value: "The date of birth on Aadhaar can be updated only once in a lifetime. If the limit is used, a grievance and a visit to the UIDAI regional office with strong documents is needed.", status: verified, source_url: "https://uidai.gov.in/contact-support/have-any-question/295-faqs/enrolment-update.html?start=100"}
+status: verified
+source_url: "https://uidai.gov.in/contact-support/have-any-question/295-faqs/enrolment-update.html?start=100"
+last_checked: 2026-10-29

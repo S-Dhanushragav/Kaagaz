@@ -1,0 +1,17 @@
+# Facts provided by the developer from official sources. Do not edit from memory.
+id: income_certificate_new
+title: Get a new income certificate
+fixes:
+  - {issue: missing_document, wrong_document: income_certificate}
+  - {issue: expired, wrong_document: income_certificate}
+corrects: income_certificate
+office: {value: "Tahsil office", status: verified, source_url: "https://ahmednagar.nic.in/en/right-to-service-act", note: "designated officer differs by district (Nayab Tahsildar or Tahsildar)"}
+steps:
+  - Apply on the Aaple Sarkar portal or at an Aaple Sarkar Seva Kendra; the Tahsil office issues the certificate.
+bring: []
+fee: null
+time_limit: {value: "15 days (Maharashtra Right to Public Services Act)", status: verified, source_url: "https://ahmednagar.nic.in/en/right-to-service-act"}
+cautions: []
+status: verified
+source_url: "https://ahmednagar.nic.in/en/right-to-service-act"
+last_checked: 2026-10-29

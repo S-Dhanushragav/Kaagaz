@@ -1,0 +1,16 @@
+# Facts provided by the developer. Do not edit from memory.
+id: aadhaar_enrolment
+title: Enrol for Aadhaar
+fixes:
+  - {issue: missing_document, wrong_document: identity_card}
+corrects: identity_card
+office: {value: "Aadhaar Seva Kendra", status: unverified, source_url: null}
+steps:
+  - Go to an Aadhaar Seva Kendra for a fresh enrolment.
+bring: []
+fee: null
+time_limit: null
+cautions: []
+status: unverified
+source_url: null
+last_checked: 2026-10-29

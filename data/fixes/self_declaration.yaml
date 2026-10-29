@@ -1,0 +1,18 @@
+# Facts provided by the developer. Do not edit from memory.
+id: self_declaration
+title: Self-declaration that two spellings are one and the same person (optional)
+optional: true
+fixes:
+  - {issue: name_mismatch, wrong_document: any}
+corrects: null
+office: null
+steps:
+  - Take the drafted declaration to the office handling the correction.
+bring: []
+fee: null
+time_limit: null
+cautions:
+  - {value: "Acceptance of the declaration is up to the office.", status: unverified, source_url: null, note: "no source confirms acceptance"}
+status: unverified
+source_url: null
+last_checked: 2026-10-29

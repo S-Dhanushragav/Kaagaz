@@ -1,0 +1,17 @@
+# Facts provided by the developer from official sources. Do not edit from memory.
+id: aadhaar_name_correction
+title: Correct the name on the Aadhaar card
+fixes:
+  - {issue: name_mismatch, wrong_document: identity_card}
+corrects: identity_card
+office: {value: "Aadhaar Seva Kendra (nearest)", status: verified, source_url: "https://www.uidai.gov.in/contact-support/have-any-question/277-faqs.html?start=150"}
+steps:
+  - Go to the nearest Aadhaar Seva Kendra and ask to update the name.
+bring: []
+fee: {value: "about Rs 75", status: unverified, source_url: null}
+time_limit: null
+cautions:
+  - {value: "The name on Aadhaar can be updated only twice in a lifetime.", status: unverified, source_url: null, note: "news sources; UIDAI FAQ title only"}
+status: verified
+source_url: "https://www.uidai.gov.in/contact-support/have-any-question/277-faqs.html?start=150"
+last_checked: 2026-10-29
