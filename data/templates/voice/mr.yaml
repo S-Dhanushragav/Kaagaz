@@ -25,7 +25,9 @@ values:
   "The time limit is set by the district under the Right to Public Services Act.": "लोकसेवा हक्क कायद्यानुसार वेळमर्यादा जिल्हा ठरवतो."
   "Acceptance of the declaration is up to the office.": "प्रतिज्ञापत्र स्वीकारायचे की नाही ते कार्यालय ठरवते."
 unverified: "हे कार्यालयात खात्री करून घ्या."  # said once, at the end, if any fact in the sentence is unverified
-household: "तुमचे कुटुंब"
+household: "तुमचे कुटुंब"  # only for steps about the whole household
+not_on_card: "रेशन कार्डवर नसलेली एक व्यक्ती"
+card_member: "रेशन कार्डवरील सदस्य क्रमांक {n}"
 options: {same: सारखे, different: वेगळे, not sure: माहीत नाही}
 law_sets: "कायद्याने या कार्यालयासाठी {time_limit} ठरवले आहेत."
 procedures:

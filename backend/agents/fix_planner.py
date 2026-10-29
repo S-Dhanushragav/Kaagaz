@@ -210,7 +210,24 @@ def finalize(steps: list[FixStep], issues: list[PlannerIssue], language: str) ->
             s.facts = _facts(p, s)
     for s, sentence in zip(steps, plan_voice(steps, issues, language)):
         s.voice = sentence
-    return steps
+    return merge_identical(steps)
+
+
+def merge_identical(steps: list[FixStep]) -> list[FixStep]:
+    """Fix and ask-at-the-office steps that say exactly the same thing become one step for all their issues
+    (e.g. three unnamed people to add to the ration card). Questions are never merged."""
+    out: list[FixStep] = []
+    seen: dict[tuple, FixStep] = {}
+    for s in steps:
+        key = (s.kind, s.procedure_id, s.voice, s.declaration)
+        if s.kind != "question" and key in seen:
+            first = seen[key]
+            first.issue_ids += [i for i in s.issue_ids if i not in first.issue_ids]
+            continue
+        if s.kind != "question":
+            seen[key] = s
+        out.append(s)
+    return out
 
 
 # ---------- 6. ordering ----------

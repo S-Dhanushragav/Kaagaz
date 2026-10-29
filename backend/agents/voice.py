@@ -66,6 +66,8 @@ class VoiceTemplates(BaseModel):
     values: dict[str, str] = {}  # knowledge-base value -> how it is said in this language
     unverified: str  # marker after an unverified fact
     household: str  # said when a step concerns the whole household
+    not_on_card: str  # a person not on the ration card whose document gives no readable name
+    card_member: str  # 'Member {n} on the ration card' (its name unreadable)
     options: dict[str, str]  # same / different / not sure
     law_sets: str  # the only way a time limit is said; contains {time_limit}
     procedures: dict[str, str]
@@ -94,10 +96,17 @@ def with_marker(t: VoiceTemplates, sentence: str, facts: list[Fact]) -> str:
 
 
 def member_text(issue: PlannerIssue | None, language: str) -> str:
-    if issue is None:
-        return load_voice(language).household
+    """The person a step is about: their name; without a readable name, 'a person not on the ration card' or
+    'member N on the ration card'. 'Your family' only for steps about the whole household."""
+    t = load_voice(language)
+    if issue is None or issue.member_id is None:
+        return t.household
     name = issue.member_name_mr if language != "en" and issue.member_name_mr else issue.member_name
-    return name or load_voice(language).household
+    if name:
+        return name
+    if issue.member_id.startswith("r") and issue.member_id[1:].isdigit():
+        return t.card_member.format(n=issue.member_id[1:])
+    return t.not_on_card
 
 
 def document_names(doc_types: list[str], language: str) -> str:

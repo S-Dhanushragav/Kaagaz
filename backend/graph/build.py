@@ -4,7 +4,8 @@ find_documents -> read_documents -> build_household -> check_rules -> plan_fixes
 
 - find_documents streams each document to the reader as soon as its crops are ready (reading overlaps finding);
   an uploaded video is deleted as soon as the finder is done.
-- read_documents collects the reads (frame agreement) and makes the recapture plan.
+- read_documents collects the reads (frame agreement) and makes the recapture plan; if most documents need a
+  new sweep, the run ends there (nothing is built on unreadable reads).
 - build_household uses the name verifier (re-reads crops) and the adjudicator.
 - plan_fixes pauses at each family question (LangGraph interrupt) and resumes with the answer.
 - speak prepares the TTS text for every step and synthesizes the first sentence.
@@ -147,7 +148,12 @@ def build_graph(deps: Deps | None = None, checkpointer: Any = None) -> Any:
     for name, fn in zip(STAGES, (find, read, household, rules, plan, voice)):
         g.add_node(name, _timed(name, fn))
     g.add_edge(START, STAGES[0])
-    for a, b in zip(STAGES, STAGES[1:]):
+    g.add_edge("find_documents", "read_documents")
+    # Most documents unreadable: ask for a new sweep; no household, rules or plan built on unreadable reads.
+    g.add_conditional_edges("read_documents",
+                            lambda s: END if (s.get("recapture") or {}).get("mode") == "sweep_again" else "build_household",
+                            ["build_household", END])
+    for a, b in zip(STAGES[2:], STAGES[3:]):
         g.add_edge(a, b)
     g.add_edge(STAGES[-1], END)
     return g.compile(checkpointer=checkpointer or InMemorySaver())

@@ -205,6 +205,10 @@ function SessionScreen({ t, id, language, onRestart }: { t: Strings; id: string;
 
   if (error) return <main><p className="error">{t.error}: {error}</p><button type="button" className="secondary" onClick={onRestart}>{t.startOver}</button></main>
   if (!view) return <main><p className="status">{t.working}…</p></main>
+  if (view.status === 'done' && view.recapture?.mode === 'sweep_again') {
+    // Most documents unreadable: no plan or results built on them; only the request to record again.
+    return <main><Recapture t={t} view={view} /><button type="button" className="primary" onClick={onRestart}>{t.startOver}</button></main>
+  }
   return (
     <main>
       {view.status === 'error' && <p className="error" role="alert">{t.error}: {view.error}</p>}
@@ -213,6 +217,7 @@ function SessionScreen({ t, id, language, onRestart }: { t: Strings; id: string;
         <QuestionCard key={view.question.question_id} t={t} id={id} question={view.question} onAnswered={resumed} />
       )}
       <Recapture t={t} view={view} />
+      {view.status === 'done' && view.recapture?.mode === 'close_ups' && <p className="note">{t.closeUpsNote}</p>}
       {view.status === 'done' && <Plan t={t} id={id} view={view} />}
       {view.household && <Results t={t} view={view} language={language} />}
       <button type="button" className="secondary" onClick={onRestart}>{t.startOver}</button>
@@ -394,8 +399,10 @@ function FixStep({ t, id, step, index, display }: { t: Strings; id: string; step
 
 // ---------- results ----------
 
-function memberName(m: Member, language: Language): string {
-  return (language === 'en' ? m.name_en ?? m.name_mr : m.name_mr ?? m.name_en) ?? m.member_id
+function memberName(m: Member, language: Language, t: Strings): string {
+  const name = language === 'en' ? m.name_en ?? m.name_mr : m.name_mr ?? m.name_en
+  if (name) return name
+  return m.on_ration_card ? t.cardMember.replace('{n}', m.member_id.replace(/^r/, '')) : t.personNotOnCard
 }
 
 function Results({ t, view, language }: { t: Strings; view: SessionView; language: Language }) {
@@ -419,7 +426,7 @@ function Results({ t, view, language }: { t: Strings; view: SessionView; languag
           <ul className="issues">
             {problems.map((i, n) => {
               const m = hh.members.find((x) => x.member_id === i.member_id)
-              return <li key={n} className={i.severity}>{t.issueTypes[i.type] ?? i.type}{m ? `: ${memberName(m, language)}` : ''}</li>
+              return <li key={n} className={i.severity}>{t.issueTypes[i.type] ?? i.type}{m ? `: ${memberName(m, language, t)}` : ''}</li>
             })}
           </ul>
         )}
@@ -428,7 +435,7 @@ function Results({ t, view, language }: { t: Strings; view: SessionView; languag
         <h2>{t.householdTitle}</h2>
         {hh.members.map((m) => (
           <div key={m.member_id} className="member-card">
-            <h3>{memberName(m, language)}{!m.on_ration_card && <span className="tag"> {t.notOnCard}</span>}</h3>
+            <h3>{memberName(m, language, t)}{!m.on_ration_card && <span className="tag"> {t.notOnCard}</span>}</h3>
             <p className="small">{Object.keys(m.documents).map((d) => t.docTypes[d] ?? d).join(', ')}</p>
             <ul className="schemes">
               {(byMember.get(m.member_id) ?? []).map((r) => (

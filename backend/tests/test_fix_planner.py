@@ -333,3 +333,14 @@ def test_declaration_alone_does_not_cover_a_mismatch() -> None:
     finalize(steps, [issue], "en")
     assert "caste certificate" in office.voice and "ration card" not in office.voice  # only the wrong document
     assert "up to the office" in declaration.voice
+
+
+def test_identical_steps_are_merged_but_questions_are_not() -> None:
+    from agents.fix_planner import merge_identical
+
+    add = lambda i: FixStep(**_step("ration_card_add_member", [i], member_id=None), voice="Add a person.")  # noqa: E731
+    q = lambda i: FixStep(kind="question", issue_ids=[i], question="?", voice="Same?")  # noqa: E731
+    merged = merge_identical([q("i1"), q("i2"), add("i3"), add("i4"), FixStep(**_step("aadhaar_enrolment", ["i5"]), voice="Enrol."),
+                              add("i3")])
+    assert [(s.kind, s.issue_ids) for s in merged] == [("question", ["i1"]), ("question", ["i2"]),
+                                                      ("fix", ["i3", "i4"]), ("fix", ["i5"])]

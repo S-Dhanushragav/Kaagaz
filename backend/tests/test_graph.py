@@ -100,3 +100,18 @@ def test_sample_video_is_not_deleted(tmp_path) -> None:
                   "reference_date": "2026-10-27"}, {"configurable": {"thread_id": "s2"}})
     assert video.exists()
     drop("s2")
+
+
+def test_sweep_again_stops_after_reading(tmp_path) -> None:
+    """Most documents unreadable: ask for a new sweep; no household, rules, questions or plan."""
+    video = tmp_path / "upload.mp4"
+    video.write_bytes(b"video")
+    deps = _deps([])
+    blurry = {"rc": _card(SUNIL).model_copy(update={"needs_retake": True, "retake_reasons": ["blurry"]}),
+              "id1": SUNEEL_ID.model_copy(update={"needs_retake": True, "retake_reasons": ["blurry"]})}
+    deps.new_reader = lambda: FakeReader(blurry)
+    out = build_graph(deps).invoke({"session_id": "s3", "language": "mr", "video_path": str(video), "delete_video": True,
+                                    "reference_date": "2026-10-27"}, {"configurable": {"thread_id": "s3"}})
+    assert out["recapture"]["mode"] == "sweep_again" and "__interrupt__" not in out
+    assert "household" not in out and "plan" not in out and set(out["timings"]) == {"find_documents", "read_documents"}
+    drop("s3")

@@ -25,7 +25,9 @@ values:
   "The time limit is set by the district under the Right to Public Services Act.": "लोक सेवा अधिकार कानून के तहत समय-सीमा ज़िला तय करता है।"
   "Acceptance of the declaration is up to the office.": "घोषणा-पत्र स्वीकार करना या नहीं, यह कार्यालय तय करता है।"
 unverified: "यह कार्यालय में पक्का कर लें।"  # said once, at the end, if any fact in the sentence is unverified
-household: "आपका परिवार"
+household: "आपका परिवार"  # only for steps about the whole household
+not_on_card: "राशन कार्ड से बाहर का एक व्यक्ति"
+card_member: "राशन कार्ड पर सदस्य नंबर {n}"
 options: {same: एक जैसे, different: अलग, not sure: पता नहीं}
 law_sets: "कानून ने इस कार्यालय के लिए {time_limit} तय किए हैं।"
 procedures:

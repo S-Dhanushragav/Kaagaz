@@ -9,7 +9,9 @@ documents:
 values:  # display text where it differs from the knowledge-base value
   "15 days (Maharashtra Right to Public Services Act)": "15 days"
 unverified: "Please confirm this at the office."  # said once, at the end, if any fact in the sentence is unverified
-household: "Your family"
+household: "Your family"  # only for steps about the whole household
+not_on_card: "A person not on the ration card"  # when their document gives no readable name
+card_member: "Member {n} on the ration card"  # when the ration card row's name is unreadable
 options: {same: same, different: different, not sure: not sure}
 law_sets: "The law sets {time_limit} for this office."
 procedures:

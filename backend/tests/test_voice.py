@@ -10,8 +10,8 @@ import pytest
 
 from agents.fix_planner import finalize, planner_issues
 from agents.tools import load_fixes
-from agents.voice import (LANGUAGES, OFFICE_REFERRALS, PLACEHOLDERS, documents_with_values, load_voice, question_text,
-                          step_voice)
+from agents.voice import (LANGUAGES, OFFICE_REFERRALS, PLACEHOLDERS, documents_with_values, load_voice, member_text,
+                          question_text, step_voice)
 from graph.nodes.build_household import build_household
 from rules.engine import evaluate
 from schemas.fixes import FixStep, PlannerIssue
@@ -179,3 +179,14 @@ def test_finalized_plan_has_a_sentence_for_every_step() -> None:
     finalize(steps, [ISSUE], "hi")
     assert all(s.voice for s in steps) and "आधार" in steps[1].voice
     assert steps[1].cautions and steps[1].fee  # completed from the procedure
+
+
+@pytest.mark.parametrize("language", LANGUAGES)
+def test_person_labels_never_call_an_unknown_person_your_family(language: str) -> None:
+    t = load_voice(language)
+    unnamed = ISSUE.model_copy(update={"member_name": None, "member_name_mr": None})
+    assert member_text(unnamed.model_copy(update={"member_id": "x2"}), language) == t.not_on_card
+    assert member_text(unnamed.model_copy(update={"member_id": "r3"}), language) == t.card_member.format(n=3)
+    assert member_text(unnamed.model_copy(update={"member_id": None}), language) == t.household  # household-level
+    named = ISSUE.model_copy(update={"member_id": "x1"})
+    assert member_text(named, language) == ("Sunil Ramesh Patil" if language == "en" else "सुनील रमेश पाटील")
