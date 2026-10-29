@@ -48,10 +48,10 @@ numbers:  # for speech only (screen text keeps digits) - MACHINE-DRAFTED, needs 
   century: "{n} सौ"  # years 1100-1999: '<19> hundred <81>'
   months: [जनवरी, फ़रवरी, मार्च, अप्रैल, मई, जून, जुलाई, अगस्त, सितंबर, अक्टूबर, नवंबर, दिसंबर]
 answers:  # MACHINE-DRAFTED, needs native review. Answers match ONLY number words or not-sure words
-  labels: [पहला, दूसरा, तीसरा, चौथा, पाँचवाँ]
+  labels: [नंबर एक, नंबर दो, नंबर तीन, नंबर चार, नंबर पाँच]  # short phrases are heard far better
   option: "{label}: {option}।"
-  instruction: "अपने जवाब का नंबर बोलें।"
-  retry: "माफ़ कीजिए, समझ नहीं आया। कृपया पहला, दूसरा, इस तरह नंबर बोलें।"
+  instruction: "नंबर एक या नंबर दो, इस तरह बोलें।"
+  retry: "माफ़ कीजिए, समझ नहीं आया। कृपया नंबर एक या नंबर दो, इस तरह बोलें।"
   buttons: "कृपया स्क्रीन पर अपना जवाब चुनें।"
   english_only: "{member}: {documents}: अंग्रेज़ी स्पेलिंग अलग है। कृपया स्क्रीन पर देखें।"  # values differ only in Latin script
   numbers:

@@ -100,7 +100,7 @@ def test_keywords_cover_the_number_words(language: str) -> None:
 
 def test_spoken_prompt_spells_out_dates_and_has_full_stops() -> None:
     prompt = question_prompt(DOB_ISSUE, "which_is_correct", "en")
-    assert "First: four February nineteen hundred eighty-one." in prompt.speech
+    assert "Number one: four February nineteen hundred eighty-one." in prompt.speech
     assert "05/02/1981" in prompt.screen and "1981" not in prompt.speech
 
 
