@@ -48,7 +48,7 @@ Base URLs and model IDs always come from env/config, never hardcoded.
 - Backend: Python 3.11, FastAPI, LangGraph, Pydantic v2, OpenCV, ffmpeg, rapidfuzz, an Indic transliteration library
 - Storage: SQLite (LangGraph checkpointer), YAML/JSON in `data/`
 - Frontend: Vite + React + TypeScript, mobile-first web app, browser camera API
-- Hosting: frontend on Vercel/Netlify; backend Docker on Hugging Face Spaces
+- Hosting: frontend on Netlify (static build); backend on Modal as one ASGI container (`deploy/modal_app.py`)
 
 ## Scope (current)
 - 5 schemes, 4 document types: ration card, Aadhaar, income certificate, caste certificate

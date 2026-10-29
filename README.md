@@ -207,13 +207,32 @@ pip install -e ".[tts]" --extra-index-url https://download.pytorch.org/whl/cpu  
 Copy `.env.example` to `.env` (repo root) and fill in `META_API_KEY` and `BASETEN_API_KEY`. Model IDs: `muse-spark-1.3`
 (vision, agent), `meta-models/muse-spark-open-1026` (text, on Baseten), `sam-3.1` (segmenter), `VISION_REASONING_EFFORT=low`.
 
+## Deploy (Modal + Netlify)
+
+The backend runs on Modal as **one** ASGI container (sessions are paused graphs held in memory); the frontend is a
+static Netlify site. Keys live only in a Modal secret.
+
+```bash
+pip install -e "backend[deploy]"                      # the Modal CLI
+modal token new                                       # once
+modal secret create kaagaz-secrets META_API_KEY=... BASETEN_API_KEY=...
+KAAGAZ_FRONTEND_ORIGIN=https://<site>.netlify.app modal deploy deploy/modal_app.py
+modal volume put kaagaz-cache .cache /                # optional: seed the model-call cache (sample runs free)
+python scripts/warmup.py https://<workspace>--kaagaz-web.modal.run   # 5 minutes before any demo
+```
+
+- MMS-TTS models are baked into the image at build time; the model-call cache is a Modal Volume.
+- `KAAGAZ_KEEP_WARM=1` at deploy keeps one container running (judging window only; it uses credits). Off by default.
+- Netlify: base directory `frontend/`, environment variable `VITE_API_URL` = the Modal URL (see `frontend/netlify.toml`).
+  CORS on the backend allows only `KAAGAZ_FRONTEND_ORIGIN`.
+
 ## Commands
 
 From `backend/` unless noted. Costs are for a cold cache; cached calls are free.
 
 | What | Command | Cost |
 |---|---|---|
-| All tests (209, no network) | `pytest -q` | free |
+| All tests (no network) | `pytest -q` | free |
 | API server | `uvicorn app.main:app --reload` | free |
 | Smoke test one image | `python scripts/smoke_test.py path/to/specimen.jpg` | ~$0.004 |
 | Regenerate v1 households (repo root) | `python -m synthetic.generate --n 10 --seed 42` | free |

@@ -1,0 +1,11 @@
+# Netlify: static build of the mobile web app. Set VITE_API_URL (the Modal URL) in the site's environment.
+[build]
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "camera=(self), microphone=(self)"
