@@ -13,7 +13,7 @@ from langgraph.types import interrupt
 from agents.answers import question_prompt
 from agents.fix_planner import plan_fixes
 from agents.tools import NOT_SURE
-from agents.voice import documents_with_values
+from agents.voice import documents_with_values, member_text
 from rules.engine import SchemeResult
 from schemas.fixes import FixPlan, PlannerIssue
 from schemas.household import Household
@@ -24,7 +24,7 @@ def question_payload(issue: PlannerIssue, kind: str, language: str) -> dict[str,
     return {
         "question_id": f"{issue.id}:{kind}",
         "issue_id": issue.id, "issue_type": issue.type, "severity": issue.severity, "kind": kind,
-        "member": issue.member_name, "screen": prompt.screen, "speech": prompt.speech,
+        "member": member_text(issue, language), "screen": prompt.screen, "speech": prompt.speech,
         "documents": documents_with_values(issue, language), "options": prompt.options, "shown": prompt.shown,
         "english_only": prompt.english_only,
         # side by side for 'confirm' name questions: document type -> value

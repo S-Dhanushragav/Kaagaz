@@ -1,0 +1,149 @@
+// Client for the Kaagaz backend (backend/app/api/routes.py).
+
+export const API_URL: string = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
+
+export type Language = 'mr' | 'hi' | 'en'
+export type Stage = 'find_documents' | 'read_documents' | 'build_household' | 'check_rules' | 'plan_fixes' | 'speak'
+
+export interface Question {
+  question_id: string
+  issue_type: string
+  severity: string // 'blocker' | 'confirm' | ...
+  kind: 'which_is_correct' | 'compare'
+  member: string | null
+  screen: string
+  speech: string
+  documents: string
+  options: string[]
+  shown: string[]
+  english_only: boolean
+  values: { document_type: string; value: string }[]
+}
+
+export interface Fact { fact: string; value: string; status: 'verified' | 'unverified'; source_url: string | null }
+
+export interface Step {
+  kind: 'question' | 'fix' | 'ask_at_office'
+  issue_ids: string[]
+  member_id: string | null
+  procedure_id: string | null
+  question: string | null
+  options: string[]
+  answer: string | null
+  office: string | null
+  bring: string[]
+  fee: string | null
+  time_limit: string | null
+  cautions: string[]
+  declaration: string | null
+  facts: Fact[]
+  visit: number | null
+  voice: string
+}
+
+export interface Member {
+  member_id: string
+  on_ration_card: boolean
+  name_mr: string | null
+  name_en: string | null
+  relation_en: string | null
+  age: number | null
+  documents: Record<string, string[]>
+}
+
+export interface Issue {
+  type: string
+  severity: string
+  member_id: string | null
+  documents: string[]
+  message: string
+}
+
+export interface RuleResult {
+  rule_id: string
+  outcome: string
+  reason: string
+  status: string
+  source: string
+  source_url: string | null
+}
+
+export interface SchemeResult {
+  scheme_id: string
+  scheme_name: string
+  member_id: string
+  outcome: 'not_eligible' | 'blocked_by_issues' | 'check_at_office' | 'eligible_on_documents'
+  reasons: string[]
+  rules: RuleResult[]
+  warnings: string[]
+}
+
+export interface Shown { text: string; verified: boolean }
+export interface StepDisplay { office: Shown | null; bring: Shown[]; fee: Shown | null; time_limit: Shown | null }
+
+export interface SessionView {
+  id: string
+  language: Language
+  sample: boolean
+  status: 'running' | 'waiting' | 'done' | 'error'
+  error: string | null
+  stage: Stage | null
+  stages: { stage: Stage; done: boolean; seconds: number | null }[]
+  question: Question | null
+  elapsed_s: number
+  found: { id: string; frames: number[]; fully_visible: boolean }[] | null
+  recapture: { mode: 'none' | 'close_ups' | 'sweep_again'; documents: string[] } | null
+  household: {
+    members: Member[]
+    documents: Record<string, { document_id: string; doc_type: string | null; unreadable: boolean }>
+    issues: Issue[]
+  } | null
+  results: SchemeResult[] | null
+  plan: { steps: Step[]; source: string } | null
+  speech: { index: number; kind: string; text: string; speech: string; display: StepDisplay | null }[] | null
+}
+
+export interface AnswerReply { action: 'answered' | 'ask_again' | 'show_buttons'; option: number | null; say: string | null; heard?: string | null }
+
+async function json<T>(res: Response): Promise<T> {
+  if (!res.ok) {
+    let detail = res.statusText
+    try { detail = (await res.json()).detail ?? detail } catch { /* not JSON */ }
+    throw new Error(detail)
+  }
+  return res.json() as Promise<T>
+}
+
+export async function startSample(language: Language): Promise<string> {
+  const res = await fetch(`${API_URL}/sessions/sample`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ language }),
+  })
+  return (await json<{ id: string }>(res)).id
+}
+
+export async function startUpload(video: Blob, language: Language): Promise<string> {
+  const form = new FormData()
+  form.append('language', language)
+  form.append('video', video, video.type.includes('mp4') ? 'sweep.mp4' : 'sweep.webm')
+  return (await json<{ id: string }>(await fetch(`${API_URL}/sessions`, { method: 'POST', body: form }))).id
+}
+
+export async function getSession(id: string): Promise<SessionView> {
+  return json<SessionView>(await fetch(`${API_URL}/sessions/${id}`))
+}
+
+export async function answerOption(id: string, questionId: string, option: number): Promise<AnswerReply> {
+  const res = await fetch(`${API_URL}/sessions/${id}/answer`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question_id: questionId, option }),
+  })
+  return json<AnswerReply>(res)
+}
+
+export async function answerAudio(id: string, questionId: string, wav: Blob): Promise<AnswerReply> {
+  const form = new FormData()
+  form.append('question_id', questionId)
+  form.append('audio', wav, 'answer.wav')
+  return json<AnswerReply>(await fetch(`${API_URL}/sessions/${id}/answer`, { method: 'POST', body: form }))
+}
+
+export const audioUrl = (id: string, key: string): string => `${API_URL}/sessions/${id}/audio/${key}`
