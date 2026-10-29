@@ -15,6 +15,8 @@ dependencies = [
     "rapidfuzz",  # fuzzy name matching
     "indic-transliteration",  # Devanagari -> Latin for cross-script name matching
     "PyYAML",  # scheme rules in data/schemes/
+    "langgraph",  # pipeline graph; ask_family as an interrupt (graph/build.py)
+    "python-multipart",  # FastAPI form uploads (video, answer audio)
 ]
 
 [project.optional-dependencies]
@@ -24,6 +26,8 @@ synthetic = ["playwright", "jinja2"]
 # Speech output with Meta MMS-TTS (clients/tts.py), CPU. Install torch from the CPU index:
 #   pip install -e ".[tts]" --extra-index-url https://download.pytorch.org/whl/cpu
 tts = ["torch", "transformers"]
+# Deployment to Modal (deploy/modal_app.py); not needed at runtime
+deploy = ["modal"]
 
 [build-system]
 requires = ["setuptools>=68"]
