@@ -92,6 +92,25 @@ transcription: 10 s timeout, one retry, then buttons. Nothing is ever matched to
 name the documents; the numbered options carry the values; in Hindi/Marathi a difference only in English spelling
 is not read out: the voice says so and points to the screen, which shows both spellings. Real recordings are next.
 
+**Deployed app, end to end** (Modal, 1 container, 4 CPU, no GPU; measured 2026-10-29 with `scripts/warmup.py` and a
+real upload; target: first spoken sentence within 60 s)
+
+| Run | Find | Read | Household | Plan | First spoken sentence | Plan ready |
+|---|---|---|---|---|---|---|
+| Sample family (HH009), cached, **cold container** (+29 s until healthy) | 24 s | 6 s | 3 s | 1 s | **42 s** (the question) | 51 s |
+| Sample family, cached, warm container | 8 s | 0 s | 0 s | 0 s | **18 s** (the question) | 30 s |
+| **Real upload, nothing cached** (20 s 720p WebM at 4 Mbps, 10 MB, HH001) | 19 s | 9 s | 0 s | 10 s | **63 s** (first plan step; no question) | 63 s |
+
+- The cached sample meets the target; **a real upload just misses it (63 s)**: 10 s of the 63 are the upload itself,
+  6 s are synthesizing the first sentence. Mask decoding and frame sampling on CPU dominate "find" even when the
+  segmenter call is cached.
+- A cold container adds ~29 s (start + loading three TTS models): run `scripts/warmup.py` 5 minutes before a demo.
+- Reading quality drops on re-encoded, phone-like video: the HH001 upload produced 3 "add to the ration card" steps
+  (1 planted) and asked for close-ups of 3 documents. If most documents are unreadable the app asks for a new sweep
+  and shows nothing else.
+- Modal cost of the deploy (two image builds) and these test runs: **$0.02 metered, covered by credits** (billing may
+  lag; an idle container stays up 20 minutes after the last request).
+
 **Rules engine**: 51 hand-written unit tests on every boundary (ages 17/18, 20/21, 64/65/66; incomes 21,000/21,001,
 250,000/250,001; each Ramai income band; each ration card colour). These are tests, not an eval: an eval would only
 compare the rules with themselves.

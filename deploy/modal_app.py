@@ -36,6 +36,20 @@ def _settings() -> dict[str, str]:
     return out
 
 
+def _dependencies() -> list[str]:
+    """Backend dependencies plus the `tts` extra, from backend/pyproject.toml (torch comes from the CPU index)."""
+    import tomllib
+
+    project = tomllib.loads((ROOT / "backend" / "pyproject.toml").read_text(encoding="utf-8"))["project"]
+    return [d for d in project["dependencies"] + project["optional-dependencies"]["tts"] if d != "torch"]
+
+
+# Modal also imports this file inside the build and app containers, where the repo is not present:
+# local files are read only on the machine that deploys.
+SETTINGS = _settings() if modal.is_local() else {}
+DEPENDENCIES = _dependencies() if modal.is_local() else []
+
+
 def _download_tts_models() -> None:
     from transformers import AutoTokenizer, VitsModel
 
@@ -48,8 +62,8 @@ image = (
     modal.Image.debian_slim(python_version="3.13")
     .apt_install("ffmpeg")
     .pip_install("torch", index_url="https://download.pytorch.org/whl/cpu")
-    .pip_install_from_pyproject(str(ROOT / "backend" / "pyproject.toml"), optional_dependencies=["tts"])
-    .env(_settings())
+    .pip_install(*DEPENDENCIES)
+    .env(SETTINGS)
     .run_function(_download_tts_models)
     .add_local_dir(ROOT / "backend", f"{REMOTE}/backend",
                    ignore=[".venv", "**/__pycache__", ".pytest_cache", "*.egg-info", "tests"])
