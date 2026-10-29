@@ -7,10 +7,40 @@ Decoding goes through OpenCV's bundled FFmpeg, so H.264 and H.265/HEVC phone vid
 rotation metadata (portrait phone videos) is applied automatically by OpenCV.
 """
 
+import shutil
+import subprocess
 from pathlib import Path
 
 import cv2
 from pydantic import BaseModel
+
+UPLOAD_FPS = 30
+UPLOAD_LONG_SIDE = 1080
+
+
+def normalize_upload(src: Path, dst: Path, max_s: float) -> float:
+    """Browser recordings (WebM from Android Chrome, MP4/HEVC from iPhones) often have a variable frame rate
+    and no duration in the header. Re-encode to constant 30 fps H.264, long side at most 1080 px, no audio,
+    cut at `max_s` + 1 s; returns the duration in seconds (frames / 30). Needs ffmpeg on PATH."""
+    ffmpeg = shutil.which("ffmpeg")
+    if ffmpeg is None:
+        raise RuntimeError("ffmpeg is needed to read uploaded videos")
+    scale = f"scale='if(gt(iw,ih),min({UPLOAD_LONG_SIDE},iw),-2)':'if(gt(iw,ih),-2,min({UPLOAD_LONG_SIDE},ih))'"
+    cmd = [ffmpeg, "-y", "-loglevel", "error", "-i", str(src), "-t", str(max_s + 1), "-an", "-vf", scale,
+           "-r", str(UPLOAD_FPS), "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p", str(dst)]
+    done = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+    if done.returncode != 0 or not dst.exists():
+        raise ValueError(f"cannot read this video: {done.stderr.strip()[-300:]}")
+    cap = _open(dst)
+    try:
+        frames = 0
+        while cap.grab():
+            frames += 1
+    finally:
+        cap.release()
+    if frames == 0:
+        raise ValueError("the video has no frames")
+    return frames / UPLOAD_FPS
 
 
 class VideoInfo(BaseModel):

@@ -71,6 +71,15 @@ class Settings(BaseSettings):
 
     segmenter: Literal["sam31_api", "sam3_modal"] = "sam31_api"
 
+    # API sessions (app/sessions.py)
+    max_sessions_per_hour: int = Field(30, ge=0)  # uploads; the bundled sample is not counted
+    session_ttl_s: int = Field(3600, gt=0)  # session data (results, crops) deleted after this
+    max_video_s: float = 45.0
+    max_video_mb: float = 60.0
+    sample_video: str = "synthetic/videos/HH009/sweep.mp4"  # relative to the repo root
+    cors_origins: str = "http://localhost:5173"  # comma-separated; the deployed frontend's origin only
+    sessions_dir: Path = Path("tmp/sessions")
+
     # Speech output (clients/tts.py): Meta MMS-TTS, CC-BY-NC 4.0, run locally on CPU
     tts_model_en: str = ""
     tts_model_hi: str = ""
