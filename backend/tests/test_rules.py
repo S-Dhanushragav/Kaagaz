@@ -250,6 +250,16 @@ def test_member_blockers_block_every_scheme() -> None:
         assert outcome(hh, scheme) == "blocked_by_issues"
 
 
+def test_name_to_confirm_never_blocks_but_is_listed() -> None:
+    confirm = _issue("name_mismatch", "a", ["id_a", "rc"], severity="confirm")
+    plain = household([WOMAN], castes={"a": "SC"})
+    hh = household([WOMAN], castes={"a": "SC"}, issues=[confirm])
+    for scheme in ("pm_ujjwala", "ladki_bahin", "ramai_awas"):
+        r = result(hh, scheme)
+        assert r.outcome == outcome(plain, scheme) and r.outcome != "blocked_by_issues"
+        assert r.to_confirm == [confirm] and confirm.message in r.warnings and not r.blocking_issues
+
+
 def test_unreadable_income_blocks_income_rules() -> None:
     hh = household([WOMAN], income=None)
     hh.documents["inc"] = _doc("inc", "income_certificate", annual_income=None, issue_date="01/10/2026")

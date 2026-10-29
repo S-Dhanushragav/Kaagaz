@@ -7,6 +7,8 @@ Outcome for a member and a scheme, in this order:
 4. eligible_on_documents  everything the documents can show passes
 Every result lists the rules used (value, status, source, interpretation), the reasons, the
 needs_other_proof items the documents cannot show, and warnings (e.g. income certificate renewal).
+Issues with severity 'confirm' (e.g. a name spelling the re-read didn't confirm) are treated like
+warnings: listed with the result (to_confirm), never blocking.
 """
 
 import re
@@ -56,6 +58,7 @@ class SchemeResult(BaseModel):
     needs_other_proof: list[OtherProofItem]
     blocking_issues: list[Issue]
     warnings: list[str]
+    to_confirm: list[Issue] = []  # the member's 'confirm' issues: listed with the result, never blocking
 
 
 # ---------- facts from the household ----------
@@ -254,6 +257,8 @@ def evaluate_member(hh: Household, member: HouseholdMember, scheme: Scheme, shar
         if w:
             results.append(w)
             warnings.append(w.reason)
+    to_confirm = [i for i in hh.issues if i.severity == "confirm" and i.member_id == member.member_id]
+    warnings += [i.message for i in to_confirm]
 
     fails = [r for r in results if r.outcome == "fail"]
     blocked = [r for r in results if r.outcome == "blocked"]
@@ -291,6 +296,7 @@ def evaluate_member(hh: Household, member: HouseholdMember, scheme: Scheme, shar
         scheme_id=scheme.id, scheme_name=scheme.name.get("en", scheme.id), member_id=member.member_id,
         outcome=outcome, reasons=reasons, rules=results, needs_other_proof=other,
         blocking_issues=blocking if outcome == "blocked_by_issues" else [], warnings=warnings,
+        to_confirm=to_confirm,
     )
 
 

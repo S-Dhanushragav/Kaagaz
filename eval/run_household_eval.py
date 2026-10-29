@@ -148,6 +148,9 @@ def run(mode: str, model: str, verify: bool = True) -> dict[str, Any]:
     planted, caught = Counter(), Counter()
     false_alarms: Counter = Counter()
     alarm_causes: Counter = Counter()
+    alarms_by_severity: Counter = Counter()
+    planted_names: Counter = Counter()  # severity of the issue that caught each planted name mismatch
+    planted_names_not_blocker: list[dict[str, Any]] = []
     other: Counter = Counter()
     outcomes: Counter = Counter()
     adjudicator_calls = 0
@@ -175,11 +178,17 @@ def run(mode: str, model: str, verify: bool = True) -> dict[str, Any]:
         m = match_issues(gt, hh.issues)
         for p in gt["planted_errors"]:
             planted[p["type"]] += 1
-        for p, _ in m.caught:
+        for p, i in m.caught:
             caught[p["type"]] += 1
+            if p["type"] == "name_mismatch":
+                planted_names[i.severity] += 1
+                if i.severity != "blocker":
+                    planted_names_not_blocker.append({"household": gt["id"], "documents": p["documents"],
+                                                      "severity": i.severity})
         alarm_reads = [misreads(gt, i, extractions[gt["id"]]) for i in m.false_alarms]
         for i, reads in zip(m.false_alarms, alarm_reads):
             false_alarms[i.type] += 1
+            alarms_by_severity[i.severity] += 1
             alarm_causes["misread" if reads else "no misread"] += 1
         for i in m.other:
             other[f"{i.type} ({i.severity})"] += 1
@@ -188,11 +197,11 @@ def run(mode: str, model: str, verify: bool = True) -> dict[str, Any]:
         details.append({
             "household": gt["id"],
             "missed": [{"type": p["type"], "documents": p["documents"], "member": p["member_id"]} for p in m.missed],
-            "false_alarms": [{"type": i.type, "member": i.member_id, "documents": i.documents, "evidence": i.evidence,
-                              "misreads": reads} for i, reads in zip(m.false_alarms, alarm_reads)],
+            "false_alarms": [{"type": i.type, "severity": i.severity, "member": i.member_id, "documents": i.documents,
+                              "evidence": i.evidence, "misreads": reads} for i, reads in zip(m.false_alarms, alarm_reads)],
             "other": [{"type": i.type, "severity": i.severity, "documents": i.documents} for i in m.other],
             "llm_links": [l.model_dump() for l in hh.links if l.method == "llm"],
-            "name_verifications": [{"member": i.member_id, "confirmed": i.type == "name_mismatch",
+            "name_verifications": [{"member": i.member_id, "confirmed": i.severity == "blocker",
                                     "verification": i.evidence["verification"]}
                                    for i in hh.issues if "verification" in i.evidence],
         })
@@ -212,6 +221,9 @@ def run(mode: str, model: str, verify: bool = True) -> dict[str, Any]:
         "false_alarms": dict(false_alarms),
         "false_alarm_total": sum(false_alarms.values()),
         "false_alarm_causes": dict(alarm_causes),
+        "false_alarms_by_severity": dict(alarms_by_severity),
+        "planted_name_mismatch_severity": dict(planted_names),
+        "planted_name_mismatch_not_blocker": planted_names_not_blocker,
         "other_issues": dict(other),
         "adjudicator_calls": adjudicator_calls,
         "adjudicator_tokens": [calls["adjudicator_prompt_tokens"], calls["adjudicator_completion_tokens"]],
@@ -232,7 +244,12 @@ def print_summary(s: dict[str, Any]) -> None:
     for t in ERROR_TYPES:
         print(f"| {t} | {s['caught'].get(t, 0)}/{s['planted'].get(t, 0)} |")
     print(f"| **all** | **{sum(s['caught'].values())}/{sum(s['planted'].values())}** ({100 * s['catch_rate']:.1f}%) |")
-    print(f"\nFalse alarms: {s['false_alarm_total']} {s['false_alarms']}; causes {s['false_alarm_causes']}")
+    print(f"\nFalse alarms: {s['false_alarm_total']} {s['false_alarms']}; by severity {s['false_alarms_by_severity']}; "
+          f"causes {s['false_alarm_causes']}")
+    n_planted = s["planted"].get("name_mismatch", 0)
+    n_blocker = s["planted_name_mismatch_severity"].get("blocker", 0)
+    print(f"Planted name mismatches reported as blocker: {n_blocker}/{n_planted}"
+          + ("" if n_blocker == n_planted else f"  ** NOT ALL BLOCKERS: {s['planted_name_mismatch_not_blocker']}"))
     print(f"Other issues (not scored): {s['other_issues']}")
     print(f"Name-adjudicator calls (text model, Baseten): {s['adjudicator_calls']}, "
           f"tokens {s['adjudicator_tokens'][0]} + {s['adjudicator_tokens'][1]}")
@@ -248,14 +265,14 @@ def print_summary(s: dict[str, Any]) -> None:
         for x in d["missed"]:
             print(f"  MISSED {d['household']} {x['type']} {x['documents']}")
         for v in d["name_verifications"]:
-            print(f"  VERIFY {d['household']} {v['member']} {'confirmed' if v['confirmed'] else 'cleared'}")
+            print(f"  VERIFY {d['household']} {v['member']} {'confirmed (blocker)' if v['confirmed'] else 'not confirmed (confirm)'}")
             for doc, r in v["verification"].items():
                 print(f"         {doc}: first {r['first_read']}, re-read {r['re_read']}"
                       + (f" ({r['error']})" if r.get("error") else ""))
         for x in d["llm_links"]:
             print(f"  ADJUD  {d['household']} {x['document_id']} -> {x['member_id']} ({x['score']}): {x['reason']}")
         for x in d["false_alarms"]:
-            print(f"  FALSE  {d['household']} {x['type']} {x['member']} {x['documents']}")
+            print(f"  FALSE  {d['household']} {x['type']} ({x['severity']}) {x['member']} {x['documents']}")
             for r in x["misreads"]:
                 print(f"         misread {r['document']} {r['field']}: expected {r['expected']!r}, read {r['read']!r}")
             if not x["misreads"]:

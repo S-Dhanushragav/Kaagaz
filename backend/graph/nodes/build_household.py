@@ -9,11 +9,13 @@ reason is logged. Steps:
 4. every other document is linked to a member by name score (>= 90 link; 70-90 ask the model;
    < 70 no link). Two members within 5 points: date of birth and gender break the tie.
    Secondary link: a score of 50-70 still goes to the model if the document's age (from its date of
-   birth, within 1 year) and gender fit exactly one member without a document of that type.
+   birth, within 1 year) and gender fit exactly one member without a document of that type; that
+   member's ration-card row is re-read first, re-scored, and the re-read name goes to the model.
    Unlinked documents belong to people not on the ration card.
 5. separate exact checks per member: names (per script, after normalization) and dates of birth.
    A null value is never a mismatch. With a name verifier, every document in a name mismatch is
-   re-read (name only, closer look); the mismatch is reported only if the re-read still differs.
+   re-read (name only, closer look): a difference the re-read confirms is a blocker; one it doesn't
+   confirm stays, with severity 'confirm' (the family compares the documents; never dropped).
 6. missing documents: an identity card for every adult on the ration card (a child's is an info
    note) and one income certificate per household; old income certificates get a warning.
 """
@@ -187,12 +189,15 @@ def _tiebreak(doc: DocumentExtraction, close: list[tuple[float, HouseholdMember]
     return score, member, f"tie with {others}; chose {member.member_id} by gender/age fit ({fit(member)})"
 
 
-def _ask(doc: DocumentExtraction, member: HouseholdMember, adjudicate: Adjudicator) -> Adjudication:
+def _ask(doc: DocumentExtraction, member: HouseholdMember, adjudicate: Adjudicator,
+         names: NamePair | None = None) -> Adjudication:
+    """`names` replaces the member's ration-card names (e.g. with a re-read of that row)."""
+    names = names or NamePair(member.name_mr, member.name_en)
     return adjudicate(
         {"doc_type": doc.doc_type.replace("_", " "), "mr": getattr(doc.fields, "name_mr", None),
          "en": getattr(doc.fields, "name_en", None), "dob": getattr(doc.fields, "dob", None),
          "gender": _gender(doc.fields)},
-        {"mr": member.name_mr, "en": member.name_en, "age": member.age, "gender": member.gender,
+        {"mr": names.mr, "en": names.en, "age": member.age, "gender": member.gender,
          "relation": member.relation_en},
     )
 
@@ -209,10 +214,13 @@ def _secondary(doc: DocumentExtraction, candidates: list[tuple[float, HouseholdM
 
 
 def _link(doc: DocumentExtraction, candidates: list[tuple[float, HouseholdMember]], ref: date,
-          adjudicate: Adjudicator | None) -> tuple[HouseholdMember | None, LinkDecision, Adjudication | None]:
+          adjudicate: Adjudicator | None, reread_row: Callable[[HouseholdMember], NamePair | None] | None = None,
+          ) -> tuple[HouseholdMember | None, LinkDecision, Adjudication | None]:
     """Returns (member or None, decision, the model's verdict if it was asked).
 
     `candidates` are the members without a document of this type yet, best name score first.
+    `reread_row` re-reads a member's ration-card row; used before a secondary link, since a misread on
+    the ration card is a common reason for a low score.
     """
     if not candidates or candidates[0][0] < ASK:
         best = candidates[0][0] if candidates else 0.0
@@ -221,11 +229,18 @@ def _link(doc: DocumentExtraction, candidates: list[tuple[float, HouseholdMember
             return None, LinkDecision(document_id=doc.document_id, member_id=None, score=best, method="none",
                                       reason=f"best name score {best} < {ASK}"), None
         score, member = fit
-        verdict = _ask(doc, member, adjudicate)
+        reason = f"secondary: name score {score}, the only free member whose age and gender fit"
+        names = reread_row(member) if reread_row else None
+        if names is not None:
+            score = name_score(_names(doc.fields), names)
+            reason += f"; ration-card row re-read as {names.en or names.mr!r}, score {score}"
+            if score >= MATCH:
+                return member, LinkDecision(document_id=doc.document_id, member_id=member.member_id, score=score,
+                                            method="fuzzy", reason=reason), None
+        verdict = _ask(doc, member, adjudicate, names)
         decision = LinkDecision(
             document_id=doc.document_id, member_id=member.member_id if verdict.same_person else None, score=score,
-            method="llm", reason=f"secondary: name score {score}, the only free member whose age and gender fit; "
-                                 f"model: {verdict.reason}")
+            method="llm", reason=f"{reason}; model: {verdict.reason}")
         return (member if verdict.same_person else None), decision, verdict
     score, member = candidates[0]
     method, reason = "fuzzy", f"name score {score}"
@@ -270,6 +285,18 @@ def build_household(
         usage.prompt_tokens += u.prompt_tokens
         usage.completion_tokens += u.completion_tokens
         usage.total_tokens += u.total_tokens
+
+    name_reads: dict[tuple[str, int | None], NameRead] = {}
+
+    def reread(q: NameQuery) -> NameRead:
+        """The verifier, at most once per document (and ration-card row)."""
+        nonlocal verification_calls
+        key = (q.document_id, q.row)
+        if key not in name_reads:
+            name_reads[key] = verify(q)
+            verification_calls += 1
+            add_usage(name_reads[key].usage)
+        return name_reads[key]
 
     # 1. Unreadable documents.
     usable = []
@@ -323,11 +350,18 @@ def build_household(
         return sorted(((name_score(_names(ex.fields), NamePair(m.name_mr, m.name_en)), m) for m in pool),
                       key=lambda c: c[0], reverse=True)
 
+    def reread_row(m: HouseholdMember) -> NamePair | None:
+        if verify is None or card is None:
+            return None
+        r = reread(NameQuery(document_id=card.document_id, doc_type="ration_card", row=int(m.member_id[1:]),
+                             relation=m.relation_en))
+        return None if r.error or not (r.name_mr or r.name_en) else NamePair(r.name_mr or m.name_mr, r.name_en or m.name_en)
+
     to_link.sort(key=lambda ex: -(ranked(ex, members)[0][0] if members else 0.0))
     extras: list[HouseholdMember] = []
     for ex in to_link:
         free = [m for m in members if not m.documents.get(ex.doc_type)]  # one document of each type per member
-        member, decision, verdict = _link(ex, ranked(ex, free), reference_date, adjudicate)
+        member, decision, verdict = _link(ex, ranked(ex, free), reference_date, adjudicate, reread_row)
         if verdict is not None:
             llm_calls += 1
             add_usage(verdict.usage)
@@ -368,14 +402,13 @@ def build_household(
             reads: dict[str, NameRead] = {}
             for d in sorted({d for values in differing.values() for d in values}):
                 row = int(m.member_id[1:]) if card and d == card.document_id else None
-                reads[d] = verify(NameQuery(document_id=d, doc_type=docs[d].doc_type, row=row,
+                reads[d] = reread(NameQuery(document_id=d, doc_type=docs[d].doc_type, row=row,
                                             relation=m.relation_en if row else None))
-                verification_calls += 1
-                add_usage(reads[d].usage)
             # A script the re-read couldn't read keeps the first read, so a failed check never hides a mismatch.
-            reread = {d: NamePair(reads[d].name_mr or n.mr, reads[d].name_en or n.en) if d in reads else n
+            second = {d: NamePair(reads[d].name_mr or n.mr, reads[d].name_en or n.en) if d in reads else n
                       for d, n in records.items()}
-            confirmed = {s: v for s, v in _name_differences(reread).items() if s in differing}
+            confirmed = {s: v for s, v in _name_differences(second).items() if s in differing}
+            unconfirmed = {s: v for s, v in differing.items() if s not in confirmed}
             verification = {d: {"first_read": {"mr": records[d].mr, "en": records[d].en},
                                 "re_read": {"mr": r.name_mr, "en": r.name_en}, **({"error": r.error} if r.error else {})}
                             for d, r in reads.items()}
@@ -384,10 +417,13 @@ def build_household(
                 issues.append(_issue("name_mismatch", "blocker", m.member_id, involved,
                                      "The name is spelled differently on these documents.", names=confirmed,
                                      first_read_names=differing, verification=verification))
-            else:
-                issues.append(_issue("name_verified", "info", m.member_id, sorted(reads),
-                                     "A spelling difference was not confirmed on a closer second read.",
-                                     first_read_names=differing, verification=verification))
+            # The re-read shares the reader's habit of writing familiar spellings, so it can confirm a
+            # difference but never remove one: the family checks the documents themselves.
+            if unconfirmed:
+                involved = sorted({d for values in unconfirmed.values() for d in values})
+                issues.append(_issue("name_mismatch", "confirm", m.member_id, involved,
+                                     "The name may be spelled differently on these documents: please compare them.",
+                                     names=unconfirmed, first_read_names=differing, verification=verification))
         elif differing:
             involved = sorted({d for values in differing.values() for d in values})
             issues.append(_issue("name_mismatch", "blocker", m.member_id, involved,

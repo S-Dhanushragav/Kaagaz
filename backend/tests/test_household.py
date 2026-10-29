@@ -251,22 +251,66 @@ def test_mismatch_confirmed_by_re_read_is_reported_with_both_reads() -> None:
     assert next(q for q in seen if q.document_id == "id1").row is None
 
 
-def test_mismatch_not_confirmed_by_re_read_becomes_info() -> None:
+def test_mismatch_not_confirmed_by_re_read_stays_for_the_family_to_confirm() -> None:
     same = NameRead(name_mr="सुनील रमेश पाटील", name_en="Sunil Ramesh Patil")
     hh = build_household([_card(SUNIL), SUNEEL_ID, _income()], REF, adjudicate=_no_llm,
                          verify=_verifier({"rc": same, "id1": same, "inc": same}, []))
-    assert "name_mismatch" not in types(hh)
-    info = [i for i in hh.issues if i.type == "name_verified"]
-    assert len(info) == 1 and info[0].severity == "info"
-    assert info[0].evidence["first_read_names"]["en"]["id1"] == "Suneel Ramesh Patil"
+    mm = [i for i in hh.issues if i.type == "name_mismatch"]
+    assert len(mm) == 1 and mm[0].severity == "confirm" and "id1" in mm[0].documents  # never dropped, never info
+    assert mm[0].evidence["names"]["en"]["id1"] == "Suneel Ramesh Patil"  # both spellings, as first read
+    assert mm[0].evidence["verification"]["id1"]["re_read"]["en"] == "Sunil Ramesh Patil"
 
 
-def test_failed_re_read_keeps_the_mismatch() -> None:
+def test_re_read_confirming_one_script_only() -> None:
+    reads = {"rc": NameRead(name_mr="सुनील रमेश पाटील", name_en="Sunil Ramesh Patil"),
+             "id1": NameRead(name_mr="सुनील रमेश पाटील", name_en="Suneel Ramesh Patil"),  # Marathi not confirmed
+             "inc": NameRead(name_mr=None, name_en="Sunil Ramesh Patil")}
+    hh = build_household([_card(SUNIL), SUNEEL_ID, _income()], REF, adjudicate=_no_llm, verify=_verifier(reads, []))
+    by_severity = {i.severity: i for i in hh.issues if i.type == "name_mismatch"}
+    assert set(by_severity) == {"blocker", "confirm"}
+    assert set(by_severity["blocker"].evidence["names"]) == {"en"} and set(by_severity["confirm"].evidence["names"]) == {"mr"}
+
+
+def test_failed_re_read_keeps_the_mismatch_as_blocker() -> None:
     failed = NameRead(error="verification call failed: timeout")
     hh = build_household([_card(SUNIL), SUNEEL_ID, _income()], REF, adjudicate=_no_llm,
                          verify=_verifier({"rc": failed, "id1": failed, "inc": failed}, []))
     mm = [i for i in hh.issues if i.type == "name_mismatch"]
-    assert len(mm) == 1 and mm[0].evidence["verification"]["id1"]["error"].startswith("verification call failed")
+    assert len(mm) == 1 and mm[0].severity == "blocker"
+    assert mm[0].evidence["verification"]["id1"]["error"].startswith("verification call failed")
+
+
+def test_secondary_link_re_reads_the_ration_card_row_first() -> None:
+    """The card's row was misread (Shyanada); its re-read (Dnyanada) matches the identity card: linked, no model."""
+    card = _card(JADHAV[0], _row(*SHYANADA, "F", 20, "Daughter"))
+    seen: list[NameQuery] = []
+    reads = {"rc": NameRead(name_mr="ज्ञानदा महेश जाधव", name_en="Dnyanada Mahesh Jadhav"),
+             "id2": NameRead(name_mr="ज्ञानदा महेश जाधव", name_en="Dnyanada Mahesh Jadhav")}
+    hh = build_household([card, _id("id1", "महेश विठ्ठल जाधव", "Mahesh Vitthal Jadhav", "01/01/1981"),
+                          _id("id2", "ज्ञानदा महेश जाधव", "Dnyanada Mahesh Jadhav", "01/01/2006", "F", "5678"),
+                          _income("Mahesh Vitthal Jadhav")], REF, adjudicate=_no_llm, verify=_verifier(reads, seen))
+    link = next(l for l in hh.links if l.document_id == "id2")
+    assert link.member_id == "r2" and link.score >= 90 and "re-read" in link.reason
+    assert (seen[0].document_id, seen[0].row) == ("rc", 2)
+    assert "not_on_ration_card" not in types(hh)
+    # The first read still differs from the identity card; the re-read doesn't confirm it, so the family checks it.
+    mm = [i for i in hh.issues if i.type == "name_mismatch"]
+    assert [i.severity for i in mm] == ["confirm"]
+    assert hh.verification_calls == 2  # the card row once (reused by the name check), the identity card once
+
+
+def test_secondary_link_passes_the_re_read_name_to_the_model() -> None:
+    asked = []
+
+    def adjudicate(a, b):
+        asked.append(b["en"])
+        return Adjudication(same_person=False, reason="different first names")
+
+    reads = {"rc": NameRead(name_mr=None, name_en="Shyamala Mahesh Jadhav")}  # still not a 90+ match
+    hh = build_household([_card(*JADHAV), _id("id1", "महेश विठ्ठल जाधव", "Mahesh Vitthal Jadhav", "01/01/1981"),
+                          _id("id2", *SHYANADA, "01/01/2006", "F", "5678"), _income("Mahesh Vitthal Jadhav")], REF,
+                         adjudicate=adjudicate, verify=_verifier(reads, []))
+    assert asked == ["Shyamala Mahesh Jadhav"] and "not_on_ration_card" in types(hh)
 
 
 def test_llm_name_verifier_reads_one_row_at_medium_effort() -> None:

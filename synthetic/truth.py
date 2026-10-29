@@ -61,8 +61,9 @@ def match_issues(gt: dict[str, Any], issues: list[Issue]) -> IssueMatch:
     members = member_map(gt)
     result = IssueMatch()
     used: set[int] = set()
+    order = sorted(range(len(issues)), key=lambda k: issues[k].severity != "blocker")  # blockers match first
     for p in gt["planted_errors"]:
-        hit = next((k for k, i in enumerate(issues) if k not in used and _matches(p, i, members)), None)
+        hit = next((k for k in order if k not in used and _matches(p, issues[k], members)), None)
         if hit is None:
             result.missed.append(p)
         else:
@@ -71,7 +72,7 @@ def match_issues(gt: dict[str, Any], issues: list[Issue]) -> IssueMatch:
     for k, i in enumerate(issues):
         if k in used:
             continue
-        if i.type in SCORED_TYPES and i.severity in ("blocker", "warning"):
+        if i.type in SCORED_TYPES and i.severity in ("blocker", "warning", "confirm"):
             result.false_alarms.append(i)
         else:
             result.other.append(i)

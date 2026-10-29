@@ -37,9 +37,9 @@ def test_baseten_uses_one_model_for_every_task() -> None:
 
 def test_max_tokens_defaults_and_override() -> None:
     s = make()
-    assert [s.resolve(t).max_tokens for t in ("vision", "agent", "text")] == [4000, 6000, 1500]
+    assert [s.resolve(t).max_tokens for t in ("vision", "agent", "text")] == [4000, 6000, 4000]
     assert make(vision_max_tokens="8000").resolve("vision").max_tokens == 8000
-    assert make(text_max_tokens="").resolve("text").max_tokens == 1500
+    assert make(text_max_tokens="").resolve("text").max_tokens == 4000
 
 
 def test_reasoning_effort_blank_is_none() -> None:

@@ -52,7 +52,7 @@ class Settings(BaseSettings):
     # Per-task output budget (includes reasoning tokens)
     vision_max_tokens: int = Field(4000, gt=0)
     agent_max_tokens: int = Field(6000, gt=0)
-    text_max_tokens: int = Field(1500, gt=0)
+    text_max_tokens: int = Field(4000, gt=0)
 
     # Meta Model API
     meta_api_key: SecretStr = SecretStr("")
