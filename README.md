@@ -132,7 +132,7 @@ phone video ──► find_documents ──► read_documents ──► build_ho
 | Read documents (vision) and the agent | **Muse Spark** (`muse-spark-1.3`) | Meta Model API, Chat Completions, structured output, reasoning effort `low` |
 | Name adjudication (text) | **Muse Spark Open** (`meta-models/muse-spark-open-1026`) | Baseten (OpenAI-compatible) |
 | Speech out | **MMS-TTS** (`facebook/mms-tts-eng`, `-hin`, `-mar`) | Local on CPU via `transformers` (optional `tts` extra); **CC-BY-NC 4.0** |
-| Speech in (Phase 6b, in progress) | **Muse Voice Transcribe** (`muse-voice-transcribe-1.0`) | Meta Model API, `POST /v1/asr/transcribe` |
+| Speech in | **Muse Voice Transcribe** (`muse-voice-transcribe-1.0`) | Meta Model API, `POST /v1/asr/transcribe` |
 
 Model IDs and base URLs come from `.env`, never from code. Every model call goes through [backend/clients/](backend/clients/)
 and a disk cache keyed by a hash of the full request, so re-running an eval costs nothing for unchanged calls.
