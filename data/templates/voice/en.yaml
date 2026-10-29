@@ -32,3 +32,16 @@ numbers:  # for speech only (screen text keeps digits)
   century: "{n} hundred"  # years 1100-1999: '<19> hundred <81>'
   months: [January, February, March, April, May, June, July, August, September, October, November, December]
   rupees: "{n} rupees"  # 'Rs 75' in English text
+answers:  # options are read aloud with these labels; answers match ONLY number words or not-sure words
+  labels: [First, Second, Third, Fourth, Fifth]
+  option: "{label}: {option}."
+  instruction: "Please say the number of your answer."
+  retry: "Sorry, I did not catch that. Please say first, second, and so on."
+  buttons: "Please tap your answer on the screen."
+  numbers:  # words that mean option 1, 2, ... (digits 1-5 always count too)
+    - [first, "1st", number one, option one]  # not bare "one": "the second one", "the one on ..."
+    - [second, two, "2nd"]
+    - [third, three, "3rd"]
+    - [fourth, four, "4th"]
+    - [fifth, five, "5th"]
+  not_sure: [not sure, "don't know", do not know, no idea]

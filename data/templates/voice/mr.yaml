@@ -47,3 +47,16 @@ numbers:  # for speech only (screen text keeps digits) - MACHINE-DRAFTED, needs 
   thousand: हजार
   century: "{n}शे"  # years 1100-1999: '<19> hundred <81>'
   months: [जानेवारी, फेब्रुवारी, मार्च, एप्रिल, मे, जून, जुलै, ऑगस्ट, सप्टेंबर, ऑक्टोबर, नोव्हेंबर, डिसेंबर]
+answers:  # MACHINE-DRAFTED, needs native review. Answers match ONLY number words or not-sure words
+  labels: [पहिले, दुसरे, तिसरे, चौथे, पाचवे]
+  option: "{label}: {option}."
+  instruction: "तुमच्या उत्तराचा क्रमांक सांगा."
+  retry: "माफ करा, समजले नाही. कृपया पहिले, दुसरे, असा क्रमांक सांगा."
+  buttons: "कृपया स्क्रीनवर तुमचे उत्तर निवडा."
+  numbers:
+    - [पहिले, पहिला, पहिली, एक, नंबर एक]
+    - [दुसरे, दुसरा, दुसरी, दोन, नंबर दोन]
+    - [तिसरे, तिसरा, तिसरी, तीन, नंबर तीन]
+    - [चौथे, चौथा, चौथी, चार, नंबर चार]
+    - [पाचवे, पाचवा, पाचवी, पाच, नंबर पाच]
+  not_sure: [माहीत नाही, माहिती नाही, ठाऊक नाही, नाही माहीत, खात्री नाही]

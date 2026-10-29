@@ -41,10 +41,25 @@ class NumberWords(BaseModel):
     rupees: str | None = None  # 'Rs 75' -> '{n} rupees' (English text only)
 
 
+class AnswerWords(BaseModel):
+    """Reading options aloud, and the only words a spoken answer is matched by (agents/answers.py)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    labels: list[str]  # option labels read aloud: First, Second, ...
+    option: str  # "{label}: {option}."
+    instruction: str
+    retry: str
+    buttons: str
+    numbers: list[list[str]]  # words meaning option 1, 2, ... (digits always count too)
+    not_sure: list[str]
+
+
 class VoiceTemplates(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     numbers: NumberWords
+    answers: AnswerWords
     language: str
     documents: dict[str, str]  # document type -> display name
     values: dict[str, str] = {}  # knowledge-base value -> how it is said in this language
