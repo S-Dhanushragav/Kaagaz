@@ -131,7 +131,8 @@ phone video ──► find_documents ──► read_documents ──► build_ho
 | Find and track documents in video | **SAM 3.1** (`sam-3.1`) | Meta Model API: Files API + Responses API; masks decoded with Meta's `meta-sam-parser` |
 | Read documents (vision) and the agent | **Muse Spark** (`muse-spark-1.3`) | Meta Model API, Chat Completions, structured output, reasoning effort `low` |
 | Name adjudication (text) | **Muse Spark Open** (`meta-models/muse-spark-open-1026`) | Baseten (OpenAI-compatible) |
-| Speech in / out (Phase 7) | Muse Voice Transcribe / MMS-TTS | planned |
+| Speech out | **MMS-TTS** (`facebook/mms-tts-eng`, `-hin`, `-mar`) | Local on CPU via `transformers` (optional `tts` extra); **CC-BY-NC 4.0** |
+| Speech in (Phase 6b, in progress) | **Muse Voice Transcribe** (`muse-voice-transcribe-1.0`) | Meta Model API, `POST /v1/asr/transcribe` |
 
 Model IDs and base URLs come from `.env`, never from code. Every model call goes through [backend/clients/](backend/clients/)
 and a disk cache keyed by a hash of the full request, so re-running an eval costs nothing for unchanged calls.
@@ -183,6 +184,7 @@ python -m venv .venv
 .venv\Scripts\activate            # Windows   (macOS/Linux: source .venv/bin/activate)
 pip install -e ".[dev,synthetic]"
 python -m playwright install chromium   # only needed to render synthetic documents
+pip install -e ".[tts]" --extra-index-url https://download.pytorch.org/whl/cpu   # only for speech output (~1 GB)
 ```
 
 Copy `.env.example` to `.env` (repo root) and fill in `META_API_KEY` and `BASETEN_API_KEY`. Model IDs: `muse-spark-1.3`
@@ -255,3 +257,9 @@ frontend/         Vite + React + TypeScript app (Phase 7)
 
 See [LICENSE](LICENSE). The bundled Noto Sans Devanagari font is under the SIL Open Font License
 ([synthetic/templates/fonts/OFL.txt](synthetic/templates/fonts/OFL.txt)). `meta-sam-parser` is distributed by Meta under the SAM License.
+
+**Speech output models are non-commercial.** Meta's MMS-TTS models used here are licensed **CC-BY-NC 4.0** ("The model
+is licensed as CC-BY-NC 4.0." on each model card: [facebook/mms-tts-mar](https://huggingface.co/facebook/mms-tts-mar),
+[facebook/mms-tts-hin](https://huggingface.co/facebook/mms-tts-hin), [facebook/mms-tts-eng](https://huggingface.co/facebook/mms-tts-eng);
+checked 2026-10-29). That is fine for this hackathon demo; a commercial deployment needs a different TTS. The models
+are downloaded at run time and not redistributed in this repository.

@@ -21,6 +21,9 @@ dependencies = [
 dev = ["pytest"]
 # Synthetic SPECIMEN document generator (synthetic/); not needed by the backend at runtime
 synthetic = ["playwright", "jinja2"]
+# Speech output with Meta MMS-TTS (clients/tts.py), CPU. Install torch from the CPU index:
+#   pip install -e ".[tts]" --extra-index-url https://download.pytorch.org/whl/cpu
+tts = ["torch", "transformers"]
 
 [build-system]
 requires = ["setuptools>=68"]

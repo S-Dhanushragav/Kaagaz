@@ -60,7 +60,7 @@ class Settings(BaseSettings):
     meta_vision_model: str = ""
     meta_agent_model: str = ""
     meta_text_model: str = ""
-    meta_transcribe_model: str = ""  # used by clients/transcribe.py (not built yet)
+    meta_transcribe_model: str = ""  # used by clients/transcribe.py
     meta_segment_model: str = ""  # used by clients/segmenter.py (not built yet)
 
     # Baseten (Muse Spark Open): one model for all tasks
@@ -69,6 +69,11 @@ class Settings(BaseSettings):
     baseten_model: str = ""
 
     segmenter: Literal["sam31_api", "sam3_modal"] = "sam31_api"
+
+    # Speech output (clients/tts.py): Meta MMS-TTS, CC-BY-NC 4.0, run locally on CPU
+    tts_model_en: str = ""
+    tts_model_hi: str = ""
+    tts_model_mr: str = ""
 
     cache_dir: Path = Path(".cache")
 
