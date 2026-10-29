@@ -8,9 +8,12 @@ reason is logged. Steps:
 3. the ration card's member list defines the household
 4. every other document is linked to a member by name score (>= 90 link; 70-90 ask the model;
    < 70 no link). Two members within 5 points: date of birth and gender break the tie.
+   Secondary link: a score of 50-70 still goes to the model if the document's age (from its date of
+   birth, within 1 year) and gender fit exactly one member without a document of that type.
    Unlinked documents belong to people not on the ration card.
 5. separate exact checks per member: names (per script, after normalization) and dates of birth.
-   A null value is never a mismatch.
+   A null value is never a mismatch. With a name verifier, every document in a name mismatch is
+   re-read (name only, closer look); the mismatch is reported only if the re-read still differs.
 6. missing documents: an identity card for every adult on the ration card (a child's is an info
    note) and one income certificate per household; old income certificates get a warning.
 """
@@ -18,31 +21,61 @@ reason is logged. Steps:
 import json
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Mapping, Sequence
 
 from openai import APIError
 from pydantic import BaseModel, ValidationError
 
-from clients.llm import LLMError, complete
+from clients.llm import LLMError, TokenUsage, complete
 from matching.names import NamePair, name_score
 from rules.engine import financial_year_start
 from rules.loader import load_shared
 from schemas.documents import DECISION_FIELDS, DocumentExtraction, field_pattern, null_paths
 from schemas.household import Household, HouseholdMember, LinkDecision
 from schemas.issues import Issue
-from vision.text import comparison_key
+from vision.text import comparison_key, normalize_text, redact_identity_numbers
 
-MATCH, ASK, TIE_MARGIN = 90.0, 70.0, 5.0
+MATCH, ASK, SECONDARY, TIE_MARGIN = 90.0, 70.0, 50.0, 5.0
 LINKED_TYPES = ("identity_card", "caste_certificate", "income_certificate")
-PROMPT = (Path(__file__).resolve().parents[2] / "prompts" / "name_adjudicator.md").read_text(encoding="utf-8")
+PROMPTS = Path(__file__).resolve().parents[2] / "prompts"
+PROMPT = (PROMPTS / "name_adjudicator.md").read_text(encoding="utf-8")
+VERIFY_PROMPT = (PROMPTS / "verify_name.md").read_text(encoding="utf-8")
+VERIFY_EFFORT = "medium"
+_NULLABLE = {"anyOf": [{"type": "string"}, {"type": "null"}]}
+VERIFY_RESPONSE_FORMAT: dict[str, Any] = {
+    "type": "json_schema",
+    "json_schema": {"name": "name_read", "strict": True, "schema": {
+        "type": "object", "properties": {"name_mr": _NULLABLE, "name_en": _NULLABLE},
+        "required": ["name_mr", "name_en"], "additionalProperties": False}},
+}
 
 
 class Adjudication(BaseModel):
     same_person: bool
     reason: str
+    usage: TokenUsage = TokenUsage()
 
 
 Adjudicator = Callable[[dict[str, Any], dict[str, Any]], Adjudication]
+
+
+class NameQuery(BaseModel):
+    """Which name to re-read: the holder's, or one ration-card member row (1-based)."""
+
+    document_id: str
+    doc_type: str
+    row: int | None = None
+    relation: str | None = None
+
+
+class NameRead(BaseModel):
+    name_mr: str | None = None
+    name_en: str | None = None
+    error: str | None = None
+    usage: TokenUsage = TokenUsage()
+
+
+NameVerifier = Callable[[NameQuery], NameRead]
 
 
 def llm_adjudicator(reference_date: date, llm: Callable[..., Any] = complete) -> Adjudicator:
@@ -55,14 +88,50 @@ def llm_adjudicator(reference_date: date, llm: Callable[..., Any] = complete) ->
         for key, value in values.items():
             prompt = prompt.replace("{" + key + "}", "unknown" if value is None else str(value))
         try:
-            text = llm(prompt, task="text").text
+            resp = llm(prompt, task="text")
         except (LLMError, APIError) as e:
             return Adjudication(same_person=False, reason=f"adjudicator call failed: {e}")
+        text = resp.text
         start, end = text.find("{"), text.rfind("}")
         try:
-            return Adjudication.model_validate(json.loads(text[start : end + 1]))
-        except (json.JSONDecodeError, ValidationError, ValueError):
-            return Adjudication(same_person=False, reason=f"adjudicator reply not valid JSON: {text[:120]!r}")
+            return Adjudication.model_validate({**json.loads(text[start : end + 1]), "usage": resp.usage})
+        except (json.JSONDecodeError, ValidationError, ValueError, TypeError):
+            return Adjudication(same_person=False, reason=f"adjudicator reply not valid JSON: {text[:120]!r}",
+                                usage=resp.usage)
+
+    return run
+
+
+def llm_name_verifier(images: Mapping[str, Sequence[bytes]], *, overrides: Mapping[str, Any] | None = None,
+                      llm: Callable[..., Any] = complete) -> NameVerifier:
+    """Re-read one name from a document's images (vision model, reasoning effort medium).
+
+    `images`: document id -> its prepared images (the same crops the reader saw).
+    """
+    settings = {"reasoning_effort": VERIFY_EFFORT, **(overrides or {})}
+
+    def run(q: NameQuery) -> NameRead:
+        if q.document_id not in images:
+            return NameRead(error="no image for this document")
+        if q.row is not None:
+            which = f"member number {q.row} in the members table, counting from the top"
+            which += f" (relation to the head of family: {q.relation})" if q.relation else ""
+        else:
+            which = "the name of the person this document is issued to"
+        prompt = VERIFY_PROMPT.replace("{doc_type}", q.doc_type.replace("_", " ")).replace("{which}", which)
+        try:
+            resp = llm(prompt, task="vision", images=list(images[q.document_id]),
+                       response_format=VERIFY_RESPONSE_FORMAT, overrides=settings, redact=redact_identity_numbers)
+        except (LLMError, APIError) as e:
+            return NameRead(error=f"verification call failed: {e}")
+        start, end = resp.text.find("{"), resp.text.rfind("}")
+        try:
+            data = json.loads(resp.text[start : end + 1])
+            clean = {k: (normalize_text(data[k]).strip() or None) if isinstance(data.get(k), str) else None
+                     for k in ("name_mr", "name_en")}
+            return NameRead(**clean, usage=resp.usage)
+        except (json.JSONDecodeError, ValidationError, ValueError, AttributeError, TypeError):
+            return NameRead(error=f"verification reply not valid JSON: {resp.text[:120]!r}", usage=resp.usage)
 
     return run
 
@@ -118,13 +187,46 @@ def _tiebreak(doc: DocumentExtraction, close: list[tuple[float, HouseholdMember]
     return score, member, f"tie with {others}; chose {member.member_id} by gender/age fit ({fit(member)})"
 
 
+def _ask(doc: DocumentExtraction, member: HouseholdMember, adjudicate: Adjudicator) -> Adjudication:
+    return adjudicate(
+        {"doc_type": doc.doc_type.replace("_", " "), "mr": getattr(doc.fields, "name_mr", None),
+         "en": getattr(doc.fields, "name_en", None), "dob": getattr(doc.fields, "dob", None),
+         "gender": _gender(doc.fields)},
+        {"mr": member.name_mr, "en": member.name_en, "age": member.age, "gender": member.gender,
+         "relation": member.relation_en},
+    )
+
+
+def _secondary(doc: DocumentExtraction, candidates: list[tuple[float, HouseholdMember]],
+               ref: date) -> tuple[float, HouseholdMember] | None:
+    """The one free member whose age (within 1 year) and gender fit the document, if its name score >= 50."""
+    gender, dob = _gender(doc.fields), _date(getattr(doc.fields, "dob", None))
+    if gender is None or dob is None:
+        return None
+    age = _age(dob, ref)
+    fits = [(s, m) for s, m in candidates if m.gender == gender and m.age is not None and abs(m.age - age) <= 1]
+    return fits[0] if len(fits) == 1 and fits[0][0] >= SECONDARY else None
+
+
 def _link(doc: DocumentExtraction, candidates: list[tuple[float, HouseholdMember]], ref: date,
-          adjudicate: Adjudicator | None) -> tuple[HouseholdMember | None, LinkDecision, bool]:
-    """Returns (member or None, decision, whether the model was asked)."""
+          adjudicate: Adjudicator | None) -> tuple[HouseholdMember | None, LinkDecision, Adjudication | None]:
+    """Returns (member or None, decision, the model's verdict if it was asked).
+
+    `candidates` are the members without a document of this type yet, best name score first.
+    """
     if not candidates or candidates[0][0] < ASK:
         best = candidates[0][0] if candidates else 0.0
-        return None, LinkDecision(document_id=doc.document_id, member_id=None, score=best, method="none",
-                                  reason=f"best name score {best} < {ASK}"), False
+        fit = _secondary(doc, candidates, ref) if adjudicate is not None and best >= SECONDARY else None
+        if fit is None:
+            return None, LinkDecision(document_id=doc.document_id, member_id=None, score=best, method="none",
+                                      reason=f"best name score {best} < {ASK}"), None
+        score, member = fit
+        verdict = _ask(doc, member, adjudicate)
+        decision = LinkDecision(
+            document_id=doc.document_id, member_id=member.member_id if verdict.same_person else None, score=score,
+            method="llm", reason=f"secondary: name score {score}, the only free member whose age and gender fit; "
+                                 f"model: {verdict.reason}")
+        return (member if verdict.same_person else None), decision, verdict
     score, member = candidates[0]
     method, reason = "fuzzy", f"name score {score}"
     close = [c for c in candidates if c[0] >= score - TIE_MARGIN and c[0] >= ASK]
@@ -133,30 +235,41 @@ def _link(doc: DocumentExtraction, candidates: list[tuple[float, HouseholdMember
         method = "tiebreak"
     if score >= MATCH:
         return member, LinkDecision(document_id=doc.document_id, member_id=member.member_id, score=score,
-                                    method=method, reason=reason), False
+                                    method=method, reason=reason), None
     if adjudicate is None:
         return None, LinkDecision(document_id=doc.document_id, member_id=None, score=score, method="none",
-                                  reason=f"borderline score {score}; no adjudicator"), False
-    dob = getattr(doc.fields, "dob", None)
-    verdict = adjudicate(
-        {"doc_type": doc.doc_type.replace("_", " "), "mr": getattr(doc.fields, "name_mr", None),
-         "en": getattr(doc.fields, "name_en", None), "dob": dob, "gender": _gender(doc.fields)},
-        {"mr": member.name_mr, "en": member.name_en, "age": member.age, "gender": member.gender,
-         "relation": member.relation_en},
-    )
+                                  reason=f"borderline score {score}; no adjudicator"), None
+    verdict = _ask(doc, member, adjudicate)
     decision = LinkDecision(document_id=doc.document_id, member_id=member.member_id if verdict.same_person else None,
                             score=score, method="llm", reason=f"model: {verdict.reason}")
-    return (member if verdict.same_person else None), decision, True
+    return (member if verdict.same_person else None), decision, verdict
 
 
 # ---------- builder ----------
 
+def _name_differences(records: dict[str, NamePair]) -> dict[str, dict[str, str]]:
+    """Per script, the documents' names if they don't all agree (nulls ignored)."""
+    differing: dict[str, dict[str, str]] = {}
+    for script in ("mr", "en"):
+        values = {d: getattr(n, script) for d, n in records.items() if getattr(n, script)}
+        if len({comparison_key(v) for v in values.values()}) > 1:
+            differing[script] = values
+    return differing
+
+
 def build_household(
-    extractions: list[DocumentExtraction], reference_date: date, *, adjudicate: Adjudicator | None = None
+    extractions: list[DocumentExtraction], reference_date: date, *, adjudicate: Adjudicator | None = None,
+    verify: NameVerifier | None = None,
 ) -> Household:
     issues: list[Issue] = []
     links: list[LinkDecision] = []
-    llm_calls = 0
+    llm_calls = verification_calls = 0
+    usage = TokenUsage()
+
+    def add_usage(u: TokenUsage) -> None:
+        usage.prompt_tokens += u.prompt_tokens
+        usage.completion_tokens += u.completion_tokens
+        usage.total_tokens += u.total_tokens
 
     # 1. Unreadable documents.
     usable = []
@@ -214,8 +327,10 @@ def build_household(
     extras: list[HouseholdMember] = []
     for ex in to_link:
         free = [m for m in members if not m.documents.get(ex.doc_type)]  # one document of each type per member
-        member, decision, asked = _link(ex, ranked(ex, free), reference_date, adjudicate)
-        llm_calls += asked
+        member, decision, verdict = _link(ex, ranked(ex, free), reference_date, adjudicate)
+        if verdict is not None:
+            llm_calls += 1
+            add_usage(verdict.usage)
         links.append(decision)
         if member is None:  # someone not on the ration card: group their documents together
             same = [x for x in extras if name_score(_names(ex.fields), NamePair(x.name_mr, x.name_en)) >= MATCH
@@ -248,12 +363,32 @@ def build_household(
         for t in LINKED_TYPES:
             for d in m.documents.get(t, []):
                 records[d] = _names(docs[d].fields)
-        differing: dict[str, dict[str, str]] = {}
-        for script in ("mr", "en"):
-            values = {d: getattr(n, script) for d, n in records.items() if getattr(n, script)}
-            if len({comparison_key(v) for v in values.values()}) > 1:
-                differing[script] = values
-        if differing:
+        differing = _name_differences(records)
+        if differing and verify is not None:
+            reads: dict[str, NameRead] = {}
+            for d in sorted({d for values in differing.values() for d in values}):
+                row = int(m.member_id[1:]) if card and d == card.document_id else None
+                reads[d] = verify(NameQuery(document_id=d, doc_type=docs[d].doc_type, row=row,
+                                            relation=m.relation_en if row else None))
+                verification_calls += 1
+                add_usage(reads[d].usage)
+            # A script the re-read couldn't read keeps the first read, so a failed check never hides a mismatch.
+            reread = {d: NamePair(reads[d].name_mr or n.mr, reads[d].name_en or n.en) if d in reads else n
+                      for d, n in records.items()}
+            confirmed = {s: v for s, v in _name_differences(reread).items() if s in differing}
+            verification = {d: {"first_read": {"mr": records[d].mr, "en": records[d].en},
+                                "re_read": {"mr": r.name_mr, "en": r.name_en}, **({"error": r.error} if r.error else {})}
+                            for d, r in reads.items()}
+            if confirmed:
+                involved = sorted({d for values in confirmed.values() for d in values})
+                issues.append(_issue("name_mismatch", "blocker", m.member_id, involved,
+                                     "The name is spelled differently on these documents.", names=confirmed,
+                                     first_read_names=differing, verification=verification))
+            else:
+                issues.append(_issue("name_verified", "info", m.member_id, sorted(reads),
+                                     "A spelling difference was not confirmed on a closer second read.",
+                                     first_read_names=differing, verification=verification))
+        elif differing:
             involved = sorted({d for values in differing.values() for d in values})
             issues.append(_issue("name_mismatch", "blocker", m.member_id, involved,
                                  "The name is spelled differently on these documents.", names=differing))
@@ -317,4 +452,6 @@ def build_household(
         issues=issues,
         links=links,
         llm_calls=llm_calls,
+        verification_calls=verification_calls,
+        usage=usage,
     )

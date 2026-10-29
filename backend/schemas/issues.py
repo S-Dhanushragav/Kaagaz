@@ -12,6 +12,7 @@ IssueType = Literal[
     "expired",  # income certificate may need renewal (warning only)
     "unreadable",  # a needed field could not be read: recapture that document
     "duplicate_merged",  # the same document was captured twice and merged (info)
+    "name_verified",  # a spelling difference was not confirmed by a closer re-read (info)
 ]
 Severity = Literal["blocker", "warning", "info"]
 

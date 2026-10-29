@@ -6,7 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from graph.nodes.build_household import Adjudication, build_household
+from clients.llm import LLMResponse, TokenUsage
+from graph.nodes.build_household import Adjudication, NameQuery, NameRead, build_household, llm_name_verifier
 from schemas.documents import FIELD_MODELS, DocumentExtraction
 from synthetic.truth import extractions_from_truth, match_issues
 
@@ -182,3 +183,105 @@ def test_unreadable_document_points_to_recapture() -> None:
     hh = build_household([_card(SUNIL), bad, _income()], REF, adjudicate=_no_llm)
     un = [i for i in hh.issues if i.type == "unreadable"]
     assert un[0].documents == ["blurry"] and "photo" in un[0].message
+
+
+# ---------- secondary linking (name score 50-70, age and gender fit one member) ----------
+
+JADHAV = [_row("महेश विठ्ठल जाधव", "Mahesh Vitthal Jadhav", "M", 45, "Self"),
+          _row("ज्ञानदा महेश जाधव", "Dnyanada Mahesh Jadhav", "F", 20, "Daughter")]
+SHYANADA = ("शयनदा महेश जाधव", "Shyanada Mahesh Jadhav")  # a misread of the daughter's name
+
+
+def test_secondary_link_asks_the_model_when_age_and_gender_fit_one_member() -> None:
+    asked = []
+
+    def adjudicate(a, b):
+        asked.append(b["en"])
+        return Adjudication(same_person=True, reason="same age and gender; first name a likely misread")
+
+    hh = build_household([_card(*JADHAV), _id("id1", "महेश विठ्ठल जाधव", "Mahesh Vitthal Jadhav", "01/01/1981"),
+                          _id("id2", *SHYANADA, "01/01/2006", "F", "5678"), _income("Mahesh Vitthal Jadhav")], REF,
+                         adjudicate=adjudicate)
+    link = next(l for l in hh.links if l.document_id == "id2")
+    assert 50 <= link.score < 70 and link.method == "llm" and link.reason.startswith("secondary")
+    assert asked == ["Dnyanada Mahesh Jadhav"] and hh.llm_calls == 1
+    assert hh.member("r2").documents["identity_card"] == ["id2"] and "not_on_ration_card" not in types(hh)
+
+
+def test_secondary_link_not_used_when_two_members_fit() -> None:
+    twin = _row("ज्ञानेश्वरी महेश जाधव", "Dnyaneshwari Mahesh Jadhav", "F", 21, "Daughter")
+    hh = build_household([_card(*JADHAV, twin), _id("id1", "महेश विठ्ठल जाधव", "Mahesh Vitthal Jadhav", "01/01/1981"),
+                          _id("id2", *SHYANADA, "01/01/2006", "F", "5678"), _income("Mahesh Vitthal Jadhav")], REF,
+                         adjudicate=_no_llm)
+    assert "not_on_ration_card" in types(hh)
+
+
+@pytest.mark.parametrize("dob, gender", [(None, "F"), ("01/01/2006", "M"), ("01/01/1996", "F")])
+def test_secondary_link_needs_matching_age_and_gender(dob: str | None, gender: str) -> None:
+    hh = build_household([_card(*JADHAV), _id("id1", "महेश विठ्ठल जाधव", "Mahesh Vitthal Jadhav", "01/01/1981"),
+                          _id("id2", *SHYANADA, dob, gender, "5678"), _income("Mahesh Vitthal Jadhav")], REF,
+                         adjudicate=_no_llm)
+    assert "not_on_ration_card" in types(hh)
+
+
+# ---------- name verification before a mismatch is reported ----------
+
+SUNEEL_ID = _id("id1", "सुनिल रमेश पाटील", "Suneel Ramesh Patil", "01/01/1986")
+
+
+def _verifier(reads: dict[str, NameRead], seen: list[NameQuery]):
+    def verify(q: NameQuery) -> NameRead:
+        seen.append(q)
+        return reads[q.document_id]
+    return verify
+
+
+def test_mismatch_confirmed_by_re_read_is_reported_with_both_reads() -> None:
+    seen: list[NameQuery] = []
+    reads = {"rc": NameRead(name_mr="सुनील रमेश पाटील", name_en="Sunil Ramesh Patil"),
+             "id1": NameRead(name_mr="सुनिल रमेश पाटील", name_en="Suneel Ramesh Patil"),
+             "inc": NameRead(name_mr=None, name_en="Sunil Ramesh Patil")}
+    hh = build_household([_card(SUNIL), SUNEEL_ID, _income()], REF, adjudicate=_no_llm, verify=_verifier(reads, seen))
+    mm = [i for i in hh.issues if i.type == "name_mismatch"]
+    assert len(mm) == 1 and "id1" in mm[0].documents
+    assert mm[0].evidence["verification"]["id1"] == {"first_read": {"mr": "सुनिल रमेश पाटील", "en": "Suneel Ramesh Patil"},
+                                                     "re_read": {"mr": "सुनिल रमेश पाटील", "en": "Suneel Ramesh Patil"}}
+    assert hh.verification_calls == 3 == len(seen)
+    assert next(q for q in seen if q.document_id == "rc").row == 1  # the member's row on the ration card
+    assert next(q for q in seen if q.document_id == "id1").row is None
+
+
+def test_mismatch_not_confirmed_by_re_read_becomes_info() -> None:
+    same = NameRead(name_mr="सुनील रमेश पाटील", name_en="Sunil Ramesh Patil")
+    hh = build_household([_card(SUNIL), SUNEEL_ID, _income()], REF, adjudicate=_no_llm,
+                         verify=_verifier({"rc": same, "id1": same, "inc": same}, []))
+    assert "name_mismatch" not in types(hh)
+    info = [i for i in hh.issues if i.type == "name_verified"]
+    assert len(info) == 1 and info[0].severity == "info"
+    assert info[0].evidence["first_read_names"]["en"]["id1"] == "Suneel Ramesh Patil"
+
+
+def test_failed_re_read_keeps_the_mismatch() -> None:
+    failed = NameRead(error="verification call failed: timeout")
+    hh = build_household([_card(SUNIL), SUNEEL_ID, _income()], REF, adjudicate=_no_llm,
+                         verify=_verifier({"rc": failed, "id1": failed, "inc": failed}, []))
+    mm = [i for i in hh.issues if i.type == "name_mismatch"]
+    assert len(mm) == 1 and mm[0].evidence["verification"]["id1"]["error"].startswith("verification call failed")
+
+
+def test_llm_name_verifier_reads_one_row_at_medium_effort() -> None:
+    calls = []
+
+    def fake_llm(prompt, **kwargs):
+        calls.append((prompt, kwargs))
+        return LLMResponse(text='{"name_mr": "ज्ञानदा महेश जाधव", "name_en": " Dnyanada Mahesh Jadhav "}',
+                           task="vision", provider="meta", model="m", usage=TokenUsage(prompt_tokens=10, completion_tokens=5))
+
+    verify = llm_name_verifier({"rc": [b"img"]}, overrides={"model": "m"}, llm=fake_llm)
+    read = verify(NameQuery(document_id="rc", doc_type="ration_card", row=2, relation="Daughter"))
+    assert read.name_en == "Dnyanada Mahesh Jadhav" and read.name_mr == "ज्ञानदा महेश जाधव" and read.usage.prompt_tokens == 10
+    prompt, kwargs = calls[0]
+    assert "member number 2" in prompt and "Daughter" in prompt and "letter by letter" in prompt
+    assert kwargs["overrides"] == {"reasoning_effort": "medium", "model": "m"} and kwargs["task"] == "vision"
+    assert verify(NameQuery(document_id="missing", doc_type="identity_card")).error == "no image for this document"
+    assert len(calls) == 1

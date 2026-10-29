@@ -56,12 +56,25 @@ All numbers are on synthetic SPECIMEN data; result files are in [eval/results/](
 - **32/32 planted errors caught, 0 false alarms**, 0 name-adjudicator calls.
 
 **Household builder, end to end** (EV001–EV030, 226 photo-like documents read by `muse-spark-1.3`, effort low)
-- **32/32 planted errors caught; 12 false alarms** (10 name mismatch, 1 not on ration card, 1 missing document), all
-  12 caused by a misread name. 0 unreadable, 0 misclassified, 0 adjudicator calls; reading took 146 s; cost $0.93.
-- The most common misread is the reader writing a familiar spelling: प्रियांका read as प्रियंका (4 of 12), ठोंबरे → ठॉंबरे,
-  ढमढेरे → धमधेरे. One misread on a ration card (ज्ञानदा → शयनदा) caused 3 false alarms in one household: the
-  member's documents no longer linked to her.
-- The report lists, for every false alarm, the misread field (document, field, expected, read).
+
+| | Without name verification | With name verification |
+|---|---|---|
+| Planted errors caught | 32/32 | 32/32 |
+| False alarms | 12 (10 name, 1 not on card, 1 missing) | **6** (4 name, 1 not on card, 1 missing) |
+| Name re-reads (vision, effort medium) | 0 | 47 (11 mismatches confirmed, 6 cleared), $0.20 |
+| Adjudicator calls (Baseten) | 0 | 1 (secondary link) |
+| Cost | $0.93 (reader) | $0.93 + $0.20 |
+
+- All false alarms come from a misread name. The most common misread is the reader writing a familiar spelling
+  (प्रियांका → प्रियंका, ठोंबरे → ठॉंबरे, ढमढेरे → धमधेरे). The report lists, for every false alarm, the misread field
+  (document, field, expected, read).
+- The re-read cleared 6 of 10 false name mismatches, but in 2 of those it read **every** document as प्रियंका: the
+  mismatch disappears because all reads agree, not because they are right. The 4 left are misreads the re-read repeated
+  (Kohitij, Yadryesh, यद्न्येश, धमडेरे).
+- One misread on a ration card (ज्ञानदा → शयनदा) still causes 2 false alarms: the secondary link sends it to the
+  adjudicator (score 67, age and gender fit), which answers "different first names".
+- The adjudicator needed 1,921 completion tokens for that answer; with `TEXT_MAX_TOKENS=1500` the call fails (reasoning
+  uses up the budget). Run with `TEXT_MAX_TOKENS=4000`.
 
 **Rules engine**: 51 hand-written unit tests on every boundary (ages 17/18, 20/21, 64/65/66; incomes 21,000/21,001,
 250,000/250,001; each Ramai income band; each ration card colour). These are tests, not an eval: an eval would only
@@ -87,8 +100,11 @@ phone video ──► find_documents ──► read_documents ──► build_ho
 3. **Build the household** ([graph/nodes/build_household.py](backend/graph/nodes/build_household.py)). The ration card's
    member list defines the household. Other documents are linked by name across scripts (Devanagari transliteration +
    rapidfuzz): score ≥ 90 links, 70–90 asks the text model and logs its reason, < 70 means the person is not on the ration
-   card. Spelling and date-of-birth checks are separate exact comparisons, so "Suneel" is linked to Sunil *and* reported
-   as a mismatch. An empty field is never a mismatch.
+   card. Secondary link: 50–70 still asks the model if the document's age (±1 year) and gender fit exactly one member
+   without a document of that type. Spelling and date-of-birth checks are separate exact comparisons, so "Suneel" is
+   linked to Sunil *and* reported as a mismatch. Before a name mismatch is reported, the name is re-read on each involved
+   document (name only, letter by letter, effort medium); it is reported only if the re-read still differs, with both
+   reads in the evidence. An empty field is never a mismatch.
 4. **Check the rules** ([rules/engine.py](backend/rules/engine.py)). For each member and scheme, the result is
    `not_eligible`, `blocked_by_issues` (fix these first), `check_at_office`, or `eligible_on_documents`, plus the rules
    used (value, status, source), the reasons, and what the documents can't show (`needs_other_proof`). **No LLM call
@@ -183,8 +199,9 @@ details to `eval/results/raw/` (gitignored).
 ## Continuing the evals (where we stopped)
 
 1. **Household eval, end to end: done** (results above). Re-run with
-   `python eval/run_household_eval.py --mode e2e` (cached reads cost nothing). All 12 false alarms came from misread
-   names, which a one-photo read can't cross-check; in the app, frame agreement over 2–3 frames applies to names.
+   `TEXT_MAX_TOKENS=4000 python eval/run_household_eval.py --mode e2e` (cached calls cost nothing; `--no-verify` for
+   the run without name re-reads). The 6 false alarms left are misread names; in the app, frame agreement over 2–3
+   frames also applies to names.
 2. **Before the final eval run:** the eval-phase notes say to keep ≥ 4 of each error type over 30 households (done in v2),
    include 5–6 member households (done), and rare names and unusual spellings to measure "correction" errors (done in v2).
 

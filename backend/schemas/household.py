@@ -5,6 +5,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
+from clients.llm import TokenUsage
 from schemas.documents import DocumentExtraction
 from schemas.issues import Issue
 
@@ -41,7 +42,9 @@ class Household(BaseModel):
     income_document_id: str | None  # the household's income certificate used for income rules
     issues: list[Issue]
     links: list[LinkDecision] = []
-    llm_calls: int = 0
+    llm_calls: int = 0  # name-adjudicator calls (text model)
+    verification_calls: int = 0  # name re-reads (vision model) before a name mismatch is reported
+    usage: TokenUsage = TokenUsage()  # tokens of both, summed
 
     def member(self, member_id: str) -> HouseholdMember:
         return next(m for m in self.members if m.member_id == member_id)

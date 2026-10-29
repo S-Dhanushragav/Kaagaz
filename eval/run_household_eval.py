@@ -4,10 +4,12 @@ Usage (from the repo root, with the backend venv):
     python eval/run_household_eval.py --mode truth              # documents from ground truth: no reader calls
     python eval/run_household_eval.py --mode e2e --dry-run      # count calls and estimate cost
     python eval/run_household_eval.py --mode e2e                # reader on photo-like images (muse-spark-1.3, low)
+    python eval/run_household_eval.py --mode e2e --no-verify    # without re-reading names before a name mismatch
 
 Reports, per planted error type: caught / planted; false alarms (scored issue types that match no
 planted error), each with the reading errors in its documents (field, expected vs read); other issues (unreadable, duplicates, info notes); name-adjudicator calls; and the
-rules engine's outcomes. Results -> eval/results/household_<mode>_<timestamp>.json.
+rules engine's outcomes. In e2e mode every name mismatch is first re-read (name only, effort medium);
+verification calls, adjudicator calls and their tokens are counted separately. Results -> eval/results/household_<mode>_<timestamp>.json.
 """
 
 import argparse
@@ -22,7 +24,9 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "backend"), str(ROOT)]
 
-from graph.nodes.build_household import build_household, llm_adjudicator  # noqa: E402
+from graph.nodes.build_household import (  # noqa: E402
+    Adjudication, NameQuery, NameRead, build_household, llm_adjudicator, llm_name_verifier,
+)
 from graph.nodes.read_documents import DocumentInput, read_documents  # noqa: E402
 from rules.engine import evaluate  # noqa: E402
 from schemas.documents import DocumentExtraction  # noqa: E402
@@ -44,14 +48,19 @@ def load() -> list[dict[str, Any]]:
     return [json.loads(p.read_text(encoding="utf-8")) for p in sorted(EVAL.glob("EV*/ground_truth.json"))]
 
 
-def read_all(gts: list[dict[str, Any]], model: str) -> tuple[dict[str, list], dict[str, Any]]:
-    """Read every photo-like document (one image each, so no frame agreement)."""
+def read_all(gts: list[dict[str, Any]], model: str) -> tuple[dict[str, list], dict[str, dict[str, list[bytes]]], dict[str, Any]]:
+    """Read every photo-like document (one image each, so no frame agreement).
+
+    Returns extractions and images per household (document id -> images), and reader usage.
+    """
     inputs, owner = [], {}
+    images: dict[str, dict[str, list[bytes]]] = defaultdict(dict)
     for gt in gts:
         for d in gt["documents"]:
             doc_id = f"{gt['id']}/{d['id']}"
             inputs.append(DocumentInput(id=doc_id, images=[encode_for_llm(read_image(EVAL / gt["id"] / d["files"]["photo"]))]))
             owner[doc_id] = (gt["id"], d["id"])
+            images[gt["id"]][d["id"]] = inputs[-1].images
     start = time.perf_counter()
     results = read_documents(inputs, overrides={"provider": "meta", "model": model, "reasoning_effort": "low"})
     elapsed = time.perf_counter() - start
@@ -68,7 +77,7 @@ def read_all(gts: list[dict[str, Any]], model: str) -> tuple[dict[str, list], di
                                                             if d["id"] == owner[i.id][1]) for i, r in zip(inputs, results)),
         "read_s": round(elapsed, 1),
     }
-    return per_household, usage
+    return per_household, images, usage
 
 
 def gts_by_id(gts: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
@@ -120,13 +129,21 @@ def misreads(gt: dict[str, Any], issue: Any, extractions: list[DocumentExtractio
     return out
 
 
-def run(mode: str, model: str) -> dict[str, Any]:
+def _tally(totals: Counter, kind: str, usage: Any) -> None:
+    totals[f"{kind}_calls"] += 1
+    totals[f"{kind}_prompt_tokens"] += usage.prompt_tokens
+    totals[f"{kind}_completion_tokens"] += usage.completion_tokens
+
+
+def run(mode: str, model: str, verify: bool = True) -> dict[str, Any]:
     gts = load()
     usage: dict[str, Any] = {}
+    images: dict[str, dict[str, list[bytes]]] = {}
     if mode == "e2e":
-        extractions, usage = read_all(gts, model)
+        extractions, images, usage = read_all(gts, model)
     else:
         extractions = {gt["id"]: extractions_from_truth(gt) for gt in gts}
+    calls: Counter = Counter()
 
     planted, caught = Counter(), Counter()
     false_alarms: Counter = Counter()
@@ -137,7 +154,23 @@ def run(mode: str, model: str) -> dict[str, Any]:
     details = []
     for gt in gts:
         ref = date.fromisoformat(gt["reference_date"])
-        hh = build_household(extractions[gt["id"]], ref, adjudicate=llm_adjudicator(ref))
+        adjudicator = llm_adjudicator(ref)
+
+        def adjudicate(a: dict[str, Any], b: dict[str, Any]) -> Adjudication:
+            verdict = adjudicator(a, b)
+            _tally(calls, "adjudicator", verdict.usage)
+            return verdict
+
+        verifier = None
+        if mode == "e2e" and verify:
+            reread = llm_name_verifier(images[gt["id"]], overrides={"provider": "meta", "model": model})
+
+            def verifier(q: NameQuery) -> NameRead:
+                read = reread(q)
+                _tally(calls, "verification", read.usage)
+                return read
+
+        hh = build_household(extractions[gt["id"]], ref, adjudicate=adjudicate, verify=verifier)
         adjudicator_calls += hh.llm_calls
         m = match_issues(gt, hh.issues)
         for p in gt["planted_errors"]:
@@ -159,11 +192,16 @@ def run(mode: str, model: str) -> dict[str, Any]:
                               "misreads": reads} for i, reads in zip(m.false_alarms, alarm_reads)],
             "other": [{"type": i.type, "severity": i.severity, "documents": i.documents} for i in m.other],
             "llm_links": [l.model_dump() for l in hh.links if l.method == "llm"],
+            "name_verifications": [{"member": i.member_id, "confirmed": i.type == "name_mismatch",
+                                    "verification": i.evidence["verification"]}
+                                   for i in hh.issues if "verification" in i.evidence],
         })
 
     cost = 0.0
     if usage:
         cost = usage["prompt_tokens"] * LLM_INPUT_PER_TOKEN + usage["completion_tokens"] * LLM_OUTPUT_PER_TOKEN
+    verify_cost = (calls["verification_prompt_tokens"] * LLM_INPUT_PER_TOKEN
+                   + calls["verification_completion_tokens"] * LLM_OUTPUT_PER_TOKEN)
     return {
         "mode": mode,
         "model": model if mode == "e2e" else None,
@@ -176,6 +214,11 @@ def run(mode: str, model: str) -> dict[str, Any]:
         "false_alarm_causes": dict(alarm_causes),
         "other_issues": dict(other),
         "adjudicator_calls": adjudicator_calls,
+        "adjudicator_tokens": [calls["adjudicator_prompt_tokens"], calls["adjudicator_completion_tokens"]],
+        "verification": mode == "e2e" and verify,
+        "verification_calls": calls["verification_calls"],
+        "verification_tokens": [calls["verification_prompt_tokens"], calls["verification_completion_tokens"]],
+        "verification_cost_usd": round(verify_cost, 3),
         "scheme_outcomes": dict(outcomes),
         "reader": usage,
         "reader_cost_usd": round(cost, 3),
@@ -191,7 +234,10 @@ def print_summary(s: dict[str, Any]) -> None:
     print(f"| **all** | **{sum(s['caught'].values())}/{sum(s['planted'].values())}** ({100 * s['catch_rate']:.1f}%) |")
     print(f"\nFalse alarms: {s['false_alarm_total']} {s['false_alarms']}; causes {s['false_alarm_causes']}")
     print(f"Other issues (not scored): {s['other_issues']}")
-    print(f"Name-adjudicator calls (text model): {s['adjudicator_calls']}")
+    print(f"Name-adjudicator calls (text model, Baseten): {s['adjudicator_calls']}, "
+          f"tokens {s['adjudicator_tokens'][0]} + {s['adjudicator_tokens'][1]}")
+    print(f"Name verification calls (vision model, effort medium): {s['verification_calls']}, "
+          f"tokens {s['verification_tokens'][0]} + {s['verification_tokens'][1]}, cost ${s['verification_cost_usd']}")
     print(f"Scheme outcomes (members x schemes): {s['scheme_outcomes']}")
     if s["reader"]:
         r = s["reader"]
@@ -201,6 +247,13 @@ def print_summary(s: dict[str, Any]) -> None:
     for d in s["details"]:
         for x in d["missed"]:
             print(f"  MISSED {d['household']} {x['type']} {x['documents']}")
+        for v in d["name_verifications"]:
+            print(f"  VERIFY {d['household']} {v['member']} {'confirmed' if v['confirmed'] else 'cleared'}")
+            for doc, r in v["verification"].items():
+                print(f"         {doc}: first {r['first_read']}, re-read {r['re_read']}"
+                      + (f" ({r['error']})" if r.get("error") else ""))
+        for x in d["llm_links"]:
+            print(f"  ADJUD  {d['household']} {x['document_id']} -> {x['member_id']} ({x['score']}): {x['reason']}")
         for x in d["false_alarms"]:
             print(f"  FALSE  {d['household']} {x['type']} {x['member']} {x['documents']}")
             for r in x["misreads"]:
@@ -215,6 +268,7 @@ def main() -> None:
     parser.add_argument("--mode", choices=["truth", "e2e"], required=True)
     parser.add_argument("--model", default="muse-spark-1.3")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--no-verify", action="store_true", help="report name mismatches without re-reading names")
     args = parser.parse_args()
 
     if args.dry_run:
@@ -223,10 +277,12 @@ def main() -> None:
         reads = 0 if args.mode == "truth" else n
         est = reads * (AVG_PROMPT_TOKENS * LLM_INPUT_PER_TOKEN + AVG_COMPLETION_TOKENS * LLM_OUTPUT_PER_TOKEN)
         print(f"{len(gts)} households, {n} documents; reader calls: {reads} (+ retries), "
-              f"estimated reader cost ${est:.2f}; plus a name-adjudicator call (Baseten) for each 70-90 name score")
+              f"estimated reader cost ${est:.2f}; plus a name-adjudicator call (Baseten) for each 70-90 name score"
+              " (or 50-70 with a unique age/gender fit)"
+              + ("; plus one name re-read per document in each name mismatch" if reads and not args.no_verify else ""))
         return
 
-    summary = run(args.mode, args.model)
+    summary = run(args.mode, args.model, verify=not args.no_verify)
     print_summary(summary)
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     name = f"household_{args.mode}_{stamp}"
