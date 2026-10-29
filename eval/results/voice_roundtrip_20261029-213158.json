@@ -1,0 +1,843 @@
+{
+  "settings": {
+    "plain": {
+      "pad_s": 0.0,
+      "keywords": true
+    },
+    "padded": {
+      "pad_s": 0.5,
+      "keywords": true
+    },
+    "padded_no_kw": {
+      "pad_s": 0.5,
+      "keywords": false
+    }
+  },
+  "languages": {
+    "en": {
+      "prompts": [
+        {
+          "text": "Gauri Hrishikesh Waghmare: which one is correct? Aadhaar card: Gauri Hrishikesh Vaghmare; ration card: Gauri Hrishikesh Waghmare First: Gauri Hrishikesh Vaghmare. Second: Gauri Hrishikesh Waghmare. Third: not sure. Please say the number of your answer.",
+          "audio_s": 19.67,
+          "tts_s": 2386.58
+        },
+        {
+          "text": "Trupti Ojas Waghmare: which one is correct? Aadhaar card: 22/08/1984; caste certificate: 24/08/1984 First: 22/08/1984. Second: 24/08/1984. Third: not sure. Please say the number of your answer.",
+          "audio_s": 24.25,
+          "tts_s": 10.52
+        }
+      ],
+      "answers": [
+        {
+          "spoken": "First",
+          "expected": 0,
+          "audio_s": 0.61,
+          "tts_s": 0.38,
+          "plain": {
+            "heard": "first",
+            "option": 0,
+            "ok": true,
+            "asr_s": 1.927
+          },
+          "padded": {
+            "heard": "first,",
+            "option": 0,
+            "ok": true,
+            "asr_s": 2.091
+          },
+          "padded_no_kw": {
+            "heard": "first",
+            "option": 0,
+            "ok": true,
+            "asr_s": 2.014
+          }
+        },
+        {
+          "spoken": "Second",
+          "expected": 1,
+          "audio_s": 0.62,
+          "tts_s": 0.41,
+          "plain": {
+            "heard": "second.",
+            "option": 1,
+            "ok": true,
+            "asr_s": 1.866
+          },
+          "padded": {
+            "heard": "second?",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.12
+          },
+          "padded_no_kw": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.418
+          }
+        },
+        {
+          "spoken": "The second one",
+          "expected": 1,
+          "audio_s": 1.68,
+          "tts_s": 0.87,
+          "plain": {
+            "heard": "the second one,",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.777
+          },
+          "padded": {
+            "heard": "the second one,",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.149
+          },
+          "padded_no_kw": {
+            "heard": "The second one.",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.05
+          }
+        },
+        {
+          "spoken": "Number one",
+          "expected": 0,
+          "audio_s": 1.18,
+          "tts_s": 0.65,
+          "plain": {
+            "heard": "number one.",
+            "option": 0,
+            "ok": true,
+            "asr_s": 2.307
+          },
+          "padded": {
+            "heard": "number one,",
+            "option": 0,
+            "ok": true,
+            "asr_s": 1.887
+          },
+          "padded_no_kw": {
+            "heard": "Number one,",
+            "option": 0,
+            "ok": true,
+            "asr_s": 2.452
+          }
+        },
+        {
+          "spoken": "Two",
+          "expected": 1,
+          "audio_s": 0.61,
+          "tts_s": 0.37,
+          "plain": {
+            "heard": "y",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.646
+          },
+          "padded": {
+            "heard": "yep",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.801
+          },
+          "padded_no_kw": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.915
+          }
+        },
+        {
+          "spoken": "Third",
+          "expected": 2,
+          "audio_s": 0.78,
+          "tts_s": 0.46,
+          "plain": {
+            "heard": "here",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.828
+          },
+          "padded": {
+            "heard": "here",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.86
+          },
+          "padded_no_kw": {
+            "heard": "Here.",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.945
+          }
+        },
+        {
+          "spoken": "Not sure",
+          "expected": 2,
+          "audio_s": 0.94,
+          "tts_s": 0.63,
+          "plain": {
+            "heard": "not sure.",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.06
+          },
+          "padded": {
+            "heard": "not sure",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.059
+          },
+          "padded_no_kw": {
+            "heard": "not sure.",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.063
+          }
+        },
+        {
+          "spoken": "I don't know",
+          "expected": 2,
+          "audio_s": 1.3,
+          "tts_s": 0.68,
+          "plain": {
+            "heard": "i don't know",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.145
+          },
+          "padded": {
+            "heard": "I don't know.",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.792
+          },
+          "padded_no_kw": {
+            "heard": "I don't know.",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.275
+          }
+        },
+        {
+          "spoken": "Sunil Ramesh Patil",
+          "expected": null,
+          "audio_s": 1.62,
+          "tts_s": 0.82,
+          "plain": {
+            "heard": "send no range puzzle.",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.885
+          },
+          "padded": {
+            "heard": "send no puzzle.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.623
+          },
+          "padded_no_kw": {
+            "heard": "send a puzzle.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.293
+          }
+        },
+        {
+          "spoken": "The one on the ration card",
+          "expected": null,
+          "audio_s": 2.03,
+          "tts_s": 1.05,
+          "plain": {
+            "heard": "the one on the ration card.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.07
+          },
+          "padded": {
+            "heard": "the one on the ration card.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.243
+          },
+          "padded_no_kw": {
+            "heard": "The one on the ration curd.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.177
+          }
+        }
+      ],
+      "summary": {
+        "plain": {
+          "answers_mapped_right": "6/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 2.05
+        },
+        "padded": {
+          "answers_mapped_right": "6/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 2.16
+        },
+        "padded_no_kw": {
+          "answers_mapped_right": "5/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 2.26
+        }
+      },
+      "tts_s_per_answer_clip": 0.63,
+      "audio_s_per_answer_clip": 1.14
+    },
+    "hi": {
+      "prompts": [
+        {
+          "text": "गौरी हृषीकेश वाघमारे: इनमें से सही कौन सा है? आधार कार्ड: Gauri Hrishikesh Vaghmare; राशन कार्ड: Gauri Hrishikesh Waghmare पहला: Gauri Hrishikesh Vaghmare। दूसरा: Gauri Hrishikesh Waghmare। तीसरा: पता नहीं। अपने जवाब का नंबर बोलें।",
+          "audio_s": 12.7,
+          "tts_s": 9.37
+        },
+        {
+          "text": "तृप्ती ओजस वाघमारे: इनमें से सही कौन सा है? आधार कार्ड: 22/08/1984; जाति प्रमाण पत्र: 24/08/1984 पहला: 22/08/1984। दूसरा: 24/08/1984। तीसरा: पता नहीं। अपने जवाब का नंबर बोलें।",
+          "audio_s": 20.87,
+          "tts_s": 8.69
+        }
+      ],
+      "answers": [
+        {
+          "spoken": "पहला",
+          "expected": 0,
+          "audio_s": 0.58,
+          "tts_s": 0.0,
+          "plain": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.784
+          },
+          "padded": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.634
+          },
+          "padded_no_kw": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.768
+          }
+        },
+        {
+          "spoken": "दूसरा",
+          "expected": 1,
+          "audio_s": 0.72,
+          "tts_s": 0.41,
+          "plain": {
+            "heard": "लूसा।",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.821
+          },
+          "padded": {
+            "heard": "लूसा।",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.266
+          },
+          "padded_no_kw": {
+            "heard": "लूसा।Lusa.",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.053
+          }
+        },
+        {
+          "spoken": "दूसरा वाला",
+          "expected": 1,
+          "audio_s": 1.01,
+          "tts_s": 0.55,
+          "plain": {
+            "heard": "दूसरा",
+            "option": 1,
+            "ok": true,
+            "asr_s": 1.652
+          },
+          "padded": {
+            "heard": "दूसरा",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.06
+          },
+          "padded_no_kw": {
+            "heard": "दूसरा",
+            "option": 1,
+            "ok": true,
+            "asr_s": 1.885
+          }
+        },
+        {
+          "spoken": "नंबर दो",
+          "expected": 1,
+          "audio_s": 0.85,
+          "tts_s": 0.49,
+          "plain": {
+            "heard": "नबर दो,",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.037
+          },
+          "padded": {
+            "heard": "नबर दोबर दो.",
+            "option": 1,
+            "ok": true,
+            "asr_s": 3.16
+          },
+          "padded_no_kw": {
+            "heard": "लुढ़बर दो,",
+            "option": 1,
+            "ok": true,
+            "asr_s": 1.808
+          }
+        },
+        {
+          "spoken": "दो",
+          "expected": 1,
+          "audio_s": 0.45,
+          "tts_s": 0.34,
+          "plain": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.729
+          },
+          "padded": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.896
+          },
+          "padded_no_kw": {
+            "heard": "लो,",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.724
+          }
+        },
+        {
+          "spoken": "तीसरा",
+          "expected": 2,
+          "audio_s": 0.88,
+          "tts_s": 0.52,
+          "plain": {
+            "heard": "तिसर।",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.839
+          },
+          "padded": {
+            "heard": "तसर",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.608
+          },
+          "padded_no_kw": {
+            "heard": "तीसरा,",
+            "option": 2,
+            "ok": true,
+            "asr_s": 1.252
+          }
+        },
+        {
+          "spoken": "पता नहीं",
+          "expected": 2,
+          "audio_s": 0.93,
+          "tts_s": 0.53,
+          "plain": {
+            "heard": "ता नहीं।:",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.606
+          },
+          "padded": {
+            "heard": "तन नह",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.672
+          },
+          "padded_no_kw": {
+            "heard": "पता नहीं,",
+            "option": 2,
+            "ok": true,
+            "asr_s": 1.865
+          }
+        },
+        {
+          "spoken": "मुझे नहीं पता",
+          "expected": 2,
+          "audio_s": 1.6,
+          "tts_s": 0.8,
+          "plain": {
+            "heard": "मुझे नहीं पता",
+            "option": 2,
+            "ok": true,
+            "asr_s": 1.874
+          },
+          "padded": {
+            "heard": "मुझेमुझे नहीं पता",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.028
+          },
+          "padded_no_kw": {
+            "heard": "मुझेमुझे नहीं पता",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.074
+          }
+        },
+        {
+          "spoken": "सुनील रमेश पाटील",
+          "expected": null,
+          "audio_s": 1.78,
+          "tts_s": 0.95,
+          "plain": {
+            "heard": "सुनील लमेश पाटी,",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.989
+          },
+          "padded": {
+            "heard": "सुनी लमेश पाटी,",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.898
+          },
+          "padded_no_kw": {
+            "heard": "सुनील लमेश पाटी",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.355
+          }
+        },
+        {
+          "spoken": "राशन कार्ड वाला",
+          "expected": null,
+          "audio_s": 1.74,
+          "tts_s": 0.88,
+          "plain": {
+            "heard": "राशनकार वरा.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.059
+          },
+          "padded": {
+            "heard": "राशमकार वरा",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.878
+          },
+          "padded_no_kw": {
+            "heard": "राश्मिकार वरा.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.373
+          }
+        }
+      ],
+      "summary": {
+        "plain": {
+          "answers_mapped_right": "3/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 1.84
+        },
+        "padded": {
+          "answers_mapped_right": "3/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 2.11
+        },
+        "padded_no_kw": {
+          "answers_mapped_right": "5/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 1.92
+        }
+      },
+      "tts_s_per_answer_clip": 0.55,
+      "audio_s_per_answer_clip": 1.05
+    },
+    "mr": {
+      "prompts": [
+        {
+          "text": "गौरी हृषीकेश वाघमारे: यापैकी बरोबर कोणते? आधार कार्ड: Gauri Hrishikesh Vaghmare; रेशन कार्ड: Gauri Hrishikesh Waghmare पहिले: Gauri Hrishikesh Vaghmare. दुसरे: Gauri Hrishikesh Waghmare. तिसरे: माहीत नाही. तुमच्या उत्तराचा क्रमांक सांगा.",
+          "audio_s": 13.45,
+          "tts_s": 9.11
+        },
+        {
+          "text": "तृप्ती ओजस वाघमारे: यापैकी बरोबर कोणते? आधार कार्ड: 22/08/1984; जातीचा दाखला: 24/08/1984 पहिले: 22/08/1984. दुसरे: 24/08/1984. तिसरे: माहीत नाही. तुमच्या उत्तराचा क्रमांक सांगा.",
+          "audio_s": 25.08,
+          "tts_s": 10.72
+        }
+      ],
+      "answers": [
+        {
+          "spoken": "पहिले",
+          "expected": 0,
+          "audio_s": 0.77,
+          "tts_s": 0.44,
+          "plain": {
+            "heard": "पहले",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.745
+          },
+          "padded": {
+            "heard": "पहल,",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.831
+          },
+          "padded_no_kw": {
+            "heard": "पहिले",
+            "option": 0,
+            "ok": true,
+            "asr_s": 1.881
+          }
+        },
+        {
+          "spoken": "दुसरे",
+          "expected": 1,
+          "audio_s": 0.61,
+          "tts_s": 0.0,
+          "plain": {
+            "heard": "गले:",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.714
+          },
+          "padded": {
+            "heard": "घुले,",
+            "option": null,
+            "ok": false,
+            "asr_s": 331.31
+          },
+          "padded_no_kw": {
+            "heard": "गुले.",
+            "option": null,
+            "ok": false,
+            "asr_s": 3.103
+          }
+        },
+        {
+          "spoken": "दुसरा",
+          "expected": 1,
+          "audio_s": 0.7,
+          "tts_s": 0.5,
+          "plain": {
+            "heard": "युजा.",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.399
+          },
+          "padded": {
+            "heard": "दुजा,",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.801
+          },
+          "padded_no_kw": {
+            "heard": "रुजा",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.853
+          }
+        },
+        {
+          "spoken": "नंबर दोन",
+          "expected": 1,
+          "audio_s": 1.02,
+          "tts_s": 0.62,
+          "plain": {
+            "heard": "नबर दन.",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.772
+          },
+          "padded": {
+            "heard": "नबर दन",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.474
+          },
+          "padded_no_kw": {
+            "heard": "नंबर दोन.",
+            "option": 1,
+            "ok": true,
+            "asr_s": 4.427
+          }
+        },
+        {
+          "spoken": "दोन",
+          "expected": 1,
+          "audio_s": 0.27,
+          "tts_s": 0.29,
+          "plain": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.95
+          },
+          "padded": {
+            "heard": "गो,",
+            "option": null,
+            "ok": false,
+            "asr_s": 3.152
+          },
+          "padded_no_kw": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.442
+          }
+        },
+        {
+          "spoken": "तिसरे",
+          "expected": 2,
+          "audio_s": 0.66,
+          "tts_s": 0.42,
+          "plain": {
+            "heard": "तिजे,",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.145
+          },
+          "padded": {
+            "heard": "तेजे,",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.823
+          },
+          "padded_no_kw": {
+            "heard": "ते जे.",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.803
+          }
+        },
+        {
+          "spoken": "माहीत नाही",
+          "expected": 2,
+          "audio_s": 1.39,
+          "tts_s": 0.75,
+          "plain": {
+            "heard": "माहित नह,ī:",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.898
+          },
+          "padded": {
+            "heard": "महित नह",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.395
+          },
+          "padded_no_kw": {
+            "heard": "माहित नाही,",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.991
+          }
+        },
+        {
+          "spoken": "मला माहीत नाही",
+          "expected": 2,
+          "audio_s": 1.65,
+          "tts_s": 0.72,
+          "plain": {
+            "heard": "मला महत नह,",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.964
+          },
+          "padded": {
+            "heard": "मला माहित नाही.",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.828
+          },
+          "padded_no_kw": {
+            "heard": "मला माहित नाही.",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.751
+          }
+        },
+        {
+          "spoken": "सुनील रमेश पाटील",
+          "expected": null,
+          "audio_s": 1.97,
+          "tts_s": 0.98,
+          "plain": {
+            "heard": "सुनील रमेश पाटील",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.914
+          },
+          "padded": {
+            "heard": "सुनील रमेश पाटील.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.404
+          },
+          "padded_no_kw": {
+            "heard": "सुनील रमेश पाटील",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.227
+          }
+        },
+        {
+          "spoken": "रेशन कार्डवरचे",
+          "expected": null,
+          "audio_s": 1.25,
+          "tts_s": 0.71,
+          "plain": {
+            "heard": "क्रिएशन कर दो।",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.898
+          },
+          "padded": {
+            "heard": "क्षेण कर्दोळी",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.153
+          },
+          "padded_no_kw": {
+            "heard": "क्रिएशनक्रिएशन कांडोवळी",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.349
+          }
+        }
+      ],
+      "summary": {
+        "plain": {
+          "answers_mapped_right": "0/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 1.84
+        },
+        "padded": {
+          "answers_mapped_right": "0/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 35.22
+        },
+        "padded_no_kw": {
+          "answers_mapped_right": "2/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 2.38
+        }
+      },
+      "tts_s_per_answer_clip": 0.54,
+      "audio_s_per_answer_clip": 1.03
+    }
+  }
+}

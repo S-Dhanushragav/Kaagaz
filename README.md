@@ -75,6 +75,20 @@ All numbers are on synthetic SPECIMEN data; result files are in [eval/results/](
 - One misread on a ration card (ज्ञानदा → शयनदा) still causes 2 blocker false alarms: before the secondary link the
   row is re-read, but the re-read repeats "Shyanada" (score stays 67) and the adjudicator answers "different first names".
 
+**Voice round trip** (MMS-TTS speaks 8 answers + 2 non-answers per language; Muse Voice Transcribe hears them;
+answers are matched by number words only). Synthetic speech of isolated words, so a weak proxy for real voices:
+
+| Language | Answers mapped right (keywords / padded+keywords / padded, no keywords) | Non-answers rejected |
+|---|---|---|
+| English | 6/8 / 6/8 / 5/8 | 2/2 |
+| Hindi | 3/8 / 3/8 / 5/8 | 2/2 |
+| Marathi | 0/8 / 0/8 / 2/8 | 2/2 |
+
+Transcription ~2 s per clip (one 331 s outlier); TTS ~0.6 s per 1 s answer clip on CPU. Single Hindi/Marathi words
+("दूसरा", "दुसरे", "दोन") are mostly misheard; keyword biasing hurt Hindi and Marathi here; the ASR writes
+"माहित" for "माहीत". Real recordings are the next test. Nothing is ever matched to a wrong option: misses become
+"ask again", then buttons.
+
 **Rules engine**: 51 hand-written unit tests on every boundary (ages 17/18, 20/21, 64/65/66; incomes 21,000/21,001,
 250,000/250,001; each Ramai income band; each ration card colour). These are tests, not an eval: an eval would only
 compare the rules with themselves.
@@ -219,6 +233,10 @@ details to `eval/results/raw/` (gitignored).
    adjudicator's reasoning).
 2. **Before the final eval run:** the eval-phase notes say to keep ≥ 4 of each error type over 30 households (done in v2),
    include 5–6 member households (done), and rare names and unusual spellings to measure "correction" errors (done in v2).
+
+## Future work
+- **Voice front agent** (free spoken questions about schemes and issues, routed to the pipeline or answered from the
+  cached scheme descriptions): not built. Phase 6b covers only fixed questions with numbered spoken answers.
 
 ## Known limitations
 - The reader sometimes "corrects" rare names and place names to familiar words. The prompt asks it not to, and this
