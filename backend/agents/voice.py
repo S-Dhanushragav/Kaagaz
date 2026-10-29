@@ -51,6 +51,7 @@ class AnswerWords(BaseModel):
     instruction: str
     retry: str
     buttons: str
+    english_only: str | None = None  # hi/mr: the values differ only in Latin script: look at the screen
     numbers: list[list[str]]  # words meaning option 1, 2, ... (digits always count too)
     not_sure: list[str]
 
@@ -108,24 +109,42 @@ def _in_script(value: str, devanagari: bool) -> str | None:
     return next((p for p in value.split(" / ") if bool(DEVANAGARI.search(p)) == devanagari), None)
 
 
-def documents_with_values(issue: PlannerIssue, language: str) -> str:
-    """'ration card: X; Aadhaar card: Y', in the script that shows the difference (the language's first)."""
-    t = load_voice(language)
-    shown = dict(issue.values)
+def shown_values(issue: PlannerIssue, language: str) -> dict[str, str]:
+    """Each document's value in the script that shows the difference (the language's own script first)."""
     for dev in (language != "en", language == "en"):
         candidate = {d: _in_script(v, dev) for d, v in issue.values.items()}
         if all(candidate.values()) and len({comparison_key(v) for v in candidate.values()}) > 1:
-            shown = candidate
-            break
+            return candidate
+    return dict(issue.values)
+
+
+def shown_value(value: str, issue: PlannerIssue, language: str) -> str:
+    """One of the issue's values (an option) as it is shown in this language."""
+    shown = shown_values(issue, language)
+    return next((shown[d] for d, v in issue.values.items() if v == value), value)
+
+
+def english_only(issue: PlannerIssue, language: str) -> bool:
+    """In Hindi or Marathi: the values differ only in Latin script, which these voices cannot say."""
+    if language == "en" or not issue.values:
+        return False
+    return not any(DEVANAGARI.search(v) or not re.search(r"[A-Za-z]", v) for v in shown_values(issue, language).values())
+
+
+def documents_with_values(issue: PlannerIssue, language: str) -> str:
+    """'ration card: X; Aadhaar card: Y' (for the screen: both spellings)."""
+    t = load_voice(language)
     groups: dict[str, list[str]] = {}
-    for d, v in shown.items():
+    for d, v in shown_values(issue, language).items():
         groups.setdefault(v, []).append(t.documents[issue.documents[d]])
     return "; ".join(f"{', '.join(dict.fromkeys(names))}: {v}" for v, names in groups.items())
 
 
 def question_text(issue: PlannerIssue, kind: str, language: str) -> str:
+    """The question names the documents only; the numbered options carry the values."""
     t = load_voice(language)
-    return t.questions[kind].format(member=member_text(issue, language), documents=documents_with_values(issue, language))
+    return t.questions[kind].format(member=member_text(issue, language),
+                                    documents=document_names(list(issue.documents.values()), language))
 
 
 def option_text(option: str, language: str) -> str:

@@ -26,7 +26,10 @@ logger = logging.getLogger(__name__)
 Language = Literal["en", "hi", "mr"]
 LANGUAGE_NAMES = {"en": "English", "hi": "Hindi", "mr": "Marathi"}  # the API biases on English language names
 RATES = (16000, 24000)
-RETRIES = 3
+# Interactive (the family is waiting): 10 s timeout, one retry, then the caller shows buttons.
+INTERACTIVE_TIMEOUT_S, INTERACTIVE_RETRIES, INTERACTIVE_BACKOFF_S = 10.0, 1, 0.5
+# Evals only: patient settings.
+EVAL_SETTINGS = {"timeout_s": 120.0, "retries": 3, "backoff_s": 2.0}
 
 
 class TranscribeError(RuntimeError):
@@ -62,29 +65,34 @@ def _multipart(request: dict, audio: bytes) -> tuple[bytes, str]:
     return b"".join(parts), f"multipart/form-data; boundary={boundary}"
 
 
-def _post(url: str, body: bytes, content_type: str, api_key: str) -> dict:
+def _post(url: str, body: bytes, content_type: str, api_key: str, timeout_s: float = INTERACTIVE_TIMEOUT_S,
+          retries: int = INTERACTIVE_RETRIES, backoff_s: float = INTERACTIVE_BACKOFF_S) -> dict:
     req = urllib.request.Request(url, data=body, method="POST", headers={
         "Authorization": f"Bearer {api_key}", "Content-Type": content_type, "Accept": "application/json"})
-    for attempt in range(1, RETRIES + 1):
+    for attempt in range(retries + 1):
+        last = attempt == retries
         try:
-            with urllib.request.urlopen(req, timeout=120) as resp:
+            with urllib.request.urlopen(req, timeout=timeout_s) as resp:
                 return json.loads(resp.read().decode("utf-8"))
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", "replace")[:300]
-            if e.code in (429, 500, 503) and attempt < RETRIES:
-                time.sleep(2 ** attempt)
+            if e.code in (429, 500, 503) and not last:
+                time.sleep(backoff_s * 2 ** attempt)
                 continue
             raise TranscribeError(f"transcribe failed: HTTP {e.code}: {detail}") from e
-        except urllib.error.URLError as e:
-            if attempt < RETRIES:
-                time.sleep(2 ** attempt)
+        except (urllib.error.URLError, TimeoutError) as e:
+            if not last:
+                time.sleep(backoff_s * 2 ** attempt)
                 continue
-            raise TranscribeError(f"transcribe failed: {e.reason}") from e
+            raise TranscribeError(f"transcribe failed: {getattr(e, 'reason', e)}") from e
     raise TranscribeError("transcribe failed")  # unreachable
 
 
-def transcribe(audio: bytes, language: Language | None = None, keywords: list[str] | None = None) -> Transcript:
-    """Transcribe one WAV clip. `language` biases recognition (omit to auto-detect)."""
+def transcribe(audio: bytes, language: Language | None = None, keywords: list[str] | None = None, *,
+               timeout_s: float = INTERACTIVE_TIMEOUT_S, retries: int = INTERACTIVE_RETRIES,
+               backoff_s: float = INTERACTIVE_BACKOFF_S) -> Transcript:
+    """Transcribe one WAV clip. `language` biases recognition (omit to auto-detect). Defaults are the
+    interactive settings (10 s timeout, one retry); evals pass EVAL_SETTINGS."""
     settings = get_settings()
     if not settings.meta_transcribe_model or not settings.meta_base_url:
         raise TranscribeError("META_TRANSCRIBE_MODEL and META_BASE_URL must be set")
@@ -103,7 +111,7 @@ def transcribe(audio: bytes, language: Language | None = None, keywords: list[st
     body, content_type = _multipart(request, audio)
     start = time.perf_counter()
     reply = _post(f"{settings.meta_base_url.rstrip('/')}/asr/transcribe", body, content_type,
-                  settings.meta_api_key.get_secret_value())
+                  settings.meta_api_key.get_secret_value(), timeout_s=timeout_s, retries=retries, backoff_s=backoff_s)
     elapsed = time.perf_counter() - start
     result = Transcript(text=(reply.get("transcript") or "").strip(), audio_ms=int(reply.get("audioDurationMs") or 0),
                         request_s=round(elapsed, 3))

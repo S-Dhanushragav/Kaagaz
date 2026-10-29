@@ -10,14 +10,17 @@ from app.config import get_settings
 from clients.tts import wav_bytes
 
 WAV = wav_bytes(np.zeros(16000, dtype=np.float32), 16000)
+fake_api_settings: list = []
 
 
 @pytest.fixture
 def fake_api(monkeypatch, tmp_path):
     sent = []
+    fake_api_settings.clear()
 
-    def post(url, body, content_type, api_key):
+    def post(url, body, content_type, api_key, **settings):
         sent.append((url, body, content_type))
+        fake_api_settings.append(settings)
         return {"sessionId": "s1", "transcript": " दुसरे ", "audioDurationMs": 1000, "turns": []}
 
     s = get_settings()
@@ -65,3 +68,30 @@ def test_wrong_audio_format_is_rejected_before_sending(fake_api, rate: int, chan
     with pytest.raises(tr.TranscribeError, match="not a WAV"):
         tr.transcribe(b"not audio", "hi")
     assert not fake_api
+
+
+def test_interactive_timeout_is_10_s_with_one_retry_then_an_error(monkeypatch, tmp_path) -> None:
+    calls = []
+
+    def urlopen(req, timeout):
+        calls.append(timeout)
+        raise TimeoutError("timed out")
+
+    s = get_settings()
+    monkeypatch.setattr(s, "cache_dir", tmp_path)
+    monkeypatch.setattr(s, "meta_transcribe_model", "muse-voice-transcribe-1.0")
+    monkeypatch.setattr(s, "meta_base_url", "https://api.meta.ai/v1")
+    monkeypatch.setattr(tr.urllib.request, "urlopen", urlopen)
+    monkeypatch.setattr(tr.time, "sleep", lambda s: None)
+    with pytest.raises(tr.TranscribeError, match="timed out"):
+        tr.transcribe(WAV, "hi")
+    assert calls == [10.0, 10.0]  # one try, one retry
+    calls.clear()
+    with pytest.raises(tr.TranscribeError):
+        tr.transcribe(WAV, "hi", **tr.EVAL_SETTINGS)
+    assert calls == [120.0] * 4  # evals: patient
+
+
+def test_settings_reach_the_http_call(fake_api) -> None:
+    tr.transcribe(WAV, "en", **tr.EVAL_SETTINGS)
+    assert fake_api_settings[-1] == tr.EVAL_SETTINGS

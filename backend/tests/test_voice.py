@@ -10,7 +10,8 @@ import pytest
 
 from agents.fix_planner import finalize, planner_issues
 from agents.tools import load_fixes
-from agents.voice import LANGUAGES, OFFICE_REFERRALS, PLACEHOLDERS, load_voice, question_text, step_voice
+from agents.voice import (LANGUAGES, OFFICE_REFERRALS, PLACEHOLDERS, documents_with_values, load_voice, question_text,
+                          step_voice)
 from graph.nodes.build_household import build_household
 from rules.engine import evaluate
 from schemas.fixes import FixStep, PlannerIssue
@@ -148,11 +149,12 @@ def test_questions_and_office_sentences_never_show_internal_ids() -> None:
                 assert any(n in sentence for n in names), (language, sentence)
 
 
-def test_a_question_shows_the_script_where_the_values_differ() -> None:
+def test_the_screen_shows_the_script_where_the_values_differ() -> None:
     marathi_only = ISSUE.model_copy(update={"values": {"rc": "मीरा किरण ठोंबरे / Meera Kiran Thombre",
                                                        "id_m1": "मीरा किरण ठॉंबरे / Meera Kiran Thombre"}})
-    assert "ठॉंबरे" in question_text(marathi_only, "compare", "en")  # English is the same on both: show Marathi
-    assert "Suneel" in question_text(ISSUE, "which_is_correct", "en") and "सुनिल" in question_text(ISSUE, "which_is_correct", "mr")
+    assert "ठॉंबरे" in documents_with_values(marathi_only, "en")  # English is the same on both: show Marathi
+    assert "Suneel" in documents_with_values(ISSUE, "en") and "सुनिल" in documents_with_values(ISSUE, "mr")
+    assert "Suneel" not in question_text(ISSUE, "which_is_correct", "en")  # the question names documents only
 
 
 @pytest.mark.parametrize("language", LANGUAGES)

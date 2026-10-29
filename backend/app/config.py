@@ -61,6 +61,7 @@ class Settings(BaseSettings):
     meta_agent_model: str = ""
     meta_text_model: str = ""
     meta_transcribe_model: str = ""  # used by clients/transcribe.py
+    asr_keyword_languages: str = "en"  # comma-separated: languages that send keyword biasing (it hurt hi/mr)
     meta_segment_model: str = ""  # used by clients/segmenter.py (not built yet)
 
     # Baseten (Muse Spark Open): one model for all tasks

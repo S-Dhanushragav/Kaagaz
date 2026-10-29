@@ -76,18 +76,21 @@ All numbers are on synthetic SPECIMEN data; result files are in [eval/results/](
   row is re-read, but the re-read repeats "Shyanada" (score stays 67) and the adjudicator answers "different first names".
 
 **Voice round trip** (MMS-TTS speaks 8 answers + 2 non-answers per language; Muse Voice Transcribe hears them;
-answers are matched by number words only). Synthetic speech of isolated words, so a weak proxy for real voices:
+answers are matched by number words only, spelling-tolerant). Synthetic speech of isolated words, so a weak proxy
+for real voices. **Buttons are the primary way to answer; voice is a bonus.**
 
-| Language | Answers mapped right (keywords / padded+keywords / padded, no keywords) | Non-answers rejected |
+| Language | Answers mapped right: default (keywords en only) / keywords / no keywords | Non-answers rejected |
 |---|---|---|
-| English | 6/8 / 6/8 / 5/8 | 2/2 |
-| Hindi | 3/8 / 3/8 / 5/8 | 2/2 |
-| Marathi | 0/8 / 0/8 / 2/8 | 2/2 |
+| English | 6/8 / 6/8 / 6/8 | 2/2 |
+| Hindi | 3/8 / 3/8 / 3/8 | 2/2 |
+| Marathi | 4/8 / 0/8 / 4/8 (was 0/8 before spelling-tolerant matching) | 2/2 |
 
-Transcription ~2 s per clip (one 331 s outlier); TTS ~0.6 s per 1 s answer clip on CPU. Single Hindi/Marathi words
-("दूसरा", "दुसरे", "दोन") are mostly misheard; keyword biasing hurt Hindi and Marathi here; the ASR writes
-"माहित" for "माहीत". Real recordings are the next test. Nothing is ever matched to a wrong option: misses become
-"ask again", then buttons.
+Transcription ~2 s per clip; TTS ~0.6 s per 1 s clip on CPU. Single synthetic Hindi/Marathi words ("दूसरा", "दो",
+"दुसरे", "दोन") are still mostly misheard; short phrases ("दूसरा वाला", "नंबर दोन", "मला माहीत नाही") work. Keyword
+biasing hurt Marathi, so it is off for Hindi and Marathi by default (`ASR_KEYWORD_LANGUAGES=en`). Interactive
+transcription: 10 s timeout, one retry, then buttons. Nothing is ever matched to a wrong option. Spoken questions
+name the documents; the numbered options carry the values; in Hindi/Marathi a difference only in English spelling
+is not read out: the voice says so and points to the screen, which shows both spellings. Real recordings are next.
 
 **Rules engine**: 51 hand-written unit tests on every boundary (ages 17/18, 20/21, 64/65/66; incomes 21,000/21,001,
 250,000/250,001; each Ramai income band; each ration card colour). These are tests, not an eval: an eval would only

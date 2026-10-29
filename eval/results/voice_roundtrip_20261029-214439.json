@@ -1,0 +1,872 @@
+{
+  "settings": {
+    "default": "as configured",
+    "keywords": true,
+    "no_keywords": false
+  },
+  "transcribe": {
+    "timeout_s": 120.0,
+    "retries": 3,
+    "backoff_s": 2.0
+  },
+  "languages": {
+    "en": {
+      "prompts": [
+        {
+          "speech": "Gauri Hrishikesh Waghmare: Aadhaar card, ration card: which one is correct? First: Gauri Hrishikesh Vaghmare. Second: Gauri Hrishikesh Waghmare. Third: not sure. Please say the number of your answer.",
+          "screen": "Gauri Hrishikesh Waghmare: Aadhaar card, ration card: which one is correct?\nAadhaar card: Gauri Hrishikesh Vaghmare; ration card: Gauri Hrishikesh Waghmare\nFirst: Gauri Hrishikesh Vaghmare.\nSecond: Gauri Hrishikesh Waghmare.\nThird: not sure.",
+          "english_only": false,
+          "audio_s": 16.33,
+          "tts_s": 0.0
+        },
+        {
+          "speech": "Trupti Ojas Waghmare: caste certificate, Aadhaar card: which one is correct? First: twenty-two August nineteen hundred eighty-four. Second: twenty-four August nineteen hundred eighty-four. Third: not sure. Please say the number of your answer.",
+          "screen": "Trupti Ojas Waghmare: caste certificate, Aadhaar card: which one is correct?\nAadhaar card: 22/08/1984; caste certificate: 24/08/1984\nFirst: 22/08/1984.\nSecond: 24/08/1984.\nThird: not sure.",
+          "english_only": false,
+          "audio_s": 18.42,
+          "tts_s": 0.0
+        },
+        {
+          "speech": "Omkar Vijay Kale: caste certificate, Aadhaar card, ration card: which one is correct? First: Omkar Vijay Kale. Second: Onkar Vijay Kale. Third: not sure. Please say the number of your answer.",
+          "screen": "Omkar Vijay Kale: caste certificate, Aadhaar card, ration card: which one is correct?\ncaste certificate, ration card: Omkar Vijay Kale; Aadhaar card: Onkar Vijay Kale\nFirst: Omkar Vijay Kale.\nSecond: Onkar Vijay Kale.\nThird: not sure.",
+          "english_only": false,
+          "audio_s": 16.42,
+          "tts_s": 0.0
+        }
+      ],
+      "answers": [
+        {
+          "spoken": "First",
+          "expected": 0,
+          "audio_s": 0.61,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "first",
+            "option": 0,
+            "ok": true,
+            "asr_s": 1.927
+          },
+          "keywords": {
+            "heard": "first",
+            "option": 0,
+            "ok": true,
+            "asr_s": 1.927
+          },
+          "no_keywords": {
+            "heard": "first",
+            "option": 0,
+            "ok": true,
+            "asr_s": 3.829
+          }
+        },
+        {
+          "spoken": "Second",
+          "expected": 1,
+          "audio_s": 0.62,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "second.",
+            "option": 1,
+            "ok": true,
+            "asr_s": 1.866
+          },
+          "keywords": {
+            "heard": "second.",
+            "option": 1,
+            "ok": true,
+            "asr_s": 1.866
+          },
+          "no_keywords": {
+            "heard": "second.",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.186
+          }
+        },
+        {
+          "spoken": "The second one",
+          "expected": 1,
+          "audio_s": 1.68,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "the second one,",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.777
+          },
+          "keywords": {
+            "heard": "the second one,",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.777
+          },
+          "no_keywords": {
+            "heard": "The second one.",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.642
+          }
+        },
+        {
+          "spoken": "Number one",
+          "expected": 0,
+          "audio_s": 1.18,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "number one.",
+            "option": 0,
+            "ok": true,
+            "asr_s": 2.307
+          },
+          "keywords": {
+            "heard": "number one.",
+            "option": 0,
+            "ok": true,
+            "asr_s": 2.307
+          },
+          "no_keywords": {
+            "heard": "number one,",
+            "option": 0,
+            "ok": true,
+            "asr_s": 1.869
+          }
+        },
+        {
+          "spoken": "Two",
+          "expected": 1,
+          "audio_s": 0.61,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "y",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.646
+          },
+          "keywords": {
+            "heard": "y",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.646
+          },
+          "no_keywords": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.87
+          }
+        },
+        {
+          "spoken": "Third",
+          "expected": 2,
+          "audio_s": 0.78,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "here",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.828
+          },
+          "keywords": {
+            "heard": "here",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.828
+          },
+          "no_keywords": {
+            "heard": "here",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.693
+          }
+        },
+        {
+          "spoken": "Not sure",
+          "expected": 2,
+          "audio_s": 0.94,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "not sure.",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.06
+          },
+          "keywords": {
+            "heard": "not sure.",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.06
+          },
+          "no_keywords": {
+            "heard": "not sure",
+            "option": 2,
+            "ok": true,
+            "asr_s": 1.745
+          }
+        },
+        {
+          "spoken": "I don't know",
+          "expected": 2,
+          "audio_s": 1.3,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "i don't know",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.145
+          },
+          "keywords": {
+            "heard": "i don't know",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.145
+          },
+          "no_keywords": {
+            "heard": "I don't know.",
+            "option": 2,
+            "ok": true,
+            "asr_s": 1.867
+          }
+        },
+        {
+          "spoken": "Sunil Ramesh Patil",
+          "expected": null,
+          "audio_s": 1.62,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "send no range puzzle.",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.885
+          },
+          "keywords": {
+            "heard": "send no range puzzle.",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.885
+          },
+          "no_keywords": {
+            "heard": "send no rage puzzle.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.319
+          }
+        },
+        {
+          "spoken": "The one on the ration card",
+          "expected": null,
+          "audio_s": 2.03,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "the one on the ration card.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.07
+          },
+          "keywords": {
+            "heard": "the one on the ration card.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.07
+          },
+          "no_keywords": {
+            "heard": "The one on the Ration card.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.318
+          }
+        }
+      ],
+      "summary": {
+        "default": {
+          "answers_mapped_right": "6/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 2.05
+        },
+        "keywords": {
+          "answers_mapped_right": "6/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 2.05
+        },
+        "no_keywords": {
+          "answers_mapped_right": "6/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 2.23
+        }
+      },
+      "tts_s_per_answer_clip": 0.0,
+      "audio_s_per_answer_clip": 1.14
+    },
+    "hi": {
+      "prompts": [
+        {
+          "speech": "गौरी हृषीकेश वाघमारे: आधार कार्ड, राशन कार्ड: अंग्रेज़ी स्पेलिंग अलग है। कृपया स्क्रीन पर देखें। पहला। दूसरा। तीसरा: पता नहीं। अपने जवाब का नंबर बोलें।",
+          "screen": "गौरी हृषीकेश वाघमारे: आधार कार्ड, राशन कार्ड: इनमें से सही कौन सा है?\nआधार कार्ड: Gauri Hrishikesh Vaghmare; राशन कार्ड: Gauri Hrishikesh Waghmare\nपहला: Gauri Hrishikesh Vaghmare।\nदूसरा: Gauri Hrishikesh Waghmare।\nतीसरा: पता नहीं।",
+          "english_only": true,
+          "audio_s": 15.94,
+          "tts_s": 26.03
+        },
+        {
+          "speech": "तृप्ती ओजस वाघमारे: जाति प्रमाण पत्र, आधार कार्ड: इनमें से सही कौन सा है? पहला: बाईस अगस्त उन्नीस सौ चौरासी। दूसरा: चौबीस अगस्त उन्नीस सौ चौरासी। तीसरा: पता नहीं। अपने जवाब का नंबर बोलें।",
+          "screen": "तृप्ती ओजस वाघमारे: जाति प्रमाण पत्र, आधार कार्ड: इनमें से सही कौन सा है?\nआधार कार्ड: 22/08/1984; जाति प्रमाण पत्र: 24/08/1984\nपहला: 22/08/1984।\nदूसरा: 24/08/1984।\nतीसरा: पता नहीं।",
+          "english_only": false,
+          "audio_s": 16.79,
+          "tts_s": 0.0
+        },
+        {
+          "speech": "ओंकार विजय काळे: जाति प्रमाण पत्र, आधार कार्ड, राशन कार्ड: इनमें से सही कौन सा है? पहला: ओंकार विजय काळे। दूसरा: ओमकार विजय काळे। तीसरा: पता नहीं। अपने जवाब का नंबर बोलें।",
+          "screen": "ओंकार विजय काळे: जाति प्रमाण पत्र, आधार कार्ड, राशन कार्ड: इनमें से सही कौन सा है?\nजाति प्रमाण पत्र, राशन कार्ड: ओंकार विजय काळे; आधार कार्ड: ओमकार विजय काळे\nपहला: ओंकार विजय काळे।\nदूसरा: ओमकार विजय काळे।\nतीसरा: पता नहीं।",
+          "english_only": false,
+          "audio_s": 15.3,
+          "tts_s": 0.0
+        }
+      ],
+      "answers": [
+        {
+          "spoken": "पहला",
+          "expected": 0,
+          "audio_s": 0.58,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.126
+          },
+          "keywords": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.784
+          },
+          "no_keywords": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.126
+          }
+        },
+        {
+          "spoken": "दूसरा",
+          "expected": 1,
+          "audio_s": 0.72,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "लूसा।",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.114
+          },
+          "keywords": {
+            "heard": "लूसा।",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.821
+          },
+          "no_keywords": {
+            "heard": "लूसा।",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.114
+          }
+        },
+        {
+          "spoken": "दूसरा वाला",
+          "expected": 1,
+          "audio_s": 1.01,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "दूसरा",
+            "option": 1,
+            "ok": true,
+            "asr_s": 1.819
+          },
+          "keywords": {
+            "heard": "दूसरा",
+            "option": 1,
+            "ok": true,
+            "asr_s": 1.652
+          },
+          "no_keywords": {
+            "heard": "दूसरा",
+            "option": 1,
+            "ok": true,
+            "asr_s": 1.819
+          }
+        },
+        {
+          "spoken": "नंबर दो",
+          "expected": 1,
+          "audio_s": 0.85,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "नंबर दो.",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.133
+          },
+          "keywords": {
+            "heard": "नबर दो,",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.037
+          },
+          "no_keywords": {
+            "heard": "नंबर दो.",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.133
+          }
+        },
+        {
+          "spoken": "दो",
+          "expected": 1,
+          "audio_s": 0.45,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "लो।",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.865
+          },
+          "keywords": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.729
+          },
+          "no_keywords": {
+            "heard": "लो।",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.865
+          }
+        },
+        {
+          "spoken": "तीसरा",
+          "expected": 2,
+          "audio_s": 0.88,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "Tisa.",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.343
+          },
+          "keywords": {
+            "heard": "तिसर।",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.839
+          },
+          "no_keywords": {
+            "heard": "Tisa.",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.343
+          }
+        },
+        {
+          "spoken": "पता नहीं",
+          "expected": 2,
+          "audio_s": 0.93,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "ता नहीं",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.656
+          },
+          "keywords": {
+            "heard": "ता नहीं।:",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.606
+          },
+          "no_keywords": {
+            "heard": "ता नहीं",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.656
+          }
+        },
+        {
+          "spoken": "मुझे नहीं पता",
+          "expected": 2,
+          "audio_s": 1.6,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "मुझे नहीं पता,",
+            "option": 2,
+            "ok": true,
+            "asr_s": 1.853
+          },
+          "keywords": {
+            "heard": "मुझे नहीं पता",
+            "option": 2,
+            "ok": true,
+            "asr_s": 1.874
+          },
+          "no_keywords": {
+            "heard": "मुझे नहीं पता,",
+            "option": 2,
+            "ok": true,
+            "asr_s": 1.853
+          }
+        },
+        {
+          "spoken": "सुनील रमेश पाटील",
+          "expected": null,
+          "audio_s": 1.78,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "सुनील रमेश पाटी.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.006
+          },
+          "keywords": {
+            "heard": "सुनील लमेश पाटी,",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.989
+          },
+          "no_keywords": {
+            "heard": "सुनील रमेश पाटी.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.006
+          }
+        },
+        {
+          "spoken": "राशन कार्ड वाला",
+          "expected": null,
+          "audio_s": 1.74,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "राशनकारवरा।",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.013
+          },
+          "keywords": {
+            "heard": "राशनकार वरा.",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.059
+          },
+          "no_keywords": {
+            "heard": "राशनकारवरा।",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.013
+          }
+        }
+      ],
+      "summary": {
+        "default": {
+          "answers_mapped_right": "3/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 1.99
+        },
+        "keywords": {
+          "answers_mapped_right": "3/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 1.84
+        },
+        "no_keywords": {
+          "answers_mapped_right": "3/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 1.99
+        }
+      },
+      "tts_s_per_answer_clip": 0.0,
+      "audio_s_per_answer_clip": 1.05
+    },
+    "mr": {
+      "prompts": [
+        {
+          "speech": "गौरी हृषीकेश वाघमारे: आधार कार्ड, रेशन कार्ड: इंग्रजी स्पेलिंग वेगळे आहे. कृपया स्क्रीनवर पाहा. पहिले. दुसरे. तिसरे: माहीत नाही. तुमच्या उत्तराचा क्रमांक सांगा.",
+          "screen": "गौरी हृषीकेश वाघमारे: आधार कार्ड, रेशन कार्ड: यापैकी बरोबर कोणते?\nआधार कार्ड: Gauri Hrishikesh Vaghmare; रेशन कार्ड: Gauri Hrishikesh Waghmare\nपहिले: Gauri Hrishikesh Vaghmare.\nदुसरे: Gauri Hrishikesh Waghmare.\nतिसरे: माहीत नाही.",
+          "english_only": true,
+          "audio_s": 15.07,
+          "tts_s": 0.0
+        },
+        {
+          "speech": "तृप्ती ओजस वाघमारे: जातीचा दाखला, आधार कार्ड: यापैकी बरोबर कोणते? पहिले: बावीस ऑगस्ट एकोणीसशे चौऱ्याऐंशी. दुसरे: चोवीस ऑगस्ट एकोणीसशे चौऱ्याऐंशी. तिसरे: माहीत नाही. तुमच्या उत्तराचा क्रमांक सांगा.",
+          "screen": "तृप्ती ओजस वाघमारे: जातीचा दाखला, आधार कार्ड: यापैकी बरोबर कोणते?\nआधार कार्ड: 22/08/1984; जातीचा दाखला: 24/08/1984\nपहिले: 22/08/1984.\nदुसरे: 24/08/1984.\nतिसरे: माहीत नाही.",
+          "english_only": false,
+          "audio_s": 18.73,
+          "tts_s": 0.0
+        },
+        {
+          "speech": "ओंकार विजय काळे: जातीचा दाखला, आधार कार्ड, रेशन कार्ड: यापैकी बरोबर कोणते? पहिले: ओंकार विजय काळे. दुसरे: ओमकार विजय काळे. तिसरे: माहीत नाही. तुमच्या उत्तराचा क्रमांक सांगा.",
+          "screen": "ओंकार विजय काळे: जातीचा दाखला, आधार कार्ड, रेशन कार्ड: यापैकी बरोबर कोणते?\nजातीचा दाखला, रेशन कार्ड: ओंकार विजय काळे; आधार कार्ड: ओमकार विजय काळे\nपहिले: ओंकार विजय काळे.\nदुसरे: ओमकार विजय काळे.\nतिसरे: माहीत नाही.",
+          "english_only": false,
+          "audio_s": 15.72,
+          "tts_s": 0.0
+        }
+      ],
+      "answers": [
+        {
+          "spoken": "पहिले",
+          "expected": 0,
+          "audio_s": 0.77,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "पहिले,",
+            "option": 0,
+            "ok": true,
+            "asr_s": 3.654
+          },
+          "keywords": {
+            "heard": "पहले",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.745
+          },
+          "no_keywords": {
+            "heard": "पहिले,",
+            "option": 0,
+            "ok": true,
+            "asr_s": 3.654
+          }
+        },
+        {
+          "spoken": "दुसरे",
+          "expected": 1,
+          "audio_s": 0.61,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "गुले.",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.326
+          },
+          "keywords": {
+            "heard": "गले:",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.714
+          },
+          "no_keywords": {
+            "heard": "गुले.",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.326
+          }
+        },
+        {
+          "spoken": "दुसरा",
+          "expected": 1,
+          "audio_s": 0.7,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "रुजा,",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.169
+          },
+          "keywords": {
+            "heard": "युजा.",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.399
+          },
+          "no_keywords": {
+            "heard": "रुजा,",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.169
+          }
+        },
+        {
+          "spoken": "नंबर दोन",
+          "expected": 1,
+          "audio_s": 1.02,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "नंबर दोन.",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.154
+          },
+          "keywords": {
+            "heard": "नबर दन.",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.772
+          },
+          "no_keywords": {
+            "heard": "नंबर दोन.",
+            "option": 1,
+            "ok": true,
+            "asr_s": 2.154
+          }
+        },
+        {
+          "spoken": "दोन",
+          "expected": 1,
+          "audio_s": 0.27,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.54
+          },
+          "keywords": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.95
+          },
+          "no_keywords": {
+            "heard": "",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.54
+          }
+        },
+        {
+          "spoken": "तिसरे",
+          "expected": 2,
+          "audio_s": 0.66,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "तेजे",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.777
+          },
+          "keywords": {
+            "heard": "तिजे,",
+            "option": null,
+            "ok": false,
+            "asr_s": 2.145
+          },
+          "no_keywords": {
+            "heard": "तेजे",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.777
+          }
+        },
+        {
+          "spoken": "माहीत नाही",
+          "expected": 2,
+          "audio_s": 1.39,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "माहित नाही.",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.645
+          },
+          "keywords": {
+            "heard": "माहित नह,ī:",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.898
+          },
+          "no_keywords": {
+            "heard": "माहित नाही.",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.645
+          }
+        },
+        {
+          "spoken": "मला माहीत नाही",
+          "expected": 2,
+          "audio_s": 1.65,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "मला माहित नाही..",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.919
+          },
+          "keywords": {
+            "heard": "मला महत नह,",
+            "option": null,
+            "ok": false,
+            "asr_s": 1.964
+          },
+          "no_keywords": {
+            "heard": "मला माहित नाही..",
+            "option": 2,
+            "ok": true,
+            "asr_s": 2.919
+          }
+        },
+        {
+          "spoken": "सुनील रमेश पाटील",
+          "expected": null,
+          "audio_s": 1.97,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "सुनील रमेश पाटील",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.193
+          },
+          "keywords": {
+            "heard": "सुनील रमेश पाटील",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.914
+          },
+          "no_keywords": {
+            "heard": "सुनील रमेश पाटील",
+            "option": null,
+            "ok": true,
+            "asr_s": 2.193
+          }
+        },
+        {
+          "spoken": "रेशन कार्डवरचे",
+          "expected": null,
+          "audio_s": 1.25,
+          "tts_s": 0.0,
+          "default": {
+            "heard": "क्रिएशन कार्डबोर्ड,:",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.844
+          },
+          "keywords": {
+            "heard": "क्रिएशन कर दो।",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.898
+          },
+          "no_keywords": {
+            "heard": "क्रिएशन कार्डबोर्ड,:",
+            "option": null,
+            "ok": true,
+            "asr_s": 1.844
+          }
+        }
+      ],
+      "summary": {
+        "default": {
+          "answers_mapped_right": "4/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 2.32
+        },
+        "keywords": {
+          "answers_mapped_right": "0/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 1.84
+        },
+        "no_keywords": {
+          "answers_mapped_right": "4/8",
+          "non_answers_rejected": "2/2",
+          "asr_s_per_clip": 2.32
+        }
+      },
+      "tts_s_per_answer_clip": 0.0,
+      "audio_s_per_answer_clip": 1.03
+    }
+  }
+}
