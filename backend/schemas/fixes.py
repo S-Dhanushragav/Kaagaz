@@ -70,6 +70,7 @@ class PlannerIssue(BaseModel):
     severity: str
     member_id: str | None
     member_name: str | None
+    member_name_mr: str | None = None  # Devanagari, for Hindi and Marathi sentences
     documents: dict[str, str]  # document id -> document type
     document_type: str | None = None  # missing / expired / to-be-corrected document type, when there is one
     values: dict[str, str] = {}  # document id -> the differing value (names or dates of birth)
@@ -89,6 +90,7 @@ class FixStep(BaseModel):
     member_id: str | None = None
     procedure_id: str | None = None
     question: str | None = None
+    question_kind: Literal["which_is_correct", "compare"] | None = None
     options: list[str] = []
     answer: str | None = None
     office: str | None = None
@@ -99,12 +101,13 @@ class FixStep(BaseModel):
     declaration: str | None = None
     facts: list[FactUsed] = []  # status and source of every fact in the step
     visit: int | None = None  # fix steps at the same office share one visit (1 = first)
-    voice: str  # one short plain-language sentence
+    voice: str = ""  # filled by code from data/templates/voice (never written by the agent)
 
 
 class FixPlan(BaseModel):
     steps: list[FixStep]
     source: Literal["agent", "agent_retry", "fallback"]
+    language: str = "en"
     verification_errors: list[str] = []  # of the last rejected attempt
     attempts: int = 0
     turns: int = 0

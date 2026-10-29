@@ -24,6 +24,7 @@ sys.path[:0] = [str(ROOT / "backend"), str(ROOT)]
 
 from agents.fix_planner import plan_fixes, planner_issues  # noqa: E402
 from agents.tools import NOT_SURE  # noqa: E402
+from agents.voice import plan_voice  # noqa: E402
 from eval.run_household_eval import LLM_INPUT_PER_TOKEN, LLM_OUTPUT_PER_TOKEN, load, read_all  # noqa: E402
 from graph.nodes.build_household import build_household, llm_adjudicator, llm_name_verifier  # noqa: E402
 from rules.engine import evaluate  # noqa: E402
@@ -124,7 +125,8 @@ def main() -> None:
                      "first_errors": plan.verification_errors,
                      "tokens": [plan.usage.prompt_tokens, plan.usage.completion_tokens],
                      "seconds": round(time.perf_counter() - start, 1)})
-        plans[gt["id"]] = {"issues": [i.model_dump() for i in issues], "plan": plan.model_dump(mode="json")}
+        voices = {lang: plan_voice(plan.steps, issues, lang) for lang in ("en", "hi", "mr")}
+        plans[gt["id"]] = {"issues": [i.model_dump() for i in issues], "plan": plan.model_dump(mode="json"), "voice": voices}
         r = rows[-1]
         print(f"\n## {gt['id']}: {r['source']} (attempts {r['attempts']}, turns {r['turns']}), {r['steps']} steps, "
               f"{r['visits']} visits, {r['seconds']} s")
@@ -156,6 +158,11 @@ def main() -> None:
     print(f"Steps per plan {summary['steps_per_plan']} (fixes {summary['fix_steps_per_plan']}), ask-at-office steps "
           f"{summary['ask_at_office_steps']}, turns per plan {summary['turns_per_plan']}")
     print(f"Tokens {prompt} + {completion}, cost ${summary['cost_usd']}, {summary['seconds']} s")
+    for hh_id in list(plans)[:3]:
+        print(f"\n## Sentences, {hh_id}")
+        for lang in ("en", "hi", "mr"):
+            for sentence in plans[hh_id]["voice"][lang]:
+                print(f"   [{lang}] {sentence}")
 
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     (RESULTS / "raw").mkdir(parents=True, exist_ok=True)

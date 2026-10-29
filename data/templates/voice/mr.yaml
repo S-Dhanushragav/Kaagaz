@@ -1,0 +1,43 @@
+# Voice sentence templates (Marathi). MACHINE-DRAFTED: needs review by a native speaker.
+# Placeholders: {office} {bring} {fee} {time_limit} {caution} {member} {documents}.
+language: mr
+documents:
+  ration_card: रेशन कार्ड
+  identity_card: आधार कार्ड
+  income_certificate: उत्पन्नाचा दाखला
+  caste_certificate: जातीचा दाखला
+values:
+  "Aadhaar Seva Kendra (nearest)": "जवळचे आधार सेवा केंद्र"
+  "Aadhaar Seva Kendra": "आधार सेवा केंद्र"
+  "Ration card / Tahsil supply office": "रेशन कार्ड / तहसील पुरवठा कार्यालय"
+  "Supply office, or the Ration Card Management System online": "पुरवठा कार्यालय, किंवा ऑनलाइन रेशन कार्ड व्यवस्थापन प्रणाली"
+  "Tahsil office": "तहसील कार्यालय"
+  "Sub-Divisional Officer / Deputy Collector": "उपविभागीय अधिकारी / उपजिल्हाधिकारी"
+  "Proof of date of birth (e.g. birth certificate)": "जन्मतारखेचा पुरावा (उदा. जन्म दाखला)"
+  "Gazette notice of the name change, or birth certificate (whichever applies)": "नाव बदलाची राजपत्र अधिसूचना, किंवा जन्म दाखला (जे लागू असेल ते)"
+  "Proof for the person being added (e.g. birth certificate for a newborn, marriage certificate for a spouse)": "नाव जोडायच्या व्यक्तीचा पुरावा (उदा. नवजात बाळासाठी जन्म दाखला, पती/पत्नीसाठी विवाह प्रमाणपत्र)"
+  "about Rs 75": "सुमारे 75 रुपये"
+  "Rs 2": "2 रुपये"
+  "15 days (Maharashtra Right to Public Services Act)": "15 दिवस"
+  "The name on Aadhaar can be updated only twice in a lifetime.": "आधारवरील नाव आयुष्यात फक्त दोनदा बदलता येते."
+  "The date of birth on Aadhaar can be updated only once in a lifetime. If the limit is used, a grievance and a visit to the UIDAI regional office with strong documents is needed.": "आधारवरील जन्मतारीख आयुष्यात फक्त एकदाच बदलता येते. ही संधी आधीच वापरली असेल तर तक्रार करून, भक्कम कागदपत्रांसह यूआयडीएआयच्या प्रादेशिक कार्यालयात जावे लागते."
+  "Confirm at the office which documents are needed.": "कोणती कागदपत्रे लागतील ते कार्यालयात विचारून खात्री करा."
+  "The time limit is set by the district under the Right to Public Services Act.": "लोकसेवा हक्क कायद्यानुसार वेळमर्यादा जिल्हा ठरवतो."
+  "Acceptance of the declaration is up to the office.": "प्रतिज्ञापत्र स्वीकारायचे की नाही ते कार्यालय ठरवते."
+unverified: "(कार्यालयात खात्री करा)"
+household: "तुमचे कुटुंब"
+options: {same: सारखे, different: वेगळे, not sure: माहीत नाही}
+law_sets: "कायद्याने या कार्यालयासाठी {time_limit} ठरवले आहेत."
+procedures:
+  aadhaar_name_correction: "{member}: आधार कार्डवरील नाव दुरुस्त करण्यासाठी {office} येथे जा. शुल्क: {fee}. {caution}"
+  aadhaar_dob_correction: "{member}: आधार कार्डवरील जन्मतारीख दुरुस्त करण्यासाठी {office} येथे जा. सोबत न्या: {bring}. {caution}"
+  ration_card_name_correction: "{member}: रेशन कार्डवरील नाव दुरुस्त करण्यासाठी {office} येथे जा. सोबत न्या: {bring}. शुल्क: {fee}."
+  ration_card_add_member: "{member}: रेशन कार्डवर नाव जोडण्यासाठी {office} येथे अर्ज करा. सोबत न्या: {bring}. {caution}"
+  income_certificate_new: "नवीन उत्पन्नाच्या दाखल्यासाठी आपले सरकार पोर्टलवर किंवा आपले सरकार सेवा केंद्रात अर्ज करा; दाखला {office} देते. कायद्याने या कार्यालयासाठी {time_limit} ठरवले आहेत."
+  caste_certificate_new: "{member}: जातीच्या दाखल्यासाठी {office} यांच्याकडे अर्ज करा. हे काम सर्वात आधी सुरू करा; याला सर्वात जास्त वेळ लागतो. {caution}"
+  aadhaar_enrolment: "{member}: नवीन आधार नोंदणीसाठी {office} येथे जा."
+  self_declaration: "{member}: {documents} वरील नावे एकाच व्यक्तीची आहेत असे लेखी प्रतिज्ञापत्रही देऊ शकता. {caution}"
+ask_at_office: "{member}: {documents} बाबत काय करायचे ते कार्यालयात विचारा."
+questions:
+  which_is_correct: "{member}: यापैकी बरोबर कोणते? {documents}"
+  compare: "{member}: कृपया हे तपासा: {documents}. हे सारखे आहे की वेगळे?"

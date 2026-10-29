@@ -29,7 +29,7 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 | 3 | Document reader: one structured-output call per document (classify + extract), validation, retry, ID masking | Done |
 | 4 | Document finder: phone-sweep video → SAM 3.1 tracks → best 2–3 upright crops per document → reader | Done |
 | 5 | Household builder + scheme rules engine (5 schemes, deterministic) | Done (end-to-end eval done) |
-| 6 | Fix planner agent (tool loop over a curated fix knowledge base) | Not started |
+| 6 | Fix planner agent (tool loop over a curated fix knowledge base), voice sentences from templates | 6a done |
 | 7 | Mobile web app, voice in (Muse Voice Transcribe) and out (MMS-TTS), recapture flow | Not started |
 
 Full product spec: [docs/PRD.md](docs/PRD.md). Working rules for this repo (architecture, hard rules): [CLAUDE.md](CLAUDE.md).
@@ -112,6 +112,17 @@ phone video ──► find_documents ──► read_documents ──► build_ho
    decides eligibility.** `confirm` issues are listed with the result (`to_confirm`, and in `warnings`), never blocking.
 5. **Recapture plan.** If more than half the documents need a retake: "sweep again"; otherwise a list of documents to
    photograph close up.
+6. **Plan the fixes** ([agents/fix_planner.py](backend/agents/fix_planner.py)). The one agent: Muse Spark in a tool loop
+   (`lookup_fix_procedure`, `get_office_info`, `ask_family`, `draft_declaration`, `submit_plan`) over the fix knowledge
+   base in [data/fixes/](data/fixes/) (8 procedures; every fact has its own status and source). Code verifies every
+   office, fee, time limit, document and caution against the knowledge base, checks that mismatches were asked about
+   first and only the wrong document is corrected, retries once, then falls back to a plain list of procedures. Code
+   also orders the plan: questions first, the slowest fix (caste certificate) next, then one visit per office.
+7. **Say it** ([agents/voice.py](backend/agents/voice.py)). The agent never writes what the family hears. Every
+   sentence and question is a template from [data/templates/voice/](data/templates/voice/) (English, Hindi, Marathi),
+   filled only with knowledge-base facts, member names and document display names; unverified facts are followed by
+   "confirm at the office"; a time limit is only ever said as "the law sets ... for this office".
+   **The Hindi and Marathi templates are machine-drafted and need review by a native speaker.**
 
 ### Meta models used
 
@@ -216,6 +227,8 @@ details to `eval/results/raw/` (gitignored).
 - Duplicates of the same document across two tracks are kept in the finder output; merging happens in the household
   builder (same ID last 4 + same date of birth).
 - Synthetic documents follow simplified layouts; real documents will need schema adjustments.
+- Hindi and Marathi voice templates (and their wording of offices, documents and cautions) are machine-drafted and
+  have not been reviewed by a native speaker.
 
 ## Repository layout
 

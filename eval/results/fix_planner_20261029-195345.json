@@ -1,0 +1,218 @@
+{
+  "model": "muse-spark-1.3",
+  "households": [
+    "EV007",
+    "EV013",
+    "EV022",
+    "EV025",
+    "EV028",
+    "EV002",
+    "EV004",
+    "EV005",
+    "EV009",
+    "EV010"
+  ],
+  "issue_mix": {
+    "dob_mismatch (blocker)": 3,
+    "name_mismatch (blocker)": 5,
+    "missing_document (blocker)": 11,
+    "name_mismatch (confirm)": 4,
+    "expired (warning)": 3,
+    "not_on_ration_card (blocker)": 4
+  },
+  "first_time_pass": 10,
+  "passed_after_retry": 0,
+  "fallbacks": 0,
+  "steps_per_plan": 4.0,
+  "fix_steps_per_plan": 2.3,
+  "ask_at_office_steps": 5,
+  "turns_per_plan": 3.1,
+  "tokens": [
+    85163,
+    30808
+  ],
+  "cost_usd": 0.237,
+  "seconds": 134.4,
+  "per_household": [
+    {
+      "household": "EV007",
+      "issues": 3,
+      "source": "agent",
+      "attempts": 1,
+      "turns": 4,
+      "steps": 6,
+      "questions": 2,
+      "fixes": 3,
+      "ask_at_office": 1,
+      "visits": 2,
+      "first_errors": [],
+      "tokens": [
+        11904,
+        5771
+      ],
+      "seconds": 27.4
+    },
+    {
+      "household": "EV013",
+      "issues": 4,
+      "source": "agent",
+      "attempts": 1,
+      "turns": 3,
+      "steps": 4,
+      "questions": 1,
+      "fixes": 3,
+      "ask_at_office": 0,
+      "visits": 3,
+      "first_errors": [],
+      "tokens": [
+        9169,
+        2410
+      ],
+      "seconds": 12.6
+    },
+    {
+      "household": "EV022",
+      "issues": 3,
+      "source": "agent",
+      "attempts": 1,
+      "turns": 3,
+      "steps": 4,
+      "questions": 1,
+      "fixes": 2,
+      "ask_at_office": 1,
+      "visits": 2,
+      "first_errors": [],
+      "tokens": [
+        7502,
+        2270
+      ],
+      "seconds": 8.9
+    },
+    {
+      "household": "EV025",
+      "issues": 3,
+      "source": "agent",
+      "attempts": 1,
+      "turns": 4,
+      "steps": 6,
+      "questions": 2,
+      "fixes": 2,
+      "ask_at_office": 2,
+      "visits": 2,
+      "first_errors": [],
+      "tokens": [
+        11787,
+        5777
+      ],
+      "seconds": 23.4
+    },
+    {
+      "household": "EV028",
+      "issues": 5,
+      "source": "agent",
+      "attempts": 1,
+      "turns": 3,
+      "steps": 5,
+      "questions": 1,
+      "fixes": 4,
+      "ask_at_office": 0,
+      "visits": 2,
+      "first_errors": [],
+      "tokens": [
+        8655,
+        2621
+      ],
+      "seconds": 11.7
+    },
+    {
+      "household": "EV002",
+      "issues": 2,
+      "source": "agent",
+      "attempts": 1,
+      "turns": 3,
+      "steps": 3,
+      "questions": 2,
+      "fixes": 1,
+      "ask_at_office": 0,
+      "visits": 1,
+      "first_errors": [],
+      "tokens": [
+        7460,
+        2188
+      ],
+      "seconds": 9.1
+    },
+    {
+      "household": "EV004",
+      "issues": 4,
+      "source": "agent",
+      "attempts": 1,
+      "turns": 3,
+      "steps": 4,
+      "questions": 0,
+      "fixes": 4,
+      "ask_at_office": 0,
+      "visits": 3,
+      "first_errors": [],
+      "tokens": [
+        8979,
+        2242
+      ],
+      "seconds": 8.1
+    },
+    {
+      "household": "EV005",
+      "issues": 2,
+      "source": "agent",
+      "attempts": 1,
+      "turns": 3,
+      "steps": 3,
+      "questions": 1,
+      "fixes": 1,
+      "ask_at_office": 1,
+      "visits": 1,
+      "first_errors": [],
+      "tokens": [
+        7536,
+        3040
+      ],
+      "seconds": 14.3
+    },
+    {
+      "household": "EV009",
+      "issues": 2,
+      "source": "agent",
+      "attempts": 1,
+      "turns": 2,
+      "steps": 2,
+      "questions": 1,
+      "fixes": 1,
+      "ask_at_office": 0,
+      "visits": 1,
+      "first_errors": [],
+      "tokens": [
+        4735,
+        1638
+      ],
+      "seconds": 7.7
+    },
+    {
+      "household": "EV010",
+      "issues": 2,
+      "source": "agent",
+      "attempts": 1,
+      "turns": 3,
+      "steps": 3,
+      "questions": 1,
+      "fixes": 2,
+      "ask_at_office": 0,
+      "visits": 2,
+      "first_errors": [],
+      "tokens": [
+        7436,
+        2851
+      ],
+      "seconds": 11.1
+    }
+  ]
+}

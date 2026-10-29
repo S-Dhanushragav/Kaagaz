@@ -1,0 +1,27 @@
+# Voice sentence templates (English). Placeholders: {office} {bring} {fee} {time_limit} {caution} {member} {documents}.
+# Filled by code from the verified plan step; the agent never writes these sentences.
+language: en
+documents:
+  ration_card: ration card
+  identity_card: Aadhaar card
+  income_certificate: income certificate
+  caste_certificate: caste certificate
+values:  # display text where it differs from the knowledge-base value
+  "15 days (Maharashtra Right to Public Services Act)": "15 days"
+unverified: "(please confirm at the office)"
+household: "Your family"
+options: {same: same, different: different, not sure: not sure}
+law_sets: "The law sets {time_limit} for this office."
+procedures:
+  aadhaar_name_correction: "{member}: go to the {office} to correct the name on the Aadhaar card. Fee: {fee}. {caution}"
+  aadhaar_dob_correction: "{member}: go to the {office} to correct the date of birth on the Aadhaar card. Bring: {bring}. {caution}"
+  ration_card_name_correction: "{member}: go to the {office} to correct the name on the ration card. Bring: {bring}. Fee: {fee}."
+  ration_card_add_member: "{member}: ask the {office} to add this person to the ration card. Bring: {bring}. {caution}"
+  income_certificate_new: "Apply for a new income certificate on the Aaple Sarkar portal or at an Aaple Sarkar Seva Kendra; the {office} issues it. The law sets {time_limit} for this office."
+  caste_certificate_new: "{member}: apply to the {office} for a caste certificate. Start this first; it takes the longest. {caution}"
+  aadhaar_enrolment: "{member}: go to the {office} to enrol for an Aadhaar card."
+  self_declaration: "{member}: you can also give a written declaration that the names on the {documents} belong to the same person. {caution}"
+ask_at_office: "{member}: ask at the office what to do about the {documents}."
+questions:
+  which_is_correct: "{member}: which one is correct? {documents}"
+  compare: "{member}: please compare these: {documents}. Are they the same or different?"

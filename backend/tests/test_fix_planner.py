@@ -6,13 +6,15 @@ from datetime import date
 
 import pytest
 
-from agents.fix_planner import fallback_steps, order_steps, plan_fixes, planner_issues, verify
-from agents.tools import ASK_AT_OFFICE, NOT_SURE, TOOLS, ToolBox, load_fixes
+from agents.fix_planner import (fallback_steps, finalize, order_steps, plan_fixes, planner_issues, question_steps,
+                                 verify)
+from agents.tools import ASK_AT_OFFICE, NOT_SURE, TOOLS, ToolBox, load_fixes, value_matches
+from agents.voice import plan_voice
 from clients.llm import ChatResponse, TokenUsage, ToolCall
 from graph.nodes.build_household import build_household
 from rules.engine import RuleResult, SchemeResult
 from schemas.fixes import FixStep, PlannerIssue
-from tests.test_household import SUNEEL_ID, SUNIL, _card, _id, _income, _no_llm
+from tests.test_household import SUNEEL_ID, SUNIL, _card, _no_llm
 
 REF = date(2026, 10, 27)
 FIXES = load_fixes()
@@ -52,8 +54,13 @@ ISSUE = PlannerIssue(id="i1", type="name_mismatch", severity="blocker", member_i
                      values={"rc": "Sunil Ramesh Patil", "id1": "Suneel Ramesh Patil"}, detail="spelled differently")
 
 
+def family_says(answer: str):
+    """A family that picks the option matching `answer` (either script), else 'not sure'."""
+    return lambda issue, kind, question, options: next((o for o in options if value_matches(o, answer)), NOT_SURE)
+
+
 def test_lookup_returns_only_knowledge_base_procedures() -> None:
-    tb = ToolBox([ISSUE], lambda *a: NOT_SURE)
+    tb = ToolBox([ISSUE], family_says(NOT_SURE))
     ids = [p["id"] for p in tb.call("lookup_fix_procedure", json.dumps(
         {"issue_type": "name_mismatch", "wrong_document_type": "identity_card"}))["procedures"]]
     assert ids == ["aadhaar_name_correction", "self_declaration"]
@@ -66,20 +73,28 @@ def test_lookup_returns_only_knowledge_base_procedures() -> None:
     assert "45" not in json.dumps(found)
 
 
-def test_office_info_types_only_and_ask_family_always_offers_not_sure() -> None:
-    tb = ToolBox([ISSUE], lambda issue, kind, q, options: options[0])
+def test_ask_family_builds_its_own_question_and_options() -> None:
+    seen = []
+
+    def family(issue, kind, question, options):
+        seen.append((question, options))
+        return options[0]
+
+    tb = ToolBox([ISSUE], family, language="mr")
     assert tb.call("get_office_info", json.dumps({"office_type": "tahsil office"}))["office_type"] == "Tahsil office"
     assert "error" in tb.call("get_office_info", json.dumps({"office_type": "Collector office, Pune"}))
-    tb.call("ask_family", json.dumps({"issue_id": "i1", "kind": "which_is_correct", "question": "Which?",
-                                      "options": ["Sunil Ramesh Patil", "Suneel Ramesh Patil"]}))
-    assert tb.answers["i1"][0]["options"][-1] == NOT_SURE and tb.answers["i1"][0]["answer"] == "Sunil Ramesh Patil"
+    result = tb.call("ask_family", json.dumps({"issue_id": "i1", "kind": "which_is_correct"}))
+    question, options = seen[0]
+    assert options == ["Suneel Ramesh Patil", "Sunil Ramesh Patil", NOT_SURE] and result["answer"] == "Suneel Ramesh Patil"
+    assert "आधार कार्ड" in question and "रेशन कार्ड" in question and "rc" not in question and "id1" not in question
+    tb.call("ask_family", json.dumps({"issue_id": "i1", "kind": "compare"}))
+    assert seen[1][1] == ["same", "different", NOT_SURE]
     weird = ToolBox([ISSUE], lambda *a: "something else")
-    assert weird.call("ask_family", json.dumps({"issue_id": "i1", "kind": "compare", "question": "Same?",
-                                                "options": ["same", "different"]}))["answer"] == NOT_SURE
+    assert weird.call("ask_family", json.dumps({"issue_id": "i1", "kind": "compare"}))["answer"] == NOT_SURE
 
 
 def test_declaration_is_a_marked_draft_with_only_the_issue_values() -> None:
-    tb = ToolBox([ISSUE], lambda *a: NOT_SURE)
+    tb = ToolBox([ISSUE], family_says(NOT_SURE))
     ok = tb.call("draft_declaration", json.dumps({"issue_id": "i1", "member_name": "Sunil Ramesh Patil",
                                                   "values": ["Sunil Ramesh Patil", "Suneel Ramesh Patil"]}))
     assert ok["declaration"].startswith("DRAFT - acceptance is up to the office") and "Suneel Ramesh Patil" in ok["declaration"]
@@ -109,12 +124,13 @@ class FakeLLM:
         return self.turns.pop(0)
 
 
-def _step(procedure_id: str | None, issue_ids: list[str], voice: str, kind: str = "fix", member_id: str = "r1", **override) -> dict:
+def _step(procedure_id: str | None, issue_ids: list[str], kind: str = "fix", member_id: str | None = "r1", **override) -> dict:
+    """A step as the agent submits it (no voice: code writes that)."""
     p = FIXES.get(procedure_id or "")
     step = {"kind": kind, "issue_ids": issue_ids, "member_id": member_id, "procedure_id": procedure_id,
             "office": p.office.value if p and p.office else None, "bring": [f.value for f in p.bring] if p else [],
             "fee": p.fee.value if p and p.fee else None, "time_limit": p.time_limit.value if p and p.time_limit else None,
-            "cautions": [f.value for f in p.cautions] if p else [], "declaration": None, "voice": voice}
+            "cautions": [f.value for f in p.cautions] if p else [], "declaration": None}
     return {**step, **override}
 
 
@@ -123,18 +139,17 @@ def household():
     return build_household([_card(SUNIL), SUNEEL_ID], REF, adjudicate=_no_llm)
 
 
-def family_says(answer: str):
-    return lambda issue, kind, question, options: answer if answer in options else NOT_SURE
+ASK = _call("ask_family", issue_id="i1", kind="which_is_correct")
+AADHAAR_FIX = _step("aadhaar_name_correction", ["i1"])
+INCOME_FIX = _step("income_certificate_new", ["i2"], member_id=None)
 
 
-def _ids(hh) -> dict[str, str]:
-    return {i.type: i.id for i in planner_issues(hh)}
-
-
-ASK = _call("ask_family", issue_id="i1", kind="which_is_correct", question="Which spelling is correct?",
-            options=["Sunil Ramesh Patil", "Suneel Ramesh Patil"])
-AADHAAR_FIX = _step("aadhaar_name_correction", ["i1"], "Correct the name on the Aadhaar card. It can be changed only twice in a lifetime; the fee is about Rs 75.")
-INCOME_FIX = _step("income_certificate_new", ["i2"], "Apply for a new income certificate; it should come within 15 days.", member_id=None)
+def test_submit_plan_schema_has_no_voice() -> None:
+    submit = next(t for t in TOOLS if t["function"]["name"] == "submit_plan")
+    step = submit["function"]["parameters"]["properties"]["steps"]["items"]
+    assert "voice" not in step["properties"] and "voice" not in step["required"]
+    ask = next(t for t in TOOLS if t["function"]["name"] == "ask_family")
+    assert set(ask["function"]["parameters"]["properties"]) == {"issue_id", "kind"}  # no free-text question
 
 
 def test_planner_issues_carry_values_and_document_types() -> None:
@@ -142,21 +157,22 @@ def test_planner_issues_carry_values_and_document_types() -> None:
     assert [(i.id, i.type, i.document_type) for i in issues] == [("i1", "name_mismatch", None),
                                                                   ("i2", "missing_document", "income_certificate")]
     assert issues[0].values == {"rc": "सुनील रमेश पाटील / Sunil Ramesh Patil", "id1": "सुनिल रमेश पाटील / Suneel Ramesh Patil"}
+    assert issues[0].member_name == "Sunil Ramesh Patil" and issues[0].member_name_mr == "सुनील रमेश पाटील"
 
 
-def test_agent_asks_first_then_plans_and_every_fact_has_status_and_source() -> None:
-    llm = FakeLLM(_turn(_call("ask_family", issue_id="i1", kind="which_is_correct", question="Which spelling is correct?",
-                              options=["सुनील रमेश पाटील / Sunil Ramesh Patil", "सुनिल रमेश पाटील / Suneel Ramesh Patil"])),
+def test_agent_asks_first_then_plans_and_every_fact_has_status_source_and_a_sentence() -> None:
+    llm = FakeLLM(_turn(ASK),
                   _turn(_call("lookup_fix_procedure", issue_type="name_mismatch", wrong_document_type="identity_card"),
                         _call("lookup_fix_procedure", issue_type="missing_document", wrong_document_type="income_certificate")),
                   _turn(_call("submit_plan", steps=[INCOME_FIX, AADHAAR_FIX])))
-    plan = plan_fixes(household(), [], family_says("सुनील रमेश पाटील / Sunil Ramesh Patil"), llm=llm)
+    plan = plan_fixes(household(), [], family_says("Sunil Ramesh Patil"), llm=llm)
     assert plan.source == "agent" and plan.attempts == 1 and plan.turns == 3
     assert [s.kind for s in plan.steps] == ["question", "fix", "fix"]
     assert plan.steps[0].answer == "सुनील रमेश पाटील / Sunil Ramesh Patil"
     aadhaar = next(s for s in plan.steps if s.procedure_id == "aadhaar_name_correction")
     assert {f.fact: (f.status, f.source_url is not None) for f in aadhaar.facts} == {
         "office": ("verified", True), "fee": ("unverified", False), "caution[0]": ("unverified", False)}
+    assert all(s.voice for s in plan.steps)
     assert plan.usage.prompt_tokens == 300 and plan.trace[0]["reasoning"] == "thinking"
     tool_order = [c["tool"] for t in plan.trace for c in t["calls"]]
     assert tool_order == ["ask_family", "lookup_fix_procedure", "lookup_fix_procedure", "submit_plan"]
@@ -174,23 +190,24 @@ def test_fixing_a_mismatch_without_asking_is_rejected_then_retried() -> None:
 
 
 def test_correcting_the_document_the_family_says_is_right_is_rejected() -> None:
-    hh = household()
-    issues = planner_issues(hh)
+    issues = planner_issues(household())
     tb = ToolBox(issues, family_says("Suneel Ramesh Patil"))  # the identity card's spelling is the right one
     tb.call("ask_family", ASK.arguments)
     errors = verify([FixStep(**AADHAAR_FIX), FixStep(**INCOME_FIX)], issues, tb)
     assert any("identity_card is not wrong" in e for e in errors)
 
 
-def test_aadhaar_change_without_lifetime_limit_is_rejected() -> None:
+def test_aadhaar_step_always_states_the_lifetime_limit_in_every_language() -> None:
+    """The agent may leave the caution out; the finalized step and its sentence still carry it."""
+    llm = FakeLLM(_turn(ASK), _turn(_call("submit_plan", steps=[{**AADHAAR_FIX, "cautions": [], "fee": None}, INCOME_FIX])))
+    plan = plan_fixes(household(), [], family_says("Sunil Ramesh Patil"), llm=llm)
+    aadhaar = next(s for s in plan.steps if s.procedure_id == "aadhaar_name_correction")
+    assert aadhaar.cautions == [NAME_LIMIT] and aadhaar.fee == "about Rs 75"
     issues = planner_issues(household())
-    tb = ToolBox(issues, family_says("Sunil Ramesh Patil"))
-    tb.call("ask_family", ASK.arguments)
-    no_caution = FixStep(**{**AADHAAR_FIX, "cautions": []})
-    no_voice = FixStep(**{**AADHAAR_FIX, "voice": "Correct the name on the Aadhaar card."})
-    for step in (no_caution, no_voice):
-        assert any("lifetime limit" in e for e in verify([step, FixStep(**INCOME_FIX)], issues, tb))
-    assert verify([FixStep(**AADHAAR_FIX), FixStep(**INCOME_FIX)], issues, tb) == []
+    limit = {"en": "only twice in a lifetime", "hi": "केवल दो बार", "mr": "फक्त दोनदा"}
+    for language, words in limit.items():
+        sentence = plan_voice(plan.steps, issues, language)[plan.steps.index(aadhaar)]
+        assert words in sentence, (language, sentence)
 
 
 @pytest.mark.parametrize("override, message", [
@@ -198,7 +215,7 @@ def test_aadhaar_change_without_lifetime_limit_is_rejected() -> None:
     ({"fee": "Rs 50"}, "fee"),
     ({"time_limit": "7 days"}, "time limit"),
     ({"bring": ["PAN card"]}, "document to bring"),
-    ({"voice": "Apply for a new income certificate; it takes 30 days."}, "numbers"),
+    ({"cautions": ["It is free."]}, "caution"),
 ])
 def test_invented_facts_are_rejected(override: dict, message: str) -> None:
     issues = planner_issues(household())
@@ -212,14 +229,14 @@ def test_unknown_procedure_and_ask_at_office_with_facts_are_rejected() -> None:
     issues = planner_issues(household())
     tb = ToolBox(issues, family_says("Sunil Ramesh Patil"))
     tb.call("ask_family", ASK.arguments)
-    invented = FixStep(**{**_step(None, ["i2"], "Go to the bank."), "procedure_id": "bank_letter", "office": "Bank"})
-    office = FixStep(**_step(None, ["i2"], "Ask at the office.", kind="ask_at_office", office="Tahsil office"))
+    invented = FixStep(**{**_step(None, ["i2"]), "procedure_id": "bank_letter", "office": "Bank"})
+    office = FixStep(**_step(None, ["i2"], kind="ask_at_office", office="Tahsil office"))
     assert any("not in data/fixes" in e for e in verify([FixStep(**AADHAAR_FIX), invented], issues, tb))
     assert any("ask_at_office" in e for e in verify([FixStep(**AADHAAR_FIX), office], issues, tb))
 
 
 def test_two_rejections_fall_back_to_knowledge_base_procedures_only() -> None:
-    bad = _step("income_certificate_new", ["i2"], "Apply; it takes 30 days.", member_id=None, fee="Rs 100")
+    bad = _step("income_certificate_new", ["i2"], member_id=None, fee="Rs 100")
     llm = FakeLLM(_turn(ASK), _turn(_call("submit_plan", steps=[AADHAAR_FIX, bad])),
                   _turn(_call("submit_plan", steps=[AADHAAR_FIX, bad])))
     plan = plan_fixes(household(), [], family_says("Sunil Ramesh Patil"), llm=llm)
@@ -229,6 +246,7 @@ def test_two_rejections_fall_back_to_knowledge_base_procedures_only() -> None:
         if s.kind == "fix":
             assert s.office == p.office.value and s.fee == (p.fee.value if p.fee else None)
             assert set(s.bring) <= {f.value for f in p.bring}
+        assert s.voice
     assert {s.procedure_id for s in plan.steps if s.kind == "fix"} == {
         "aadhaar_name_correction", "ration_card_name_correction", "income_certificate_new"}  # either document may be wrong
     assert plan.steps[0].kind == "question"
@@ -243,8 +261,7 @@ def test_no_plan_within_the_turn_limit_falls_back() -> None:
 def test_confirm_issue_is_asked_as_a_question_and_same_needs_no_fix() -> None:
     hh = household()
     hh.issues = [i.model_copy(update={"severity": "confirm"}) if i.type == "name_mismatch" else i for i in hh.issues]
-    compare = _call("ask_family", issue_id="i1", kind="compare", question="Do these two spellings differ on the documents?",
-                    options=["same", "different"])
+    compare = _call("ask_family", issue_id="i1", kind="compare")
     no_compare = FakeLLM(_turn(_call("submit_plan", steps=[INCOME_FIX])), _turn(compare),
                          _turn(_call("submit_plan", steps=[INCOME_FIX])))
     plan = plan_fixes(hh, [], family_says("same"), llm=no_compare)
@@ -259,13 +276,13 @@ def test_order_questions_first_then_slowest_then_one_visit_per_office() -> None:
                            documents={}, detail=""),
               PlannerIssue(id="i3", type="missing_document", severity="blocker", member_id="r1", member_name="A",
                            documents={}, document_type="caste_certificate", detail="")]
-    steps = [FixStep(**_step("aadhaar_enrolment", ["i1"], "Enrol.")),
-             FixStep(**_step(None, ["i9"], "Ask at the office.", kind="ask_at_office")),
-             FixStep(**_step("income_certificate_new", ["i4"], "Apply.")),
-             FixStep(**_step("aadhaar_dob_correction", ["i2"], "Correct the date of birth; only once.")),
-             FixStep(kind="question", issue_ids=["i5"], question="?", voice="?"),
-             FixStep(kind="question", issue_ids=["i2"], question="Compare?", voice="Compare?"),
-             FixStep(**_step("caste_certificate_new", ["i3"], "Apply for a caste certificate."))]
+    steps = [FixStep(**_step("aadhaar_enrolment", ["i1"])),
+             FixStep(**_step(None, ["i9"], kind="ask_at_office")),
+             FixStep(**_step("income_certificate_new", ["i4"])),
+             FixStep(**_step("aadhaar_dob_correction", ["i2"])),
+             FixStep(kind="question", issue_ids=["i5"], question="?"),
+             FixStep(kind="question", issue_ids=["i2"], question="Compare?"),
+             FixStep(**_step("caste_certificate_new", ["i3"]))]
     ordered = order_steps(steps, issues)
     assert [(s.kind, s.issue_ids[0]) for s in ordered] == [
         ("question", "i2"), ("question", "i5"),  # 'confirm' issue's question first
@@ -299,20 +316,20 @@ def test_fallback_for_an_uncovered_combination_says_ask_at_the_office() -> None:
     assert "ask at the office" in steps[-1].voice and steps[-1].office is None and not steps[-1].bring
 
 
-def test_declaration_alone_does_not_cover_a_mismatch_and_must_say_acceptance_is_up_to_the_office() -> None:
+def test_declaration_alone_does_not_cover_a_mismatch() -> None:
     """EV025: the family's answer makes a certificate the wrong document; no procedure corrects it."""
     issue = PlannerIssue(id="i1", type="name_mismatch", severity="blocker", member_id="r1", member_name="Meera Yogesh Zodge",
                          documents={"rc": "ration_card", "cc": "caste_certificate"},
                          values={"rc": "Meera Yogesh Zodge", "cc": "Mira Yogesh Zodge"}, detail="spelled differently")
     tb = ToolBox([issue], family_says("Meera Yogesh Zodge"))
-    tb.call("ask_family", json.dumps({"issue_id": "i1", "kind": "which_is_correct", "question": "Which?",
-                                      "options": ["Meera Yogesh Zodge", "Mira Yogesh Zodge"]}))
+    tb.call("ask_family", json.dumps({"issue_id": "i1", "kind": "which_is_correct"}))
     text = tb.call("draft_declaration", json.dumps({"issue_id": "i1", "member_name": "Meera Yogesh Zodge",
                                                     "values": ["Meera Yogesh Zodge", "Mira Yogesh Zodge"]}))["declaration"]
-    declaration = FixStep(**_step("self_declaration", ["i1"], "Keep this paper with your documents.", declaration=text))
-    errors = verify([declaration], [issue], tb)
-    assert any("not covered" in e for e in errors) and any("up to the office" in e for e in errors)
-    fixed = FixStep(**{**declaration.model_dump(), "voice": "A declaration may help; acceptance is up to the office."})
-    office = FixStep(**_step(None, ["i1"], "Ask at the office how to correct the name on the caste certificate.",
-                             kind="ask_at_office"))
-    assert verify([fixed, office], [issue], tb) == []
+    declaration = FixStep(**_step("self_declaration", ["i1"], declaration=text))
+    assert any("not covered" in e for e in verify([declaration], [issue], tb))
+    office = FixStep(**_step(None, ["i1"], kind="ask_at_office"))
+    steps = [*question_steps([issue], tb), declaration, office]
+    assert verify(steps, [issue], tb) == []
+    finalize(steps, [issue], "en")
+    assert "caste certificate" in office.voice and "ration card" not in office.voice  # only the wrong document
+    assert "up to the office" in declaration.voice
