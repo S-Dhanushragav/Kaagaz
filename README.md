@@ -20,7 +20,18 @@ Many families who qualify for welfare schemes lose them because of paperwork: a 
 documents, an expired income certificate, a missing identity card. Nobody catches it at application time; the rejection
 arrives weeks later. Most of the people affected can't easily read forms, so Kaagaz works by camera and voice.
 
+## Try it
+
+- **App:** https://kaagaz-demo.netlify.app (mobile-first; Marathi, Hindi or English). "Try with a sample family" runs a
+  bundled sweep video of synthetic SPECIMEN documents; "Record your documents" uses the phone camera (up to 45 s).
+- **Backend API:** https://s-dhanushragav--kaagaz-web.us-east.modal.run (`/health`; endpoints in
+  [app/api/routes.py](backend/app/api/routes.py)).
+- The backend scales to zero when idle: the first request after a pause takes ~30 s to start (run
+  `python scripts/warmup.py <backend URL>` before a demo).
+
 ## Status
+
+All phases are built, tested and deployed (430 backend tests, no network).
 
 | Phase | What | Status |
 |---|---|---|
@@ -28,9 +39,11 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 | 2 | Synthetic SPECIMEN documents (4 types, Marathi + English), photo-like images, planted errors, ground truth | Done |
 | 3 | Document reader: one structured-output call per document (classify + extract), validation, retry, ID masking | Done |
 | 4 | Document finder: phone-sweep video → SAM 3.1 tracks → best 2–3 upright crops per document → reader | Done |
-| 5 | Household builder + scheme rules engine (5 schemes, deterministic) | Done (end-to-end eval done) |
-| 6 | Fix planner agent (tool loop over a curated fix knowledge base), voice sentences from templates | 6a done |
-| 7 | Mobile web app, voice in (Muse Voice Transcribe) and out (MMS-TTS), recapture flow | Not started |
+| 5 | Household builder (name re-read before reporting, adjudicator) + scheme rules engine (5 schemes, deterministic) | Done, evaluated end to end |
+| 6a | Fix planner agent (tool loop over a curated fix knowledge base, deterministic verification, retry, fallback) | Done, evaluated (10 households) |
+| 6b | Voice: sentences from en/hi/mr templates, numbers spelled out, MMS-TTS out, Muse Voice Transcribe in, numbered spoken answers | Done, round-trip evaluated |
+| 7 | LangGraph pipeline (family question as an interrupt), sessions API, mobile web app, Modal + Netlify deployment | Done, deployed |
+| 7+ | Close-up loop (a clearer photo of one document re-runs household → rules → plan), "no documents" / "sweep again" stops, issues waiting for a clearer photo, scheme reasons in en/hi/mr, upload progress | Done, deployed |
 
 Full product spec: [docs/PRD.md](docs/PRD.md). Working rules for this repo (architecture, hard rules): [CLAUDE.md](CLAUDE.md).
 
@@ -75,6 +88,16 @@ All numbers are on synthetic SPECIMEN data; result files are in [eval/results/](
 - One misread on a ration card (ज्ञानदा → शयनदा) still causes 2 blocker false alarms: before the secondary link the
   row is re-read, but the re-read repeats "Shyanada" (score stays 67) and the adjudicator answers "different first names".
 
+**Fix planner** (10 EV households with issues, built end to end; a simulated family answers from the ground truth;
+`muse-spark-1.3`)
+- **10/10 plans passed verification the first time**, 0 retries, 0 fallbacks; 4.0 steps per plan, 3.1 agent turns per
+  plan; 85k + 31k tokens, **$0.24** for the 10 households.
+- Every mismatch was asked about before any fix, only the document the family's answer showed to be wrong was
+  corrected, every Aadhaar change stated its lifetime limit, and wrong documents with no procedure in the knowledge base
+  became "ask at the office". All 4 "confirm" spellings were asked as comparisons first (the family said "same").
+- Spoken sentences and questions come from templates, not the agent; offices, fees, time limits and documents are
+  checked against [data/fixes/](data/fixes/) before a plan is accepted.
+
 **Voice round trip** (MMS-TTS speaks 8 answers + 2 non-answers per language; Muse Voice Transcribe hears them;
 answers are matched by number words only, spelling-tolerant). Synthetic speech of isolated words, so a weak proxy
 for real voices. **Buttons are the primary way to answer; voice is a bonus.**
@@ -97,8 +120,9 @@ real upload; target: first spoken sentence within 60 s)
 
 | Run | Find | Read | Household | Plan | First spoken sentence | Plan ready |
 |---|---|---|---|---|---|---|
-| Sample family (HH009), cached, **cold container** (+29 s until healthy) | 24 s | 6 s | 3 s | 1 s | **42 s** (the question) | 51 s |
-| Sample family, cached, warm container | 8 s | 0 s | 0 s | 0 s | **18 s** (the question) | 30 s |
+| Sample family (HH009), cached, **cold container** (+29 s until healthy; 2026-10-30) | 9 s | 0 s | 1 s | 1 s | **17 s** (the question) | 22 s |
+| Sample family, cached, warm container (2026-10-29) | 8 s | 0 s | 0 s | 0 s | **18 s** (the question) | 30 s |
+| Sample close-up ("Use sample close-up" on one listed document), deployed | – | 1 photo | re-run | re-run | – | **4 s** after the tap |
 | Real upload, nothing cached, old setting (20 s 720p WebM at 4 Mbps, 10 MB, HH001) | 19 s | 9 s | 0 s | 10 s | 63 s (first plan step) | 63 s |
 | **Real upload, nothing cached, current setting** (20 s 1080p WebM at 8 Mbps, 18 MB, HH009) | 29 s | 8 s | 0 s | 11 s | **66 s** (first plan step; upload 12 s) | 64 s |
 
@@ -107,9 +131,11 @@ real upload; target: first spoken sentence within 60 s)
   now shows as a progress bar). Full-size frames make "find" slower (29 s vs 19 s at 720p): frame sampling and
   mask decoding on CPU. The trade is deliberate: at 720p the ration card often could not be read (see below).
 - A cold container adds ~29 s (start + loading three TTS models): run `scripts/warmup.py` 5 minutes before a demo.
-- Reading quality drops on re-encoded, phone-like video: the HH001 upload produced 3 "add to the ration card" steps
-  (1 planted) and asked for close-ups of 3 documents. If most documents are unreadable the app asks for a new sweep
-  and shows nothing else.
+- Reading quality on phone-like video: at the current setting HH001 plans exactly its planted error; the HH009 upload
+  caught the expired income certificate but not the name mismatch, because one Aadhaar card was unclear. That card is
+  put on the close-up list, everything that depends on it (who is on the ration card, a "missing" Aadhaar card) waits
+  for the clearer photo, and the close-up re-runs the household, rules and plan. If most documents are unreadable the
+  app asks for a new sweep; if no documents are found it says so; in both cases nothing else is shown.
 - **Recording size matters more than bitrate.** HH001 as an upload, scored against its ground truth:
 
   | Upload | Frames the reader saw | Names read right | Ration card read | Plan |
@@ -122,8 +148,8 @@ real upload; target: first spoken sentence within 60 s)
   4 Mbps lost a name and with it the plan, so the app stays at 1080p / 8 Mbps and the server keeps up to 1920 px
   (`UPLOAD_LONG_SIDE`). The cost is upload
   size: ~20 MB for a 20 s sweep (the 63 s timing above was a 10 MB upload).
-- Modal cost of the deploy (two image builds) and these test runs: **$0.02 metered, covered by credits** (billing may
-  lag; an idle container stays up 20 minutes after the last request).
+- Modal cost so far (all deploys, image builds and test runs, month to date 2026-10-30): **$0.41 metered, covered by
+  credits** ($0.00 billed). Most of it is the container idling 20 minutes after each test session.
 
 **Rules engine**: 51 hand-written unit tests on every boundary (ages 17/18, 20/21, 64/65/66; incomes 21,000/21,001,
 250,000/250,001; each Ramai income band; each ration card colour). These are tests, not an eval: an eval would only
@@ -132,8 +158,12 @@ compare the rules with themselves.
 ## How it works
 
 ```
-phone video ──► find_documents ──► read_documents ──► build_household ──► rules engine ──► fix planner ──► voice
-               (SAM 3.1, OpenCV)   (Muse Spark)       (deterministic)      (deterministic)   (agent, Phase 6) (Phase 7)
+phone video ──► find_documents ──► read_documents ──► build_household ──► check_rules ──► plan_fixes ──► speak
+               (SAM 3.1, OpenCV)   (Muse Spark)       (deterministic +     (deterministic) (the agent;   (templates,
+                                                       name re-read)                        asks family)  MMS-TTS)
+                                        │                                       ▲
+                                        └── "sweep again" / "no documents": stop │ close-up photo of one document
+                                                                                └── re-runs from build_household
 ```
 
 1. **Find** ([graph/nodes/find_documents.py](backend/graph/nodes/find_documents.py)). The video is resampled to 5 fps at
@@ -173,6 +203,15 @@ phone video ──► find_documents ──► read_documents ──► build_ho
    filled only with knowledge-base facts, member names and document display names; unverified facts are followed by
    "confirm at the office"; a time limit is only ever said as "the law sets ... for this office".
    **The Hindi and Marathi templates are machine-drafted and need review by a native speaker.**
+8. **Run it as a graph** ([graph/build.py](backend/graph/build.py)). The steps above are a LangGraph graph with one shared
+   state. When the agent asks the family a question, the graph pauses (an interrupt) and resumes with the answer; the
+   answer is remembered if the plan is rebuilt later. A "sweep again" or "no documents found" result stops after reading.
+   A close-up photo of a document on the close-up list replaces its reading and re-runs household → rules → plan →
+   speak; issues involving a document still waiting for a close-up are listed, not planned.
+9. **The app** ([frontend/](frontend/)). Language choice, sample family or camera recording (1080p, up to 45 s, upload
+   progress), stage progress, questions as large numbered buttons (plus a mic: answers are matched only by number words),
+   the plan grouped by office visit with a play button per sentence, scheme results per member with reasons and
+   sources, and the close-up list with "Take a photo". Served from Netlify; the API runs on Modal.
 
 ### Meta models used
 
@@ -275,19 +314,26 @@ From `backend/` unless noted. Costs are for a cold cache; cached calls are free.
 | Finder + reader eval (repo root) | `python eval/run_finder_eval.py --prompts document` (`--debug` keeps contact sheets in `tmp/`) | ~$0.40 |
 | Household eval, ground truth (repo root) | `python eval/run_household_eval.py --mode truth` | free |
 | Household eval, end to end (repo root) | `python eval/run_household_eval.py --mode e2e` (`--dry-run` first) | ~$0.90 |
+| Fix planner eval, 10 households (repo root) | `python eval/run_fix_planner_eval.py` (`--dry-run` first) | ~$0.25 |
+| Voice round trip (repo root, `tts` extra) | `python eval/run_voice_roundtrip.py` | < $0.01 |
+| Warm up / time the deployed app (repo root) | `python scripts/warmup.py <backend URL>` | small |
+| Rebuild sample close-ups (repo root) | `python scripts/make_sample_closeups.py` | free (cached) |
+| Frontend (from `frontend/`) | `npm run dev` / `npm run build` | free |
 
 Every eval script has `--dry-run` (or prints its call count) and saves a summary to `eval/results/` and per-document
 details to `eval/results/raw/` (gitignored).
 
-## Continuing the evals (where we stopped)
+## Next steps
 
-1. **Household eval, end to end: done** (results above). Re-run with
-   `python eval/run_household_eval.py --mode e2e` (cached calls cost nothing; `--no-verify` for the run without name
-   re-reads). The 6 blocker false alarms left are misread names that the re-read repeats; in the app, frame agreement
-   over 2–3 frames also applies to names. `TEXT_MAX_TOKENS` now defaults to 4000 (1,500 was too few for the
-   adjudicator's reasoning).
-2. **Before the final eval run:** the eval-phase notes say to keep ≥ 4 of each error type over 30 households (done in v2),
-   include 5–6 member households (done), and rare names and unusual spellings to measure "correction" errors (done in v2).
+1. **Real Hindi recordings** for the spoken-answer round trip (synthetic single words are a weak proxy; short phrases
+   such as "नंबर दो" already work far better).
+2. **Native-speaker review** of every Hindi and Marathi text: voice templates, number words, answer words, scheme
+   reasons, UI strings.
+3. **Upload time:** the real uncached upload is at 66 s against a 60 s target; the largest parts are the upload itself
+   and CPU frame sampling / mask decoding in "find".
+4. The `needs_other_proof` scheme items stay `unverified` until the developer adds sources.
+5. Re-running the evals: `python eval/run_household_eval.py --mode e2e` and `python eval/run_fix_planner_eval.py`
+   (cached calls cost nothing).
 
 ## Future work
 - **Voice front agent** (free spoken questions about schemes and issues, routed to the pipeline or answered from the
@@ -304,26 +350,39 @@ details to `eval/results/raw/` (gitignored).
 - Synthetic documents follow simplified layouts; real documents will need schema adjustments.
 - Hindi and Marathi voice templates (their wording of offices, documents and cautions, and the number words used for speech) are machine-drafted and
   have not been reviewed by a native speaker.
+- The backend is one container with sessions held in memory: a restart or redeploy drops open sessions (don't redeploy
+  during a demo). Session data is deleted after an hour anyway.
+- Spoken answers: single Hindi/Marathi words are often misheard by speech recognition in our synthetic tests; buttons
+  are the primary way to answer.
+- MMS-TTS is CC-BY-NC 4.0 (non-commercial): a commercial deployment needs a different TTS.
 
 ## Repository layout
 
 ```
 backend/
-  app/            FastAPI app and settings (per-task model routing)
-  clients/        the only place model calls happen: llm.py, segmenter.py (SAM 3.1), cache.py
-  graph/nodes/    pipeline steps: find_documents, read_documents, build_household (+ later: check_rules, plan_fixes, speak)
-  vision/         frames, quality, deskew, tracks, images, text normalization and ID masking
+  app/            FastAPI app, settings, sessions (pipeline runs, answers, close-ups, cleanup, rate limit), API routes
+  agents/         fix planner (the agent), its tools, voice templates, speech text, spoken answers, scheme reasons
+  clients/        the only place model calls happen: llm.py (chat + tools), segmenter.py (SAM 3.1), tts.py (MMS-TTS),
+                  transcribe.py (Muse Voice Transcribe), cache.py
+  graph/          LangGraph pipeline: state.py, build.py, closeup.py, runtime.py, nodes/ (find_documents,
+                  read_documents, build_household, check_rules, plan_fixes, speak)
+  vision/         frames (incl. upload normalization), quality, deskew, tracks, images, text normalization and ID masking
   matching/       cross-script name matching
   rules/          YAML loader and deterministic rules engine
-  schemas/        Pydantic models: documents, issues, household
-  prompts/        all prompts (extract, retry, name adjudicator)
-  scripts/        smoke test, SAM probe, 2x2 vision comparison
-  tests/          209 tests, no network
-data/schemes/     scheme rules (YAML)
+  schemas/        Pydantic models: documents, issues, household, fixes
+  prompts/        all prompts (extract, retry, name adjudicator, name re-read, fix planner)
+  tests/          430 tests, no network
+data/
+  schemes/        scheme rules (YAML, with sources)
+  fixes/          fix procedures (YAML, status and source per fact)
+  templates/      voice sentences (en/hi/mr), scheme reasons (en/hi/mr), declaration draft
+  sample/         bundled close-up photos for the sample family
+deploy/           Modal app (backend container)
+scripts/          warm-up / timing check, sample close-up builder
 synthetic/        document templates, generators (v1, v2), photo-like and video simulators, ground-truth helpers
-eval/             eval scripts and results
+eval/             eval scripts and results (reader, finder, household, fix planner, voice round trip)
 docs/             PRD and build log
-frontend/         Vite + React + TypeScript app (Phase 7)
+frontend/         Vite + React + TypeScript mobile web app (Netlify)
 ```
 
 ## License
