@@ -31,7 +31,8 @@ def _settings() -> dict[str, str]:
         key, sep, value = line.partition("=")
         if sep and not line.startswith("#") and value.strip() and not key.endswith("_API_KEY"):
             out[key.strip()] = value.strip()
-    out.update({"CACHE_DIR": "/cache", "SESSIONS_DIR": "/tmp/kaagaz-sessions", "HF_HOME": "/models",
+    out.update({"KAAGAZ_ENV": "production",  # login keys must come from the secret: the app refuses to start without
+                "CACHE_DIR": "/cache", "SESSIONS_DIR": "/tmp/kaagaz-sessions", "HF_HOME": "/models",
                 "CORS_ORIGINS": FRONTEND_ORIGIN or out.get("CORS_ORIGINS", "")})
     return out
 

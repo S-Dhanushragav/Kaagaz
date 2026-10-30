@@ -13,7 +13,9 @@ the app runs as one process/container).
   updates it after a close-up re-plan. Guest sessions are never stored.
 """
 
+import hmac
 import logging
+import secrets
 import shutil
 import threading
 import time
@@ -81,6 +83,9 @@ class Session:
     user_id: str | None = None  # logged in: the check is saved when it finishes; None: a guest, nothing is stored
     recheck_of: str | None = None  # "Check again": the stored check this one re-checks
     check_id: str | None = None  # the stored check, once saved
+    # Proves "this is my check" on claim: given only to the browser that started the session (never in a URL or
+    # a log line, unlike the session id, which appears in API paths and so in access logs).
+    guest_secret: str = field(default_factory=lambda: secrets.token_urlsafe(24))
     lock: threading.Lock = field(default_factory=threading.Lock)
 
     @property
@@ -94,6 +99,7 @@ class SessionManager:
         self.reader = reader  # reads one close-up photo; None: the real reader
         self.locator = locator or _locate_id_numbers  # boxes around the identity number on a crop (vision model)
         self.store = store  # case files (storage.store.Store); None: nothing is ever saved
+        self._last_save_failed: dict[str, bool] = {}
         self.sessions: dict[str, Session] = {}
         self.uploads: list[float] = []  # start times of upload sessions (rate limit)
         self._lock = threading.Lock()
@@ -262,8 +268,10 @@ class SessionManager:
 
     # ---------- case file ----------
 
-    def _save(self, session: Session) -> None:
-        """Keep a logged-in user's finished check (and update it after a close-up re-plan). Never fails the run."""
+    def _save(self, session: Session, strict: bool = False) -> None:
+        """Keep a logged-in user's finished check (and update it after a close-up re-plan). Never fails the run;
+        with `strict` (a claim), a database outage is remembered so the caller can report it."""
+        self._last_save_failed.pop(session.id, None)
         if not (self.store and session.user_id):
             return
         from app.casefile import check_data, worth_keeping
@@ -275,13 +283,22 @@ class SessionManager:
             record = self.store.save_check(session.user_id, session.id, session.language, check_data(view),
                                            previous_id=session.recheck_of)
             session.check_id = record.id
-        except Exception:  # noqa: BLE001 - the family still sees their results
-            logger.exception("saving the check of session %s failed", session.id)
+        except Exception as e:  # noqa: BLE001 - the family still sees their results
+            self._last_save_failed[session.id] = True
+            if strict:
+                logger.warning("saving a claimed check failed: %s", type(e).__name__)
+            else:
+                logger.exception("saving a check failed")
 
-    def claim(self, session_id: str, user_id: str) -> str | None:
+    def claim(self, session_id: str, user_id: str, guest_secret: str) -> str | None:
         """A guest logs in after their check: attach the session (if still in memory) and save its check.
+        Only the browser that started the session has its guest secret; the session id alone is not enough.
         Returns the stored check id, or None when there is nothing worth keeping."""
+        from storage.store import StoreUnavailable
+
         session = self.get(session_id)
+        if not hmac.compare_digest(session.guest_secret, guest_secret or ""):
+            raise SessionError(403, "This check was started on another device.")
         with session.lock:
             if session.user_id not in (None, user_id):
                 raise SessionError(409, "This check belongs to someone else.")
@@ -290,7 +307,9 @@ class SessionManager:
             session.user_id = user_id
             finished = session.status == "done"
         if finished and session.check_id is None:
-            self._save(session)
+            self._save(session, strict=True)
+            if session.check_id is None and self._last_save_failed.get(session.id):
+                raise StoreUnavailable("could not save the check")
         return session.check_id  # a running check is saved when it finishes
 
     def forget_user(self, user_id: str) -> None:

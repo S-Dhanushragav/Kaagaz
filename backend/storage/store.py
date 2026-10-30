@@ -10,6 +10,11 @@ from typing import Protocol
 from storage.models import CheckData, CheckRecord, FeedbackEntry, User
 
 
+class StoreUnavailable(RuntimeError):
+    """The case-file database cannot be reached (refused, timed out, dropped). Guests are not affected: only saving,
+    login and the case file fail, with a friendly 503."""
+
+
 def now() -> datetime:
     return datetime.now(timezone.utc)
 

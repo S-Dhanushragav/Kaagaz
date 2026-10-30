@@ -131,16 +131,29 @@ def test_a_guest_check_is_saved_when_the_family_logs_in_afterwards(setup) -> Non
     _finish(manager, guest.id)
     assert store.checks == {}  # nothing stored for a guest
     _, user_id = _login(auth)
-    check_id = manager.claim(guest.id, user_id)
+    check_id = manager.claim(guest.id, user_id, guest.guest_secret)
     (record,) = store.list_checks(user_id)
     assert record.id == check_id and record.session_id == guest.id
-    assert manager.claim(guest.id, user_id) == check_id  # claiming twice changes nothing
+    assert manager.claim(guest.id, user_id, guest.guest_secret) == check_id  # claiming twice changes nothing
     with pytest.raises(SessionError) as e:
-        manager.claim(guest.id, "someone-else")
+        manager.claim(guest.id, "someone-else", guest.guest_secret)
     assert e.value.status == 409
     with pytest.raises(SessionError) as e:
-        manager.claim("gone", user_id)
+        manager.claim("gone", user_id, guest.guest_secret)
     assert e.value.status == 404
+
+
+def test_knowing_another_sessions_id_is_not_enough_to_claim_it(setup) -> None:
+    """Session ids appear in API paths (and so in access logs); only the starting browser has the guest secret."""
+    manager, store, auth = setup
+    theirs = manager.start_sample("en")
+    _finish(manager, theirs.id)
+    _, intruder = _login(auth)
+    for wrong in ("", "guess", manager.start_sample("en").guest_secret):  # even a real secret of another session
+        with pytest.raises(SessionError) as e:
+            manager.claim(theirs.id, intruder, wrong)
+        assert e.value.status == 403
+    assert store.list_checks(intruder) == [] and manager.get(theirs.id).user_id is None  # still unclaimed
 
 
 def test_claim_route_needs_a_login(setup, monkeypatch) -> None:
@@ -150,9 +163,12 @@ def test_claim_route_needs_a_login(setup, monkeypatch) -> None:
     for name, value in (("store", store), ("auth", auth), ("sessions", manager)):
         monkeypatch.setattr(app.state, name, value, raising=False)
     client = TestClient(app)
-    guest = client.post("/sessions/sample", json={"language": "mr"}).json()["id"]
+    started = client.post("/sessions/sample", json={"language": "mr"}).json()
+    guest, secret = started["id"], started["guest_secret"]
     _finish(manager, guest)
-    assert client.post(f"/sessions/{guest}/claim").status_code == 401
+    assert client.post(f"/sessions/{guest}/claim", json={"guest_secret": secret}).status_code == 401
     token, user_id = _login(auth)
-    saved = client.post(f"/sessions/{guest}/claim", headers={"Authorization": f"Bearer {token}"}).json()
+    h = {"Authorization": f"Bearer {token}"}
+    assert client.post(f"/sessions/{guest}/claim", json={"guest_secret": "wrong"}, headers=h).status_code == 403
+    saved = client.post(f"/sessions/{guest}/claim", json={"guest_secret": secret}, headers=h).json()
     assert saved["check_id"] == store.list_checks(user_id)[0].id

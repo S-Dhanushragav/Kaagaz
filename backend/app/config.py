@@ -86,6 +86,9 @@ class Settings(BaseSettings):
     phone_hash_key: SecretStr = SecretStr("")  # HMAC key for phone numbers
     token_signing_key: SecretStr = SecretStr("")  # HMAC key for login tokens
     auth_mode: Literal["demo", "sms"] = "demo"  # demo: the code is shown in the app, no SMS is sent
+    # production (default): login keys must be set (app/auth.py auth_keys); local/test: development keys allowed
+    kaagaz_env: Literal["local", "test", "production"] = "production"
+    database_url_test: SecretStr = SecretStr("")  # live-database tests use this when set (KAAGAZ_LIVE_DB=1)
     check_retention_days: int = Field(365, gt=0)  # stored checks older than this are deleted
 
     # Speech output (clients/tts.py): Meta MMS-TTS, CC-BY-NC 4.0, run locally on CPU

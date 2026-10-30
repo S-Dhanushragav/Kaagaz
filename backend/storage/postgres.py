@@ -1,8 +1,14 @@
 """The Store on Postgres (Neon, DATABASE_URL). One connection, reused behind a lock and reopened once if it was
 dropped (Neon closes idle connections). `prepare_threshold=None`: Neon's pooled endpoint (PgBouncer, transaction
-mode) does not keep server-side prepared statements."""
+mode) does not keep server-side prepared statements.
 
+When the database cannot be reached, every call raises StoreUnavailable quickly: a 5 s connect timeout, then for
+RETRY_AFTER_S calls fail at once instead of waiting again (guests never wait on the database). The schema is
+created on the first connection that works, so the app also starts while the database is down."""
+
+import logging
 import threading
+import time
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -13,34 +19,48 @@ from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
 from storage.models import CheckData, CheckRecord, FeedbackEntry, User
+from storage.store import StoreUnavailable
 
 SCHEMA = (Path(__file__).with_name("schema.sql")).read_text(encoding="utf-8")
 T = TypeVar("T")
+CONNECT_TIMEOUT_S = 5
+RETRY_AFTER_S = 30.0
+logger = logging.getLogger(__name__)
 
 
 class PostgresStore:
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, clock: Callable[[], float] = time.monotonic) -> None:
         self.url = url
+        self.clock = clock
         self._conn: psycopg.Connection | None = None
         self._lock = threading.Lock()
+        self._schema_ready = False
+        self._down_until = 0.0  # after a failure: fail fast until then
 
     # ---------- connection ----------
 
     def _connect(self) -> psycopg.Connection:
         return psycopg.connect(self.url, autocommit=True, row_factory=dict_row, prepare_threshold=None,
-                               connect_timeout=10)
+                               connect_timeout=CONNECT_TIMEOUT_S)
 
     def _run(self, fn: Callable[[psycopg.Connection], T]) -> T:
         with self._lock:
+            if self.clock() < self._down_until:
+                raise StoreUnavailable("the case-file database was unreachable a moment ago")
             for attempt in (1, 2):
-                if self._conn is None or self._conn.closed:
-                    self._conn = self._connect()
                 try:
+                    if self._conn is None or self._conn.closed:
+                        self._conn = self._connect()
+                        if not self._schema_ready:
+                            self._conn.execute(SCHEMA)
+                            self._schema_ready = True
                     return fn(self._conn)
-                except psycopg.OperationalError:
-                    self._conn = None  # dropped: reconnect once
+                except psycopg.OperationalError as e:  # refused, timed out, dropped
+                    self._conn = None
                     if attempt == 2:
-                        raise
+                        self._down_until = self.clock() + RETRY_AFTER_S
+                        logger.warning("case-file database unreachable: %s", type(e).__name__)
+                        raise StoreUnavailable("the case-file database is unreachable") from e
             raise AssertionError("unreachable")
 
     def _one(self, sql: str, params: tuple = ()) -> dict[str, Any] | None:
@@ -53,7 +73,11 @@ class PostgresStore:
         return self._run(lambda c: c.execute(sql, params).rowcount)
 
     def init(self) -> None:
-        self._run(lambda c: c.execute(SCHEMA))
+        """Create the schema now if the database is reachable; otherwise on the first connection that works."""
+        try:
+            self._run(lambda c: None)
+        except StoreUnavailable:
+            logger.warning("case-file database unreachable at start-up: guests still work")
 
     # ---------- users ----------
 

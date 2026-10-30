@@ -12,6 +12,7 @@ DELETE /me/checks/{id}                     delete one check
 GET  /me/checks/{id}/audio/{n}             a stored plan sentence, spoken again (MMS-TTS)
 """
 
+import logging
 from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
@@ -21,8 +22,10 @@ from pydantic import BaseModel, Field
 from app.auth import AuthError, AuthService
 from app.casefile import full, summary
 from storage.models import User
+from storage.store import StoreUnavailable
 
 router = APIRouter()
+logger = logging.getLogger("kaagaz.auth")
 Language = Literal["en", "hi", "mr"]
 
 
@@ -39,8 +42,9 @@ def bearer(request: Request) -> str | None:
     return header[7:].strip() if header.lower().startswith("bearer ") else None
 
 
-def optional_user(request: Request) -> User | None:
-    """The logged-in user, or None for a guest (no header). A bad or expired token is an error, not a guest."""
+def _token_user(request: Request) -> User | None:
+    """None without a header; 401 for a bad, expired or deleted-user token; StoreUnavailable if the database is down
+    (never a 401 then: an outage must not log anyone out)."""
     token = bearer(request)
     if token is None:
         return None
@@ -50,11 +54,30 @@ def optional_user(request: Request) -> User | None:
     return user
 
 
+def optional_user(request: Request) -> User | None:
+    """The logged-in user, or None for a guest. If the case-file database is down, a logged-in family continues as a
+    guest (their check still runs; it is just not saved)."""
+    try:
+        return _token_user(request)
+    except StoreUnavailable:
+        return None
+
+
 def current_user(request: Request) -> User:
-    user = optional_user(request)
+    """Routes that need the case file: 401 without a valid login, a friendly 503 while the database is down."""
+    user = _token_user(request)
     if user is None:
         raise HTTPException(401, "Please log in.")
     return user
+
+
+def mask_ip(ip: str) -> str:
+    """For logs: the last IPv4 octet (or the last half of an IPv6 address) hidden."""
+    if ip.count(".") == 3:
+        return ip.rsplit(".", 1)[0] + ".x"
+    if ":" in ip:
+        return ":".join(ip.split(":")[:4]) + ":x"
+    return "x"
 
 
 def client_ip(request: Request) -> str:
@@ -80,8 +103,11 @@ class VerifyRequest(BaseModel):
 
 @router.post("/auth/start")
 def auth_start(request: Request, body: StartRequest) -> dict[str, Any]:
+    ip = client_ip(request)
+    hops = [h for h in request.headers.get("x-forwarded-for", "").split(",") if h.strip()]
+    logger.info("login code requested: client %s, %d X-Forwarded-For entries", mask_ip(ip), len(hops))
     try:
-        return auth(request).start(body.phone, client_ip(request))
+        return auth(request).start(body.phone, ip)
     except AuthError as e:
         raise _fail(e) from e
 

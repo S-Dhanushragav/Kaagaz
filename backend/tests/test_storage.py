@@ -1,7 +1,8 @@
-"""Case-file store contract, run on MemoryStore (always) and on Postgres (`pytest -m live_db`, needs
-DATABASE_URL; it uses a throwaway user and deletes it). Users, checks (save, re-save by session, list, get, delete),
+"""Case-file store contract, run on MemoryStore (always) and on Postgres only when asked for:
+`KAAGAZ_LIVE_DB=1 pytest -m live_db` (DATABASE_URL_TEST if set, else DATABASE_URL; a throwaway user, deleted). Users, checks (save, re-save by session, list, get, delete),
 step ticks, ownership, delete-everything, retention purge, feedback."""
 
+import os
 import uuid
 from datetime import datetime, timedelta, timezone
 
@@ -23,9 +24,12 @@ def _data(voices: tuple[str, ...] = ("Go to the Tahsil office.", "Ask at the off
 
 
 def _postgres():
-    url = get_settings().database_url.get_secret_value()
+    if os.environ.get("KAAGAZ_LIVE_DB") != "1":
+        pytest.skip("live database tests run only with KAAGAZ_LIVE_DB=1")
+    s = get_settings()
+    url = s.database_url_test.get_secret_value() or s.database_url.get_secret_value()
     if not url:
-        pytest.skip("DATABASE_URL is not set")
+        pytest.skip("neither DATABASE_URL_TEST nor DATABASE_URL is set")
     from storage.postgres import PostgresStore
 
     store = PostgresStore(url)

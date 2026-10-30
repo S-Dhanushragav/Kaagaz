@@ -154,3 +154,52 @@ def test_a_spoofed_first_forwarded_entry_does_not_bypass_the_ip_limit(monkeypatc
     assert blocked.status_code == 429
     other = client.post("/auth/start", json={"phone": "9666666666"}, headers={"X-Forwarded-For": "203.0.113.8"})
     assert other.status_code == 200  # another real address is not affected
+
+
+def test_production_refuses_missing_or_short_keys() -> None:
+    from app.auth import DEV_PHONE_KEY, DEV_TOKEN_KEY, auth_keys
+
+    strong = "k" * 32
+    assert auth_keys("production", strong, strong) == (strong, strong)
+    for phone, token in (("", strong), (strong, ""), ("short", strong), (strong, "k" * 31)):
+        with pytest.raises(RuntimeError) as e:
+            auth_keys("production", phone, token)
+        assert "at least 32 bytes" in str(e.value)
+    assert auth_keys("local", "", "") == (DEV_PHONE_KEY, DEV_TOKEN_KEY)  # development keys, clearly named
+    assert auth_keys("test", "", "") == (DEV_PHONE_KEY, DEV_TOKEN_KEY)
+    assert "dev-only" in DEV_PHONE_KEY and "dev-only" in DEV_TOKEN_KEY
+
+
+def test_the_app_will_not_start_in_production_without_keys(monkeypatch) -> None:
+    from app.config import get_settings
+    from app.main import app, lifespan
+
+    s = get_settings()
+    monkeypatch.setattr(s, "kaagaz_env", "production")
+    monkeypatch.setattr(s, "phone_hash_key", type(s.phone_hash_key)(""))
+    monkeypatch.setattr(app.state, "store", MemoryStore(), raising=False)
+    if hasattr(app.state, "auth"):
+        monkeypatch.delattr(app.state, "auth")
+    import asyncio
+
+    async def start():
+        async with lifespan(app):
+            pass
+    with pytest.raises(RuntimeError):
+        asyncio.run(start())
+
+
+def test_login_requests_log_a_masked_ip_and_no_phone(monkeypatch, caplog) -> None:
+    import logging
+
+    from app.api.account import mask_ip
+    from app.main import app
+
+    assert mask_ip("203.0.113.77") == "203.0.113.x" and mask_ip("2001:db8:1:2:3:4:5:6") == "2001:db8:1:2:x"
+    auth, _, _ = _auth()
+    monkeypatch.setattr(app.state, "auth", auth, raising=False)
+    with caplog.at_level(logging.INFO, logger="kaagaz.auth"):
+        TestClient(app).post("/auth/start", json={"phone": PHONE}, headers={"X-Forwarded-For": "10.1.2.3, 203.0.113.77"})
+    logged = " ".join(r.getMessage() for r in caplog.records)
+    assert "203.0.113.x" in logged and "2 X-Forwarded-For entries" in logged
+    assert "203.0.113.77" not in logged and "10.1.2.3" not in logged and "43210" not in logged

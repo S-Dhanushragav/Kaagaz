@@ -36,6 +36,25 @@ class AuthError(Exception):
         self.status, self.message, self.extra = status, message, extra
 
 
+MIN_KEY_BYTES = 32
+# Only for KAAGAZ_ENV=local / test: clearly not a secret, never accepted in production.
+DEV_PHONE_KEY = "dev-only-insecure-phone-hash-key-local-runs-only"
+DEV_TOKEN_KEY = "dev-only-insecure-token-signing-key-local-runs-only"
+
+
+def auth_keys(env: str, phone_key: str, token_key: str) -> tuple[str, str]:
+    """The keys to use. Outside local and test runs, both must be set and at least 32 bytes long, or the app
+    refuses to start: there is no default in production."""
+    if env in ("local", "test"):
+        return phone_key or DEV_PHONE_KEY, token_key or DEV_TOKEN_KEY
+    problems = [name for name, key in (("PHONE_HASH_KEY", phone_key), ("TOKEN_SIGNING_KEY", token_key))
+                if len(key.encode()) < MIN_KEY_BYTES]
+    if problems:
+        raise RuntimeError(f"{' and '.join(problems)} must be set and at least {MIN_KEY_BYTES} bytes long "
+                           f"(KAAGAZ_ENV={env}). Set KAAGAZ_ENV=local for a local run with development keys.")
+    return phone_key, token_key
+
+
 def normalize_phone(raw: str) -> str:
     """An Indian mobile number as 10 digits: '+91 98765-43210', '098765 43210' and '9876543210' are the same."""
     digits = re.sub(r"\D", "", raw or "")
@@ -142,9 +161,12 @@ class AuthService:
                     del self._pending[h]
                     raise AuthError(429, "Too many wrong codes. Please ask for a new one.")
                 raise AuthError(401, "That code is not right.", attempts_left=p.attempts_left)
-            del self._pending[h]
             last4 = p.last4
+        # The code is used up only once the user is found or created: if the database is down (StoreUnavailable,
+        # a friendly 503), the same code works again a moment later.
         user = self.store.user_by_phone_hash(h) or self.store.create_user(h, last4, language)
+        with self._lock:
+            self._pending.pop(h, None)
         return self.issue(user.id), user
 
     # ---------- tokens ----------

@@ -4,15 +4,17 @@ import time
 from datetime import datetime, timedelta, timezone
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.account import router as account_router
 from app.api.routes import router
-from app.auth import AuthService
+from app.auth import AuthService, auth_keys
 from app.config import get_settings
 from app.sessions import SessionManager
 from storage import make_store
+from storage.store import StoreUnavailable
 
 
 def _preload_tts() -> None:
@@ -46,8 +48,9 @@ async def lifespan(app: FastAPI):
         app.state.store.init()
     if not hasattr(app.state, "auth"):
         s = get_settings()
-        app.state.auth = AuthService(app.state.store, s.phone_hash_key.get_secret_value(),
-                                     s.token_signing_key.get_secret_value(), mode=s.auth_mode)
+        phone_key, token_key = auth_keys(s.kaagaz_env, s.phone_hash_key.get_secret_value(),
+                                         s.token_signing_key.get_secret_value())  # refuses to start without keys
+        app.state.auth = AuthService(app.state.store, phone_key, token_key, mode=s.auth_mode)
     if not hasattr(app.state, "sessions"):
         app.state.sessions = SessionManager(store=app.state.store)
     app.state.sessions.start_cleanup_loop()
@@ -65,6 +68,13 @@ app.add_middleware(
 )
 app.include_router(router)
 app.include_router(account_router)
+
+
+@app.exception_handler(StoreUnavailable)
+def store_unavailable(request: Request, exc: StoreUnavailable) -> JSONResponse:
+    """The case-file database is down: login, saving and the case file say so; guest checks are unaffected."""
+    return JSONResponse(status_code=503, content={"detail": "Saved checks are not available right now. "
+                                                            "Your check still works without logging in."})
 
 
 @app.get("/health")

@@ -7,7 +7,7 @@ POST /sessions/{id}/answer      {question_id, option} (JSON) or a short WAV clip
 GET  /sessions/{id}/audio/{key} TTS WAV for 'question' or 'step-<n>'
 GET  /sessions/{id}/crops/{doc}  thumbnail of a found document's best crop (from memory; gone with the session)
 POST /sessions/{id}/closeup     a clearer photo of one document on the close-up list (form: document_id, photo|sample)
-POST /sessions/{id}/claim       logged in after a guest check: save that check to the case file (Bearer token)
+POST /sessions/{id}/claim       logged in after a guest check: save it {guest_secret} (Bearer token)
 POST /feedback                  {session_id, target, value, comment}: thumbs up/down, stored anonymously
 GET  /schemes?lang=             the scheme catalog: each scheme's rules as lines, with status and sources (YAML only)
 """
@@ -16,7 +16,7 @@ from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, Response
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.api.account import current_user, optional_user
 from app.config import get_settings
@@ -82,15 +82,15 @@ async def create_session(request: Request, video: UploadFile = File(...), langua
         session = sessions.start_upload(raw, language, user_id=user.id if user else None, recheck_of=previous)
     except SessionError as e:
         raise _fail(e) from e
-    return {"id": session.id}
+    return {"id": session.id, "guest_secret": session.guest_secret}
 
 
 @router.post("/sessions/sample")
 def create_sample(request: Request, body: SampleRequest, user: Any = Depends(optional_user)) -> dict[str, Any]:
     previous = _recheck(request, user, body.recheck_of)
     try:
-        return {"id": manager(request).start_sample(body.language, user_id=user.id if user else None,
-                                                    recheck_of=previous).id}
+        session = manager(request).start_sample(body.language, user_id=user.id if user else None, recheck_of=previous)
+        return {"id": session.id, "guest_secret": session.guest_secret}
     except SessionError as e:
         raise _fail(e) from e
 
@@ -141,11 +141,16 @@ async def closeup(request: Request, session_id: str, document_id: str = Form(...
         raise _fail(e) from e
 
 
+class ClaimRequest(BaseModel):
+    guest_secret: str = Field(max_length=64)  # returned when the session started; never in a URL
+
+
 @router.post("/sessions/{session_id}/claim")
-def claim(request: Request, session_id: str, user: Any = Depends(current_user)) -> dict[str, Any]:
-    """After logging in from the "Save this check" card: keep the guest's check (only while it is still in memory)."""
+def claim(request: Request, session_id: str, body: ClaimRequest, user: Any = Depends(current_user)) -> dict[str, Any]:
+    """After logging in from the "Save this check" card: keep the guest's check (only while it is still in memory,
+    and only for the browser that started it)."""
     try:
-        return {"check_id": manager(request).claim(session_id, user.id)}
+        return {"check_id": manager(request).claim(session_id, user.id, body.guest_secret)}
     except SessionError as e:
         raise _fail(e) from e
 
