@@ -77,6 +77,7 @@ export interface SchemeResult {
   rules: RuleResult[]
   warnings: string[]
   display?: { reasons: string[]; warnings: string[] } // in the family's language (backend templates)
+  blocking_issues?: Issue[] // the member's problems that block this scheme (live checks; not stored)
 }
 
 export interface Shown { text: string; verified: boolean }

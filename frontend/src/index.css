@@ -488,7 +488,8 @@ details summary { cursor: pointer; min-height: 44px; padding: 8px 0; font-weight
 /* ---------- composer: always clear of the home bar and any floating badge ---------- */
 .composer {
   position: relative; z-index: 20; display: flex; align-items: center; gap: 8px;
-  padding: 10px 14px max(12px, env(safe-area-inset-bottom));
+  /* the same centred 780 px column as the messages (the border still runs the full width) */
+  padding: 10px max(14px, calc((100% - 780px) / 2)) max(12px, env(safe-area-inset-bottom));
   border-top: 1px solid var(--line); background: var(--bg);
 }
 .composer > * { flex: none; }

@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import type { CatalogScheme, Language, SchemeResult, SessionView } from '../api'
 import { count } from '../counts'
 import type { Strings } from '../i18n'
-import { memberName, OUTCOME_MARK, sources } from '../labels'
+import { detailReasons, memberName, OUTCOME_MARK, sources } from '../labels'
 import { Close, Office } from './Icons'
 
 const OUTCOMES: SchemeResult['outcome'][] = ['eligible_on_documents', 'blocked_by_issues', 'check_at_office', 'not_eligible']
@@ -23,7 +23,7 @@ export default function SchemesCard({ t, view, language, schemes, narrow, onOpen
   const chosen = picked ? result(picked.member, picked.scheme) : undefined
   const chosenMember = picked ? hh.members.find((m) => m.member_id === picked.member) : undefined
   const detail = chosen && chosenMember && (
-    <Detail t={t} result={chosen} who={memberName(chosenMember, language, t)}
+    <Detail t={t} result={chosen} reasons={detailReasons(view, chosen, language, t)} who={memberName(chosenMember, language, t)}
       scheme={columns.find((c) => c.id === chosen.scheme_id)?.name ?? chosen.scheme_id} />
   )
 
@@ -77,7 +77,9 @@ export default function SchemesCard({ t, view, language, schemes, narrow, onOpen
   )
 }
 
-function Detail({ t, result, who, scheme }: { t: Strings; result: SchemeResult; who: string; scheme: string }) {
+function Detail({ t, result, reasons, who, scheme }: {
+  t: Strings; result: SchemeResult; reasons: string[]; who: string; scheme: string
+}) {
   return (
     <div className={`reasons ${result.outcome}`} aria-live="polite">
       <p className="reasons-title"><strong>{who}</strong> · {scheme}</p>
@@ -85,7 +87,7 @@ function Detail({ t, result, who, scheme }: { t: Strings; result: SchemeResult; 
         <span className={`cell mini ${result.outcome}`} aria-hidden="true">{OUTCOME_MARK[result.outcome]}</span>
         {t.outcomes[result.outcome]}
       </p>
-      <ul>{(result.display?.reasons ?? result.reasons).map((x, n) => <li key={n}>{x}</li>)}</ul>
+      <ul>{reasons.map((x, n) => <li key={n}>{x}</li>)}</ul>
       {(result.display?.warnings ?? []).length > 0 && (
         <ul className="warnings">{result.display!.warnings.map((x, n) => <li key={n}>{x}</li>)}</ul>
       )}

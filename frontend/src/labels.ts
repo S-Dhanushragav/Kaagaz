@@ -47,3 +47,20 @@ export function sources(r: SchemeResult): [string, string][] {
 export const OUTCOME_MARK: Record<SchemeResult['outcome'], string> = {
   eligible_on_documents: '✓', blocked_by_issues: '!', check_at_office: '?', not_eligible: '–',
 }
+
+// A box's reasons, with "a document could not be read" made specific: whose document, and which one, as the problems
+// list says it. The backend adds one general line per problem type after the rule reasons, sorted by type, so the
+// "unreadable" line is always the last one (agents/reasons.py). Saved checks keep their reasons as they were.
+export function detailReasons(view: SessionView, r: SchemeResult, language: Language, t: Strings): string[] {
+  const lines = r.display?.reasons ?? r.reasons
+  const docs = (r.blocking_issues ?? [])
+    .filter((i) => i.type === 'unreadable' && i.member_id === r.member_id).flatMap((i) => i.documents)
+  if (!r.display || !docs.length || !lines.length) return lines
+  const named = [...new Set(docs)].map((d) => {
+    const type = docType(view, d)
+    const document = (type && t.docTypes[type]) || t.document
+    const who = docOwner(view, d, language, t)
+    return (who ? t.unreadableNamed.replace('{name}', who) : t.unreadableDoc).replace('{document}', document)
+  })
+  return [...lines.slice(0, -1), ...named]
+}

@@ -157,6 +157,8 @@ const en = {
   loginLeadDemo: "Enter a phone number. The 6-digit code then appears on this screen.",
   demoNotice: "Demo mode: no SMS is sent. Anyone who types a number can open the checks saved under it, so please use a made-up number, not your real one.",
   saveFailed: "The check could not be saved right now. You can still use it here.",
+  unreadableNamed: "{name}'s {document} could not be read: take a clearer photo first.",
+  unreadableDoc: "The {document} could not be read: take a clearer photo first.",
 }
 
 type Strings = typeof en
@@ -316,6 +318,8 @@ const hi: Strings = {
   loginLeadDemo: "फ़ोन नंबर डालें। फिर 6 अंकों का कोड इसी स्क्रीन पर दिखेगा।",
   demoNotice: "डेमो मोड: कोई SMS नहीं भेजा जाता। जो भी कोई नंबर डालता है, वह उस नंबर पर सहेजी गई जाँचें खोल सकता है, इसलिए अपना असली नहीं, कोई बनावटी नंबर डालें।",
   saveFailed: "अभी जाँच सहेजी नहीं जा सकी। आप इसे यहीं इस्तेमाल कर सकते हैं।",
+  unreadableNamed: "{name} का {document} पढ़ा नहीं जा सका: पहले साफ़ फ़ोटो लें।",
+  unreadableDoc: "{document} पढ़ा नहीं जा सका: पहले साफ़ फ़ोटो लें।",
 }
 
 const mr: Strings = {
@@ -473,6 +477,8 @@ const mr: Strings = {
   loginLeadDemo: "फोन नंबर द्या. त्यानंतर 6 अंकी कोड याच स्क्रीनवर दिसेल.",
   demoNotice: "डेमो मोड: SMS पाठवला जात नाही. कोणताही नंबर टाकणारी व्यक्ती त्या नंबरवर जतन केलेल्या तपासण्या उघडू शकते, म्हणून तुमचा खरा नंबर नव्हे, तर एखादा बनावट नंबर वापरा.",
   saveFailed: "सध्या तपासणी जतन करता आली नाही. तुम्ही ती इथे वापरू शकता.",
+  unreadableNamed: "{name}: {document}: वाचता आले नाही. आधी स्पष्ट फोटो घ्या.",
+  unreadableDoc: "{document}: वाचता आले नाही. आधी स्पष्ट फोटो घ्या.",
 }
 
 export const STRINGS: Record<Language, Strings> = { en, hi, mr }
