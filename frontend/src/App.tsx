@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
-  answerAudio, answerOption, audioUrl, getSession, startSample, startUpload,
+  answerAudio, answerOption, audioUrl, getSession, sendCloseup, startSample, startUpload,
   type Language, type Member, type Question, type SessionView, type Shown, type Step, type StepDisplay,
 } from './api'
 import { LANGUAGE_NAMES, STRINGS, type Strings } from './i18n'
@@ -218,7 +218,7 @@ function SessionScreen({ t, id, language, onRestart }: { t: Strings; id: string;
       {view.status === 'waiting' && view.question && (
         <QuestionCard key={view.question.question_id} t={t} id={id} question={view.question} onAnswered={resumed} />
       )}
-      <Recapture t={t} view={view} language={language} />
+      <Recapture t={t} view={view} language={language} onReplanned={resumed} />
       {view.status === 'done' && view.recapture?.mode === 'close_ups' && <p className="note">{t.closeUpsNote}</p>}
       {view.status === 'done' && <Waiting t={t} view={view} language={language} />}
       {view.status === 'done' && <Plan t={t} id={id} view={view} />}
@@ -357,18 +357,58 @@ function Waiting({ t, view, language }: { t: Strings; view: SessionView; languag
   )
 }
 
-function Recapture({ t, view, language }: { t: Strings; view: SessionView; language: Language }) {
+function Recapture({ t, view, language, onReplanned }: {
+  t: Strings; view: SessionView; language: Language; onReplanned?: () => void
+}) {
   const r = view.recapture
   if (!r || r.mode === 'none') return null
+  const ready = view.status === 'done' && onReplanned
   return (
     <section className={r.mode === 'close_ups' ? 'card warn' : 'card warn strong'}>
       {r.mode === 'no_documents' ? <p>{t.noDocuments}</p> : r.mode === 'sweep_again' ? <p>{t.recaptureSweep}</p> : (
         <>
           <p>{t.recaptureCloseUps}</p>
-          <ul>{r.documents.map((d) => <li key={d}>{docLabel(view, d, r.documents, language, t)}</li>)}</ul>
+          <ul className="closeups">
+            {r.documents.map((d) => (
+              <li key={d}>
+                <strong>{docLabel(view, d, r.documents, language, t)}</strong>
+                {ready && <CloseUp t={t} sessionId={view.id} documentId={d} sample={view.sample} onReplanned={onReplanned} />}
+              </li>
+            ))}
+          </ul>
         </>
       )}
     </section>
+  )
+}
+
+function CloseUp({ t, sessionId, documentId, sample, onReplanned }: {
+  t: Strings; sessionId: string; documentId: string; sample: boolean; onReplanned: () => void
+}) {
+  const input = useRef<HTMLInputElement>(null)
+  const [busy, setBusy] = useState(false)
+  const [note, setNote] = useState<string | null>(null)
+  const send = async (photo: Blob | null) => {
+    setBusy(true)
+    setNote(null)
+    try {
+      const reply = await sendCloseup(sessionId, documentId, photo)
+      if (reply.clear) { onReplanned(); return }
+      setNote(t.stillUnclear)
+    } catch (e) {
+      setNote(e instanceof Error ? e.message : String(e))
+    }
+    setBusy(false)
+  }
+  return (
+    <div className="closeup">
+      <input ref={input} type="file" accept="image/*" capture="environment" hidden
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) void send(f); e.target.value = '' }} />
+      <button type="button" className="secondary" disabled={busy} onClick={() => input.current?.click()}>📷 {t.takePhoto}</button>
+      {sample && <button type="button" className="secondary" disabled={busy} onClick={() => void send(null)}>{t.useSampleCloseUp}</button>}
+      {busy && <p className="note" role="status">{t.readingPhoto}</p>}
+      {note && <p className="note" role="status">{note}</p>}
+    </div>
   )
 }
 

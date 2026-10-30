@@ -56,8 +56,9 @@ class Session:
 
 
 class SessionManager:
-    def __init__(self, graph: Any = None) -> None:
+    def __init__(self, graph: Any = None, reader: Any = None) -> None:
         self.graph = graph or build_graph()
+        self.reader = reader  # reads one close-up photo; None: the real reader
         self.sessions: dict[str, Session] = {}
         self.uploads: list[float] = []  # start times of upload sessions (rate limit)
         self._lock = threading.Lock()
@@ -209,6 +210,43 @@ class SessionManager:
             self.answer_option(session_id, question_id, result.option)
         return {"action": result.action, "option": result.option, "say": result.say,
                 "heard": result.attempts[-1].heard if result.attempts else None}
+
+    # ---------- close-ups ----------
+
+    def sample_closeup(self, session_id: str, document_id: str) -> bytes:
+        """The bundled clear photo of a sample document (data/sample/closeups/<sample>/<document id>.jpg)."""
+        session = self.get(session_id)
+        if not session.sample:
+            raise SessionError(409, "Sample close-ups are only for the sample family.")
+        video = Path(get_settings().sample_video)
+        path = REPO_ROOT / "data" / "sample" / "closeups" / video.parent.name / f"{Path(document_id).name}.jpg"
+        if not path.exists():
+            raise SessionError(404, "No sample close-up for this document.")
+        return path.read_bytes()
+
+    def closeup(self, session_id: str, document_id: str, photo: bytes) -> dict[str, Any]:
+        """Read a close-up photo as this document; if it is clear, run household -> rules -> plan -> speak again."""
+        from graph.closeup import CloseupError, apply_closeup
+
+        session = self.get(session_id)
+        with session.lock:
+            if session.status != "done":
+                raise SessionError(409, "Please wait until the plan is ready.")
+            session.status = "running"
+        try:
+            kwargs = {"reader": self.reader} if self.reader else {}
+            result = apply_closeup(self.graph, session_id, session.config, document_id, photo, **kwargs)
+        except CloseupError as e:
+            session.status = "done"
+            raise SessionError(422, str(e)) from e
+        except Exception:
+            session.status = "done"
+            raise
+        if result["clear"]:
+            self._run(session, None)  # continues from build_household
+        else:
+            session.status = "done"
+        return result
 
     # ---------- cleanup ----------
 

@@ -26,7 +26,7 @@ from clients.llm import chat
 from graph.nodes.build_household import build_household, llm_adjudicator, llm_name_verifier
 from graph.nodes.check_rules import check_rules
 from graph.nodes.find_documents import FindResult, FoundDocument, RecapturePlan, find_documents, plan_recapture
-from graph.nodes.plan_fixes import run_planner
+from graph.nodes.plan_fixes import remembered_answers, run_planner
 from graph.nodes.read_documents import StreamingReader
 from graph.nodes.speak import speak
 from graph.runtime import runtime
@@ -147,9 +147,11 @@ def build_graph(deps: Deps | None = None, checkpointer: Any = None) -> Any:
         results = [SchemeResult.model_validate(r) for r in state.get("results", [])]
         recapture = state.get("recapture") or {}
         waiting = frozenset(recapture.get("documents", [])) if recapture.get("mode") == "close_ups" else frozenset()
-        fix_plan = run_planner(hh, results, state["language"], deps.llm, waiting)
+        fix_plan = run_planner(hh, results, state["language"], deps.llm, waiting, state.get("answers"))
+        planned = planner_issues(hh, results, waiting)
         return {"plan": fix_plan.model_dump(mode="json", exclude={"trace"}),
-                "issues": [i.model_dump(mode="json") for i in planner_issues(hh, results, waiting)],
+                "answers": remembered_answers(fix_plan, planned),  # reused if a close-up re-runs the plan
+                "issues": [i.model_dump(mode="json") for i in planned],
                 "waiting": [i.model_dump(mode="json") for i in waiting_issues(hh, results, waiting)],
                 "usage": {"plan_tokens": fix_plan.usage.prompt_tokens + fix_plan.usage.completion_tokens},
                 "log": [f"plan: {len(fix_plan.steps)} steps ({fix_plan.source})"]}

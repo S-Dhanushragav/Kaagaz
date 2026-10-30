@@ -157,4 +157,12 @@ export async function answerAudio(id: string, questionId: string, wav: Blob): Pr
   return json<AnswerReply>(await fetch(`${API_URL}/sessions/${id}/answer`, { method: 'POST', body: form }))
 }
 
+export async function sendCloseup(id: string, documentId: string, photo: Blob | null): Promise<{ clear: boolean; missing: string[] }> {
+  const form = new FormData()
+  form.append('document_id', documentId)
+  if (photo) form.append('photo', photo, 'closeup.jpg')
+  else form.append('sample', 'true')
+  return json(await fetch(`${API_URL}/sessions/${id}/closeup`, { method: 'POST', body: form }))
+}
+
 export const audioUrl = (id: string, key: string): string => `${API_URL}/sessions/${id}/audio/${key}`

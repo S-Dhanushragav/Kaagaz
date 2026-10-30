@@ -5,6 +5,7 @@ POST /sessions/sample           the bundled sample family's sweep video, no uplo
 GET  /sessions/{id}             stage progress, partial results, the pending question
 POST /sessions/{id}/answer      {question_id, option} (JSON) or a short WAV clip (form: question_id, audio)
 GET  /sessions/{id}/audio/{key} TTS WAV for 'question' or 'step-<n>'
+POST /sessions/{id}/closeup     a clearer photo of one document on the close-up list (form: document_id, photo|sample)
 """
 
 from typing import Any, Literal
@@ -20,6 +21,7 @@ router = APIRouter()
 Language = Literal["en", "hi", "mr"]
 CHUNK = 1024 * 1024
 MAX_AUDIO_BYTES = 2 * 1024 * 1024  # ~60 s of 16 kHz mono WAV; answers are a few seconds
+MAX_PHOTO_BYTES = 15 * 1024 * 1024
 
 
 def manager(request: Request) -> SessionManager:
@@ -96,6 +98,25 @@ async def answer(request: Request, session_id: str) -> dict[str, Any]:
         if len(data) > MAX_AUDIO_BYTES:
             raise HTTPException(413, "The recording is too long.")
         return sessions.answer_audio(session_id, str(question_id), data)
+    except SessionError as e:
+        raise _fail(e) from e
+
+
+@router.post("/sessions/{session_id}/closeup")
+async def closeup(request: Request, session_id: str, document_id: str = Form(...), sample: bool = Form(False),
+                  photo: UploadFile | None = File(None)) -> dict[str, Any]:
+    """A clearer photo of one document on the close-up list (or, for the sample family, its bundled photo)."""
+    sessions = manager(request)
+    try:
+        if sample:
+            data = sessions.sample_closeup(session_id, document_id)
+        elif photo is not None:
+            data = await photo.read(MAX_PHOTO_BYTES + 1)
+            if len(data) > MAX_PHOTO_BYTES:
+                raise HTTPException(413, "The photo is too large.")
+        else:
+            raise HTTPException(422, "Send a photo, or sample=true for the sample family.")
+        return sessions.closeup(session_id, document_id, data)
     except SessionError as e:
         raise _fail(e) from e
 

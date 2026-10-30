@@ -6,6 +6,7 @@ start: every agent turn is in the disk cache (keyed by the full conversation), s
 identical up to the question, where `interrupt()` now returns the family's answer.
 """
 
+import json
 from typing import Any, Callable
 
 from langgraph.types import interrupt
@@ -32,8 +33,27 @@ def question_payload(issue: PlannerIssue, kind: str, language: str) -> dict[str,
     }
 
 
-def interrupting_family(language: str) -> Callable[[PlannerIssue, str, str, list[str]], str]:
+def question_key(issue: PlannerIssue, kind: str) -> str:
+    """Stable across re-plans (issue ids are renumbered when the issues change): the issue type, the question
+    kind and each document's value. If a close-up changes a value, the key changes and the family is asked again."""
+    return json.dumps([issue.type, kind, sorted(issue.values.items())], ensure_ascii=False)
+
+
+def remembered_answers(plan: FixPlan, issues: list[PlannerIssue]) -> dict[str, str]:
+    by_id = {i.id: i for i in issues}
+    return {question_key(by_id[s.issue_ids[0]], s.question_kind): s.answer for s in plan.steps
+            if s.kind == "question" and s.answer and s.question_kind and s.issue_ids and s.issue_ids[0] in by_id}
+
+
+def interrupting_family(language: str, remembered: dict[str, str] | None = None
+                        ) -> Callable[[PlannerIssue, str, str, list[str]], str]:
+    """Asks by pausing the graph, unless the family already answered the same question before a re-plan."""
+    remembered = remembered or {}
+
     def ask(issue: PlannerIssue, kind: str, question: str, options: list[str]) -> str:
+        earlier = remembered.get(question_key(issue, kind))
+        if earlier in options:
+            return earlier
         payload = question_payload(issue, kind, language)
         index = interrupt(payload)  # pauses the graph; returns the option index on resume
         try:
@@ -45,5 +65,6 @@ def interrupting_family(language: str) -> Callable[[PlannerIssue, str, str, list
 
 
 def run_planner(household: Household, results: list[SchemeResult], language: str, llm: Callable[..., Any],
-                waiting: frozenset[str] = frozenset()) -> FixPlan:
-    return plan_fixes(household, results, interrupting_family(language), llm=llm, language=language, waiting=waiting)
+                waiting: frozenset[str] = frozenset(), remembered: dict[str, str] | None = None) -> FixPlan:
+    return plan_fixes(household, results, interrupting_family(language, remembered), llm=llm, language=language,
+                      waiting=waiting)

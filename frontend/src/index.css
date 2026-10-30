@@ -94,3 +94,6 @@ button:disabled { opacity: 0.55; }
 .outcome.not_eligible { border-color: #777; }
 details summary { cursor: pointer; min-height: 40px; padding: 6px 0; }
 a { color: var(--brand); margin-right: 10px; }
+.closeups { list-style: none; padding: 0; }
+.closeups li { border-top: 1px solid #c9a46a; padding: 8px 0; }
+.closeup button { margin: 6px 0; }
