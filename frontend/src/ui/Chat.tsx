@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react'
-import type { CatalogScheme, Language, SessionView } from '../api'
+import type { CatalogScheme, CheckFull, Language, SessionView } from '../api'
 import { LANGUAGE_NAMES, type Strings } from '../i18n'
 import Feedback from './Feedback'
+import { formatDate } from '../casefile'
+import { RecheckComparison } from './PastCheck'
 import { Camera, Logo } from './Icons'
 import QuestionCard from './QuestionCard'
 import Recapture from './Recapture'
@@ -32,11 +34,13 @@ export function Me({ children }: { children: ReactNode }) {
 }
 
 export default function Chat({ t, language, schemes, check, view, error, answered, voice, onRecord, onSample, onRecorded,
-  onCancelRecord, onAnswered, onReplanned, onNewCheck }: {
+  onCancelRecord, onAnswered, onReplanned, onNewCheck, latest, recheck, onOpenCheck }: {
   t: Strings; language: Language; schemes: CatalogScheme[]; check: Check; view: SessionView | null; error: string | null; answered: Answered[]
   voice: Voice; onRecord: () => void; onSample: () => void; onRecorded: (b: Blob) => void; onCancelRecord: () => void
   onAnswered: (label: string) => void; onReplanned: () => void; onNewCheck: () => void
+  latest: CheckFull | null; recheck: boolean; onOpenCheck: (id: string, step: number | null) => void
 }) {
+  const names = Object.fromEntries(schemes.map((s) => [s.id, s.name]))
   const started = check.kind !== 'idle'
   const sample = check.kind !== 'idle' && check.kind !== 'recording' && check.sample
   const stopped = view?.status === 'done' && (view.recapture?.mode === 'sweep_again' || view.recapture?.mode === 'no_documents')
@@ -46,6 +50,7 @@ export default function Chat({ t, language, schemes, check, view, error, answere
         <p className="lead">{t.welcome}</p>
         <p className="specimen-note">{t.specimen}</p>
       </Bot>
+      {latest && !started && <Bot><WelcomeBack t={t} language={language} latest={latest} onOpenCheck={onOpenCheck} /></Bot>}
       <Bot>
         <p>{t.startPrompt}</p>
         {!started && (
@@ -55,7 +60,7 @@ export default function Chat({ t, language, schemes, check, view, error, answere
           </div>
         )}
       </Bot>
-      {started && <Me>{sample ? t.trySample : t.record}</Me>}
+      {started && <Me>{recheck ? `${t.checkAgain}: ${sample ? t.trySample : t.record}` : sample ? t.trySample : t.record}</Me>}
 
       {check.kind === 'recording' && <Bot wide><Recorder t={t} onDone={onRecorded} onCancel={onCancelRecord} /></Bot>}
       {check.kind === 'uploading' && <Bot><Uploading t={t} percent={check.percent} /></Bot>}
@@ -85,13 +90,44 @@ export default function Chat({ t, language, schemes, check, view, error, answere
       {view?.status === 'done' && !stopped && (
         <>
           {view.recapture?.mode === 'close_ups' && <p className="system-note">{t.closeUpsNote}</p>}
+          {view.check_id && <p className="system-note saved">✓ {t.savedNote}</p>}
+          {view.check_id && view.recheck_of && (
+            <Bot wide><RecheckComparison key={view.check_id} t={t} language={language} checkId={view.check_id} names={names} /></Bot>
+          )}
           <Bot wide><PlanCard t={t} view={view}><Feedback key={view.id} t={t} sessionId={view.id} target="plan" /></PlanCard></Bot>
           <Bot wide><ProblemsCard t={t} view={view} language={language} /></Bot>
-          <Bot wide><FamilyCard key={view.id} t={t} view={view} language={language}
-            names={Object.fromEntries(schemes.map((s) => [s.id, s.name]))} /></Bot>
+          <Bot wide><FamilyCard key={view.id} t={t} view={view} language={language} names={names} /></Bot>
         </>
       )}
     </>
+  )
+}
+
+// A returning user: what the last check found, and its open steps (tap one to open the check there).
+function WelcomeBack({ t, language, latest, onOpenCheck }: {
+  t: Strings; language: Language; latest: CheckFull; onOpenCheck: (id: string, step: number | null) => void
+}) {
+  const open = latest.data.steps.filter((s) => !latest.steps_done[String(s.index)])
+  return (
+    <div className="welcome-back">
+      <p className="lead">{t.welcomeBack.replace('{date}', formatDate(latest.created, language))
+        .replace('{n}', String(latest.problems)).replace('{m}', String(latest.open_visits))}</p>
+      {open.length > 0 && (
+        <>
+          <p className="eyebrow">{t.stillToDo}</p>
+          <ul className="open-steps">
+            {open.slice(0, 5).map((s) => (
+              <li key={s.index}>
+                <button type="button" className="open-step" onClick={() => onOpenCheck(latest.id, s.index)}>
+                  <span className="open-step-box" aria-hidden="true" />
+                  <span>{s.office ? <strong>{s.office.text}: </strong> : null}{s.voice}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
   )
 }
 

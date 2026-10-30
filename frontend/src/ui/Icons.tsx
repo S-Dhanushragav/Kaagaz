@@ -31,6 +31,7 @@ export const ThumbUp = ({ size = 20 }: P) => svg(size, <path d="M7 10v10H4V10zM7
 export const ThumbDown = ({ size = 20 }: P) => svg(size, <path d="M7 14V4H4v10zM7 14l4 7c1.5 0 2.5-1 2.5-2.5V15h5a2 2 0 0 0 2-2.3l-1.2-7A2 2 0 0 0 17.3 4H7" />)
 export const Download = ({ size = 18 }: P) => svg(size, <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />)
 export const DocIcon = ({ size = 44 }: P) => svg(size, <><path d="M6 3h9l4 4v14H6z" /><path d="M15 3v4h4M9 12h7M9 16h7" /></>)
+export const Person = ({ size = 20 }: P) => svg(size, <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.5 3.5-7 8-7s8 2.5 8 7" /></>)
 export const Link = ({ size = 14 }: P) => svg(size, <path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6" />)
 
 // Problem types: one shape each, so they read without colour too.

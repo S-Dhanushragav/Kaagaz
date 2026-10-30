@@ -14,7 +14,13 @@ const stepKey = (id: string, i: number) => `${id}:step-${i}`
 
 // ---------- What to do: steps grouped by office visit ----------
 
-export function PlanCard({ t, view, children }: { t: Strings; view: SessionView; children?: ReactNode }) {
+// Steps of a saved check can be ticked as done (`ticks`); its audio comes from the case file (`audioFor`).
+export interface Ticks { done: Record<string, boolean>; onToggle: (step: number, done: boolean) => void; focus?: number | null }
+
+export function PlanCard({ t, view, children, audioFor, ticks }: {
+  t: Strings; view: SessionView; children?: ReactNode; audioFor?: (step: number) => string; ticks?: Ticks
+}) {
+  const urlFor = audioFor ?? ((i: number) => audioUrl(view.id, `step-${i}`))
   const { key, group } = useAudio()
   const id = view.id
   const steps = view.plan?.steps ?? []
@@ -23,7 +29,7 @@ export function PlanCard({ t, view, children }: { t: Strings; view: SessionView;
   steps.forEach((s, i) => { if (s.kind === 'fix' && s.visit) visits.set(s.visit, [...(visits.get(s.visit) ?? []), i]) })
   const groups = [...visits.entries()].sort(([a], [b]) => a - b)
   const office = steps.map((s, i) => [s, i] as const).filter(([s]) => s.kind === 'ask_at_office').map(([, i]) => i)
-  const asked = steps.filter((s) => s.kind === 'question')
+  const asked = steps.filter((s) => s.kind === 'question' && s.question)
   const order = [...groups.flatMap(([, idx]) => idx), ...office]
   const playingAll = group === `plan:${id}`
   let n = 0
@@ -34,7 +40,7 @@ export function PlanCard({ t, view, children }: { t: Strings; view: SessionView;
         <h2 id="plan-title">{t.planTitle}</h2>
         {order.length > 0 && (
           <button type="button" className={playingAll ? 'listen-all playing' : 'listen-all'} aria-pressed={playingAll}
-            onClick={() => (playingAll ? stop() : playAll(`plan:${id}`, order.map((i) => [stepKey(id, i), audioUrl(id, `step-${i}`)])))}>
+            onClick={() => (playingAll ? stop() : playAll(`plan:${id}`, order.map((i) => [stepKey(id, i), urlFor(i)])))}>
             {playingAll ? <Stop /> : <Play />}<span>{playingAll ? t.stop : t.listenAll}</span>
           </button>
         )}
@@ -50,7 +56,7 @@ export function PlanCard({ t, view, children }: { t: Strings; view: SessionView;
             </h3>
             <ol className="step-list">
               {idx.map((i) => <FixStep key={i} t={t} id={id} step={steps[i]} index={i} number={++n} display={display(i)}
-                current={key === stepKey(id, i)} />)}
+                current={key === stepKey(id, i)} url={urlFor(i)} ticks={ticks} />)}
             </ol>
           </div>
         )
@@ -60,7 +66,7 @@ export function PlanCard({ t, view, children }: { t: Strings; view: SessionView;
           <h3 className="visit-title"><span className="visit-num ask" aria-hidden="true">?</span><span>{t.askAtOffice}</span></h3>
           <ol className="step-list">
             {office.map((i) => <FixStep key={i} t={t} id={id} step={steps[i]} index={i} number={++n} display={null}
-              current={key === stepKey(id, i)} />)}
+              current={key === stepKey(id, i)} url={urlFor(i)} ticks={ticks} />)}
           </ol>
         </div>
       )}
@@ -75,9 +81,11 @@ export function PlanCard({ t, view, children }: { t: Strings; view: SessionView;
   )
 }
 
-function FixStep({ t, id, step, index, number, display, current }: {
+function FixStep({ t, id, step, index, number, display, current, url, ticks }: {
   t: Strings; id: string; step: Step; index: number; number: number; display: StepDisplay | null; current: boolean
+  url: string; ticks?: Ticks
 }) {
+  const done = !!ticks?.done[String(index)]
   const download = () => {
     const url = URL.createObjectURL(new Blob([step.declaration ?? ''], { type: 'text/plain;charset=utf-8' }))
     const a = document.createElement('a')
@@ -87,8 +95,9 @@ function FixStep({ t, id, step, index, number, display, current }: {
     URL.revokeObjectURL(url)
   }
   return (
-    <li className={current ? 'step current' : 'step'} aria-current={current ? 'step' : undefined}>
-      <span className="step-num" aria-hidden="true">{number}</span>
+    <li id={`step-${index}`} className={['step', current && 'current', done && 'done', ticks?.focus === index && 'focus'].filter(Boolean).join(' ')}
+      aria-current={current ? 'step' : undefined}>
+      <span className="step-num" aria-hidden="true">{done ? '✓' : number}</span>
       <div className="step-body">
         <p className="step-voice">{step.voice}</p>
         {display && (display.bring.length > 0 || display.fee || display.time_limit) && (
@@ -99,7 +108,13 @@ function FixStep({ t, id, step, index, number, display, current }: {
           </dl>
         )}
         <div className="step-actions">
-          <ListenButton t={t} audioKey={stepKey(id, index)} url={audioUrl(id, `step-${index}`)} label={String(number)} />
+          <ListenButton t={t} audioKey={stepKey(id, index)} url={url} label={String(number)} />
+          {ticks && (
+            <label className="tick-box">
+              <input type="checkbox" checked={done} onChange={(e) => ticks.onToggle(index, e.target.checked)} />
+              <span>{t.stepDone}</span>
+            </label>
+          )}
           {step.declaration && <button type="button" className="button slim" onClick={download}><Download />{t.downloadDeclaration}</button>}
         </div>
       </div>

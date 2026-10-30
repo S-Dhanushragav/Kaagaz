@@ -1,6 +1,7 @@
 // One audio at a time for the whole app. Any Listen button stops whatever is playing; "Listen to all" plays a
 // queue of keys in order and can be stopped at any point. Components subscribe with useAudio().
 import { useSyncExternalStore } from 'react'
+import { playableUrl } from './api'
 
 // key: what is playing now; queue: what plays after it; group: the 'Listen to all' that started it, if any
 type State = { key: string | null; queue: string[]; group: string | null }
@@ -17,7 +18,7 @@ function set(next: State): void {
 
 function start(key: string, queue: string[], group: string | null): void {
   audio?.pause()
-  const el = new Audio(urls[key])
+  const el = new Audio()
   audio = el
   const next = () => {
     if (audio !== el) return // stopped or replaced meanwhile
@@ -28,7 +29,9 @@ function start(key: string, queue: string[], group: string | null): void {
   el.onended = next
   el.onerror = next // no TTS on the server: skip rather than hang
   set({ key, queue, group })
-  void el.play().catch(next)
+  playableUrl(urls[key])  // case-file audio needs the login header: fetched first
+    .then((src) => { if (audio !== el) return; el.src = src; return el.play() })
+    .catch(next)
 }
 
 export function play(key: string, url: string): void {

@@ -1,6 +1,7 @@
-import type { CatalogScheme } from '../api'
+import type { CatalogScheme, CheckSummary, Language, UserView } from '../api'
 import type { Strings } from '../i18n'
 import { Close, Logo, Plus } from './Icons'
+import { formatDateTime } from '../casefile'
 
 export function Wordmark({ t }: { t: Strings }) {
   return (
@@ -11,8 +12,11 @@ export function Wordmark({ t }: { t: Strings }) {
   )
 }
 
-export default function Sidebar({ t, schemes, onNewCheck, onOpenScheme, onClose }: {
-  t: Strings; schemes: CatalogScheme[]; onNewCheck: () => void; onOpenScheme: (id: string) => void; onClose?: () => void
+export default function Sidebar({ t, language, schemes, onNewCheck, onOpenScheme, onClose, user, checks, openCheck,
+  onOpenCheck, onLogin }: {
+  t: Strings; language: Language; schemes: CatalogScheme[]; onNewCheck: () => void; onOpenScheme: (id: string) => void
+  onClose?: () => void; user: UserView | null; checks: CheckSummary[]; openCheck: string | null
+  onOpenCheck: (id: string) => void; onLogin: () => void
 }) {
   return (
     <nav className="sidebar" aria-label={t.menu}>
@@ -25,8 +29,29 @@ export default function Sidebar({ t, schemes, onNewCheck, onOpenScheme, onClose 
 
       <section className="sidebar-section">
         <h2 className="eyebrow">{t.yourChecks}</h2>
-        {/* Phase 9 fills this from the login-based history API. */}
-        <p className="sidebar-empty">{t.checksEmpty}</p>
+        {!user ? (
+          <>
+            <p className="sidebar-empty">{t.checksEmpty}</p>
+            <button type="button" className="button side-login" onClick={onLogin}>{t.logIn}</button>
+          </>
+        ) : checks.length === 0 ? <p className="sidebar-empty">{t.checksNone}</p> : (
+          <ul className="check-list">
+            {checks.map((c) => {
+              const head = c.head && (language === 'en' ? c.head.name_en ?? c.head.name_mr : c.head.name_mr ?? c.head.name_en)
+              return (
+                <li key={c.id}>
+                  <button type="button" className={c.id === openCheck ? 'check-link on' : 'check-link'} aria-current={c.id === openCheck}
+                    onClick={() => onOpenCheck(c.id)}>
+                    <span className="check-date">{formatDateTime(c.created, language)}</span>
+                    {head && <span className="check-head">{head}</span>}
+                    <span className={c.open_steps ? 'check-open' : 'check-open done'}>
+                      {c.open_steps ? (c.open_steps === 1 ? t.openStep : t.openSteps.replace('{n}', String(c.open_steps))) : `✓ ${t.allDone}`}</span>
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        )}
       </section>
 
       <section className="sidebar-section">
