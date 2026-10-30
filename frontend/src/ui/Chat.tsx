@@ -34,11 +34,12 @@ export function Me({ children }: { children: ReactNode }) {
 }
 
 export default function Chat({ t, language, schemes, check, view, error, answered, voice, onRecord, onSample, onRecorded,
-  onCancelRecord, onAnswered, onReplanned, onNewCheck, latest, recheck, onOpenCheck }: {
+  onCancelRecord, onAnswered, onReplanned, onNewCheck, latest, recheck, onOpenCheck, loggedIn, onSaveCheck }: {
   t: Strings; language: Language; schemes: CatalogScheme[]; check: Check; view: SessionView | null; error: string | null; answered: Answered[]
   voice: Voice; onRecord: () => void; onSample: () => void; onRecorded: (b: Blob) => void; onCancelRecord: () => void
   onAnswered: (label: string) => void; onReplanned: () => void; onNewCheck: () => void
   latest: CheckFull | null; recheck: boolean; onOpenCheck: (id: string, step: number | null) => void
+  loggedIn: boolean; onSaveCheck: (sessionId: string) => void
 }) {
   const names = Object.fromEntries(schemes.map((s) => [s.id, s.name]))
   const started = check.kind !== 'idle'
@@ -97,6 +98,14 @@ export default function Chat({ t, language, schemes, check, view, error, answere
           <Bot wide><PlanCard t={t} view={view}><Feedback key={view.id} t={t} sessionId={view.id} target="plan" /></PlanCard></Bot>
           <Bot wide><ProblemsCard t={t} view={view} language={language} /></Bot>
           <Bot wide><FamilyCard key={view.id} t={t} view={view} language={language} names={names} /></Bot>
+          {!loggedIn && view.household && (
+            <Bot>
+              <div className="save-card">
+                <p>{t.saveCheck}</p>
+                <button type="button" className="button primary" onClick={() => onSaveCheck(view.id)}>{t.saveCheckButton}</button>
+              </div>
+            </Bot>
+          )}
         </>
       )}
     </>
@@ -110,7 +119,7 @@ function WelcomeBack({ t, language, latest, onOpenCheck }: {
   const open = latest.data.steps.filter((s) => !latest.steps_done[String(s.index)])
   return (
     <div className="welcome-back">
-      <p className="lead">{t.welcomeBack.replace('{date}', formatDate(latest.created, language))
+      <p className="lead">{(latest.open_visits === 1 ? t.welcomeBackOne : t.welcomeBack).replace('{date}', formatDate(latest.created, language))
         .replace('{n}', String(latest.problems)).replace('{m}', String(latest.open_visits))}</p>
       {open.length > 0 && (
         <>

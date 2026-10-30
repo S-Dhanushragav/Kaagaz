@@ -354,3 +354,8 @@ export async function playableUrl(url: string): Promise<string> {
   blobs.set(url, blobUrl)
   return blobUrl
 }
+
+// After logging in from the "Save this check" card: keep that guest check (while the session is still in memory).
+export async function claimSession(sessionId: string): Promise<{ check_id: string | null }> {
+  return json(await fetch(`${API_URL}/sessions/${sessionId}/claim`, { method: 'POST', headers: headers() }))
+}

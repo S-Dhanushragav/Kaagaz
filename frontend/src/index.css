@@ -362,6 +362,12 @@ details summary { cursor: pointer; min-height: 44px; padding: 8px 0; font-weight
 .login-card .specimen-note { margin-top: 16px; }
 .flash { margin: 0; padding: 10px 16px; background: var(--ok-tint); color: var(--ok); font-weight: 650; text-align: center; }
 
+.login-overlay { position: fixed; inset: 0; z-index: 70; overflow-y: auto; background: var(--paper); }
+.save-card { display: flex; flex-direction: column; gap: 10px; }
+.save-card p { margin: 0; font-weight: 600; }
+.save-card .button { align-self: flex-start; }
+.conversation-inner > .flash { border-radius: 12px; }
+
 /* ---------- account ---------- */
 .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .topbar-right .langmenu { margin-left: 0; }

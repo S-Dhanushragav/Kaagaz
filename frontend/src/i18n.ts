@@ -156,6 +156,9 @@ const en = {
   schemeChanges: "Scheme changes",
   changedTo: "{scheme}: now {outcome}",
   noChanges: "Nothing has changed yet.",
+  saveCheck: "Save this check so you can come back to it? Log in with your phone.",
+  saveCheckButton: "Log in and save",
+  welcomeBackOne: "Welcome back. On {date} we found {n} problems; 1 office visit is still open.",
 }
 
 type Strings = typeof en
@@ -314,6 +317,9 @@ const hi: Strings = {
   schemeChanges: "योजनाओं में बदलाव",
   changedTo: "{scheme}: अब {outcome}",
   noChanges: "अभी कुछ नहीं बदला।",
+  saveCheck: "यह जाँच सहेजें ताकि आप इस पर वापस आ सकें? अपने फ़ोन से लॉग इन करें।",
+  saveCheckButton: "लॉग इन करके सहेजें",
+  welcomeBackOne: "फिर से स्वागत है। {date} को हमें {n} समस्याएँ मिली थीं; अभी बाकी कार्यालय जाना: 1।",
 }
 
 const mr: Strings = {
@@ -470,6 +476,9 @@ const mr: Strings = {
   schemeChanges: "योजनांमधील बदल",
   changedTo: "{scheme}: आता {outcome}",
   noChanges: "अजून काहीही बदललेले नाही.",
+  saveCheck: "ही तपासणी जतन करायची, म्हणजे तुम्ही ती पुन्हा पाहू शकाल? तुमच्या फोनने लॉग इन करा.",
+  saveCheckButton: "लॉग इन करून जतन करा",
+  welcomeBackOne: "पुन्हा स्वागत. {date} रोजी आम्हाला {n} अडचणी आढळल्या; अजून बाकी कार्यालय भेटी: 1.",
 }
 
 export const STRINGS: Record<Language, Strings> = { en, hi, mr }

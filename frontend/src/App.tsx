@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import {
-  ApiError, getMe, getSchemes, getSession, hasToken, myCheck, myChecks, setMyLanguage, setToken, startSample, startUpload,
+  ApiError, claimSession, getMe, getSchemes, getSession, hasToken, myCheck, myChecks, setMyLanguage, setToken, startSample, startUpload,
   tickStep, type CatalogScheme, type CheckFull, type CheckSummary, type Language, type SessionView, type UserView,
 } from './api'
 import { stop } from './audio'
@@ -60,9 +60,10 @@ type Center = { kind: 'live' } | { kind: 'past'; check: CheckFull; focus: number
 export default function App() {
   const [language, setLanguage] = useState<Language>(() => (localStorage.getItem('kaagaz.lang') as Language) || 'mr')
   const [user, setUser] = useState<UserView | null>(null)
-  const [authChecked, setAuthChecked] = useState(!hasToken()) // with a saved token: wait for /me before showing login
-  const [guest, setGuest] = useState(() => localStorage.getItem('kaagaz.guest') === '1')
-  const [loginNote, setLoginNote] = useState<string | null>(null)
+  const [authChecked, setAuthChecked] = useState(!hasToken()) // with a saved token: wait for /me (no guest flash)
+  // Login is never the front door: it opens over the chat from "Log in" or the "Save this check" card.
+  const [login, setLogin] = useState<{ claim: string | null } | null>(null)
+  const [flash, setFlash] = useState<string | null>(null)
   const [checks, setChecks] = useState<CheckSummary[]>([])
   const [latest, setLatest] = useState<CheckFull | null>(null)
   const [center, setCenter] = useState<Center>({ kind: 'live' })
@@ -205,23 +206,28 @@ export default function App() {
     setUser(null)
     setChecks([])
     setLatest(null)
-    setGuest(false)
-    localStorage.removeItem('kaagaz.guest')
-    setLoginNote(note)
+    setFlash(note)
     newCheck()
   }
 
-  if (!authChecked) return null
-  if (!user && !guest) {
-    return (
-      <>
-        {loginNote && <p className="flash" role="status">{loginNote}</p>}
-        <Login t={t} language={language} setLanguage={setLanguage}
-          onLoggedIn={(token, u) => { setToken(token); setUser(u); setLoginNote(null); void loadChecks() }}
-          onGuest={() => { localStorage.setItem('kaagaz.guest', '1'); setGuest(true); setLoginNote(null) }} />
-      </>
-    )
+  const loggedIn = async (token: string, u: UserView) => {
+    setToken(token)
+    setUser(u)
+    setFlash(null)
+    const claim = login?.claim ?? null
+    setLogin(null)
+    if (claim) {
+      try {
+        await claimSession(claim)  // the guest check this login was for
+        refresh()  // the session view now carries the saved check id
+      } catch (e) {
+        setStartError(e instanceof Error ? e.message : String(e))
+      }
+    }
+    void loadChecks()
   }
+
+  if (!authChecked) return null
 
   const busy = check.kind === 'recording' || check.kind === 'uploading' || view?.status === 'running' || view?.status === 'waiting'
   const scheme = schemes.find((s) => s.id === openScheme)
@@ -234,7 +240,7 @@ export default function App() {
         <Sidebar t={t} language={language} schemes={schemes} onNewCheck={newCheck}
           onOpenScheme={(id) => { setOpenScheme(id); setDrawer(false) }} onClose={() => setDrawer(false)}
           user={user} checks={checks} openCheck={center.kind === 'past' ? center.check.id : null}
-          onOpenCheck={(id) => void openCheck(id)} onLogin={() => { setGuest(false); localStorage.removeItem('kaagaz.guest') }} />
+          onOpenCheck={(id) => void openCheck(id)} onLogin={() => { setDrawer(false); setLogin({ claim: null }) }} />
       </aside>
       {drawer && <div className="scrim" onClick={() => setDrawer(false)} aria-hidden="true" />}
 
@@ -248,7 +254,7 @@ export default function App() {
               <AccountMenu t={t} user={user} language={language} onLanguage={changeLanguage}
                 onLogout={() => signedOut(null)} onDeleted={() => signedOut(t.deletedNote)} />
             ) : (
-              <button type="button" className="account-button" onClick={() => { setGuest(false); localStorage.removeItem('kaagaz.guest') }}>
+              <button type="button" className="account-button" onClick={() => setLogin({ claim: null })}>
                 <Person /><span>{t.logIn}</span>
               </button>
             )}
@@ -257,6 +263,7 @@ export default function App() {
 
         <div className="conversation" ref={scroller}>
           <div className="conversation-inner">
+            {flash && <p className="flash" role="status">{flash}</p>}
             {center.kind === 'past' ? (
               <PastCheck t={t} language={language} check={center.check} schemes={schemes} focus={center.focus}
                 onTick={(s, d) => void onTick(s, d)} onCheckAgain={checkAgain} />
@@ -266,7 +273,8 @@ export default function App() {
                 onRecorded={onRecorded} onCancelRecord={() => setCheck({ kind: 'idle' })} onAnswered={onAnswered}
                 onReplanned={refresh} onNewCheck={newCheck} recheck={recheckOf !== null}
                 latest={user && latest && latest.id === checks[0]?.id ? latest : null /* never an older check while the newest loads */}
-                onOpenCheck={(id, step) => void openCheck(id, step)} />
+                onOpenCheck={(id, step) => void openCheck(id, step)} loggedIn={user !== null}
+                onSaveCheck={(id) => setLogin({ claim: id })} />
             )}
           </div>
         </div>
@@ -300,6 +308,12 @@ export default function App() {
       {sheet && <div className="scrim sheet-scrim" onClick={() => setSheet(false)} aria-hidden="true" />}
 
       {scheme && <SchemeCard key={scheme.id} t={t} scheme={scheme} onClose={() => setOpenScheme(null)} />}
+      {login && (
+        <div className="login-overlay">
+          <Login t={t} language={language} setLanguage={changeLanguage} onLoggedIn={(token, u) => void loggedIn(token, u)}
+            onGuest={() => setLogin(null)} />
+        </div>
+      )}
     </div>
   )
 }
