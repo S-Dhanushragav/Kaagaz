@@ -154,8 +154,8 @@ def crop(request: Request, session_id: str, document_id: str) -> Response:
 
 
 @router.post("/feedback", status_code=204)
-def feedback(body: Feedback) -> Response:
-    record(body)
+def feedback(request: Request, body: Feedback) -> Response:
+    record(body, request.app.state.store)
     return Response(status_code=204)
 
 

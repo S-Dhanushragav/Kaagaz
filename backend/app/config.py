@@ -80,7 +80,13 @@ class Settings(BaseSettings):
     sample_video: str = "synthetic/videos/HH009/sweep.mp4"  # relative to the repo root
     cors_origins: str = "http://localhost:5173"  # comma-separated; the deployed frontend's origin only
     sessions_dir: Path = Path("tmp/sessions")
-    feedback_path: Path = Path("var/feedback.jsonl")  # anonymous thumbs up/down (Phase 9 moves it to the database)
+
+    # Case files and login (Phase 9). Secrets come from .env / the Modal secret, never from code.
+    database_url: SecretStr = SecretStr("")  # Neon pooled URL; empty: an in-memory store (nothing survives a restart)
+    phone_hash_key: SecretStr = SecretStr("")  # HMAC key for phone numbers
+    token_signing_key: SecretStr = SecretStr("")  # HMAC key for login tokens
+    auth_mode: Literal["demo", "sms"] = "demo"  # demo: the code is shown in the app, no SMS is sent
+    check_retention_days: int = Field(365, gt=0)  # stored checks older than this are deleted
 
     # Speech output (clients/tts.py): Meta MMS-TTS, CC-BY-NC 4.0, run locally on CPU
     tts_model_en: str = ""

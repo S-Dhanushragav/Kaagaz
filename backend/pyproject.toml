@@ -17,6 +17,7 @@ dependencies = [
     "PyYAML",  # scheme rules in data/schemes/
     "langgraph",  # pipeline graph; ask_family as an interrupt (graph/build.py)
     "python-multipart",  # FastAPI form uploads (video, answer audio)
+    "psycopg[binary]>=3.2",  # case files on Postgres (Neon); storage/postgres.py
 ]
 
 [project.optional-dependencies]
@@ -38,4 +39,6 @@ include = ["app*", "agents*", "clients*", "graph*", "matching*", "rules*", "sche
 
 [tool.pytest.ini_options]
 pythonpath = [".", ".."]  # ".." makes the repo-root synthetic/ package importable in tests
+markers = ["live_db: talks to the real database (DATABASE_URL); run with `pytest -m live_db`"]
+addopts = "-m 'not live_db'"  # tests stay offline by default
 testpaths = ["tests"]

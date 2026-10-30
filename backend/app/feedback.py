@@ -1,21 +1,14 @@
-"""Feedback on the plan and on answers: thumbs up/down and an optional comment, stored anonymously.
-
-One JSON line per entry in `feedback_path` (Phase 9 moves this to the database). Nothing identifying is kept:
-no IP address, no user agent, no names; only the session id (random, deleted with the session's data after an
-hour), what the feedback is about, the value, the comment and the date.
+"""Feedback on the plan and on answers: thumbs up/down and an optional comment, stored anonymously in the case-file
+store (the `feedback` table). Nothing identifying is kept: no IP address, no user agent, no user, no names; only the
+session id (random), what the feedback is about, the value, the comment and the date.
 """
 
-import json
-import threading
-from datetime import date
-from pathlib import Path
 from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from app.config import REPO_ROOT, get_settings
-
-_LOCK = threading.Lock()
+from storage.models import FeedbackEntry
+from storage.store import Store
 
 
 class Feedback(BaseModel):
@@ -25,15 +18,6 @@ class Feedback(BaseModel):
     comment: str | None = Field(None, max_length=500)
 
 
-def feedback_path() -> Path:
-    p = get_settings().feedback_path
-    return p if p.is_absolute() else REPO_ROOT / p
-
-
-def record(entry: Feedback, path: Path | None = None) -> None:
-    path = path or feedback_path()
-    line = {**entry.model_dump(), "comment": (entry.comment or "").strip() or None, "date": date.today().isoformat()}
-    with _LOCK:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        with path.open("a", encoding="utf-8") as f:
-            f.write(json.dumps(line, ensure_ascii=False) + "\n")
+def record(entry: Feedback, store: Store) -> None:
+    store.add_feedback(FeedbackEntry(session_id=entry.session_id, target=entry.target, value=entry.value,
+                                     comment=(entry.comment or "").strip() or None))

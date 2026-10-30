@@ -1,5 +1,7 @@
 import logging
 import threading
+import time
+from datetime import datetime, timedelta, timezone
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -8,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import router
 from app.config import get_settings
 from app.sessions import SessionManager
+from storage import make_store
 
 
 def _preload_tts() -> None:
@@ -23,11 +26,26 @@ def _preload_tts() -> None:
             logging.getLogger(__name__).warning("TTS preload failed for %s: %s", language, e)
 
 
+def _purge_loop(store, every_s: int = 6 * 3600) -> None:
+    """Delete stored checks older than the retention limit, at start-up and then every few hours."""
+    while True:
+        try:
+            cutoff = datetime.now(timezone.utc) - timedelta(days=get_settings().check_retention_days)
+            store.purge_checks(cutoff)
+        except Exception:  # noqa: BLE001
+            logging.getLogger(__name__).exception("retention purge failed")
+        time.sleep(every_s)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if not hasattr(app.state, "sessions"):  # tests set their own
+    if not hasattr(app.state, "store"):  # tests set their own
+        app.state.store = make_store(get_settings().database_url.get_secret_value())
+        app.state.store.init()
+    if not hasattr(app.state, "sessions"):
         app.state.sessions = SessionManager()
     app.state.sessions.start_cleanup_loop()
+    threading.Thread(target=_purge_loop, args=(app.state.store,), daemon=True, name="retention").start()
     threading.Thread(target=_preload_tts, daemon=True, name="tts-preload").start()
     yield
 
