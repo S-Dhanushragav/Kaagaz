@@ -172,3 +172,22 @@ def test_claim_route_needs_a_login(setup, monkeypatch) -> None:
     assert client.post(f"/sessions/{guest}/claim", json={"guest_secret": "wrong"}, headers=h).status_code == 403
     saved = client.post(f"/sessions/{guest}/claim", json={"guest_secret": secret}, headers=h).json()
     assert saved["check_id"] == store.list_checks(user_id)[0].id
+
+
+def test_could_not_read_names_whose_document_it_is() -> None:
+    view = {
+        "household": {
+            "members": [{"member_id": "r2", "name_en": "Savita Aditya Bhosale", "name_mr": "सविता आदित्य भोसले",
+                         "on_ration_card": True, "documents": {"identity_card": ["d2"]}}],
+            "documents": {"d2": {"doc_type": "identity_card"}, "d5": {"doc_type": "identity_card"},
+                          "d9": {"doc_type": "caste_certificate"}},
+            "issues": [{"type": "unreadable", "severity": "blocker", "documents": ["d2", "d5", "d9"]}]},
+        "extractions": [{"document_id": "d5", "fields": {"name_en": "Aditya Yogesh Bhosale", "name_mr": None}},
+                        {"document_id": "d9", "fields": None}],
+    }
+    unread = [p for p in check_data(view).problems if p.type == "unreadable"]
+    assert [(p.member_id, p.member_name, p.document_types) for p in unread] == [
+        ("r2", "Savita Aditya Bhosale", ["identity_card"]),  # linked to the member
+        (None, "Aditya Yogesh Bhosale", ["identity_card"]),  # the name read on it
+        (None, None, ["caste_certificate"]),  # nobody known: the document only
+    ]

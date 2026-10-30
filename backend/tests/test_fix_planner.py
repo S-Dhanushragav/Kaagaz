@@ -313,7 +313,8 @@ def test_fallback_for_an_uncovered_combination_says_ask_at_the_office() -> None:
                          values={"cc": "01/01/1990", "cc2": "02/01/1990"}, detail="dates differ")
     steps = fallback_steps([issue])
     assert [s.kind for s in steps] == ["question", "ask_at_office"]
-    assert "ask at the office" in steps[-1].voice and steps[-1].office is None and not steps[-1].bring
+    assert "date of birth" in steps[-1].voice and "Ask the office what to do" in steps[-1].voice
+    assert steps[-1].office is None and not steps[-1].bring
 
 
 def test_declaration_alone_does_not_cover_a_mismatch() -> None:

@@ -23,6 +23,20 @@ def _fact(shown: dict[str, Any] | None) -> StoredFact | None:
     return StoredFact(text=_t(shown["text"]) or "", verified=bool(shown.get("verified"))) if shown else None
 
 
+def document_owner(view: dict[str, Any], doc_id: str) -> tuple[str | None, str | None, str | None]:
+    """Whose document this is (member id, English name, Marathi name), as the close-up card names it: the household
+    member it was linked to, else the name read on it (a ration card: its head of family)."""
+    hh = view.get("household") or {}
+    doc_type = ((hh.get("documents") or {}).get(doc_id) or {}).get("doc_type")
+    if doc_type != "ration_card":  # a ration card belongs to the whole family
+        for m in hh.get("members", []):
+            if any(doc_id in ids for ids in (m.get("documents") or {}).values()):
+                return m["member_id"], m.get("name_en"), m.get("name_mr")
+    ex = next((e for e in view.get("extractions") or [] if e.get("document_id") == doc_id), None)
+    f = (ex or {}).get("fields") or {}
+    return None, f.get("name_en") or f.get("head_name_en"), f.get("name_mr") or f.get("head_name_mr")
+
+
 def worth_keeping(view: dict[str, Any]) -> bool:
     """A finished run with results (not stopped for a new sweep). The caller knows the run has finished."""
     return bool(view.get("household")) and (view.get("recapture") or {}).get("mode") not in STOP_MODES
@@ -49,9 +63,11 @@ def check_data(view: dict[str, Any]) -> CheckData:
     problems += [problem(i, True) for i in view.get("waiting") or []]
     for i in hh.get("issues", []):
         if i.get("type") == "unreadable" and i.get("severity") != "info":
-            problems.append(StoredProblem(type="unreadable", member_id=None, member_name=None, member_name_mr=None,
-                                          document_types=sorted({doc_types.get(d) for d in i.get("documents", [])
-                                                                 if doc_types.get(d)}), waiting=False))
+            for d in i.get("documents", []):  # one line per document, each naming whose it is when we know
+                member_id, en, mr = document_owner(view, d)
+                problems.append(StoredProblem(type="unreadable", member_id=member_id, member_name=_t(en),
+                                              member_name_mr=_t(mr), document_types=[t for t in [doc_types.get(d)] if t],
+                                              waiting=False))
 
     outcomes = [StoredOutcome(member_id=r["member_id"], scheme_id=r["scheme_id"], outcome=r["outcome"],
                               reasons=[_t(x) or "" for x in (r.get("display") or {}).get("reasons", r.get("reasons", []))],

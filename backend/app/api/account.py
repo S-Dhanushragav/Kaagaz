@@ -1,5 +1,6 @@
 """Login and the family's case file (Phase 9).
 
+GET  /auth/config                          {mode}: 'demo' (no SMS; the code is shown) or 'sms'
 POST /auth/start   {phone}               a one-time code (demo mode: returned in the reply; sms mode: sent by SMS)
 POST /auth/verify  {phone, code, language} -> {token, user}; send the token as `Authorization: Bearer <token>`
 GET  /me                                   the logged-in user (phone shown only as its last 4 digits)
@@ -99,6 +100,12 @@ class VerifyRequest(BaseModel):
     phone: str = Field(max_length=32)
     code: str = Field(max_length=12)
     language: Language = "mr"
+
+
+@router.get("/auth/config")
+def auth_config(request: Request) -> dict[str, Any]:
+    """What the login screen should say: in demo mode no SMS is sent and the code is shown on screen."""
+    return {"mode": auth(request).mode}
 
 
 @router.post("/auth/start")

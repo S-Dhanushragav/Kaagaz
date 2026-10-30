@@ -39,7 +39,14 @@ procedures:
   caste_certificate_new: "{member}: जातीच्या दाखल्यासाठी {office} यांच्याकडे अर्ज करा. हे काम सर्वात आधी सुरू करा; याला सर्वात जास्त वेळ लागतो. {caution}"
   aadhaar_enrolment: "{member}: नवीन आधार नोंदणीसाठी {office} येथे जा."
   self_declaration: "{member}: {documents}: यांवरील नावे एकाच व्यक्तीची आहेत असे लेखी प्रतिज्ञापत्रही देऊ शकता. {caution}"
-ask_at_office: "{member}: {documents}: याबाबत काय करायचे ते कार्यालयात विचारा."
+ask_at_office:  # MACHINE-DRAFTED (added after the native-speaker review). One per problem type.
+  # {documents} stays a label ("नाव: कागदपत्र: ..."): Marathi would inflect it before a postposition.
+  name_mismatch: "{member}: {documents}: यावरील नावाची स्पेलिंग त्यांच्या इतर कागदपत्रांपेक्षा वेगळी आहे. काय करायचे ते कार्यालयात विचारा."
+  dob_mismatch: "{member}: {documents}: यावरील जन्मतारीख त्यांच्या इतर कागदपत्रांपेक्षा वेगळी आहे. काय करायचे ते कार्यालयात विचारा."
+  not_on_ration_card: "{member}: {documents}: यावर नाव नाही. काय करायचे ते कार्यालयात विचारा."
+  missing_document: "{member}: {documents}: हे कागदपत्र मिळाले नाही. काय करायचे ते कार्यालयात विचारा."
+  expired: "{member}: {documents}: हा दाखला जुना असू शकतो. काय करायचे ते कार्यालयात विचारा."
+  default: "{member}: {documents}: याबाबत काय करायचे ते कार्यालयात विचारा."
 questions:
   which_is_correct: "{member}: {documents}: यापैकी बरोबर कोणते?"
   compare: "{member}: {documents}: कृपया तपासा. हे सारखे आहे की वेगळे?"

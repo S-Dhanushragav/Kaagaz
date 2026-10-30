@@ -203,3 +203,12 @@ def test_login_requests_log_a_masked_ip_and_no_phone(monkeypatch, caplog) -> Non
     logged = " ".join(r.getMessage() for r in caplog.records)
     assert "203.0.113.x" in logged and "2 X-Forwarded-For entries" in logged
     assert "203.0.113.77" not in logged and "10.1.2.3" not in logged and "43210" not in logged
+
+
+def test_the_login_screen_can_ask_for_the_mode(monkeypatch) -> None:
+    from app.main import app
+
+    for mode in ("demo", "sms"):
+        auth, _, _ = _auth(mode=mode)
+        monkeypatch.setattr(app.state, "auth", auth, raising=False)
+        assert TestClient(app).get("/auth/config").json() == {"mode": mode}

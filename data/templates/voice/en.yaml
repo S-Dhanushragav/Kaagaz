@@ -25,7 +25,13 @@ procedures:
   caste_certificate_new: "{member}: apply to the {office} for a caste certificate. Start this first; it takes the longest. {caution}"
   aadhaar_enrolment: "{member}: go to the {office} to enrol for an Aadhaar card."
   self_declaration: "{member}: {documents}: you can also give a written declaration that the names on these belong to the same person. {caution}"
-ask_at_office: "{member}: {documents}: ask at the office what to do about this."
+ask_at_office:  # one per problem type: says what the problem is; no procedure, office or fee (not verified)
+  name_mismatch: "The name on {member}'s {documents} is spelled differently from their other documents. Ask the office what to do."
+  dob_mismatch: "The date of birth on {member}'s {documents} differs from their other documents. Ask the office what to do."
+  not_on_ration_card: "{member} is not on the {documents}. Ask the office what to do."
+  missing_document: "No {documents} was found for {member}. Ask the office what to do."
+  expired: "{member}'s {documents} may be too old. Ask the office what to do."
+  default: "{member}: {documents}: ask the office what to do about this."
 questions:
   which_is_correct: "{member}: {documents}: which one is correct?"
   compare: "{member}: {documents}: please compare them. Are they the same or different?"

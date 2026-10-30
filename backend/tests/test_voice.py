@@ -10,6 +10,7 @@ import pytest
 
 from agents.fix_planner import finalize, planner_issues
 from agents.tools import load_fixes
+from agents.fix_planner import PLANNED_TYPES
 from agents.voice import (LANGUAGES, OFFICE_REFERRALS, PLACEHOLDERS, documents_with_values, load_voice, member_text,
                           question_text, step_voice)
 from graph.nodes.build_household import build_household
@@ -28,7 +29,8 @@ def _placeholders(template: str) -> set[str]:
 
 def _all_templates(language: str) -> dict[str, str]:
     t = load_voice(language)
-    return {**{f"procedures.{k}": v for k, v in t.procedures.items()}, "ask_at_office": t.ask_at_office,
+    return {**{f"procedures.{k}": v for k, v in t.procedures.items()},
+            **{f"ask_at_office.{k}": v for k, v in t.ask_at_office.items()},
             **{f"questions.{k}": v for k, v in t.questions.items()}, "law_sets": t.law_sets}
 
 
@@ -50,7 +52,8 @@ ISSUE = PlannerIssue(id="i1", type="name_mismatch", severity="blocker", member_i
 def test_every_procedure_question_and_document_has_a_template(language: str) -> None:
     t = load_voice(language)
     assert set(t.procedures) == set(FIXES)
-    assert set(t.questions) == {"which_is_correct", "compare"} and t.ask_at_office
+    assert set(t.questions) == {"which_is_correct", "compare"}
+    assert set(t.ask_at_office) == set(PLANNED_TYPES) | {"default"}
     assert set(t.documents) == set(DOC_TYPES) and set(t.options) == {"same", "different", "not sure"}
 
 
@@ -116,8 +119,11 @@ def test_office_referral_cautions_exist_in_the_knowledge_base() -> None:
 @pytest.mark.parametrize("language", LANGUAGES)
 def test_document_names_are_only_ever_a_label(language: str) -> None:
     """'{documents}' is followed by ':' (a label) or is a stand-alone list in a question (after ':' or '?'):
-    it never needs an inflected form."""
+    it never needs an inflected form. Exception: the ask-at-the-office sentences in English (no inflection) and Hindi
+    (the four document names are masculine and keep their form before पर / का)."""
     for name, template in _all_templates(language).items():
+        if name.startswith("ask_at_office.") and language in ("en", "hi"):
+            continue
         for m in re.finditer(r"\{documents\}", template):
             after, before = template[m.end():m.end() + 1], template[:m.start()].rstrip()
             assert after == ":" or (name.startswith("questions.") and before.endswith((":", "?"))), (name, template)
@@ -190,3 +196,16 @@ def test_person_labels_never_call_an_unknown_person_your_family(language: str) -
     assert member_text(unnamed.model_copy(update={"member_id": None}), language) == t.household  # household-level
     named = ISSUE.model_copy(update={"member_id": "x1"})
     assert member_text(named, language) == ("Sunil Ramesh Patil" if language == "en" else "सुनील रमेश पाटील")
+
+
+def test_ask_at_the_office_says_what_the_problem_is() -> None:
+    lata = PlannerIssue(id="i9", type="name_mismatch", severity="blocker", member_id="r3", member_name="Lata Aditya Bhosale",
+                        member_name_mr="लता आदित्य भोसले", documents={"cc": "caste_certificate"}, values={}, detail="")
+    step = FixStep(kind="ask_at_office", issue_ids=["i9"], member_id="r3")
+    assert step_voice(step, {"i9": lata}, {}, "en") == ("The name on Lata Aditya Bhosale's caste certificate is spelled "
+                                                        "differently from their other documents. Ask the office what to do.")
+    assert step_voice(step, {"i9": lata}, {}, "mr").startswith("लता आदित्य भोसले: जातीचा दाखला: यावरील नावाची स्पेलिंग")
+    assert "जाति प्रमाण पत्र" in step_voice(step, {"i9": lata}, {}, "hi")
+    missing = lata.model_copy(update={"type": "missing_document", "documents": {}, "document_type": "caste_certificate"})
+    assert step_voice(step, {"i9": missing}, {}, "en") == ("No caste certificate was found for Lata Aditya Bhosale. "
+                                                           "Ask the office what to do.")

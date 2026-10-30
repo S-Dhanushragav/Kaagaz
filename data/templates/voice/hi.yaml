@@ -39,7 +39,13 @@ procedures:
   caste_certificate_new: "{member}: जाति प्रमाण पत्र के लिए {office} को आवेदन दें। यह काम सबसे पहले शुरू करें; इसमें सबसे ज़्यादा समय लगता है। {caution}"
   aadhaar_enrolment: "{member}: नए आधार नामांकन के लिए {office} जाएँ।"
   self_declaration: "{member}: {documents}: आप यह लिखित घोषणा-पत्र भी दे सकते हैं कि इन पर लिखे नाम एक ही व्यक्ति के हैं। {caution}"
-ask_at_office: "{member}: {documents}: इस बारे में क्या करना है, यह कार्यालय में पूछें।"
+ask_at_office:  # MACHINE-DRAFTED. One per problem type: says what the problem is; no procedure, office or fee
+  name_mismatch: "{member} के {documents} पर नाम की स्पेलिंग उनके दूसरे दस्तावेज़ों से अलग है। क्या करना है, यह कार्यालय में पूछें।"
+  dob_mismatch: "{member} के {documents} पर जन्म तिथि उनके दूसरे दस्तावेज़ों से अलग है। क्या करना है, यह कार्यालय में पूछें।"
+  not_on_ration_card: "{member} का नाम {documents} पर नहीं है। क्या करना है, यह कार्यालय में पूछें।"
+  missing_document: "{member} का {documents} नहीं मिला। क्या करना है, यह कार्यालय में पूछें।"
+  expired: "{member} का {documents} पुराना हो सकता है। क्या करना है, यह कार्यालय में पूछें।"
+  default: "{member}: {documents}: इस बारे में क्या करना है, यह कार्यालय में पूछें।"
 questions:
   which_is_correct: "{member}: {documents}: इनमें से सही कौन सा है?"
   compare: "{member}: {documents}: कृपया मिलाकर देखें। क्या ये एक जैसे हैं या अलग?"

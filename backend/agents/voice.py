@@ -71,7 +71,7 @@ class VoiceTemplates(BaseModel):
     options: dict[str, str]  # same / different / not sure
     law_sets: str  # the only way a time limit is said; contains {time_limit}
     procedures: dict[str, str]
-    ask_at_office: str
+    ask_at_office: dict[str, str]  # problem type (or 'default') -> sentence naming the problem
     questions: dict[str, str]  # which_is_correct, compare
 
 
@@ -178,7 +178,8 @@ def step_voice(step: FixStep, issues: dict[str, PlannerIssue], answers: dict[str
         return question_text(issue, step.question_kind, language)
     if step.kind == "ask_at_office":
         docs = concerned_documents(issue, answers.get(issue.id)) if issue else []
-        return t.ask_at_office.format(member=member, documents=document_names(docs, language))
+        template = t.ask_at_office.get(issue.type if issue else "", t.ask_at_office["default"])
+        return template.format(member=member, documents=document_names(docs, language))
     p = load_fixes()[step.procedure_id]
     template = t.procedures[p.id]
     bring = [f for f in p.bring if f.value in step.bring]
