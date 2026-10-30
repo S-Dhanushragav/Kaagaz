@@ -1,4 +1,4 @@
-# Voice sentence templates (Marathi). MACHINE-DRAFTED: needs review by a native speaker.
+# Voice sentence templates (Marathi). Reviewed by a native speaker.
 # Placeholders: {office} {bring} {fee} {time_limit} {caution} {member} {documents}.
 language: mr
 documents:

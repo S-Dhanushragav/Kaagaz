@@ -31,7 +31,7 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 
 ## Status
 
-All phases are built, tested and deployed (430 backend tests, no network).
+Phases 0-7 are built, tested and deployed; Phase 8 is built and tested, not deployed yet (449 backend tests, no network).
 
 | Phase | What | Status |
 |---|---|---|
@@ -44,6 +44,7 @@ All phases are built, tested and deployed (430 backend tests, no network).
 | 6b | Voice: sentences from en/hi/mr templates, numbers spelled out, MMS-TTS out, Muse Voice Transcribe in, numbered spoken answers | Done, round-trip evaluated |
 | 7 | LangGraph pipeline (family question as an interrupt), sessions API, mobile web app, Modal + Netlify deployment | Done, deployed |
 | 7+ | Close-up loop (a clearer photo of one document re-runs household → rules → plan), "no documents" / "sweep again" stops, issues waiting for a clearer photo, scheme reasons in en/hi/mr, upload progress | Done, deployed |
+| 8 | UI redesign: chat with scheme sidebar and household matrix, live document thumbnails, result cards with Listen/Stop and Listen to all, scheme catalog (`GET /schemes`), feedback (`POST /feedback`) | Built, awaiting review; not deployed |
 
 Remaining phases: see [docs/ROADMAP.md](docs/ROADMAP.md).
 
@@ -204,7 +205,8 @@ phone video ──► find_documents ──► read_documents ──► build_ho
    sentence and question is a template from [data/templates/voice/](data/templates/voice/) (English, Hindi, Marathi),
    filled only with knowledge-base facts, member names and document display names; unverified facts are followed by
    "confirm at the office"; a time limit is only ever said as "the law sets ... for this office".
-   **The Hindi and Marathi templates are machine-drafted and need review by a native speaker.**
+   **The Marathi templates have been reviewed by a native speaker; the Hindi templates are machine-drafted and still
+   need that review.**
 8. **Run it as a graph** ([graph/build.py](backend/graph/build.py)). The steps above are a LangGraph graph with one shared
    state. When the agent asks the family a question, the graph pauses (an interrupt) and resumes with the answer; the
    answer is remembered if the plan is rebuilt later. A "sweep again" or "no documents found" result stops after reading.
@@ -329,8 +331,8 @@ details to `eval/results/raw/` (gitignored).
 
 1. **Real Hindi recordings** for the spoken-answer round trip (synthetic single words are a weak proxy; short phrases
    such as "नंबर दो" already work far better).
-2. **Native-speaker review** of every Hindi and Marathi text: voice templates, number words, answer words, scheme
-   reasons, UI strings.
+2. **Native-speaker review** of the Hindi texts (voice templates, number words, answer words, scheme reasons, UI
+   strings), and of the Marathi UI strings and scheme-catalog lines added after the Marathi template review.
 3. **Upload time:** the real uncached upload is at 66 s against a 60 s target; the largest parts are the upload itself
    and CPU frame sampling / mask decoding in "find".
 4. The `needs_other_proof` scheme items stay `unverified` until the developer adds sources.
@@ -350,8 +352,8 @@ details to `eval/results/raw/` (gitignored).
 - Duplicates of the same document across two tracks are kept in the finder output; merging happens in the household
   builder (same ID last 4 + same date of birth).
 - Synthetic documents follow simplified layouts; real documents will need schema adjustments.
-- Hindi and Marathi voice templates (their wording of offices, documents and cautions, and the number words used for speech) are machine-drafted and
-  have not been reviewed by a native speaker.
+- Hindi voice templates (their wording of offices, documents and cautions, and the number words used for speech) are machine-drafted and
+  have not been reviewed by a native speaker. The Marathi templates have been reviewed by one.
 - The backend is one container with sessions held in memory: a restart or redeploy drops open sessions (don't redeploy
   during a demo). Session data is deleted after an hour anyway.
 - Spoken answers: single Hindi/Marathi words are often misheard by speech recognition in our synthetic tests; buttons

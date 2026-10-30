@@ -8,15 +8,19 @@ Cut order if late: cross-model verification and video cross-check, then Malayala
 then the re-check comparison. Login, history, Ask Kaagaz and the UI redesign stay.
 
 ## Phase 8: UI redesign (Sat 1 Nov)
-- [ ] Chat layout: sidebar, conversation, household panel; phone and laptop (I, D, CV)
-- [ ] Live document thumbnails as SAM 3.1 finds each one, labelled with the owner (M, D, V)
-- [ ] Household matrix: members x 5 schemes, tap for reasons (I, D)
-- [ ] Result cards: What to do with Listen/Stop and Listen to all; Problems found;
+- [x] Chat layout: sidebar, conversation, household panel; phone and laptop (I, D, CV)
+- [x] Live document thumbnails as SAM 3.1 finds each one, labelled with the owner (M, D, V)
+- [x] Household matrix: members x 5 schemes, tap for reasons (I, D)
+- [x] Result cards: What to do with Listen/Stop and Listen to all; Problems found;
       collapsible Your family (I, D)
-- [ ] Scheme catalog from verified YAML with sources, GET /schemes (I, T)
-- [ ] Feedback on answers and plans (I)
-- [ ] Layout ready for login and history (T)
-Status: not started. Commits: -
+- [x] Scheme catalog from verified YAML with sources, GET /schemes (I, T)
+- [x] Feedback on answers and plans (I) (on the plan now; the component takes `answer:<id>` for Phase 10)
+- [x] Layout ready for login and history (T) ("Your checks" placeholder in the sidebar)
+Status: built and tested with Playwright at 360 and 1440 px in mr/hi/en; awaiting screenshot review; not deployed.
+Commits: 0a7af4c, 06fbdc5, a035d08, 083f376, and the docs commit.
+Changed: the catalog's rule lines are new wording in data/templates/reasons/*.yaml (`catalog`); the Marathi lines
+are machine-drafted (added after the native-speaker review). Scheme names stay English (the YAML has `en` only).
+Also fixed: age limits in scheme reasons were shown as rupees ("minimum age of ₹65").
 
 ## Phase 9: Login and case file (Sun 2 Nov, morning)
 - [ ] Phone login, demo-code mode, pluggable SMS adapter; Continue as guest (I, T, D)
