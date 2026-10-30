@@ -209,7 +209,7 @@ function SessionScreen({ t, id, language, onRestart }: { t: Strings; id: string;
   if (!view) return <main><p className="status">{t.working}…</p></main>
   if (view.status === 'done' && (view.recapture?.mode === 'sweep_again' || view.recapture?.mode === 'no_documents')) {
     // Most documents unreadable: no plan or results built on them; only the request to record again.
-    return <main><Recapture t={t} view={view} /><button type="button" className="primary" onClick={onRestart}>{t.startOver}</button></main>
+    return <main><Recapture t={t} view={view} language={language} /><button type="button" className="primary" onClick={onRestart}>{t.startOver}</button></main>
   }
   return (
     <main>
@@ -218,8 +218,9 @@ function SessionScreen({ t, id, language, onRestart }: { t: Strings; id: string;
       {view.status === 'waiting' && view.question && (
         <QuestionCard key={view.question.question_id} t={t} id={id} question={view.question} onAnswered={resumed} />
       )}
-      <Recapture t={t} view={view} />
+      <Recapture t={t} view={view} language={language} />
       {view.status === 'done' && view.recapture?.mode === 'close_ups' && <p className="note">{t.closeUpsNote}</p>}
+      {view.status === 'done' && <Waiting t={t} view={view} language={language} />}
       {view.status === 'done' && <Plan t={t} id={id} view={view} />}
       {view.household && <Results t={t} view={view} language={language} />}
       <button type="button" className="secondary" onClick={onRestart}>{t.startOver}</button>
@@ -319,16 +320,52 @@ function QuestionCard({ t, id, question, onAnswered }: { t: Strings; id: string;
 
 // ---------- recapture ----------
 
-function Recapture({ t, view }: { t: Strings; view: SessionView }) {
+// 'Aadhaar card (name)' from the member it belongs to or the name read on it; else 'Aadhaar card 1', '… 2'
+// among the same type in the list being shown.
+function docLabel(view: SessionView, docId: string, group: string[], language: Language, t: Strings): string {
+  const ex = view.extractions?.find((e) => e.document_id === docId)
+  const type = ex?.doc_type ?? view.household?.documents[docId]?.doc_type ?? null
+  const typeName = (type && t.docTypes[type]) || t.document
+  const owner = view.household?.members.find((m) => Object.values(m.documents).some((ids) => ids.includes(docId)))
+  const f = (ex?.fields ?? {}) as Record<string, unknown>
+  const read = (language === 'en' ? f.name_en ?? f.name_mr : f.name_mr ?? f.name_en) as string | undefined
+  const name = owner && type !== 'ration_card' ? memberName(owner, language, t) : read
+  if (name) return `${typeName} (${name})`
+  const same = group.filter((d) => {
+    const e = view.extractions?.find((x) => x.document_id === d)
+    return (e?.doc_type ?? view.household?.documents[d]?.doc_type ?? null) === type
+  })
+  return same.length > 1 ? `${typeName} ${same.indexOf(docId) + 1}` : typeName
+}
+
+function Waiting({ t, view, language }: { t: Strings; view: SessionView; language: Language }) {
+  const waiting = view.waiting ?? []
+  if (!waiting.length) return null
+  const group = waiting.flatMap((w) => Object.keys(w.documents))
+  return (
+    <section className="card warn">
+      <h2>{t.waitingTitle}</h2>
+      <p>{t.waitingNote}</p>
+      <ul>
+        {waiting.map((w) => {
+          const who = language === 'en' ? w.member_name : w.member_name_mr ?? w.member_name
+          const docs = Object.keys(w.documents).map((d) => docLabel(view, d, group, language, t)).join(', ')
+          return <li key={w.id}>{t.issueTypes[w.type] ?? w.type}{who ? `: ${who}` : ''}{docs ? ` (${docs})` : ''}</li>
+        })}
+      </ul>
+    </section>
+  )
+}
+
+function Recapture({ t, view, language }: { t: Strings; view: SessionView; language: Language }) {
   const r = view.recapture
   if (!r || r.mode === 'none') return null
-  const docType = (docId: string) => view.household?.documents[docId]?.doc_type
   return (
     <section className={r.mode === 'close_ups' ? 'card warn' : 'card warn strong'}>
       {r.mode === 'no_documents' ? <p>{t.noDocuments}</p> : r.mode === 'sweep_again' ? <p>{t.recaptureSweep}</p> : (
         <>
           <p>{t.recaptureCloseUps}</p>
-          <ul>{r.documents.map((d) => <li key={d}>{t.docTypes[docType(d) ?? ''] ?? d}</li>)}</ul>
+          <ul>{r.documents.map((d) => <li key={d}>{docLabel(view, d, r.documents, language, t)}</li>)}</ul>
         </>
       )}
     </section>

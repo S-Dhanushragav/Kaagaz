@@ -44,5 +44,6 @@ def interrupting_family(language: str) -> Callable[[PlannerIssue, str, str, list
     return ask
 
 
-def run_planner(household: Household, results: list[SchemeResult], language: str, llm: Callable[..., Any]) -> FixPlan:
-    return plan_fixes(household, results, interrupting_family(language), llm=llm, language=language)
+def run_planner(household: Household, results: list[SchemeResult], language: str, llm: Callable[..., Any],
+                waiting: frozenset[str] = frozenset()) -> FixPlan:
+    return plan_fixes(household, results, interrupting_family(language), llm=llm, language=language, waiting=waiting)

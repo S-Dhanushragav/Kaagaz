@@ -141,13 +141,16 @@ def build_graph(deps: Deps | None = None, checkpointer: Any = None) -> Any:
         return {"results": [r.model_dump(mode="json") for r in results]}
 
     def plan(state: KaagazState) -> dict[str, Any]:
-        from agents.fix_planner import planner_issues
+        from agents.fix_planner import planner_issues, waiting_issues
 
         hh = Household.model_validate(state["household"])
         results = [SchemeResult.model_validate(r) for r in state.get("results", [])]
-        fix_plan = run_planner(hh, results, state["language"], deps.llm)
+        recapture = state.get("recapture") or {}
+        waiting = frozenset(recapture.get("documents", [])) if recapture.get("mode") == "close_ups" else frozenset()
+        fix_plan = run_planner(hh, results, state["language"], deps.llm, waiting)
         return {"plan": fix_plan.model_dump(mode="json", exclude={"trace"}),
-                "issues": [i.model_dump(mode="json") for i in planner_issues(hh, results)],
+                "issues": [i.model_dump(mode="json") for i in planner_issues(hh, results, waiting)],
+                "waiting": [i.model_dump(mode="json") for i in waiting_issues(hh, results, waiting)],
                 "usage": {"plan_tokens": fix_plan.usage.prompt_tokens + fix_plan.usage.completion_tokens},
                 "log": [f"plan: {len(fix_plan.steps)} steps ({fix_plan.source})"]}
 

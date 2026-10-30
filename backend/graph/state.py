@@ -35,6 +35,7 @@ class KaagazState(TypedDict, total=False):
     household: dict[str, Any]
     results: list[dict[str, Any]]  # scheme results per member
     issues: list[dict[str, Any]]  # issues as the planner saw them
+    waiting: list[dict[str, Any]]  # issues held back until a document on the close-up list is photographed clearly
     plan: dict[str, Any]
     speech: list[dict[str, Any]]  # per plan step: screen text and TTS text
     timings: Annotated[dict[str, float], merge]  # seconds per stage

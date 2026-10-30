@@ -344,3 +344,20 @@ def test_identical_steps_are_merged_but_questions_are_not() -> None:
                               add("i3")])
     assert [(s.kind, s.issue_ids) for s in merged] == [("question", ["i1"]), ("question", ["i2"]),
                                                       ("fix", ["i3", "i4"]), ("fix", ["i5"])]
+
+
+def test_issues_on_close_up_documents_wait_for_a_clearer_photo() -> None:
+    from agents.fix_planner import waiting_issues
+    from tests.test_household import _id
+
+    hh = household()  # name mismatch on rc + id1; income certificate missing
+    planned = planner_issues(hh, [], frozenset({"id1"}))
+    held = waiting_issues(hh, [], frozenset({"id1"}))
+    assert [i.type for i in planned] == ["missing_document"] and [i.type for i in held] == ["name_mismatch"]
+    # The ration card waits: who is (not) on it, and whose identity card is missing, wait too.
+    hh2 = build_household([_card(SUNIL), _id("id2", "रेखा अनिल जाधव", "Rekha Anil Jadhav", "01/01/1990", "F", "9999")],
+                          REF, adjudicate=_no_llm)
+    held2 = {i.type for i in waiting_issues(hh2, [], frozenset({"rc"}))}
+    assert {"not_on_ration_card", "missing_document"} <= held2
+    assert [i.document_type for i in planner_issues(hh2, [], frozenset({"rc"}))] == ["income_certificate"]
+    assert planner_issues(hh, []) == planner_issues(hh, [], frozenset())  # nothing waits without a close-up list

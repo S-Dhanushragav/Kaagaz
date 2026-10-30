@@ -49,8 +49,7 @@ def _member_name(hh: Household, member_id: str | None, devanagari: bool = False)
     return (m.name_mr or m.name_en) if devanagari else (m.name_en or m.name_mr)
 
 
-def planner_issues(hh: Household, results: list[SchemeResult] = ()) -> list[PlannerIssue]:
-    """The issues to plan for. Recapture (unreadable) and info notes are handled elsewhere."""
+def _all_issues(hh: Household, results: list[SchemeResult]) -> list[PlannerIssue]:
     out: list[PlannerIssue] = []
 
     def add(**kw: Any) -> None:
@@ -84,6 +83,29 @@ def planner_issues(hh: Household, results: list[SchemeResult] = ()) -> list[Plan
                 member_name_mr=_member_name(hh, m.member_id, devanagari=True), documents={}, document_type="caste_certificate",
                 detail=f"{m.name_en or m.member_id} has no caste certificate of their own (needed for Ramai Awas).")
     return out
+
+
+def waits_for_photo(issue: PlannerIssue, hh: Household, waiting: frozenset[str]) -> bool:
+    """The issue involves a document on the close-up list, so it may be a reading error: it waits for a clearer
+    photo instead of being planned. If the ration card itself waits, so do the issues that depend on reading it
+    (someone 'not on the ration card', a member's missing identity card)."""
+    if set(issue.documents) & waiting:
+        return True
+    card_waits = hh.ration_card_id is not None and hh.ration_card_id in waiting
+    return card_waits and (issue.type == "not_on_ration_card"
+                           or (issue.type == "missing_document" and issue.document_type == "identity_card"))
+
+
+def planner_issues(hh: Household, results: list[SchemeResult] = (),
+                   waiting: frozenset[str] = frozenset()) -> list[PlannerIssue]:
+    """The issues to plan for. Recapture (unreadable), info notes and issues waiting for a clearer photo of one
+    of their documents (`waiting`: the close-up list) are handled elsewhere."""
+    return [i for i in _all_issues(hh, results) if not waits_for_photo(i, hh, waiting)]
+
+
+def waiting_issues(hh: Household, results: list[SchemeResult], waiting: frozenset[str]) -> list[PlannerIssue]:
+    """Issues held back until the documents on the close-up list are photographed clearly."""
+    return [i for i in _all_issues(hh, results) if waits_for_photo(i, hh, waiting)]
 
 
 # ---------- 3. assembling ----------
@@ -293,8 +315,9 @@ def _add_usage(total: TokenUsage, u: TokenUsage) -> None:
 
 
 def plan_fixes(hh: Household, results: list[SchemeResult], family: FamilyResponder, *, llm: Chat = chat,
-               language: str = "en", overrides: dict[str, Any] | None = None, max_turns: int = MAX_TURNS) -> FixPlan:
-    issues = planner_issues(hh, results)
+               language: str = "en", overrides: dict[str, Any] | None = None, max_turns: int = MAX_TURNS,
+               waiting: frozenset[str] = frozenset()) -> FixPlan:
+    issues = planner_issues(hh, results, waiting)
     if not issues:
         return FixPlan(steps=[], source="agent", language=language)
     toolbox = ToolBox(issues, family, language)

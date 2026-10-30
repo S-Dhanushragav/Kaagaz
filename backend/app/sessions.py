@@ -156,7 +156,8 @@ class SessionManager:
         timings = values.get("timings", {})
         stages = [{"stage": s, "done": s in timings, "seconds": timings.get(s)} for s in STAGES]
         current = next((s["stage"] for s in stages if not s["done"]), None) if session.status == "running" else None
-        keys = ("found", "recapture", "household", "results", "issues", "plan", "speech", "usage")
+        keys = ("found", "extractions", "recapture", "household", "results", "issues", "waiting", "plan", "speech",
+                "usage")
         return {"id": session.id, "language": session.language, "sample": session.sample, "status": session.status,
                 "error": session.error, "stage": current, "stages": stages, "question": session.question,
                 "elapsed_s": round(time.time() - session.created, 1),

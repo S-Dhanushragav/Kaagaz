@@ -81,6 +81,15 @@ export interface SchemeResult {
 export interface Shown { text: string; verified: boolean }
 export interface StepDisplay { office: Shown | null; bring: Shown[]; fee: Shown | null; time_limit: Shown | null }
 
+export interface Extraction {
+  document_id: string
+  doc_type: string | null
+  unreadable: boolean
+  fields: Record<string, unknown> | null
+}
+
+export interface WaitingIssue { id: string; type: string; member_id: string | null; member_name: string | null; member_name_mr: string | null; documents: Record<string, string> }
+
 export interface SessionView {
   id: string
   language: Language
@@ -92,6 +101,8 @@ export interface SessionView {
   question: Question | null
   elapsed_s: number
   found: { id: string; frames: number[]; fully_visible: boolean }[] | null
+  extractions: Extraction[] | null
+  waiting: WaitingIssue[] | null
   recapture: { mode: 'none' | 'close_ups' | 'sweep_again' | 'no_documents'; documents: string[] } | null
   household: {
     members: Member[]
