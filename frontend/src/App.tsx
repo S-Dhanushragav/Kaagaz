@@ -32,6 +32,7 @@ export default function App() {
   const [language, setLanguage] = useState<Language>(() => (localStorage.getItem('kaagaz.lang') as Language) || 'mr')
   const [screen, setScreen] = useState<Screen>({ name: 'home' })
   const [error, setError] = useState<string | null>(null)
+  const [progress, setProgress] = useState<number | null>(null) // upload percent; null for the sample
   const t = STRINGS[language]
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function App() {
   const run = useCallback(async (start: () => Promise<string>) => {
     setError(null)
     try {
+      setProgress(null)
       setScreen({ name: 'uploading' })
       setScreen({ name: 'session', id: await start() })
     } catch (e) {
@@ -62,13 +64,29 @@ export default function App() {
           onSample={() => run(() => startSample(language))} onRecord={() => setScreen({ name: 'record' })} />
       )}
       {screen.name === 'record' && (
-        <Recorder t={t} onDone={(blob) => run(() => startUpload(blob, language))} onCancel={() => setScreen({ name: 'home' })} />
+        <Recorder t={t} onDone={(blob) => run(() => startUpload(blob, language, setProgress))} onCancel={() => setScreen({ name: 'home' })} />
       )}
-      {screen.name === 'uploading' && <p className="status" aria-live="polite">{t.uploading}</p>}
+      {screen.name === 'uploading' && <Uploading t={t} percent={progress} />}
       {screen.name === 'session' && (
         <SessionScreen t={t} id={screen.id} language={language} onRestart={() => setScreen({ name: 'home' })} />
       )}
     </div>
+  )
+}
+
+// ---------- upload progress ----------
+
+function Uploading({ t, percent }: { t: Strings; percent: number | null }) {
+  if (percent === null) return <p className="status" aria-live="polite">{t.working}…</p>
+  const sent = percent >= 100
+  return (
+    <main>
+      <p className="status" aria-live="polite">{sent ? t.uploaded : t.uploading} {sent ? '' : percent + '%'}</p>
+      <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}
+        aria-label={t.uploading}>
+        <div className="fill" style={{ width: percent + '%' }} />
+      </div>
+    </main>
   )
 }
 
@@ -109,6 +127,7 @@ function Recorder({ t, onDone, onCancel }: { t: Strings; onDone: (b: Blob) => vo
   const [recording, setRecording] = useState(false)
   const [left, setLeft] = useState(MAX_RECORD_S)
   const [failed, setFailed] = useState(false)
+  const [ready, setReady] = useState(false) // camera stream live: before that, Start would do nothing
 
   useEffect(() => {
     let cancelled = false
@@ -118,6 +137,7 @@ function Recorder({ t, onDone, onCancel }: { t: Strings; onDone: (b: Blob) => vo
       if (cancelled) { stream.getTracks().forEach((tr) => tr.stop()); return }
       streamRef.current = stream
       if (videoRef.current) videoRef.current.srcObject = stream
+      setReady(true)
     }).catch(() => setFailed(true))
     return () => {
       cancelled = true
@@ -171,7 +191,7 @@ function Recorder({ t, onDone, onCancel }: { t: Strings; onDone: (b: Blob) => vo
         </>
       ) : (
         <>
-          <button type="button" className="primary" onClick={start}>● {t.startRecording}</button>
+          <button type="button" className="primary" disabled={!ready} onClick={start}>● {t.startRecording}</button>
           <button type="button" className="secondary" onClick={onCancel}>{t.startOver}</button>
         </>
       )}

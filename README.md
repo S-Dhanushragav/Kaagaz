@@ -99,11 +99,13 @@ real upload; target: first spoken sentence within 60 s)
 |---|---|---|---|---|---|---|
 | Sample family (HH009), cached, **cold container** (+29 s until healthy) | 24 s | 6 s | 3 s | 1 s | **42 s** (the question) | 51 s |
 | Sample family, cached, warm container | 8 s | 0 s | 0 s | 0 s | **18 s** (the question) | 30 s |
-| **Real upload, nothing cached** (20 s 720p WebM at 4 Mbps, 10 MB, HH001) | 19 s | 9 s | 0 s | 10 s | **63 s** (first plan step; no question) | 63 s |
+| Real upload, nothing cached, old setting (20 s 720p WebM at 4 Mbps, 10 MB, HH001) | 19 s | 9 s | 0 s | 10 s | 63 s (first plan step) | 63 s |
+| **Real upload, nothing cached, current setting** (20 s 1080p WebM at 8 Mbps, 18 MB, HH009) | 29 s | 8 s | 0 s | 11 s | **66 s** (first plan step; upload 12 s) | 64 s |
 
-- The cached sample meets the target; **a real upload just misses it (63 s)**: 10 s of the 63 are the upload itself,
-  6 s are synthesizing the first sentence. Mask decoding and frame sampling on CPU dominate "find" even when the
-  segmenter call is cached.
+- The cached sample meets the target; **a real upload misses it: 66 s** at the current 1080p / 8 Mbps setting
+  (12 s upload of 18 MB from a desktop line; on slow mobile data the upload alone takes longer, which the app
+  now shows as a progress bar). Full-size frames make "find" slower (29 s vs 19 s at 720p): frame sampling and
+  mask decoding on CPU. The trade is deliberate: at 720p the ration card often could not be read (see below).
 - A cold container adds ~29 s (start + loading three TTS models): run `scripts/warmup.py` 5 minutes before a demo.
 - Reading quality drops on re-encoded, phone-like video: the HH001 upload produced 3 "add to the ration card" steps
   (1 planted) and asked for close-ups of 3 documents. If most documents are unreadable the app asks for a new sweep
@@ -115,8 +117,10 @@ real upload; target: first spoken sentence within 60 s)
   | 720p, 4 Mbps (server cap 1080 px) | 608×1080 | 6/6 | no (close-up asked) | 3 "add to ration card" + 1 enrolment (3 false) |
   | 1080p, 8 Mbps (server cap 1080 px) | 608×1080 | 6/6 | no | the same 4 steps |
   | **1080p, 8 Mbps (server keeps 1920 px)** | 1080×1920 | **11/11** | **yes** | **1 "add to ration card" (the planted error)** |
+  | 1080p, 4 Mbps (server keeps 1920 px), 10.5 MB | 1080×1920 | 10/10 (one more name unread) | yes | 1 Aadhaar enrolment (false) |
 
-  The app now records 1080p at 8 Mbps and the server keeps up to 1920 px (`UPLOAD_LONG_SIDE`). The cost is upload
+  4 Mbps lost a name and with it the plan, so the app stays at 1080p / 8 Mbps and the server keeps up to 1920 px
+  (`UPLOAD_LONG_SIDE`). The cost is upload
   size: ~20 MB for a 20 s sweep (the 63 s timing above was a 10 MB upload).
 - Modal cost of the deploy (two image builds) and these test runs: **$0.02 metered, covered by credits** (billing may
   lag; an idle container stays up 20 minutes after the last request).

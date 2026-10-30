@@ -361,3 +361,19 @@ def test_issues_on_close_up_documents_wait_for_a_clearer_photo() -> None:
     assert {"not_on_ration_card", "missing_document"} <= held2
     assert [i.document_type for i in planner_issues(hh2, [], frozenset({"rc"}))] == ["income_certificate"]
     assert planner_issues(hh, []) == planner_issues(hh, [], frozenset())  # nothing waits without a close-up list
+
+
+def test_missing_identity_card_waits_while_an_identity_card_needs_a_close_up() -> None:
+    """HH009 upload: an unclear Aadhaar card did not link to its owner, who then looked like they had none."""
+    from agents.fix_planner import waiting_issues
+    from tests.test_household import _id, _row
+
+    rekha_row = _row("रेखा सुनील पाटील", "Rekha Sunil Patil", "F", 36, "Wife")
+    unclear = _id("idx", None, "R. Patil", None, "F", "4444")  # her card, read too poorly to link
+    hh = build_household([_card(SUNIL, rekha_row), _id("id1", "सुनील रमेश पाटील", "Sunil Ramesh Patil", "01/01/1986"),
+                          unclear], REF, adjudicate=_no_llm)
+    held = waiting_issues(hh, [], frozenset({"idx"}))
+    assert ("missing_document", "identity_card") in {(i.type, i.document_type) for i in held}
+    planned = planner_issues(hh, [], frozenset({"idx"}))
+    assert not any(i.type == "missing_document" and i.document_type == "identity_card" for i in planned)
+    assert any(i.document_type == "income_certificate" for i in planned)  # other missing documents still planned

@@ -92,8 +92,13 @@ def waits_for_photo(issue: PlannerIssue, hh: Household, waiting: frozenset[str])
     if set(issue.documents) & waiting:
         return True
     card_waits = hh.ration_card_id is not None and hh.ration_card_id in waiting
-    return card_waits and (issue.type == "not_on_ration_card"
-                           or (issue.type == "missing_document" and issue.document_type == "identity_card"))
+    if card_waits and (issue.type == "not_on_ration_card"
+                       or (issue.type == "missing_document" and issue.document_type == "identity_card")):
+        return True
+    # A member's "missing" document may be the unclear one on the close-up list (not linked to them yet):
+    # wait while a document of that type (or of unknown type) is waiting.
+    waiting_types = {hh.documents[d].doc_type if d in hh.documents else None for d in waiting}
+    return issue.type == "missing_document" and bool(waiting_types & {issue.document_type, None})
 
 
 def planner_issues(hh: Household, results: list[SchemeResult] = (),

@@ -16,6 +16,7 @@ const en = {
   secondsLeft: 'seconds left',
   cameraError: 'The camera could not be opened. Please allow camera access, or try the sample family.',
   uploading: 'Sending the video…',
+  uploaded: 'Video sent. Preparing it…',
   working: 'Checking your documents',
   stages: {
     find_documents: 'Finding documents', read_documents: 'Reading documents', build_household: 'Matching people',
@@ -85,6 +86,7 @@ const hi: Strings = {
   secondsLeft: 'सेकंड बाकी',
   cameraError: 'कैमरा नहीं खुल सका। कैमरा की अनुमति दें, या नमूना परिवार आज़माएँ।',
   uploading: 'वीडियो भेजा जा रहा है…',
+  uploaded: 'वीडियो भेज दिया। तैयार किया जा रहा है…',
   working: 'आपके दस्तावेज़ जाँचे जा रहे हैं',
   stages: {
     find_documents: 'दस्तावेज़ ढूँढना', read_documents: 'दस्तावेज़ पढ़ना', build_household: 'लोगों का मिलान',
@@ -152,6 +154,7 @@ const mr: Strings = {
   secondsLeft: 'सेकंद बाकी',
   cameraError: 'कॅमेरा उघडता आला नाही. कॅमेऱ्याची परवानगी द्या, किंवा नमुना कुटुंब वापरून पाहा.',
   uploading: 'व्हिडिओ पाठवत आहोत…',
+  uploaded: 'व्हिडिओ पाठवला. तयार करत आहोत…',
   working: 'तुमची कागदपत्रे तपासत आहोत',
   stages: {
     find_documents: 'कागदपत्रे शोधणे', read_documents: 'कागदपत्रे वाचणे', build_household: 'व्यक्ती जुळवणे',

@@ -133,11 +133,27 @@ export async function startSample(language: Language): Promise<string> {
   return (await json<{ id: string }>(res)).id
 }
 
-export async function startUpload(video: Blob, language: Language): Promise<string> {
+// XMLHttpRequest rather than fetch: fetch has no upload progress, and a 20 MB sweep on slow mobile data takes a
+// while. `onProgress` gets 0-100 while sending; the server then normalizes the video before answering.
+export function startUpload(video: Blob, language: Language, onProgress?: (percent: number) => void): Promise<string> {
   const form = new FormData()
   form.append('language', language)
   form.append('video', video, video.type.includes('mp4') ? 'sweep.mp4' : 'sweep.webm')
-  return (await json<{ id: string }>(await fetch(`${API_URL}/sessions`, { method: 'POST', body: form }))).id
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', `${API_URL}/sessions`)
+    xhr.responseType = 'json'
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress?.(Math.round((e.loaded / e.total) * 100)) }
+    xhr.upload.onload = () => onProgress?.(100)
+    xhr.onload = () => {
+      const body = xhr.response as { id?: string; detail?: string } | null
+      if (xhr.status >= 200 && xhr.status < 300 && body?.id) resolve(body.id)
+      else reject(new Error(body?.detail ?? `HTTP ${xhr.status}`))
+    }
+    xhr.onerror = () => reject(new Error('network error'))
+    xhr.ontimeout = () => reject(new Error('timed out'))
+    xhr.send(form)
+  })
 }
 
 export async function getSession(id: string): Promise<SessionView> {

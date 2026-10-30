@@ -98,3 +98,5 @@ a { color: var(--brand); margin-right: 10px; }
 .closeups li { border-top: 1px solid #c9a46a; padding: 8px 0; }
 .closeup button { margin: 6px 0; }
 .warnings li { color: var(--warn); font-weight: 600; }
+.bar { height: 28px; border: 2px solid var(--line); border-radius: 14px; overflow: hidden; background: #eee; }
+.bar .fill { height: 100%; background: var(--brand); transition: width 0.3s; }
