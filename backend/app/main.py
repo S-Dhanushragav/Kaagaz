@@ -7,7 +7,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.account import router as account_router
 from app.api.routes import router
+from app.auth import AuthService
 from app.config import get_settings
 from app.sessions import SessionManager
 from storage import make_store
@@ -42,6 +44,10 @@ async def lifespan(app: FastAPI):
     if not hasattr(app.state, "store"):  # tests set their own
         app.state.store = make_store(get_settings().database_url.get_secret_value())
         app.state.store.init()
+    if not hasattr(app.state, "auth"):
+        s = get_settings()
+        app.state.auth = AuthService(app.state.store, s.phone_hash_key.get_secret_value(),
+                                     s.token_signing_key.get_secret_value(), mode=s.auth_mode)
     if not hasattr(app.state, "sessions"):
         app.state.sessions = SessionManager()
     app.state.sessions.start_cleanup_loop()
@@ -54,10 +60,11 @@ app = FastAPI(title="Kaagaz", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in get_settings().cors_origins.split(",") if o.strip()],
-    allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 app.include_router(router)
+app.include_router(account_router)
 
 
 @app.get("/health")
