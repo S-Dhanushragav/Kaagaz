@@ -205,7 +205,7 @@ function SessionScreen({ t, id, language, onRestart }: { t: Strings; id: string;
 
   if (error) return <main><p className="error">{t.error}: {error}</p><button type="button" className="secondary" onClick={onRestart}>{t.startOver}</button></main>
   if (!view) return <main><p className="status">{t.working}…</p></main>
-  if (view.status === 'done' && view.recapture?.mode === 'sweep_again') {
+  if (view.status === 'done' && (view.recapture?.mode === 'sweep_again' || view.recapture?.mode === 'no_documents')) {
     // Most documents unreadable: no plan or results built on them; only the request to record again.
     return <main><Recapture t={t} view={view} /><button type="button" className="primary" onClick={onRestart}>{t.startOver}</button></main>
   }
@@ -322,8 +322,8 @@ function Recapture({ t, view }: { t: Strings; view: SessionView }) {
   if (!r || r.mode === 'none') return null
   const docType = (docId: string) => view.household?.documents[docId]?.doc_type
   return (
-    <section className={r.mode === 'sweep_again' ? 'card warn strong' : 'card warn'}>
-      {r.mode === 'sweep_again' ? <p>{t.recaptureSweep}</p> : (
+    <section className={r.mode === 'close_ups' ? 'card warn' : 'card warn strong'}>
+      {r.mode === 'no_documents' ? <p>{t.noDocuments}</p> : r.mode === 'sweep_again' ? <p>{t.recaptureSweep}</p> : (
         <>
           <p>{t.recaptureCloseUps}</p>
           <ul>{r.documents.map((d) => <li key={d}>{t.docTypes[docType(d) ?? ''] ?? d}</li>)}</ul>

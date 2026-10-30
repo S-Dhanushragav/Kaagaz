@@ -5,7 +5,7 @@ find_documents -> read_documents -> build_household -> check_rules -> plan_fixes
 - find_documents streams each document to the reader as soon as its crops are ready (reading overlaps finding);
   an uploaded video is deleted as soon as the finder is done.
 - read_documents collects the reads (frame agreement) and makes the recapture plan; if most documents need a
-  new sweep, the run ends there (nothing is built on unreadable reads).
+  new sweep, or no documents were found at all, the run ends there (nothing is built on those reads).
 - build_household uses the name verifier (re-reads crops) and the adjudicator.
 - plan_fixes pauses at each family question (LangGraph interrupt) and resumes with the answer.
 - speak prepares the TTS text for every step and synthesizes the first sentence.
@@ -25,7 +25,7 @@ from langgraph.graph import END, START, StateGraph
 from clients.llm import chat
 from graph.nodes.build_household import build_household, llm_adjudicator, llm_name_verifier
 from graph.nodes.check_rules import check_rules
-from graph.nodes.find_documents import FindResult, FoundDocument, find_documents, plan_recapture
+from graph.nodes.find_documents import FindResult, FoundDocument, RecapturePlan, find_documents, plan_recapture
 from graph.nodes.plan_fixes import run_planner
 from graph.nodes.read_documents import StreamingReader
 from graph.nodes.speak import speak
@@ -70,6 +70,16 @@ def default_deps() -> Deps:
     return Deps(tts=_real_tts())
 
 
+STOP_MODES = ("sweep_again", "no_documents")  # record again: nothing is built on these reads
+
+
+def no_documents(extractions: list[DocumentExtraction]) -> bool:
+    """No welfare documents in the video (e.g. a webcam showing a person): nothing read as one of the four
+    document types, or no ration card and fewer than 2 documents."""
+    kinds = [e.doc_type for e in extractions if not e.unreadable and e.doc_type not in (None, "other")]
+    return not kinds or ("ration_card" not in kinds and len(kinds) < 2)
+
+
 def _timed(name: str, fn: Callable[[KaagazState], dict[str, Any]]) -> Callable[[KaagazState], dict[str, Any]]:
     def node(state: KaagazState) -> dict[str, Any]:
         start = time.perf_counter()
@@ -109,6 +119,8 @@ def build_graph(deps: Deps | None = None, checkpointer: Any = None) -> Any:
             reads = reader.results()
         extractions = {k: r.extraction for k, r in reads.items()}
         recapture = plan_recapture(rt.find_result, extractions) if rt.find_result else None
+        if no_documents(list(extractions.values())):
+            recapture = RecapturePlan(mode="no_documents")
         tokens = sum(r.usage.prompt_tokens + r.usage.completion_tokens for r in reads.values())
         return {"extractions": [e.model_dump(mode="json") for e in extractions.values()],
                 "recapture": recapture.model_dump(mode="json") if recapture else {"mode": "none"},
@@ -151,7 +163,7 @@ def build_graph(deps: Deps | None = None, checkpointer: Any = None) -> Any:
     g.add_edge("find_documents", "read_documents")
     # Most documents unreadable: ask for a new sweep; no household, rules or plan built on unreadable reads.
     g.add_conditional_edges("read_documents",
-                            lambda s: END if (s.get("recapture") or {}).get("mode") == "sweep_again" else "build_household",
+                            lambda s: END if (s.get("recapture") or {}).get("mode") in STOP_MODES else "build_household",
                             ["build_household", END])
     for a, b in zip(STAGES[2:], STAGES[3:]):
         g.add_edge(a, b)

@@ -115,3 +115,28 @@ def test_sweep_again_stops_after_reading(tmp_path) -> None:
     assert out["recapture"]["mode"] == "sweep_again" and "__interrupt__" not in out
     assert "household" not in out and "plan" not in out and set(out["timings"]) == {"find_documents", "read_documents"}
     drop("s3")
+
+
+def test_no_documents_rule() -> None:
+    from graph.build import no_documents
+
+    other = DocumentExtraction(document_id="o", doc_type="other")
+    blank = DocumentExtraction(document_id="u", unreadable=True)
+    assert no_documents([]) and no_documents([other, blank])
+    assert no_documents([SUNEEL_ID])  # one document and no ration card
+    assert not no_documents([_card(SUNIL)])  # a ration card alone is enough to start
+    assert not no_documents([SUNEEL_ID, SUNEEL_ID.model_copy(update={"document_id": "id2"})])
+
+
+def test_video_without_documents_stops_after_reading(tmp_path) -> None:
+    """A webcam showing a person: no household, rules or plan; the app asks to record the papers again."""
+    video = tmp_path / "upload.mp4"
+    video.write_bytes(b"video")
+    deps = _deps([])
+    deps.new_reader = lambda: FakeReader({"rc": DocumentExtraction(document_id="rc", doc_type="other"),
+                                          "id1": DocumentExtraction(document_id="id1", unreadable=True)})
+    out = build_graph(deps).invoke({"session_id": "s4", "language": "en", "video_path": str(video), "delete_video": True,
+                                    "reference_date": "2026-10-27"}, {"configurable": {"thread_id": "s4"}})
+    assert out["recapture"] == {"mode": "no_documents", "documents": [], "reasons": {}}
+    assert "household" not in out and "plan" not in out and "results" not in out
+    drop("s4")

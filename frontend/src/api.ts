@@ -92,7 +92,7 @@ export interface SessionView {
   question: Question | null
   elapsed_s: number
   found: { id: string; frames: number[]; fully_visible: boolean }[] | null
-  recapture: { mode: 'none' | 'close_ups' | 'sweep_again'; documents: string[] } | null
+  recapture: { mode: 'none' | 'close_ups' | 'sweep_again' | 'no_documents'; documents: string[] } | null
   household: {
     members: Member[]
     documents: Record<string, { document_id: string; doc_type: string | null; unreadable: boolean }>

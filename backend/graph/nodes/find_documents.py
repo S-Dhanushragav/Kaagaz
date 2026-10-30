@@ -45,7 +45,7 @@ FALLBACK_MIN_GAP_S = 0.2
 class RecapturePlan(BaseModel):
     """What the app should ask for after reading (used in Phase 7)."""
 
-    mode: Literal["none", "close_ups", "sweep_again"]
+    mode: Literal["none", "close_ups", "sweep_again", "no_documents"]
     documents: list[str] = []  # document ids that need a retake (for close_ups)
     reasons: dict[str, list[str]] = {}
 
