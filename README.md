@@ -31,7 +31,7 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 
 ## Status
 
-Phases 0-7 are built, tested and deployed; Phase 8 is built and tested, not deployed yet (449 backend tests, no network).
+Phases 0-8 are built, tested and deployed (462 backend tests, no network).
 
 | Phase | What | Status |
 |---|---|---|
@@ -44,7 +44,7 @@ Phases 0-7 are built, tested and deployed; Phase 8 is built and tested, not depl
 | 6b | Voice: sentences from en/hi/mr templates, numbers spelled out, MMS-TTS out, Muse Voice Transcribe in, numbered spoken answers | Done, round-trip evaluated |
 | 7 | LangGraph pipeline (family question as an interrupt), sessions API, mobile web app, Modal + Netlify deployment | Done, deployed |
 | 7+ | Close-up loop (a clearer photo of one document re-runs household → rules → plan), "no documents" / "sweep again" stops, issues waiting for a clearer photo, scheme reasons in en/hi/mr, upload progress | Done, deployed |
-| 8 | UI redesign: chat with scheme sidebar and household matrix, live document thumbnails, result cards with Listen/Stop and Listen to all, scheme catalog (`GET /schemes`), feedback (`POST /feedback`) | Built, awaiting review; not deployed |
+| 8 | UI redesign: chat with scheme sidebar and household matrix, live document thumbnails, result cards with Listen/Stop and Listen to all, scheme catalog (`GET /schemes`), feedback (`POST /feedback`), Aadhaar numbers blurred on thumbnails | Done, deployed |
 
 Remaining phases: see [docs/ROADMAP.md](docs/ROADMAP.md).
 
