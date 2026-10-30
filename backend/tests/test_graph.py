@@ -27,6 +27,9 @@ class FakeReader:
         return {i: ReadResult(extraction=self.extractions[i], usage=TokenUsage(prompt_tokens=10, completion_tokens=5),
                               elapsed_s=0.1, attempts=1, cached=False) for i in self.submitted}
 
+    def done(self) -> dict[str, ReadResult]:
+        return self.results()
+
     def __enter__(self) -> "FakeReader":
         return self
 

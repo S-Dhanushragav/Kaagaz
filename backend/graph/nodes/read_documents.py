@@ -340,3 +340,7 @@ class StreamingReader:
 
     def results(self) -> dict[str, ReadResult]:
         return {doc_id: f.result() for doc_id, f in self._futures.items()}
+
+    def done(self) -> dict[str, ReadResult]:
+        """The documents read so far, without waiting (for progress while reading goes on)."""
+        return {doc_id: f.result() for doc_id, f in list(self._futures.items()) if f.done() and not f.exception()}

@@ -127,3 +127,46 @@ def test_everything_is_deleted_after_the_time_limit(manager) -> None:
     with pytest.raises(SessionError) as e:
         manager.view(session.id)
     assert e.value.status == 404
+
+
+def test_found_documents_are_listed_with_type_and_name_once_read(manager) -> None:
+    session = manager.start_sample("en")
+    view = _wait(manager, session.id)
+    docs = {d["id"]: d for d in view["documents"]}
+    assert list(docs) == ["rc", "id1"]  # in the order the finder handed them over
+    assert docs["rc"]["doc_type"] == "ration_card" and docs["id1"]["doc_type"] == "identity_card"
+    assert docs["id1"]["read"] and docs["id1"]["name_en"] == "Suneel Ramesh Patil"
+
+
+def test_live_documents_before_reading_is_done() -> None:
+    from app.sessions import live_documents
+
+    reads = {"d1": {"document_id": "d1", "doc_type": "identity_card", "fields": {"name_en": "Savita", "name_mr": None}},
+             "rc": {"document_id": "rc", "doc_type": "ration_card", "fields": {"head_name_mr": "आदित्य", "members": []}}}
+    out = live_documents(["d1", "d2", "rc"], [], reads)
+    assert out[0] == {"id": "d1", "doc_type": "identity_card", "name_en": "Savita", "name_mr": None, "read": True}
+    assert out[1] == {"id": "d2", "doc_type": None, "name_en": None, "name_mr": None, "read": False}
+    assert out[2]["name_mr"] == "आदित्य"  # a ration card is labelled with its head of family
+
+
+def test_thumbnails_come_from_memory_and_go_with_the_session(manager) -> None:
+    import cv2
+    import numpy as np
+
+    from graph.runtime import runtime
+
+    session = manager.start_sample("en")
+    _wait(manager, session.id)
+    with pytest.raises(SessionError) as e:
+        manager.thumbnail(session.id, "id1")  # the fake crops are not images
+    assert e.value.status == 404
+    ok, big = cv2.imencode(".jpg", np.full((1200, 900, 3), 200, dtype=np.uint8))
+    runtime(session.id).add_document("id1", [big.tobytes()])
+    thumb = cv2.imdecode(np.frombuffer(manager.thumbnail(session.id, "id1"), dtype=np.uint8), cv2.IMREAD_COLOR)
+    assert max(thumb.shape[:2]) == 480
+    with pytest.raises(SessionError):
+        manager.thumbnail(session.id, "nope")
+    manager.delete(session.id)
+    with pytest.raises(SessionError) as e:
+        manager.thumbnail(session.id, "id1")
+    assert e.value.status == 404

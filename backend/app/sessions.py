@@ -5,6 +5,8 @@ the app runs as one process/container).
   by the graph as soon as the finder is done. The bundled sample is never deleted.
 - The graph pauses at a family question; `answer` resumes it with an option index (spoken answers are matched
   to an option first; only a match resumes).
+- Each document is listed as soon as the finder hands it over (`documents`, with its type and name once read);
+  its thumbnail is made from the best crop in memory only.
 - Everything a session holds (folder, crops, checkpoint, results) is deleted `session_ttl_s` after it started.
 - Uploads are rate-limited per hour; the sample is not counted (its model calls are cached).
 """
@@ -24,12 +26,32 @@ from langgraph.types import Command
 from agents.answers import AnswerResult, Prompt, answer_from_audio
 from app.config import REPO_ROOT, get_settings
 from graph.build import build_graph
-from graph.runtime import drop
+from graph.runtime import drop, runtime
 from graph.state import STAGES
 
 logger = logging.getLogger(__name__)
 
 Status = Literal["running", "waiting", "done", "error"]
+THUMB_LONG_SIDE = 480
+
+
+def _names(extraction: dict[str, Any]) -> tuple[str | None, str | None]:
+    """(English, Marathi) name on a document: the person's, or for a ration card its head of family."""
+    f = extraction.get("fields") or {}
+    return (f.get("name_en") or f.get("head_name_en")), (f.get("name_mr") or f.get("head_name_mr"))
+
+
+def live_documents(found: list[str], extractions: list[dict[str, Any]], reads: dict[str, Any]) -> list[dict[str, Any]]:
+    """Each found document with what is known so far: from the stored extractions once reading is done, else from
+    the reads finished so far (`reads`: document id -> extraction dict)."""
+    known = {e["document_id"]: e for e in extractions} or reads
+    out = []
+    for doc_id in found:
+        e = known.get(doc_id)
+        name_en, name_mr = _names(e) if e else (None, None)
+        out.append({"id": doc_id, "doc_type": (e or {}).get("doc_type"), "name_en": name_en, "name_mr": name_mr,
+                    "read": e is not None})
+    return out
 
 
 class SessionError(Exception):
@@ -159,10 +181,43 @@ class SessionManager:
         current = next((s["stage"] for s in stages if not s["done"]), None) if session.status == "running" else None
         keys = ("found", "extractions", "recapture", "household", "results", "issues", "waiting", "plan", "speech",
                 "usage")
+        rt = runtime(session.id)
+        reads = {}
+        if not values.get("extractions") and rt.reader is not None:
+            reads = {k: r.extraction.model_dump(mode="json") for k, r in rt.reader.done().items()}
+        documents = live_documents(rt.found_ids(), values.get("extractions") or [], reads)
         return {"id": session.id, "language": session.language, "sample": session.sample, "status": session.status,
                 "error": session.error, "stage": current, "stages": stages, "question": session.question,
-                "elapsed_s": round(time.time() - session.created, 1),
+                "elapsed_s": round(time.time() - session.created, 1), "documents": documents,
                 **{k: values.get(k) for k in keys}}
+
+    def thumbnail(self, session_id: str, document_id: str) -> bytes:
+        """A small JPEG of the document's best crop, from memory (made once, kept until the session is deleted)."""
+        import cv2
+        import numpy as np
+
+        self.get(session_id)
+        rt = runtime(session_id)
+        with rt.lock:
+            cached = rt.thumbs.get(document_id)
+            crops = rt.images.get(document_id)
+        if cached is not None:
+            return cached
+        if not crops:
+            raise SessionError(404, "No such document.")
+        image = cv2.imdecode(np.frombuffer(crops[0], dtype=np.uint8), cv2.IMREAD_COLOR)
+        if image is None:
+            raise SessionError(404, "No such document.")
+        scale = THUMB_LONG_SIDE / max(image.shape[:2])
+        if scale < 1:
+            image = cv2.resize(image, (round(image.shape[1] * scale), round(image.shape[0] * scale)),
+                               interpolation=cv2.INTER_AREA)
+        ok, jpeg = cv2.imencode(".jpg", image, [cv2.IMWRITE_JPEG_QUALITY, 80])
+        if not ok:
+            raise SessionError(500, "The thumbnail could not be made.")
+        with rt.lock:
+            rt.thumbs[document_id] = jpeg.tobytes()
+        return jpeg.tobytes()
 
     def speech_text(self, session_id: str, key: str) -> str:
         """TTS input for 'question' (the pending question) or 'step-<n>' (a plan step)."""

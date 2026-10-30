@@ -98,7 +98,7 @@ def build_graph(deps: Deps | None = None, checkpointer: Any = None) -> Any:
         rt.reader = deps.new_reader()
 
         def on_document(d: FoundDocument) -> None:
-            rt.images[d.document.id] = list(d.document.images)
+            rt.add_document(d.document.id, d.document.images)  # shown as a thumbnail right away
             rt.reader.submit(d.document)
 
         video = Path(state["video_path"])

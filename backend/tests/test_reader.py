@@ -245,3 +245,22 @@ def test_agreement_strength_from_frame_times() -> None:
     other = DocumentExtraction(document_id="f", doc_type="other")
     ex = agree_extractions("d", [_id_frame(), other, _id_frame()], times_s=[1.0, 3.0, 1.3])
     assert ex.agreement_gap_s == 0.3 and ex.agreement_strength == "weak"
+
+
+def test_streaming_reader_reports_finished_documents_without_waiting() -> None:
+    release = threading.Event()
+
+    def llm(prompt: str, **kwargs: Any) -> LLMResponse:
+        if kwargs["images"] == [b"slow"]:
+            release.wait(5)
+        return FakeLLM(GOOD)(prompt, **kwargs)
+
+    with StreamingReader(llm=llm, agreement=False) as reader:
+        reader.submit(DocumentInput(id="fast", images=[b"fast"]))
+        reader.submit(DocumentInput(id="slow", images=[b"slow"]))
+        deadline = time.time() + 5
+        while "fast" not in reader.done() and time.time() < deadline:
+            time.sleep(0.01)
+        assert set(reader.done()) == {"fast"}  # the slow one is still being read
+        release.set()
+        assert set(reader.results()) == {"fast", "slow"}

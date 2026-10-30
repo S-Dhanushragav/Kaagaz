@@ -202,3 +202,5 @@ export async function getSchemes(language: Language): Promise<CatalogScheme[]> {
 }
 
 export const audioUrl = (id: string, key: string): string => `${API_URL}/sessions/${id}/audio/${key}`
+export const cropUrl = (id: string, documentId: string, version = 0): string =>
+  `${API_URL}/sessions/${id}/crops/${encodeURIComponent(documentId)}?v=${version}`

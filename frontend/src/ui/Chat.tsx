@@ -5,6 +5,7 @@ import { Camera, Logo } from './Icons'
 import QuestionCard from './QuestionCard'
 import Recapture from './Recapture'
 import Recorder from './Recorder'
+import Thumbnails from './Thumbnails'
 import { Plan, Results } from './Results'
 import type { Voice } from './voice'
 
@@ -63,6 +64,7 @@ export default function Chat({ t, language, check, view, error, answered, voice,
         <p className="system-note">{t.sessionLanguage.replace('{lang}', LANGUAGE_NAMES[view.language])}</p>
       )}
       {view && <Bot><Progress t={t} view={view} /></Bot>}
+      {view && (view.documents ?? []).length > 0 && <Bot wide><Thumbnails t={t} view={view} language={language} /></Bot>}
       {view && answered.map((a, i) => (
         <div key={i} className="exchange">
           <Bot><p className="asked">{t.questionTitle}{a.member ? `: ${a.member}` : ''}</p></Bot>

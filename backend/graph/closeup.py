@@ -47,7 +47,7 @@ def apply_closeup(graph: Any, session_id: str, config: dict[str, Any], document_
     extractions = [e for e in values.get("extractions", []) if e["document_id"] != document_id]
     extractions.append(read.extraction.model_dump(mode="json"))
     remaining = [d for d in recapture["documents"] if d != document_id]
-    runtime(session_id).images[document_id] = [jpeg]  # the name verifier re-reads this photo
+    runtime(session_id).add_document(document_id, [jpeg])  # the name verifier re-reads this photo
     graph.update_state(config, {
         "extractions": extractions,
         "recapture": {"mode": "close_ups" if remaining else "none", "documents": remaining,

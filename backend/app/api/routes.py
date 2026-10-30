@@ -5,6 +5,7 @@ POST /sessions/sample           the bundled sample family's sweep video, no uplo
 GET  /sessions/{id}             stage progress, partial results, the pending question
 POST /sessions/{id}/answer      {question_id, option} (JSON) or a short WAV clip (form: question_id, audio)
 GET  /sessions/{id}/audio/{key} TTS WAV for 'question' or 'step-<n>'
+GET  /sessions/{id}/crops/{doc}  thumbnail of a found document's best crop (from memory; gone with the session)
 POST /sessions/{id}/closeup     a clearer photo of one document on the close-up list (form: document_id, photo|sample)
 GET  /schemes?lang=             the scheme catalog: each scheme's rules as lines, with status and sources (YAML only)
 """
@@ -12,7 +13,7 @@ GET  /schemes?lang=             the scheme catalog: each scheme's rules as lines
 from typing import Any, Literal
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
 
 from app.config import get_settings
@@ -138,6 +139,16 @@ def audio(request: Request, session_id: str, key: str) -> FileResponse:
     except TTSError as e:
         raise HTTPException(503, f"Speech output is not available: {e}") from e
     return FileResponse(speech.path, media_type="audio/wav", headers={"Cache-Control": "private, max-age=3600"})
+
+
+@router.get("/sessions/{session_id}/crops/{document_id}")
+def crop(request: Request, session_id: str, document_id: str) -> Response:
+    try:
+        jpeg = manager(request).thumbnail(session_id, document_id)
+    except SessionError as e:
+        raise _fail(e) from e
+    # no-store: a close-up replaces the crop, and nothing of a document should outlive the session in a cache
+    return Response(jpeg, media_type="image/jpeg", headers={"Cache-Control": "private, no-store"})
 
 
 @router.get("/schemes")
