@@ -60,6 +60,7 @@ Base URLs and model IDs always come from env/config, never hardcoded.
 - Use type hints everywhere; Pydantic models for all data crossing module boundaries.
 - Keep prompts in `backend/prompts/*.md`, not inline strings.
 - After finishing a task, suggest a one-line entry for `docs/BUILD_LOG.md` and a commit message.
+- After each phase, update `docs/ROADMAP.md`: tick finished items, add the commit hashes, note anything cut or changed and why, and keep the README Status table in sync.
 - Ask before adding any new dependency.
 
 ## Commands

@@ -45,6 +45,8 @@ All phases are built, tested and deployed (430 backend tests, no network).
 | 7 | LangGraph pipeline (family question as an interrupt), sessions API, mobile web app, Modal + Netlify deployment | Done, deployed |
 | 7+ | Close-up loop (a clearer photo of one document re-runs household → rules → plan), "no documents" / "sweep again" stops, issues waiting for a clearer photo, scheme reasons in en/hi/mr, upload progress | Done, deployed |
 
+Remaining phases: see [docs/ROADMAP.md](docs/ROADMAP.md).
+
 Full product spec: [docs/PRD.md](docs/PRD.md). Working rules for this repo (architecture, hard rules): [CLAUDE.md](CLAUDE.md).
 
 ## Results so far
