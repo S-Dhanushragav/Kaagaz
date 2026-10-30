@@ -66,7 +66,7 @@ def rule_reason(result: RuleResult, language: str) -> str:
         return result.reason  # a code without wording yet: the engine's English trace
     params: dict[str, Any] = {}
     for key, value in result.params.items():
-        if key in MONEY and isinstance(value, (int, float)):
+        if key in MONEY and isinstance(value, (int, float)) and not result.code.startswith("age"):  # age limits are years
             params[key] = inr(value)
         elif key in ("gender", "needs", "card", "source") and isinstance(value, str):
             params[key] = t.words.get(value, value)

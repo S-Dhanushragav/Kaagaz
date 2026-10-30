@@ -89,6 +89,18 @@ export interface Extraction {
   fields: Record<string, unknown> | null
 }
 
+// An issue as the fix planner saw it (also the shape of a waiting issue).
+export interface PlannerIssue {
+  id: string
+  type: string
+  severity: string
+  member_id: string | null
+  member_name: string | null
+  member_name_mr: string | null
+  documents: Record<string, string> // document id -> document type
+  document_type: string | null // for a missing document: which one
+}
+
 export interface WaitingIssue { id: string; type: string; member_id: string | null; member_name: string | null; member_name_mr: string | null; documents: Record<string, string> }
 
 // A document the finder has handed over, with what is known about it so far (type and name once read).
@@ -107,6 +119,7 @@ export interface SessionView {
   found: { id: string; frames: number[]; fully_visible: boolean }[] | null
   documents?: LiveDocument[] | null // found so far, while the finder runs (and after); crops at cropUrl()
   extractions: Extraction[] | null
+  issues: PlannerIssue[] | null // the problems the plan is for
   waiting: WaitingIssue[] | null
   recapture: { mode: 'none' | 'close_ups' | 'sweep_again' | 'no_documents'; documents: string[] } | null
   household: {

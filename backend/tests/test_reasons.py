@@ -75,3 +75,10 @@ def test_blocked_reasons_name_the_problem_and_missing_documents() -> None:
 def test_rupees_are_spoken_in_english() -> None:
     assert speech_text("Fee: about ₹75.", "en") == "Fee: about seventy-five rupees."
     assert speech_text("Income ₹2,04,000.", "en").startswith("Income ")
+
+
+def test_age_limits_are_years_not_rupees() -> None:
+    hh = household([{**WOMAN, "age": 48}], income=204000)
+    shravanbal = next(r for r in evaluate(hh) if r.scheme_id == "shravanbal")
+    reasons = scheme_reasons(shravanbal, "en")["reasons"]
+    assert "Age 48 is under the minimum age of 65." in reasons

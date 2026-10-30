@@ -6,7 +6,7 @@ import QuestionCard from './QuestionCard'
 import Recapture from './Recapture'
 import Recorder from './Recorder'
 import Thumbnails from './Thumbnails'
-import { Plan, Results } from './Results'
+import { FamilyCard, PlanCard, ProblemsCard } from './Results'
 import type { Voice } from './voice'
 
 export type Check =
@@ -84,8 +84,9 @@ export default function Chat({ t, language, check, view, error, answered, voice,
       {view?.status === 'done' && !stopped && (
         <>
           {view.recapture?.mode === 'close_ups' && <p className="system-note">{t.closeUpsNote}</p>}
-          <Bot wide><Plan t={t} id={view.id} view={view} /></Bot>
-          {view.household && <Bot wide><Results t={t} view={view} language={language} /></Bot>}
+          <Bot wide><PlanCard t={t} view={view} /></Bot>
+          <Bot wide><ProblemsCard t={t} view={view} language={language} /></Bot>
+          <Bot wide><FamilyCard key={view.id} t={t} view={view} language={language} /></Bot>
         </>
       )}
     </>

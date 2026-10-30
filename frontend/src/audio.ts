@@ -2,9 +2,10 @@
 // queue of keys in order and can be stopped at any point. Components subscribe with useAudio().
 import { useSyncExternalStore } from 'react'
 
-type State = { key: string | null; queue: string[] } // key: what is playing now; queue: what plays after it
+// key: what is playing now; queue: what plays after it; group: the 'Listen to all' that started it, if any
+type State = { key: string | null; queue: string[]; group: string | null }
 
-let state: State = { key: null, queue: [] }
+let state: State = { key: null, queue: [], group: null }
 let audio: HTMLAudioElement | null = null
 let urls: Record<string, string> = {}
 const listeners = new Set<() => void>()
@@ -14,37 +15,37 @@ function set(next: State): void {
   listeners.forEach((l) => l())
 }
 
-function start(key: string, queue: string[]): void {
+function start(key: string, queue: string[], group: string | null): void {
   audio?.pause()
   const el = new Audio(urls[key])
   audio = el
   const next = () => {
     if (audio !== el) return // stopped or replaced meanwhile
     const [head, ...rest] = state.queue
-    if (head) start(head, rest)
-    else { audio = null; set({ key: null, queue: [] }) }
+    if (head) start(head, rest, state.group)
+    else { audio = null; set({ key: null, queue: [], group: null }) }
   }
   el.onended = next
   el.onerror = next // no TTS on the server: skip rather than hang
-  set({ key, queue })
+  set({ key, queue, group })
   void el.play().catch(next)
 }
 
 export function play(key: string, url: string): void {
   urls[key] = url
-  start(key, [])
+  start(key, [], null)
 }
 
-export function playAll(items: [string, string][]): void {
+export function playAll(group: string, items: [string, string][]): void {
   if (!items.length) return
   urls = { ...urls, ...Object.fromEntries(items) }
-  start(items[0][0], items.slice(1).map(([k]) => k))
+  start(items[0][0], items.slice(1).map(([k]) => k), group)
 }
 
 export function stop(): void {
   audio?.pause()
   audio = null
-  set({ key: null, queue: [] })
+  set({ key: null, queue: [], group: null })
 }
 
 export function useAudio(): State {
