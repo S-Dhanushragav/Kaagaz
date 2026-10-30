@@ -309,6 +309,23 @@ details summary { cursor: pointer; min-height: 44px; padding: 8px 0; font-weight
 .why-sources { margin: 4px 0 0; font-size: 0.85rem; }
 .why-sources a { margin-right: 10px; }
 
+/* feedback */
+.feedback { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
+.feedback-ask { font-weight: 650; color: var(--ink-2); }
+.feedback-buttons { display: flex; gap: 8px; }
+.thumb-button {
+  width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--line-2); background: var(--surface); color: var(--ink-2);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.thumb-button:hover { border-color: var(--indigo); color: var(--indigo); }
+.thumb-button.on { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+.feedback-form { flex-basis: 100%; display: flex; gap: 8px; align-items: flex-end; }
+.feedback-form textarea {
+  flex: 1; min-height: 48px; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line-2); background: var(--paper);
+  font: inherit; color: var(--ink); resize: vertical;
+}
+.feedback-thanks { margin: 16px 0 0; padding-top: 12px; border-top: 1px solid var(--line); color: var(--ok); font-weight: 650; }
+
 /* ---------- composer ---------- */
 .composer {
   display: flex; align-items: center; gap: 8px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom));

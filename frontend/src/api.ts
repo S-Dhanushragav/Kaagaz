@@ -217,3 +217,12 @@ export async function getSchemes(language: Language): Promise<CatalogScheme[]> {
 export const audioUrl = (id: string, key: string): string => `${API_URL}/sessions/${id}/audio/${key}`
 export const cropUrl = (id: string, documentId: string, version = 0): string =>
   `${API_URL}/sessions/${id}/crops/${encodeURIComponent(documentId)}?v=${version}`
+
+// Thumbs up/down on the plan ('plan') or one answer ('answer:<id>'), stored anonymously.
+export async function sendFeedback(sessionId: string, target: string, value: 'up' | 'down', comment?: string): Promise<void> {
+  const res = await fetch(`${API_URL}/feedback`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ session_id: sessionId, target, value, comment: comment || null }),
+  })
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+}

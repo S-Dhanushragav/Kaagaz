@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Language, SessionView } from '../api'
 import { LANGUAGE_NAMES, type Strings } from '../i18n'
+import Feedback from './Feedback'
 import { Camera, Logo } from './Icons'
 import QuestionCard from './QuestionCard'
 import Recapture from './Recapture'
@@ -84,7 +85,7 @@ export default function Chat({ t, language, check, view, error, answered, voice,
       {view?.status === 'done' && !stopped && (
         <>
           {view.recapture?.mode === 'close_ups' && <p className="system-note">{t.closeUpsNote}</p>}
-          <Bot wide><PlanCard t={t} view={view} /></Bot>
+          <Bot wide><PlanCard t={t} view={view}><Feedback key={view.id} t={t} sessionId={view.id} target="plan" /></PlanCard></Bot>
           <Bot wide><ProblemsCard t={t} view={view} language={language} /></Bot>
           <Bot wide><FamilyCard key={view.id} t={t} view={view} language={language} /></Bot>
         </>

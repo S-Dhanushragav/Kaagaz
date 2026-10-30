@@ -7,6 +7,7 @@ POST /sessions/{id}/answer      {question_id, option} (JSON) or a short WAV clip
 GET  /sessions/{id}/audio/{key} TTS WAV for 'question' or 'step-<n>'
 GET  /sessions/{id}/crops/{doc}  thumbnail of a found document's best crop (from memory; gone with the session)
 POST /sessions/{id}/closeup     a clearer photo of one document on the close-up list (form: document_id, photo|sample)
+POST /feedback                  {session_id, target, value, comment}: thumbs up/down, stored anonymously
 GET  /schemes?lang=             the scheme catalog: each scheme's rules as lines, with status and sources (YAML only)
 """
 
@@ -17,6 +18,7 @@ from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
 
 from app.config import get_settings
+from app.feedback import Feedback, record
 from app.sessions import SessionError, SessionManager
 
 router = APIRouter()
@@ -149,6 +151,12 @@ def crop(request: Request, session_id: str, document_id: str) -> Response:
         raise _fail(e) from e
     # no-store: a close-up replaces the crop, and nothing of a document should outlive the session in a cache
     return Response(jpeg, media_type="image/jpeg", headers={"Cache-Control": "private, no-store"})
+
+
+@router.post("/feedback", status_code=204)
+def feedback(body: Feedback) -> Response:
+    record(body)
+    return Response(status_code=204)
 
 
 @router.get("/schemes")
