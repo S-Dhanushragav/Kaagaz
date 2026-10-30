@@ -76,6 +76,7 @@ export interface SchemeResult {
   reasons: string[]
   rules: RuleResult[]
   warnings: string[]
+  display?: { reasons: string[]; warnings: string[] } // in the family's language (backend templates)
 }
 
 export interface Shown { text: string; verified: boolean }

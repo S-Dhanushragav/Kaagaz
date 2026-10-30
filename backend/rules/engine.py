@@ -39,6 +39,8 @@ class RuleResult(BaseModel):
     source: str
     source_url: str | None
     interpretation: str | None = None
+    code: str = ""  # e.g. 'age_min.fail': how the app words the reason (data/templates/reasons)
+    params: dict[str, Any] = {}  # values the wording needs (amounts, ages, missing documents)
 
 
 class OtherProofItem(BaseModel):
@@ -127,20 +129,24 @@ class _Facts:
 
 # ---------- checks ----------
 
-def _result(rule: Rule, outcome: RuleOutcome, reason: str, actual: Any = None) -> RuleResult:
+def _result(rule: Rule, outcome: RuleOutcome, reason: str, actual: Any = None, code: str | None = None,
+            **params: Any) -> RuleResult:
+    """`code` + `params` let the app say the reason in the family's language (data/templates/reasons);
+    `reason` stays the English trace. The code defaults to '<check>.<outcome>'."""
     return RuleResult(rule_id=rule.id, check=rule.check, outcome=outcome, reason=reason, value=rule.value,
                       actual=actual, status=rule.status, source=rule.source, source_url=rule.source_url,
-                      interpretation=rule.interpretation)
+                      interpretation=rule.interpretation, code=code or f"{rule.check}.{outcome}", params=params)
 
 
 def _age(rule: Rule, f: _Facts, ok: bool, wording: str) -> RuleResult:
     m = f.member
     if m.age is None:
-        return _result(rule, "blocked", "age unknown (date of birth not readable)")
+        return _result(rule, "blocked", "age unknown (date of birth not readable)", code="age.unknown")
     if f.age_doubtful:
-        return _result(rule, "blocked", "dates of birth differ between documents", m.age)
+        return _result(rule, "blocked", "dates of birth differ between documents", m.age, code="age.doubtful")
     src = "identity card" if m.age_source == "identity_card" else "ration card"
-    return _result(rule, "pass" if ok else "fail", f"age {m.age} ({src}) {'meets' if ok else 'does not meet'} {wording}", m.age)
+    return _result(rule, "pass" if ok else "fail", f"age {m.age} ({src}) {'meets' if ok else 'does not meet'} {wording}",
+                   m.age, age=m.age, limit=rule.value, source=m.age_source)
 
 
 def _check(rule: Rule, scheme: Scheme, f: _Facts) -> RuleResult:
@@ -148,8 +154,9 @@ def _check(rule: Rule, scheme: Scheme, f: _Facts) -> RuleResult:
     if rule.check == "gender":
         want = {"female": "F", "male": "M"}[v]
         if m.gender is None:
-            return _result(rule, "blocked", "gender not readable")
-        return _result(rule, "pass" if m.gender == want else "fail", f"gender {m.gender}, needs {v}", m.gender)
+            return _result(rule, "blocked", "gender not readable", code="gender.unknown")
+        return _result(rule, "pass" if m.gender == want else "fail", f"gender {m.gender}, needs {v}", m.gender,
+                       gender=m.gender, needs=want)
     if rule.check == "age_min":
         return _age(rule, f, m.age is not None and m.age >= v, f"minimum {v}")
     if rule.check == "age_max":
@@ -163,70 +170,89 @@ def _check(rule: Rule, scheme: Scheme, f: _Facts) -> RuleResult:
         if f.income_doc is None:
             if f.hh.card_colour in exempt_cards:
                 return _result(rule, "pass", f"no income certificate; {f.hh.card_colour} ration card satisfies "
-                                             "the income requirement (our reading)", f.hh.card_colour)
-            return _result(rule, "blocked", "income certificate missing")
+                                             "the income requirement (our reading)", f.hh.card_colour,
+                               code="income.card", card=f.hh.card_colour)
+            return _result(rule, "blocked", "income certificate missing", code="income.missing")
         if rule.check == "income_certificate_unless_card":
-            return _result(rule, "pass", "income certificate present", f.hh.income_document_id)
+            return _result(rule, "pass", "income certificate present", f.hh.income_document_id, code="income.present")
         if f.income is None:
-            return _result(rule, "blocked", "income not readable on the income certificate")
+            return _result(rule, "blocked", "income not readable on the income certificate", code="income.unreadable")
         if f.income_doubtful:
-            return _result(rule, "blocked", "the income certificate has issues to fix first", f.income)
+            return _result(rule, "blocked", "the income certificate has issues to fix first", f.income,
+                           code="income.doubtful")
         if rule.check == "income_max":
             ok = f.income <= v
-            return _result(rule, "pass" if ok else "fail", f"family income {f.income} {'<=' if ok else '>'} {v}", f.income)
+            return _result(rule, "pass" if ok else "fail", f"family income {f.income} {'<=' if ok else '>'} {v}", f.income,
+                           income=f.income, limit=v)
         if f.income <= v["pass_max"]:  # income_bands (conflicting sources)
-            return _result(rule, "pass", f"family income {f.income} <= {v['pass_max']}", f.income)
+            return _result(rule, "pass", f"family income {f.income} <= {v['pass_max']}", f.income,
+                           income=f.income, limit=v["pass_max"])
         if f.income > v["fail_above"]:
-            return _result(rule, "fail", f"family income {f.income} > {v['fail_above']}", f.income)
+            return _result(rule, "fail", f"family income {f.income} > {v['fail_above']}", f.income,
+                           income=f.income, limit=v["fail_above"])
         return _result(rule, "check_at_office",
                        f"family income {f.income} is between {v['pass_max']} and {v['fail_above']}; "
-                       "sources disagree on the limit", f.income)
+                       "sources disagree on the limit", f.income, income=f.income, low=v["pass_max"], high=v["fail_above"])
 
     if rule.check == "caste_household":
         qualifying = [(i, d) for i, d in f.caste_docs() if category_code(d) in v["qualifying"]]
         clean = [i for i, _ in qualifying if not f.doc_blockers([i])]
+        categories = "/".join(v["qualifying"])
         if clean:
-            return _result(rule, "pass", f"household has a {'/'.join(v['qualifying'])} caste certificate", clean)
+            return _result(rule, "pass", f"household has a {categories} caste certificate", clean, categories=categories)
         if qualifying:
             return _result(rule, "blocked", "the qualifying caste certificate has issues to fix first",
-                           [i for i, _ in qualifying])
+                           [i for i, _ in qualifying], categories=categories)
         return _result(rule, "needs_other_proof",
-                       f"no {'/'.join(v['qualifying'])} caste certificate; other qualifying categories need other proof")
+                       f"no {categories} caste certificate; other qualifying categories need other proof",
+                       categories=categories)
 
     if rule.check == "caste_applicant":
         own = f.caste_docs(m.member_id)
+        categories = "/".join(v["qualifying"])
         if not own:
             others = [i for i, d in f.caste_docs() if category_code(d) in v["qualifying"]]
             if others:
                 return _result(rule, "check_at_office", "only another household member has a qualifying caste "
-                                                        "certificate (our reading)", others)
-            return _result(rule, "blocked", "no caste certificate for the applicant")
+                                                        "certificate (our reading)", others, categories=categories)
+            return _result(rule, "blocked", "no caste certificate for the applicant", code="caste_applicant.none",
+                           categories=categories)
         if all(f.doc_blockers([i]) for i, _ in own):
-            return _result(rule, "blocked", "the applicant's caste certificate has issues to fix first", [i for i, _ in own])
+            return _result(rule, "blocked", "the applicant's caste certificate has issues to fix first", [i for i, _ in own],
+                           categories=categories)
         codes = {category_code(d) for i, d in own if not f.doc_blockers([i])}
         if codes & set(v["qualifying"]):
-            return _result(rule, "pass", f"applicant's own caste certificate: {sorted(codes & set(v['qualifying']))}", sorted(codes))
-        return _result(rule, "fail", f"applicant's caste category {sorted(c for c in codes if c)} is not "
-                                     f"{'/'.join(v['qualifying'])}", sorted(c for c in codes if c))
+            return _result(rule, "pass", f"applicant's own caste certificate: {sorted(codes & set(v['qualifying']))}",
+                           sorted(codes), categories="/".join(sorted(codes & set(v["qualifying"]))))
+        have = "/".join(sorted(c for c in codes if c))
+        return _result(rule, "fail", f"applicant's caste category {sorted(c for c in codes if c)} is not {categories}",
+                       sorted(c for c in codes if c), have=have, categories=categories)
 
     if rule.check == "documents":
-        missing = []
+        missing, items = [], []  # items: what is missing, for the app's wording
         if v.get("ration_card") and not f.hh.ration_card_id:
             missing.append("ration card")
+            items.append({"kind": "ration_card"})
         if v.get("identity_card") == "every_adult_on_ration_card":
             for mem in f.hh.members:
                 if not mem.on_ration_card:
                     continue
                 if mem.age is None:
                     missing.append(f"age of {mem.member_id} unknown (adult identity card check)")
+                    items.append({"kind": "age_unknown", "member_id": mem.member_id, "name_en": mem.name_en,
+                                  "name_mr": mem.name_mr})
                 elif mem.age >= 18 and not mem.documents.get("identity_card"):
                     missing.append(f"identity card of {mem.name_en or mem.member_id}")
+                    items.append({"kind": "identity_card", "member_id": mem.member_id, "name_en": mem.name_en,
+                                  "name_mr": mem.name_mr})
         if v.get("caste_certificate") and not f.caste_docs():
             missing.append("caste certificate")
+            items.append({"kind": "caste_certificate"})
         if v.get("income_certificate") and f.income_doc is None:
             missing.append("income certificate")
+            items.append({"kind": "income_certificate"})
         if missing:
-            return _result(rule, "blocked", "missing: " + "; ".join(missing), missing)
+            return _result(rule, "blocked", "missing: " + "; ".join(missing), missing, code="documents.missing", items=items)
         return _result(rule, "pass", "required documents present")
 
     raise ValueError(f"unknown check {rule.check!r} in {scheme.id}")
@@ -242,7 +268,8 @@ def _validity_warning(shared: SharedRules, f: _Facts) -> RuleResult | None:
     start = financial_year_start(f.hh.reference_date)
     if issued < start:
         return _result(rule, "warning", f"income certificate issued {issue_date}, before {start:%d/%m/%Y}: "
-                                        f"{rule.value['message']}", issue_date)
+                                        f"{rule.value['message']}", issue_date, code="validity.warning",
+                       issued=issue_date, since=f"{start:%d/%m/%Y}")
     return None
 
 

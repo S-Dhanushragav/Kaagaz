@@ -1,0 +1,57 @@
+# Scheme-result reasons (Marathi). MACHINE-DRAFTED: needs review by a native speaker. Amounts are shown as ₹2,04,000.
+language: mr
+words:
+  F: महिला
+  M: पुरुष
+  yellow: पिवळे
+  orange: केशरी
+  white: पांढरे
+  identity_card: आधार कार्ड
+  ration_card: रेशन कार्ड
+missing:
+  ration_card: रेशन कार्ड
+  income_certificate: उत्पन्नाचा दाखला
+  caste_certificate: जातीचा दाखला
+  identity_card: "{name}: आधार कार्ड"
+  age_unknown: "{name}: वय (वाचता आले नाही)"
+reasons:
+  gender.unknown: "लिंग वाचता आले नाही."
+  gender.pass: "{gender} आहेत, जसे आवश्यक आहे."
+  gender.fail: "ही योजना {needs} यांच्यासाठी आहे."
+  age.unknown: "वय वाचता आले नाही."
+  age.doubtful: "कागदपत्रांवर जन्मतारीख वेगळी आहे."
+  age_min.pass: "वय {age} आहे, किमान {limit} ची अट पूर्ण होते."
+  age_min.fail: "वय {age} आहे, किमान {limit} असायला हवे."
+  age_max.pass: "वय {age} आहे, कमाल {limit} च्या आत आहे."
+  age_max.fail: "वय {age} आहे, कमाल {limit} पेक्षा जास्त आहे."
+  age_below.pass: "वय {age} आहे, {limit} पेक्षा कमी आहे."
+  age_below.fail: "वय {age} आहे, {limit} पेक्षा कमी नाही."
+  income.card: "उत्पन्नाचा दाखला नाही, पण {card} रेशन कार्ड उत्पन्नासाठी ग्राह्य धरले जाते (आमचा अर्थ)."
+  income.missing: "उत्पन्नाचा दाखला नाही."
+  income.present: "उत्पन्नाचा दाखला आहे."
+  income.unreadable: "दाखल्यावरील उत्पन्न वाचता आले नाही."
+  income.doubtful: "उत्पन्नाच्या दाखल्यातील एक अडचण आधी दूर करायची आहे."
+  income_max.pass: "कुटुंबाचे उत्पन्न {income} आहे, {limit} च्या मर्यादेत आहे."
+  income_max.fail: "कुटुंबाचे उत्पन्न {income} आहे, {limit} च्या मर्यादेपेक्षा जास्त आहे."
+  income_bands.pass: "कुटुंबाचे उत्पन्न {income} आहे, {limit} च्या आत आहे."
+  income_bands.fail: "कुटुंबाचे उत्पन्न {income} आहे, {limit} पेक्षा जास्त आहे."
+  income_bands.check_at_office: "कुटुंबाचे उत्पन्न {income} आहे, {low} आणि {high} च्या दरम्यान; स्रोतांमध्ये मर्यादा वेगवेगळी आहे."
+  caste_household.pass: "कुटुंबाकडे {categories} जातीचा दाखला आहे."
+  caste_household.blocked: "{categories} जातीच्या दाखल्यातील एक अडचण आधी दूर करायची आहे."
+  caste_household.needs_other_proof: "{categories} जातीचा दाखला नाही; इतर मार्गाने पात्रतेसाठी वेगळा पुरावा लागेल."
+  caste_applicant.check_at_office: "{categories} जातीचा दाखला फक्त कुटुंबातील दुसऱ्या सदस्याकडे आहे (आमचा अर्थ)."
+  caste_applicant.none: "स्वतःचा जातीचा दाखला नाही."
+  caste_applicant.blocked: "त्यांच्या जातीच्या दाखल्यातील एक अडचण आधी दूर करायची आहे."
+  caste_applicant.pass: "स्वतःचा जातीचा दाखला: {categories}."
+  caste_applicant.fail: "त्यांचा जातीचा प्रवर्ग ({have}) {categories} नाही."
+  documents.missing: "नाही: {items}."
+  documents.pass: "आवश्यक कागदपत्रे आहेत."
+  validity.warning: "उत्पन्नाचा दाखला {issued} रोजी दिला होता, {since} पूर्वी: कदाचित नवीन करावा लागेल. कार्यालयात विचारा."
+issues:
+  name_mismatch: "कागदपत्रांवर नावाची स्पेलिंग वेगळी आहे: आधी हे दुरुस्त करा."
+  dob_mismatch: "कागदपत्रांवर जन्मतारीख वेगळी आहे: आधी हे दुरुस्त करा."
+  not_on_ration_card: "रेशन कार्डवर नाव नाही: आधी हे दुरुस्त करा."
+  missing_document: "एक कागदपत्र नाही: आधी हे दुरुस्त करा."
+  unreadable: "एक कागदपत्र वाचता आले नाही: आधी स्पष्ट फोटो घ्या."
+  expired: "उत्पन्नाचा दाखला जुना असू शकतो."
+confirm: "कृपया तपासा: कागदपत्रांवर नावाची स्पेलिंग वेगळी असू शकते."

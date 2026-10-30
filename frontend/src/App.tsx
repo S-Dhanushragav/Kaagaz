@@ -484,11 +484,19 @@ function memberName(m: Member, language: Language, t: Strings): string {
   return m.on_ration_card ? t.cardMember.replace('{n}', m.member_id.replace(/^r/, '')) : t.personNotOnCard
 }
 
+// Each source once per scheme (several rules often cite the same page).
+function sources(r: NonNullable<SessionView['results']>[number]): [string, string][] {
+  const seen = new Map<string, string>()
+  for (const x of r.rules) if (x.source_url && !seen.has(x.source_url)) seen.set(x.source_url, x.source)
+  return [...seen.entries()]
+}
+
 function Results({ t, view, language }: { t: Strings; view: SessionView; language: Language }) {
   const hh = view.household!
   const byMember = new Map<string, NonNullable<SessionView['results']>>()
   for (const r of view.results ?? []) byMember.set(r.member_id, [...(byMember.get(r.member_id) ?? []), r])
   const problems = hh.issues.filter((i) => i.severity !== 'info')
+  const unreadable = problems.filter((i) => i.type === 'unreadable').flatMap((i) => i.documents)
   return (
     <>
       <section className="card">
@@ -505,7 +513,11 @@ function Results({ t, view, language }: { t: Strings; view: SessionView; languag
           <ul className="issues">
             {problems.map((i, n) => {
               const m = hh.members.find((x) => x.member_id === i.member_id)
-              return <li key={n} className={i.severity}>{t.issueTypes[i.type] ?? i.type}{m ? `: ${memberName(m, language, t)}` : ''}</li>
+              // 'Could not read' names the document; other problems name the person.
+              const what = i.type === 'unreadable' && i.documents.length
+                ? docLabel(view, i.documents[0], unreadable, language, t)
+                : m ? memberName(m, language, t) : ''
+              return <li key={n} className={i.severity}>{t.issueTypes[i.type] ?? i.type}{what ? `: ${what}` : ''}</li>
             })}
           </ul>
         )}
@@ -521,9 +533,12 @@ function Results({ t, view, language }: { t: Strings; view: SessionView; languag
                 <li key={r.scheme_id} className={`outcome ${r.outcome}`}>
                   <details>
                     <summary><strong>{r.scheme_name}</strong>: {t.outcomes[r.outcome]}</summary>
-                    <ul className="small">{r.reasons.map((x, n) => <li key={n}>{x}</li>)}</ul>
-                    <p className="small">{t.sources}: {r.rules.filter((x) => x.source_url).map((x, n) => (
-                      <a key={n} href={x.source_url!} target="_blank" rel="noreferrer">{x.source}</a>
+                    <ul className="small">{(r.display?.reasons ?? r.reasons).map((x, n) => <li key={n}>{x}</li>)}</ul>
+                    {(r.display?.warnings ?? []).length > 0 && (
+                      <ul className="small warnings">{r.display!.warnings.map((x, n) => <li key={n}>{x}</li>)}</ul>
+                    )}
+                    <p className="small">{t.sources}: {sources(r).map(([url, source]) => (
+                      <a key={url} href={url} target="_blank" rel="noreferrer">{source}</a>
                     ))}</p>
                   </details>
                 </li>

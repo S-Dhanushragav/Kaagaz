@@ -1,0 +1,57 @@
+# Scheme-result reasons (Hindi). MACHINE-DRAFTED: needs review by a native speaker. Amounts are shown as ₹2,04,000.
+language: hi
+words:
+  F: महिला
+  M: पुरुष
+  yellow: पीला
+  orange: केसरिया
+  white: सफ़ेद
+  identity_card: आधार कार्ड
+  ration_card: राशन कार्ड
+missing:
+  ration_card: राशन कार्ड
+  income_certificate: आय प्रमाण पत्र
+  caste_certificate: जाति प्रमाण पत्र
+  identity_card: "{name} का आधार कार्ड"
+  age_unknown: "{name} की उम्र (पढ़ी नहीं जा सकी)"
+reasons:
+  gender.unknown: "लिंग पढ़ा नहीं जा सका।"
+  gender.pass: "{gender} हैं, जैसा ज़रूरी है।"
+  gender.fail: "यह योजना {needs} के लिए है।"
+  age.unknown: "उम्र पढ़ी नहीं जा सकी।"
+  age.doubtful: "दस्तावेज़ों में जन्म तिथि अलग है।"
+  age_min.pass: "उम्र {age} है, कम से कम {limit} की शर्त पूरी है।"
+  age_min.fail: "उम्र {age} है, कम से कम {limit} होनी चाहिए।"
+  age_max.pass: "उम्र {age} है, ज़्यादा से ज़्यादा {limit} की सीमा में है।"
+  age_max.fail: "उम्र {age} है, ज़्यादा से ज़्यादा {limit} होनी चाहिए।"
+  age_below.pass: "उम्र {age} है, {limit} से कम है।"
+  age_below.fail: "उम्र {age} है, {limit} से कम नहीं है।"
+  income.card: "आय प्रमाण पत्र नहीं है, पर {card} राशन कार्ड आय के लिए माना जाता है (हमारी समझ)।"
+  income.missing: "आय प्रमाण पत्र नहीं है।"
+  income.present: "आय प्रमाण पत्र है।"
+  income.unreadable: "प्रमाण पत्र पर आय पढ़ी नहीं जा सकी।"
+  income.doubtful: "आय प्रमाण पत्र में पहले एक समस्या ठीक करनी है।"
+  income_max.pass: "परिवार की आय {income} है, {limit} की सीमा में है।"
+  income_max.fail: "परिवार की आय {income} है, {limit} की सीमा से ज़्यादा है।"
+  income_bands.pass: "परिवार की आय {income} है, {limit} के अंदर है।"
+  income_bands.fail: "परिवार की आय {income} है, {limit} से ज़्यादा है।"
+  income_bands.check_at_office: "परिवार की आय {income} है, {low} और {high} के बीच; स्रोतों में सीमा अलग-अलग है।"
+  caste_household.pass: "परिवार के पास {categories} जाति प्रमाण पत्र है।"
+  caste_household.blocked: "{categories} जाति प्रमाण पत्र में पहले एक समस्या ठीक करनी है।"
+  caste_household.needs_other_proof: "{categories} जाति प्रमाण पत्र नहीं है; दूसरे आधार पर पात्रता के लिए दूसरा प्रमाण चाहिए।"
+  caste_applicant.check_at_office: "{categories} जाति प्रमाण पत्र केवल परिवार के किसी और सदस्य के पास है (हमारी समझ)।"
+  caste_applicant.none: "अपना जाति प्रमाण पत्र नहीं है।"
+  caste_applicant.blocked: "उनके जाति प्रमाण पत्र में पहले एक समस्या ठीक करनी है।"
+  caste_applicant.pass: "अपना जाति प्रमाण पत्र: {categories}।"
+  caste_applicant.fail: "उनकी जाति श्रेणी ({have}) {categories} नहीं है।"
+  documents.missing: "नहीं है: {items}।"
+  documents.pass: "ज़रूरी दस्तावेज़ हैं।"
+  validity.warning: "आय प्रमाण पत्र {issued} को बना था, {since} से पहले: शायद नया बनवाना होगा। कार्यालय में पता करें।"
+issues:
+  name_mismatch: "दस्तावेज़ों पर नाम की स्पेलिंग अलग है: पहले इसे ठीक करें।"
+  dob_mismatch: "दस्तावेज़ों में जन्म तिथि अलग है: पहले इसे ठीक करें।"
+  not_on_ration_card: "राशन कार्ड पर नाम नहीं है: पहले इसे ठीक करें।"
+  missing_document: "एक दस्तावेज़ नहीं है: पहले इसे ठीक करें।"
+  unreadable: "एक दस्तावेज़ पढ़ा नहीं जा सका: पहले साफ़ फ़ोटो लें।"
+  expired: "आय प्रमाण पत्र पुराना हो सकता है।"
+confirm: "कृपया मिलाकर देखें: दस्तावेज़ों पर नाम की स्पेलिंग अलग हो सकती है।"

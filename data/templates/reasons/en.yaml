@@ -1,0 +1,57 @@
+# Scheme-result reasons, one per rule result code (rules/engine.py `code`). Amounts are shown as ₹2,04,000.
+language: en
+words:
+  F: a woman
+  M: a man
+  yellow: yellow
+  orange: orange
+  white: white
+  identity_card: Aadhaar card
+  ration_card: ration card
+missing:
+  ration_card: ration card
+  income_certificate: income certificate
+  caste_certificate: caste certificate
+  identity_card: "Aadhaar card of {name}"
+  age_unknown: "age of {name} (not readable)"
+reasons:
+  gender.unknown: "Gender could not be read."
+  gender.pass: "Is {gender}, as required."
+  gender.fail: "The scheme is for {needs}."
+  age.unknown: "Age could not be read."
+  age.doubtful: "The date of birth differs between documents."
+  age_min.pass: "Age {age} meets the minimum age of {limit}."
+  age_min.fail: "Age {age} is under the minimum age of {limit}."
+  age_max.pass: "Age {age} is within the maximum age of {limit}."
+  age_max.fail: "Age {age} is over the maximum age of {limit}."
+  age_below.pass: "Age {age} is under {limit}."
+  age_below.fail: "Age {age} is not under {limit}."
+  income.card: "No income certificate, but the {card} ration card is accepted for income (our reading)."
+  income.missing: "The income certificate is missing."
+  income.present: "The income certificate is there."
+  income.unreadable: "The income on the certificate could not be read."
+  income.doubtful: "The income certificate has a problem to fix first."
+  income_max.pass: "Family income {income} is within the limit of {limit}."
+  income_max.fail: "Family income {income} is above the limit of {limit}."
+  income_bands.pass: "Family income {income} is within {limit}."
+  income_bands.fail: "Family income {income} is above {limit}."
+  income_bands.check_at_office: "Family income {income} is between {low} and {high}; sources disagree on the limit."
+  caste_household.pass: "The family has a {categories} caste certificate."
+  caste_household.blocked: "The {categories} caste certificate has a problem to fix first."
+  caste_household.needs_other_proof: "No {categories} caste certificate; other ways to qualify need other proof."
+  caste_applicant.check_at_office: "Only another family member has a {categories} caste certificate (our reading)."
+  caste_applicant.none: "No caste certificate of their own."
+  caste_applicant.blocked: "Their caste certificate has a problem to fix first."
+  caste_applicant.pass: "Their own caste certificate: {categories}."
+  caste_applicant.fail: "Their caste category ({have}) is not {categories}."
+  documents.missing: "Missing: {items}."
+  documents.pass: "The required documents are there."
+  validity.warning: "The income certificate was issued on {issued}, before {since}: it may need renewal. Check at the office."
+issues:
+  name_mismatch: "The name is spelled differently on the documents: fix this first."
+  dob_mismatch: "The date of birth differs between documents: fix this first."
+  not_on_ration_card: "Not on the ration card: fix this first."
+  missing_document: "A document is missing: fix this first."
+  unreadable: "A document could not be read: take a clearer photo first."
+  expired: "The income certificate may be too old."
+confirm: "Please compare: the name may be spelled differently on the documents."

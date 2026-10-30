@@ -137,8 +137,11 @@ def build_graph(deps: Deps | None = None, checkpointer: Any = None) -> Any:
                 "log": [f"household: {len(hh.members)} members, {len(hh.issues)} issues"]}
 
     def rules(state: KaagazState) -> dict[str, Any]:
+        from agents.reasons import scheme_reasons
+
         results = check_rules(Household.model_validate(state["household"]))
-        return {"results": [r.model_dump(mode="json") for r in results]}
+        return {"results": [{**r.model_dump(mode="json"), "display": scheme_reasons(r, state["language"])}
+                            for r in results]}
 
     def plan(state: KaagazState) -> dict[str, Any]:
         from agents.fix_planner import planner_issues, waiting_issues

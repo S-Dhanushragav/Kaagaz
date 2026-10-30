@@ -97,3 +97,4 @@ a { color: var(--brand); margin-right: 10px; }
 .closeups { list-style: none; padding: 0; }
 .closeups li { border-top: 1px solid #c9a46a; padding: 8px 0; }
 .closeup button { margin: 6px 0; }
+.warnings li { color: var(--warn); font-weight: 600; }

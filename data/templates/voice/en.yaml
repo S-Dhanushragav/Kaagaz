@@ -7,6 +7,8 @@ documents:
   income_certificate: income certificate
   caste_certificate: caste certificate
 values:  # display text where it differs from the knowledge-base value
+  "about Rs 75": "about ₹75"
+  "Rs 2": "₹2"
   "15 days (Maharashtra Right to Public Services Act)": "15 days"
 unverified: "Please confirm this at the office."  # said once, at the end, if any fact in the sentence is unverified
 household: "Your family"  # only for steps about the whole household

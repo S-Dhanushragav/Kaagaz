@@ -10,7 +10,7 @@ import re
 from agents.voice import NumberWords, load_voice
 
 DATE = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
-RUPEES = re.compile(r"\bRs\.?\s*(\d+)\b")
+RUPEES = re.compile(r"(?:\bRs\.?\s*|₹\s*)(\d[\d,]*)\b")  # 'Rs 75', '₹75', '₹2,04,000'
 NUMBER = re.compile(r"\d+")
 
 
@@ -56,5 +56,5 @@ def speech_text(text: str, language: str) -> str:
 
     text = DATE.sub(date, text)
     if w.rupees:
-        text = RUPEES.sub(lambda m: w.rupees.format(n=m.group(1)), text)
+        text = RUPEES.sub(lambda m: w.rupees.format(n=m.group(1).replace(",", "")), text)
     return NUMBER.sub(lambda m: number_words(int(m.group()), language), text)
