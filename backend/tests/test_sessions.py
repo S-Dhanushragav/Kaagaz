@@ -149,24 +149,76 @@ def test_live_documents_before_reading_is_done() -> None:
     assert out[2]["name_mr"] == "आदित्य"  # a ration card is labelled with its head of family
 
 
-def test_thumbnails_come_from_memory_and_go_with_the_session(manager) -> None:
+def _jpeg(h: int = 1200, w: int = 900) -> bytes:
     import cv2
     import numpy as np
 
+    yy, xx = np.mgrid[:h, :w]
+    board = (((yy // 40) + (xx // 40)) % 2 * 255).astype(np.uint8)  # sharp detail that survives the thumbnail size
+    return cv2.imencode(".jpg", np.dstack([board] * 3))[1].tobytes()
+
+
+def _decode(data: bytes):
+    import cv2
+    import numpy as np
+
+    return cv2.imdecode(np.frombuffer(data, dtype=np.uint8), cv2.IMREAD_COLOR)
+
+
+def test_identity_card_thumbnails_are_masked_once_and_go_with_the_session(manager) -> None:
     from graph.runtime import runtime
 
+    calls = []
+    manager.locator = lambda image: calls.append(image) or [(0.2, 0.6, 0.8, 0.7)]
     session = manager.start_sample("en")
     _wait(manager, session.id)
-    with pytest.raises(SessionError) as e:
-        manager.thumbnail(session.id, "id1")  # the fake crops are not images
-    assert e.value.status == 404
-    ok, big = cv2.imencode(".jpg", np.full((1200, 900, 3), 200, dtype=np.uint8))
-    runtime(session.id).add_document("id1", [big.tobytes()])
-    thumb = cv2.imdecode(np.frombuffer(manager.thumbnail(session.id, "id1"), dtype=np.uint8), cv2.IMREAD_COLOR)
-    assert max(thumb.shape[:2]) == 480
-    with pytest.raises(SessionError):
-        manager.thumbnail(session.id, "nope")
+    crop = _jpeg()
+    runtime(session.id).add_document("id1", [crop])  # id1 is read as an identity card
+    masked = _decode(manager.thumbnail(session.id, "id1"))
+    assert max(masked.shape[:2]) == 480 and calls == [crop]
+    plain = _decode(manager.thumbnail(session.id, "id1"))
+    assert calls == [crop]  # made once, then cached
+    band, above = masked[300:330, 100:260], masked[:150]  # the number's band (480 px tall thumbnail)
+    original = _decode(crop)
+    assert band.std() < 20 < above.std()  # blurred band, everything else still detailed
+    assert plain.shape == masked.shape and original is not None
     manager.delete(session.id)
     with pytest.raises(SessionError) as e:
         manager.thumbnail(session.id, "id1")
     assert e.value.status == 404
+
+
+def test_identity_card_without_a_box_is_never_shown(manager) -> None:
+    from graph.runtime import runtime
+
+    session = manager.start_sample("en")
+    _wait(manager, session.id)
+    runtime(session.id).add_document("id1", [_jpeg()])
+    manager.locator = lambda image: []  # the model saw no number
+    with pytest.raises(SessionError) as e:
+        manager.thumbnail(session.id, "id1")
+    assert e.value.status == 404
+    manager.locator = lambda image: (_ for _ in ()).throw(AssertionError("asked again"))
+    with pytest.raises(SessionError):
+        manager.thumbnail(session.id, "id1")  # cached: shown as an icon, not asked again
+    runtime(session.id).add_document("id1", [_jpeg()])  # a close-up replaces the crop: located again
+    manager.locator = lambda image: None  # the call failed: icon now, not cached
+    with pytest.raises(SessionError):
+        manager.thumbnail(session.id, "id1")
+    assert "id1" not in runtime(session.id).thumbs
+
+
+def test_unread_documents_get_an_unreadable_preview_and_others_their_crop(manager) -> None:
+    from graph.runtime import runtime
+
+    manager.locator = lambda image: (_ for _ in ()).throw(AssertionError("not an identity card"))
+    session = manager.start_sample("en")
+    _wait(manager, session.id)
+    rt = runtime(session.id)
+    rt.add_document("rc", [_jpeg()])
+    rt.add_document("new", [_jpeg()])  # handed over by the finder, not read yet
+    card = _decode(manager.thumbnail(session.id, "rc"))
+    unread = _decode(manager.thumbnail(session.id, "new"))
+    assert card.std() > 40 and unread.std() < 20  # the ration card as it is; the unread one only as blocks
+    with pytest.raises(SessionError):
+        manager.thumbnail(session.id, "nope")

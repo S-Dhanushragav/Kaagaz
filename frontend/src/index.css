@@ -187,8 +187,10 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
 }
 .thumb-image img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 3px; box-shadow: 0 2px 6px rgba(27, 31, 42, 0.25); }
 .thumb.reading .thumb-image { background: linear-gradient(100deg, var(--sunk) 40%, #f8f4ec 50%, var(--sunk) 60%) 0 0 / 300% 100%; animation: land 0.45s ease-out both, shimmer 1.6s linear infinite; }
+.thumb-icon { color: var(--ink-2); display: inline-flex; }
 .thumb-label { margin: 6px 2px 0; font-size: 0.88rem; font-weight: 650; line-height: 1.35; }
-.thumb.reading .thumb-label { color: var(--ink-2); font-weight: 500; }
+.thumb.reading .thumb-icon { color: var(--ink-2); display: inline-flex; }
+.thumb-label { color: var(--ink-2); font-weight: 500; }
 @keyframes land { from { opacity: 0; transform: translateY(-8px) rotate(-2deg) scale(0.96); } }
 @keyframes shimmer { to { background-position: -300% 0; } }
 

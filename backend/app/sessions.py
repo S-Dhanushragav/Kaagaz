@@ -6,7 +6,7 @@ the app runs as one process/container).
 - The graph pauses at a family question; `answer` resumes it with an option index (spoken answers are matched
   to an option first; only a match resumes).
 - Each document is listed as soon as the finder hands it over (`documents`, with its type and name once read);
-  its thumbnail is made from the best crop in memory only.
+  its thumbnail is made from the best crop in memory only, with identity numbers blurred (see `thumbnail`).
 - Everything a session holds (folder, crops, checkpoint, results) is deleted `session_ttl_s` after it started.
 - Uploads are rate-limited per hour; the sample is not counted (its model calls are cached).
 """
@@ -32,7 +32,13 @@ from graph.state import STAGES
 logger = logging.getLogger(__name__)
 
 Status = Literal["running", "waiting", "done", "error"]
-THUMB_LONG_SIDE = 480
+SHOWN_AS_IS = ("ration_card", "income_certificate", "caste_certificate")  # thumbnails without masking
+
+
+def _locate_id_numbers(image: bytes) -> Any:
+    from agents.id_locator import locate_id_numbers
+
+    return locate_id_numbers(image)
 
 
 def _names(extraction: dict[str, Any]) -> tuple[str | None, str | None]:
@@ -78,9 +84,10 @@ class Session:
 
 
 class SessionManager:
-    def __init__(self, graph: Any = None, reader: Any = None) -> None:
+    def __init__(self, graph: Any = None, reader: Any = None, locator: Any = None) -> None:
         self.graph = graph or build_graph()
         self.reader = reader  # reads one close-up photo; None: the real reader
+        self.locator = locator or _locate_id_numbers  # boxes around the identity number on a crop (vision model)
         self.sessions: dict[str, Session] = {}
         self.uploads: list[float] = []  # start times of upload sessions (rate limit)
         self._lock = threading.Lock()
@@ -192,32 +199,55 @@ class SessionManager:
                 **{k: values.get(k) for k in keys}}
 
     def thumbnail(self, session_id: str, document_id: str) -> bytes:
-        """A small JPEG of the document's best crop, from memory (made once, kept until the session is deleted)."""
+        """A small JPEG of the document's best crop, made from memory, never showing an identity number:
+        - ration card, income and caste certificate: the crop itself;
+        - identity card: the crop with the number blurred where the vision model boxed it; no box -> 404 (the app
+          shows an icon instead);
+        - not read yet, unreadable or another kind of document: a coarse preview with nothing readable.
+        Final thumbnails are made once per document (a close-up replaces them)."""
         import cv2
         import numpy as np
 
-        self.get(session_id)
+        from vision.mask import blur_boxes, preview, thumbnail_jpeg
+
+        session = self.get(session_id)
         rt = runtime(session_id)
         with rt.lock:
-            cached = rt.thumbs.get(document_id)
             crops = rt.images.get(document_id)
-        if cached is not None:
-            return cached
         if not crops:
             raise SessionError(404, "No such document.")
         image = cv2.imdecode(np.frombuffer(crops[0], dtype=np.uint8), cv2.IMREAD_COLOR)
         if image is None:
             raise SessionError(404, "No such document.")
-        scale = THUMB_LONG_SIDE / max(image.shape[:2])
-        if scale < 1:
-            image = cv2.resize(image, (round(image.shape[1] * scale), round(image.shape[0] * scale)),
-                               interpolation=cv2.INTER_AREA)
-        ok, jpeg = cv2.imencode(".jpg", image, [cv2.IMWRITE_JPEG_QUALITY, 80])
-        if not ok:
-            raise SessionError(500, "The thumbnail could not be made.")
-        with rt.lock:
-            rt.thumbs[document_id] = jpeg.tobytes()
-        return jpeg.tobytes()
+        doc_type = self._doc_type(session, document_id)
+        if doc_type not in SHOWN_AS_IS and doc_type != "identity_card":
+            return thumbnail_jpeg(preview(image))
+        with rt.thumb_lock(document_id):
+            with rt.lock:
+                cached = rt.thumbs.get(document_id)
+            if cached is None:
+                if doc_type == "identity_card":
+                    boxes = self.locator(crops[0])
+                    if boxes is None:  # the call failed: show the icon now, try again on the next request
+                        raise SessionError(404, "The identity number could not be located, so the photo is not shown.")
+                    cached = thumbnail_jpeg(blur_boxes(image, boxes)) if boxes else b""
+                else:
+                    cached = thumbnail_jpeg(image)
+                with rt.lock:
+                    if rt.images.get(document_id) is crops:  # not replaced by a close-up meanwhile
+                        rt.thumbs[document_id] = cached
+        if not cached:
+            raise SessionError(404, "The identity number could not be located, so the photo is not shown.")
+        return cached
+
+    def _doc_type(self, session: Session, document_id: str) -> str | None:
+        values = self.graph.get_state(session.config).values or {}
+        for e in values.get("extractions") or []:
+            if e["document_id"] == document_id:
+                return None if e.get("unreadable") else e.get("doc_type")
+        reader = runtime(session.id).reader
+        read = reader.done().get(document_id) if reader is not None else None
+        return None if read is None or read.extraction.unreadable else read.extraction.doc_type
 
     def speech_text(self, session_id: str, key: str) -> str:
         """TTS input for 'question' (the pending question) or 'step-<n>' (a plan step)."""

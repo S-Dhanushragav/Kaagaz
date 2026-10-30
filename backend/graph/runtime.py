@@ -13,7 +13,8 @@ class SessionRuntime:
     find_result: Any = None
     images: dict[str, list[bytes]] = field(default_factory=dict)  # document id -> crops (best first)
     found: list[str] = field(default_factory=list)  # document ids in the order the finder handed them over
-    thumbs: dict[str, bytes] = field(default_factory=dict)  # document id -> small JPEG of the best crop
+    thumbs: dict[str, bytes] = field(default_factory=dict)  # document id -> shown thumbnail (b'': show an icon)
+    thumb_locks: dict[str, threading.Lock] = field(default_factory=dict)  # one model call per document at a time
     lock: threading.Lock = field(default_factory=threading.Lock)
 
     def add_document(self, document_id: str, images: list[bytes]) -> None:
@@ -22,6 +23,10 @@ class SessionRuntime:
             self.thumbs.pop(document_id, None)
             if document_id not in self.found:
                 self.found.append(document_id)
+
+    def thumb_lock(self, document_id: str) -> threading.Lock:
+        with self.lock:
+            return self.thumb_locks.setdefault(document_id, threading.Lock())
 
     def found_ids(self) -> list[str]:
         with self.lock:
