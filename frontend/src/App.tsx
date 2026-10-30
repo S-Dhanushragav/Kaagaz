@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import {
   ApiError, claimSession, getMe, getSchemes, getSession, hasToken, myCheck, myChecks, setMyLanguage, setToken, startSample, startUpload,
-  tickStep, type CatalogScheme, type CheckFull, type CheckSummary, type Language, type SessionView, type UserView,
+  tickStep, type CatalogScheme, type Started, type CheckFull, type CheckSummary, type Language, type SessionView, type UserView,
 } from './api'
 import { stop } from './audio'
+import { count } from './counts'
 import { STRINGS } from './i18n'
 import AccountMenu from './ui/AccountMenu'
 import Chat, { type Answered, type Check } from './ui/Chat'
@@ -62,7 +63,7 @@ export default function App() {
   const [user, setUser] = useState<UserView | null>(null)
   const [authChecked, setAuthChecked] = useState(!hasToken()) // with a saved token: wait for /me (no guest flash)
   // Login is never the front door: it opens over the chat from "Log in" or the "Save this check" card.
-  const [login, setLogin] = useState<{ claim: string | null } | null>(null)
+  const [login, setLogin] = useState<{ claim: { id: string; secret: string } | null } | null>(null)
   const [flash, setFlash] = useState<string | null>(null)
   const [checks, setChecks] = useState<CheckSummary[]>([])
   const [latest, setLatest] = useState<CheckFull | null>(null)
@@ -106,7 +107,11 @@ export default function App() {
   useEffect(() => {
     if (!hasToken()) return
     getMe().then((u) => { setUser(u); void loadChecks() })
-      .catch(() => setToken(null))
+      .catch((e) => {
+        // expired, signed with another key, or the user was deleted: forget it and land as a guest, no error.
+        // Anything else (the case file is down): stay a guest for now and keep the token for next time.
+        if (e instanceof ApiError && e.status === 401) setToken(null)
+      })
       .finally(() => setAuthChecked(true))
   }, [loadChecks])
 
@@ -134,11 +139,12 @@ export default function App() {
     if (el && center.kind === 'live') el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
   }, [signature, center.kind])
 
-  const begin = async (sample: boolean, start: () => Promise<string>) => {
+  const begin = async (sample: boolean, start: () => Promise<Started>) => {
     setStartError(null)
     setCheck({ kind: 'uploading', sample, percent: null })
     try {
-      setCheck({ kind: 'session', sample, id: await start() })
+      const started = await start()
+      setCheck({ kind: 'session', sample, id: started.id, guestSecret: started.guestSecret })
     } catch (e) {
       setStartError(e instanceof Error ? e.message : String(e))
       setCheck({ kind: 'idle' })
@@ -218,13 +224,13 @@ export default function App() {
     setLogin(null)
     if (claim) {
       try {
-        await claimSession(claim)  // the guest check this login was for
-        refresh()  // the session view now carries the saved check id
-      } catch (e) {
-        setStartError(e instanceof Error ? e.message : String(e))
+        await claimSession(claim.id, claim.secret)  // the guest check this login was for
+      } catch {
+        setFlash(t.saveFailed)  // e.g. the case file is down: the check itself still works here
       }
     }
-    void loadChecks()
+    await loadChecks()  // "Your checks" shows it at once (a check still running is listed when it finishes)
+    if (claim) refresh()  // the session view now carries the saved check id
   }
 
   if (!authChecked) return null
@@ -274,14 +280,14 @@ export default function App() {
                 onReplanned={refresh} onNewCheck={newCheck} recheck={recheckOf !== null}
                 latest={user && latest && latest.id === checks[0]?.id ? latest : null /* never an older check while the newest loads */}
                 onOpenCheck={(id, step) => void openCheck(id, step)} loggedIn={user !== null}
-                onSaveCheck={(id) => setLogin({ claim: id })} />
+                onSaveCheck={() => { if (check.kind === 'session') setLogin({ claim: { id: check.id, secret: check.guestSecret } }) }} />
             )}
           </div>
         </div>
 
         {members > 0 && (
           <button type="button" className="family-bar only-sheet" onClick={() => setSheet(true)}>
-            <Family /><span>{t.householdTitle}</span><span className="family-count">{t.familyCount.replace('{n}', String(members))}</span>
+            <Family /><span>{t.householdTitle}</span><span className="family-count">{count(language, 'person', members)}</span>
           </button>
         )}
 

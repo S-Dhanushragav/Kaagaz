@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { CatalogScheme, Language, SchemeResult, SessionView } from '../api'
 import type { Strings } from '../i18n'
+import { count } from '../counts'
 import { memberName, OUTCOME_MARK, sources } from '../labels'
 import { Close, Office } from './Icons'
 
@@ -87,7 +88,7 @@ export default function HouseholdPanel({ t, view, language, schemes, onOpenSchem
               )}
             </div>
           ) : <p className="hint">{t.tapForReasons}</p>}
-          <Visits t={t} view={view!} />
+          <Visits t={t} view={view!} language={language} />
         </>
       )}
     </div>
@@ -103,7 +104,7 @@ function HowItWorks({ t }: { t: Strings }) {
   )
 }
 
-function Visits({ t, view }: { t: Strings; view: SessionView }) {
+function Visits({ t, view, language }: { t: Strings; view: SessionView; language: Language }) {
   const steps = view.plan?.steps ?? []
   const visits = new Map<number, number[]>()
   steps.forEach((s, i) => { if (s.kind === 'fix' && s.visit) visits.set(s.visit, [...(visits.get(s.visit) ?? []), i]) })
@@ -120,7 +121,7 @@ function Visits({ t, view }: { t: Strings; view: SessionView }) {
               <span className="visit-body">
                 <span className="visit-office"><Office size={18} />{office ? office.text : `${t.visit} ${visit}`}
                   {office && !office.verified && <span className="unverified"> ({t.unverified})</span>}</span>
-                <span className="visit-steps">{idx.length} {t.steps}</span>
+                <span className="visit-steps">{count(language, 'step', idx.length)}</span>
               </span>
             </li>
           )

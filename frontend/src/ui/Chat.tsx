@@ -3,6 +3,7 @@ import type { CatalogScheme, CheckFull, Language, SessionView } from '../api'
 import { LANGUAGE_NAMES, type Strings } from '../i18n'
 import Feedback from './Feedback'
 import { formatDate } from '../casefile'
+import { count } from '../counts'
 import { RecheckComparison } from './PastCheck'
 import { Camera, Logo } from './Icons'
 import QuestionCard from './QuestionCard'
@@ -16,7 +17,7 @@ export type Check =
   | { kind: 'idle' }
   | { kind: 'recording' }
   | { kind: 'uploading'; sample: boolean; percent: number | null }
-  | { kind: 'session'; sample: boolean; id: string }
+  | { kind: 'session'; sample: boolean; id: string; guestSecret: string }
 
 export interface Answered { question: string; member: string | null; answer: string }
 
@@ -39,7 +40,7 @@ export default function Chat({ t, language, schemes, check, view, error, answere
   voice: Voice; onRecord: () => void; onSample: () => void; onRecorded: (b: Blob) => void; onCancelRecord: () => void
   onAnswered: (label: string) => void; onReplanned: () => void; onNewCheck: () => void
   latest: CheckFull | null; recheck: boolean; onOpenCheck: (id: string, step: number | null) => void
-  loggedIn: boolean; onSaveCheck: (sessionId: string) => void
+  loggedIn: boolean; onSaveCheck: () => void
 }) {
   const names = Object.fromEntries(schemes.map((s) => [s.id, s.name]))
   const started = check.kind !== 'idle'
@@ -70,7 +71,7 @@ export default function Chat({ t, language, schemes, check, view, error, answere
       {view && view.language !== language && (
         <p className="system-note">{t.sessionLanguage.replace('{lang}', LANGUAGE_NAMES[view.language])}</p>
       )}
-      {view && <Bot><Progress t={t} view={view} /></Bot>}
+      {view && <Bot><Progress t={t} language={language} view={view} /></Bot>}
       {view && (view.documents ?? []).length > 0 && <Bot wide><Thumbnails t={t} view={view} language={language} /></Bot>}
       {view && answered.map((a, i) => (
         <div key={i} className="exchange">
@@ -102,7 +103,7 @@ export default function Chat({ t, language, schemes, check, view, error, answere
             <Bot>
               <div className="save-card">
                 <p>{t.saveCheck}</p>
-                <button type="button" className="button primary" onClick={() => onSaveCheck(view.id)}>{t.saveCheckButton}</button>
+                <button type="button" className="button primary" onClick={onSaveCheck}>{t.saveCheckButton}</button>
               </div>
             </Bot>
           )}
@@ -119,8 +120,9 @@ function WelcomeBack({ t, language, latest, onOpenCheck }: {
   const open = latest.data.steps.filter((s) => !latest.steps_done[String(s.index)])
   return (
     <div className="welcome-back">
-      <p className="lead">{(latest.open_visits === 1 ? t.welcomeBackOne : t.welcomeBack).replace('{date}', formatDate(latest.created, language))
-        .replace('{n}', String(latest.problems)).replace('{m}', String(latest.open_visits))}</p>
+      <p className="lead">{t.welcomeBack.replace('{date}', formatDate(latest.created, language))
+        .replace('{problems}', count(language, 'problemFound', latest.problems))
+        .replace('{visits}', count(language, 'visitOpen', latest.open_visits))}</p>
       {open.length > 0 && (
         <>
           <p className="eyebrow">{t.stillToDo}</p>
@@ -153,13 +155,13 @@ function Uploading({ t, percent }: { t: Strings; percent: number | null }) {
   )
 }
 
-function Progress({ t, view }: { t: Strings; view: SessionView }) {
+function Progress({ t, language, view }: { t: Strings; language: Language; view: SessionView }) {
   const finished = view.stages.every((s) => s.done)
   if (finished) {
     const total = view.stages.reduce((sum, s) => sum + (s.seconds ?? 0), 0)
     return (
       <>
-        <p className="progress-done"><span className="tick" aria-hidden="true">✓</span>{t.checkedIn.replace('{s}', total.toFixed(0))}</p>
+        <p className="progress-done"><span className="tick" aria-hidden="true">✓</span>{t.checkedIn.replace('{time}', count(language, 'secondsTaken', Math.round(total)))}</p>
         <p className="powered-by">{t.poweredBy}</p>
       </>
     )

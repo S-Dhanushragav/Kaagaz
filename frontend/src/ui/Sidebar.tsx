@@ -2,6 +2,7 @@ import type { CatalogScheme, CheckSummary, Language, UserView } from '../api'
 import type { Strings } from '../i18n'
 import { Close, Logo, Plus } from './Icons'
 import { formatDateTime } from '../casefile'
+import { count } from '../counts'
 
 export function Wordmark({ t }: { t: Strings }) {
   return (
@@ -45,7 +46,7 @@ export default function Sidebar({ t, language, schemes, onNewCheck, onOpenScheme
                     <span className="check-date">{formatDateTime(c.created, language)}</span>
                     {head && <span className="check-head">{head}</span>}
                     <span className={c.open_steps ? 'check-open' : 'check-open done'}>
-                      {c.open_steps ? (c.open_steps === 1 ? t.openStep : t.openSteps.replace('{n}', String(c.open_steps))) : `✓ ${t.allDone}`}</span>
+                      {c.open_steps ? count(language, 'stepOpen', c.open_steps) : `✓ ${t.allDone}`}</span>
                   </button>
                 </li>
               )

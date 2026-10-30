@@ -196,18 +196,22 @@ function headers(extra: Record<string, string> = {}): Record<string, string> {
   return token ? { ...extra, Authorization: `Bearer ${token}` } : extra
 }
 
-export async function startSample(language: Language, recheckOf: string | null = null): Promise<string> {
+// A started check: its id, and the guest secret that lets this browser (only) save it after logging in.
+export interface Started { id: string; guestSecret: string }
+
+export async function startSample(language: Language, recheckOf: string | null = null): Promise<Started> {
   const res = await fetch(`${API_URL}/sessions/sample`, {
     method: 'POST', headers: headers({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({ language, recheck_of: recheckOf }),
   })
-  return (await json<{ id: string }>(res)).id
+  const body = await json<{ id: string; guest_secret: string }>(res)
+  return { id: body.id, guestSecret: body.guest_secret }
 }
 
 // XMLHttpRequest rather than fetch: fetch has no upload progress, and a 20 MB sweep on slow mobile data takes a
 // while. `onProgress` gets 0-100 while sending; the server then normalizes the video before answering.
 export function startUpload(video: Blob, language: Language, onProgress?: (percent: number) => void,
-  recheckOf: string | null = null): Promise<string> {
+  recheckOf: string | null = null): Promise<Started> {
   const form = new FormData()
   form.append('language', language)
   if (recheckOf) form.append('recheck_of', recheckOf)
@@ -220,8 +224,8 @@ export function startUpload(video: Blob, language: Language, onProgress?: (perce
     xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress?.(Math.round((e.loaded / e.total) * 100)) }
     xhr.upload.onload = () => onProgress?.(100)
     xhr.onload = () => {
-      const body = xhr.response as { id?: string; detail?: string } | null
-      if (xhr.status >= 200 && xhr.status < 300 && body?.id) resolve(body.id)
+      const body = xhr.response as { id?: string; guest_secret?: string; detail?: string } | null
+      if (xhr.status >= 200 && xhr.status < 300 && body?.id) resolve({ id: body.id, guestSecret: body.guest_secret ?? '' })
       else reject(new Error(body?.detail ?? `HTTP ${xhr.status}`))
     }
     xhr.onerror = () => reject(new Error('network error'))
@@ -356,6 +360,13 @@ export async function playableUrl(url: string): Promise<string> {
 }
 
 // After logging in from the "Save this check" card: keep that guest check (while the session is still in memory).
-export async function claimSession(sessionId: string): Promise<{ check_id: string | null }> {
-  return json(await fetch(`${API_URL}/sessions/${sessionId}/claim`, { method: 'POST', headers: headers() }))
+export async function claimSession(sessionId: string, guestSecret: string): Promise<{ check_id: string | null }> {
+  return json(await fetch(`${API_URL}/sessions/${sessionId}/claim`, {
+    method: 'POST', headers: headers({ 'Content-Type': 'application/json' }), body: JSON.stringify({ guest_secret: guestSecret }),
+  }))
+}
+
+// Demo mode sends no SMS (the code is shown on screen): the login screen says so.
+export async function getAuthConfig(): Promise<{ mode: 'demo' | 'sms' }> {
+  return json(await fetch(`${API_URL}/auth/config`))
 }

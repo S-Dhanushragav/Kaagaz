@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { audioUrl, type Language, type PlannerIssue, type SessionView, type Shown, type Step, type StepDisplay } from '../api'
 import { playAll, stop, useAudio } from '../audio'
 import type { Strings } from '../i18n'
-import { docLabel, memberName, OUTCOME_MARK, sources } from '../labels'
+import { docLabel, docOwner, docType, memberName, OUTCOME_MARK, sources } from '../labels'
 import { Download, IssueIcon, Office, Play, Stop } from './Icons'
 import ListenButton from './ListenButton'
 
@@ -141,8 +141,11 @@ export function ProblemsCard({ t, view, language }: { t: Strings; view: SessionV
       waiting: false, blocker: i.severity === 'blocker' })),
     ...(view.waiting ?? []).map((i) => ({ key: `w-${i.id}`, type: i.type, who: who(i as PlannerIssue), docs: label(Object.keys(i.documents)),
       waiting: true, blocker: false })),
-    ...unreadable.map((d) => ({ key: `u-${d}`, type: 'unreadable', who: null, docs: docLabel(view, d, unreadable, language, t),
-      waiting: false, blocker: true })),
+    ...unreadable.map((d) => {  // whose document it is, as the close-up card says, when we know
+      const type = docType(view, d)
+      return { key: `u-${d}`, type: 'unreadable', who: docOwner(view, d, language, t),
+        docs: (type && t.docTypes[type]) || t.document, waiting: false, blocker: true }
+    }),
   ]
   return (
     <section className="card-block" aria-labelledby="problems-title">

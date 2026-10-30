@@ -1,15 +1,16 @@
-import { useState } from 'react'
-import { ApiError, authStart, authVerify, type Language, type UserView } from '../api'
+import { useEffect, useState } from 'react'
+import { ApiError, authStart, authVerify, getAuthConfig, type Language, type UserView } from '../api'
+import { count } from '../counts'
 import type { Strings } from '../i18n'
 import LanguageMenu from './LanguageMenu'
 import { Wordmark } from './Sidebar'
 
 // Errors by HTTP status, in the family's language.
-function authMessage(t: Strings, e: unknown): string {
+function authMessage(t: Strings, language: Language, e: unknown): string {
   if (e instanceof ApiError) {
     if (e.status === 422) return t.errPhone
     if (e.status === 429) return t.errTooMany
-    if (e.status === 401) return t.errWrong.replace('{n}', String(e.attemptsLeft ?? 0))
+    if (e.status === 401) return t.errWrong.replace('{tries}', count(language, 'tryLeft', e.attemptsLeft ?? 0))
     if (e.status === 410) return t.errExpired
     if (e.status === 503) return t.errUnavailable
   }
@@ -27,6 +28,11 @@ export default function Login({ t, language, setLanguage, onLoggedIn, onGuest }:
   const [demoCode, setDemoCode] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [mode, setMode] = useState<'demo' | 'sms'>('demo')  // demo until the server says otherwise: no promise of an SMS
+
+  useEffect(() => {
+    getAuthConfig().then((c) => setMode(c.mode)).catch(() => { /* keep the demo wording */ })
+  }, [])
 
   const start = async () => {
     setBusy(true)
@@ -37,7 +43,7 @@ export default function Login({ t, language, setLanguage, onLoggedIn, onGuest }:
       setCode('')
       setStep('code')
     } catch (e) {
-      setError(authMessage(t, e))
+      setError(authMessage(t, language, e))
     }
     setBusy(false)
   }
@@ -49,7 +55,7 @@ export default function Login({ t, language, setLanguage, onLoggedIn, onGuest }:
       const r = await authVerify(phone, code, language)
       onLoggedIn(r.token, r.user)
     } catch (e) {
-      setError(authMessage(t, e))
+      setError(authMessage(t, language, e))
       if (e instanceof ApiError && (e.status === 410 || e.status === 429)) setStep('phone')
       setBusy(false)
     }
@@ -64,7 +70,7 @@ export default function Login({ t, language, setLanguage, onLoggedIn, onGuest }:
       </header>
       <main className="login-card">
         <h1>{t.loginTitle}</h1>
-        <p className="login-lead">{t.loginLead}</p>
+        <p className="login-lead">{mode === 'demo' ? t.loginLeadDemo : t.loginLead}</p>
         {step === 'phone' ? (
           <form onSubmit={(e) => { e.preventDefault(); void start() }}>
             <label className="field">
@@ -75,6 +81,7 @@ export default function Login({ t, language, setLanguage, onLoggedIn, onGuest }:
                   onChange={(e) => setPhone(e.target.value)} placeholder="98765 43210" />
               </span>
             </label>
+            {mode === 'demo' && <p className="demo-notice">{t.demoNotice}</p>}
             <button type="submit" className="button primary big" disabled={busy || phone.replace(/\D/g, '').length < 10}>{t.getCode}</button>
           </form>
         ) : (

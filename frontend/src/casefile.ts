@@ -1,5 +1,6 @@
 // A stored check (the case file) in the shapes the live views already read.
-import type { CheckFull, Language, SchemeResult, SessionView, Step, StepDisplay } from './api'
+import type { CheckFull, Comparison, Language, SchemeResult, SessionView, Step, StepDisplay, StoredProblem } from './api'
+import type { Strings } from './i18n'
 
 export function formatDateTime(iso: string, language: Language): string {
   return new Intl.DateTimeFormat(`${language}-IN`, { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })
@@ -44,4 +45,21 @@ export function checkAsView(c: CheckFull): SessionView {
     household: { members: d.members.map((m) => ({ ...m, documents: {} })), documents: {}, issues: [] },
     results, plan: { steps, source: 'stored' }, speech,
   }
+}
+
+// One problem line: what it is, and whose document (by name when known) of which type.
+export function problemLine(t: Strings, language: Language, p: StoredProblem): { title: string; detail: string } {
+  const who = language === 'en' ? p.member_name ?? p.member_name_mr : p.member_name_mr ?? p.member_name
+  const docs = p.document_types.map((d) => t.docTypes[d] ?? d).join(', ')
+  return { title: t.issueTypes[p.type] ?? p.type, detail: [who, docs].filter(Boolean).join(' · ') }
+}
+
+// "Ladki Bahin: now eligible on these documents", and whose it is.
+export function changeLine(t: Strings, language: Language, o: Comparison['outcomes_changed'][number],
+  names: Record<string, string>): { title: string; detail: string } {
+  const who = language === 'en' ? o.member_name ?? o.member_name_mr : o.member_name_mr ?? o.member_name
+  const outcome = t.outcomes[o.after]
+  const title = t.changedTo.replace('{scheme}', names[o.scheme_id] ?? o.scheme_id)
+    .replace('{outcome}', language === 'en' ? outcome.charAt(0).toLowerCase() + outcome.slice(1) : outcome)
+  return { title, detail: who ?? '' }
 }

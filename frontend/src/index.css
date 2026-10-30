@@ -368,6 +368,11 @@ details summary { cursor: pointer; min-height: 44px; padding: 8px 0; font-weight
 .save-card .button { align-self: flex-start; }
 .conversation-inner > .flash { border-radius: 12px; }
 
+.demo-notice {
+  margin: -4px 0 12px; padding: 8px 10px; border-radius: 10px; background: var(--warn-tint); color: var(--ink);
+  border-left: 4px solid var(--warn); font-size: 0.8rem; line-height: 1.35;
+}
+
 /* ---------- account ---------- */
 .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .topbar-right .langmenu { margin-left: 0; }

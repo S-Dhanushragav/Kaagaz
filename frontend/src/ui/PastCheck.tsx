@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { myCheck, storedAudioUrl, type CatalogScheme, type CheckFull, type Comparison, type Language, type StoredProblem } from '../api'
-import { checkAsView, formatDate } from '../casefile'
+import { changeLine, checkAsView, formatDate, problemLine } from '../casefile'
 import type { Strings } from '../i18n'
 import { OUTCOME_MARK } from '../labels'
 import { Camera, IssueIcon } from './Icons'
@@ -10,14 +10,13 @@ export function ProblemList({ t, language, problems }: { t: Strings; language: L
   return (
     <ul className="problems">
       {problems.map((p, i) => {
-        const who = language === 'en' ? p.member_name ?? p.member_name_mr : p.member_name_mr ?? p.member_name
-        const docs = p.document_types.map((d) => t.docTypes[d] ?? d).join(', ')
+        const line = problemLine(t, language, p)
         return (
           <li key={i} className={p.waiting ? 'problem waiting' : 'problem'}>
             <span className="problem-icon"><IssueIcon type={p.waiting ? 'waiting' : p.type} /></span>
             <span className="problem-text">
-              <strong>{t.issueTypes[p.type] ?? p.type}</strong>
-              {(who || docs) && <span className="problem-detail">{[who, docs].filter(Boolean).join(' · ')}</span>}
+              <strong>{line.title}</strong>
+              {line.detail && <span className="problem-detail">{line.detail}</span>}
             </span>
           </li>
         )
@@ -49,14 +48,11 @@ export function ComparisonCard({ t, language, comparison, names }: {
           <h3>{t.schemeChanges}</h3>
           <ul className="changes-list">
             {c.outcomes_changed.map((o, i) => {
-              const who = language === 'en' ? o.member_name ?? o.member_name_mr : o.member_name_mr ?? o.member_name
-              const outcome = t.outcomes[o.after]
+              const line = changeLine(t, language, o, names)
               return (
                 <li key={i}>
                   <span className={`cell mini ${o.after}`} aria-hidden="true">{OUTCOME_MARK[o.after]}</span>
-                  <span><strong>{t.changedTo.replace('{scheme}', names[o.scheme_id] ?? o.scheme_id)
-                    .replace('{outcome}', language === 'en' ? outcome.charAt(0).toLowerCase() + outcome.slice(1) : outcome)}</strong>
-                    {who && <span className="problem-detail"> · {who}</span>}</span>
+                  <span><strong>{line.title}</strong>{line.detail && <span className="problem-detail"> · {line.detail}</span>}</span>
                 </li>
               )
             })}
