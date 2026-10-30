@@ -9,6 +9,8 @@ the app runs as one process/container).
   its thumbnail is made from the best crop in memory only, with identity numbers blurred (see `thumbnail`).
 - Everything a session holds (folder, crops, checkpoint, results) is deleted `session_ttl_s` after it started.
 - Uploads are rate-limited per hour; the sample is not counted (its model calls are cached).
+- A logged-in user's session saves its check (app/casefile.py) to the case-file store when it finishes, and
+  updates it after a close-up re-plan. Guest sessions are never stored.
 """
 
 import logging
@@ -76,6 +78,9 @@ class Session:
     error: str | None = None
     question: dict[str, Any] | None = None  # the pending family question
     heard: list[str] = field(default_factory=list)  # transcripts of spoken tries for the pending question
+    user_id: str | None = None  # logged in: the check is saved when it finishes; None: a guest, nothing is stored
+    recheck_of: str | None = None  # "Check again": the stored check this one re-checks
+    check_id: str | None = None  # the stored check, once saved
     lock: threading.Lock = field(default_factory=threading.Lock)
 
     @property
@@ -84,10 +89,11 @@ class Session:
 
 
 class SessionManager:
-    def __init__(self, graph: Any = None, reader: Any = None, locator: Any = None) -> None:
+    def __init__(self, graph: Any = None, reader: Any = None, locator: Any = None, store: Any = None) -> None:
         self.graph = graph or build_graph()
         self.reader = reader  # reads one close-up photo; None: the real reader
         self.locator = locator or _locate_id_numbers  # boxes around the identity number on a crop (vision model)
+        self.store = store  # case files (storage.store.Store); None: nothing is ever saved
         self.sessions: dict[str, Session] = {}
         self.uploads: list[float] = []  # start times of upload sessions (rate limit)
         self._lock = threading.Lock()
@@ -113,7 +119,8 @@ class SessionManager:
                 raise SessionError(429, "Too many sessions this hour. Please try the sample family.")
             self.uploads.append(now)
 
-    def start_upload(self, video: Path, language: str) -> Session:
+    def start_upload(self, video: Path, language: str, user_id: str | None = None,
+                     recheck_of: str | None = None) -> Session:
         """`video` is the saved upload inside this session's folder (already size-checked)."""
         from vision.frames import normalize_upload
 
@@ -130,23 +137,24 @@ class SessionManager:
         if seconds > settings.max_video_s + 0.5:
             shutil.rmtree(video.parent, ignore_errors=True)
             raise SessionError(413, f"The video is longer than {settings.max_video_s:.0f} seconds.")
-        return self._start(session_id, normalized, language, sample=False)
+        return self._start(session_id, normalized, language, sample=False, user_id=user_id, recheck_of=recheck_of)
 
-    def start_sample(self, language: str) -> Session:
+    def start_sample(self, language: str, user_id: str | None = None, recheck_of: str | None = None) -> Session:
         video = REPO_ROOT / get_settings().sample_video
         if not video.exists():
             raise SessionError(503, "The sample video is not available on this server.")
         session_id = uuid.uuid4().hex[:12]
         self.folder(session_id).mkdir(parents=True, exist_ok=True)
-        return self._start(session_id, video, language, sample=True)
+        return self._start(session_id, video, language, sample=True, user_id=user_id, recheck_of=recheck_of)
 
     def new_upload_folder(self) -> Path:
         folder = self.folder(uuid.uuid4().hex[:12])
         folder.mkdir(parents=True, exist_ok=True)
         return folder
 
-    def _start(self, session_id: str, video: Path, language: str, sample: bool) -> Session:
-        session = Session(id=session_id, language=language, sample=sample)
+    def _start(self, session_id: str, video: Path, language: str, sample: bool, user_id: str | None = None,
+               recheck_of: str | None = None) -> Session:
+        session = Session(id=session_id, language=language, sample=sample, user_id=user_id, recheck_of=recheck_of)
         with self._lock:
             self.sessions[session_id] = session
         state = {"session_id": session_id, "language": language, "video_path": str(video), "delete_video": not sample,
@@ -159,6 +167,8 @@ class SessionManager:
             try:
                 out = self.graph.invoke(graph_input, session.config)
                 interrupts = out.get("__interrupt__") if isinstance(out, dict) else None
+                if not interrupts:
+                    self._save(session)  # before "done", so the app sees the saved check id with the results
                 with session.lock:
                     if interrupts:
                         session.status, session.question, session.heard = "waiting", interrupts[0].value, []
@@ -196,6 +206,7 @@ class SessionManager:
         return {"id": session.id, "language": session.language, "sample": session.sample, "status": session.status,
                 "error": session.error, "stage": current, "stages": stages, "question": session.question,
                 "elapsed_s": round(time.time() - session.created, 1), "documents": documents,
+                "check_id": session.check_id, "recheck_of": session.recheck_of,
                 **{k: values.get(k) for k in keys}}
 
     def thumbnail(self, session_id: str, document_id: str) -> bytes:
@@ -248,6 +259,30 @@ class SessionManager:
         reader = runtime(session.id).reader
         read = reader.done().get(document_id) if reader is not None else None
         return None if read is None or read.extraction.unreadable else read.extraction.doc_type
+
+    # ---------- case file ----------
+
+    def _save(self, session: Session) -> None:
+        """Keep a logged-in user's finished check (and update it after a close-up re-plan). Never fails the run."""
+        if not (self.store and session.user_id):
+            return
+        from app.casefile import check_data, worth_keeping
+
+        try:
+            view = self.view(session.id)
+            if not worth_keeping(view) or self.store.get_user(session.user_id) is None:
+                return
+            record = self.store.save_check(session.user_id, session.id, session.language, check_data(view),
+                                           previous_id=session.recheck_of)
+            session.check_id = record.id
+        except Exception:  # noqa: BLE001 - the family still sees their results
+            logger.exception("saving the check of session %s failed", session.id)
+
+    def forget_user(self, user_id: str) -> None:
+        """After 'Delete my data': running sessions of this user become guest sessions (nothing more is saved)."""
+        for s in list(self.sessions.values()):
+            if s.user_id == user_id:
+                s.user_id, s.check_id, s.recheck_of = None, None, None
 
     def speech_text(self, session_id: str, key: str) -> str:
         """TTS input for 'question' (the pending question) or 'step-<n>' (a plan step)."""

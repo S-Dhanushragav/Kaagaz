@@ -49,7 +49,7 @@ async def lifespan(app: FastAPI):
         app.state.auth = AuthService(app.state.store, s.phone_hash_key.get_secret_value(),
                                      s.token_signing_key.get_secret_value(), mode=s.auth_mode)
     if not hasattr(app.state, "sessions"):
-        app.state.sessions = SessionManager()
+        app.state.sessions = SessionManager(store=app.state.store)
     app.state.sessions.start_cleanup_loop()
     threading.Thread(target=_purge_loop, args=(app.state.store,), daemon=True, name="retention").start()
     threading.Thread(target=_preload_tts, daemon=True, name="tts-preload").start()

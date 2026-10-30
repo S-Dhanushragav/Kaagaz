@@ -13,10 +13,11 @@ GET  /schemes?lang=             the scheme catalog: each scheme's rules as lines
 
 from typing import Any, Literal
 
-from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
 
+from app.api.account import optional_user
 from app.config import get_settings
 from app.feedback import Feedback, record
 from app.sessions import SessionError, SessionManager
@@ -38,6 +39,16 @@ def _fail(e: SessionError) -> HTTPException:
 
 class SampleRequest(BaseModel):
     language: Language = "mr"
+    recheck_of: str | None = None  # "Check again" on a stored check (logged in only)
+
+
+def _recheck(request: Request, user: Any, recheck_of: str | None) -> str | None:
+    """A re-check links to one of the user's own stored checks; guests cannot re-check."""
+    if not recheck_of:
+        return None
+    if user is None or request.app.state.store.get_check(user.id, recheck_of) is None:
+        raise HTTPException(404, "No such check.")
+    return recheck_of
 
 
 class OptionAnswer(BaseModel):
@@ -46,8 +57,10 @@ class OptionAnswer(BaseModel):
 
 
 @router.post("/sessions")
-async def create_session(request: Request, video: UploadFile = File(...), language: Language = Form("mr")) -> dict[str, Any]:
+async def create_session(request: Request, video: UploadFile = File(...), language: Language = Form("mr"),
+                         recheck_of: str | None = Form(None), user: Any = Depends(optional_user)) -> dict[str, Any]:
     sessions = manager(request)
+    previous = _recheck(request, user, recheck_of)
     try:
         sessions.check_rate()
     except SessionError as e:
@@ -65,16 +78,18 @@ async def create_session(request: Request, video: UploadFile = File(...), langua
                 raise HTTPException(413, f"The video is larger than {get_settings().max_video_mb:.0f} MB.")
             f.write(chunk)
     try:
-        session = sessions.start_upload(raw, language)
+        session = sessions.start_upload(raw, language, user_id=user.id if user else None, recheck_of=previous)
     except SessionError as e:
         raise _fail(e) from e
     return {"id": session.id}
 
 
 @router.post("/sessions/sample")
-def create_sample(request: Request, body: SampleRequest) -> dict[str, Any]:
+def create_sample(request: Request, body: SampleRequest, user: Any = Depends(optional_user)) -> dict[str, Any]:
+    previous = _recheck(request, user, body.recheck_of)
     try:
-        return {"id": manager(request).start_sample(body.language).id}
+        return {"id": manager(request).start_sample(body.language, user_id=user.id if user else None,
+                                                    recheck_of=previous).id}
     except SessionError as e:
         raise _fail(e) from e
 

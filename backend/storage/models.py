@@ -45,16 +45,21 @@ class StoredOutcome(_Strict):
     warnings: list[str]
 
 
+class StoredFact(_Strict):
+    text: str
+    verified: bool  # False: shown with "confirm at the office"
+
+
 class StoredStep(_Strict):
     index: int  # position in the plan (step_progress uses it)
     kind: str  # 'fix' | 'ask_at_office'
     visit: int | None
-    office: str | None
+    office: StoredFact | None
     voice: str  # what the app showed
     speech: str  # what was spoken (TTS input), so a past check can still be listened to
-    bring: list[str]
-    fee: str | None
-    time_limit: str | None
+    bring: list[StoredFact]
+    fee: StoredFact | None
+    time_limit: StoredFact | None
     member_id: str | None
 
 

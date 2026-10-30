@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from app.config import get_settings
-from storage.models import CheckData, FeedbackEntry, StoredMember, StoredStep
+from storage.models import CheckData, FeedbackEntry, StoredFact, StoredMember, StoredStep
 from storage.store import MemoryStore
 
 
@@ -17,7 +17,7 @@ def _data(voices: tuple[str, ...] = ("Go to the Tahsil office.", "Ask at the off
         members=[StoredMember(member_id="r1", name_mr="सविता", name_en="Savita", relation_en="Wife", age=46,
                               on_ration_card=True)],
         documents=["ration_card", "identity_card"], problems=[], outcomes=[],
-        steps=[StoredStep(index=i, kind="fix", visit=1, office="Tahsil office", voice=v, speech=v, bring=[], fee=None,
+        steps=[StoredStep(index=i, kind="fix", visit=1, office=StoredFact(text="Tahsil office", verified=True), voice=v, speech=v, bring=[], fee=None,
                           time_limit=None, member_id="r1") for i, v in enumerate(voices)],
         answers=[])
 
