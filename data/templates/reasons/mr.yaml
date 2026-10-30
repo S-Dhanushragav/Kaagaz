@@ -55,3 +55,19 @@ issues:
   unreadable: "एक कागदपत्र वाचता आले नाही: आधी स्पष्ट फोटो घ्या."
   expired: "उत्पन्नाचा दाखला जुना असू शकतो."
 confirm: "कृपया तपासा: कागदपत्रांवर नावाची स्पेलिंग वेगळी असू शकते."
+# Scheme catalog (GET /schemes): one line per rule, from the rule's value in data/schemes. Wording only.
+# MACHINE-DRAFTED (added after the native-speaker review of the sections above).
+catalog:
+  gender.F: "महिलांसाठी."
+  gender.M: "पुरुषांसाठी."
+  age_min: "वय {limit} किंवा जास्त."
+  age_max: "वय {limit} किंवा कमी."
+  age_below: "वय {limit} वर्षांपेक्षा कमी."
+  income_max: "कुटुंबाचे उत्पन्न {limit} पर्यंत."
+  income_bands: "कुटुंबाचे उत्पन्न {low} पर्यंत; {low} ते {high} दरम्यान स्रोतांमध्ये फरक आहे."
+  caste_household: "कुटुंबातील एखाद्याकडे {categories} जातीचा दाखला; नसल्यास इतर पुरावा लागतो."
+  caste_applicant: "अर्जदाराचा स्वतःचा {categories} जातीचा दाखला."
+  documents: "कागदपत्रे: {items}."
+  income_certificate_unless_card: "उत्पन्नाचा दाखला, किंवा {cards} रेशन कार्ड."
+  every_adult_identity_card: "रेशन कार्डवरील प्रत्येक प्रौढाचे आधार कार्ड"
+  or: "किंवा"

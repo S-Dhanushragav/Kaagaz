@@ -1,572 +1,163 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  answerAudio, answerOption, audioUrl, getSession, sendCloseup, startSample, startUpload,
-  type Language, type Member, type Question, type SessionView, type Shown, type Step, type StepDisplay,
-} from './api'
-import { LANGUAGE_NAMES, STRINGS, type Strings } from './i18n'
-import { toWav16k } from './wav'
+import { getSchemes, getSession, startSample, startUpload, type CatalogScheme, type Language, type SessionView } from './api'
+import { stop } from './audio'
+import { STRINGS } from './i18n'
+import Chat, { type Answered, type Check } from './ui/Chat'
+import HouseholdPanel from './ui/HouseholdPanel'
+import { Camera, Family, Menu, Mic, Send } from './ui/Icons'
+import LanguageMenu from './ui/LanguageMenu'
+import SchemeCard from './ui/SchemeCard'
+import Sidebar, { Wordmark } from './ui/Sidebar'
+import { useVoiceAnswer } from './ui/voice'
 
-type Screen = { name: 'home' } | { name: 'record' } | { name: 'uploading' } | { name: 'session'; id: string }
-
-const MAX_RECORD_S = 45
-// 1080p at 8 Mbps: ~20 MB for a 20 s sweep, ~45 MB at most (server limit 60 MB). At 720p the ration card often
-// could not be read (HH001 test: 3 false 'add to ration card' steps; at 1080p none).
-const VIDEO_BITS_PER_SECOND = 8_000_000
-
-// ---------- audio playback: one sentence at a time ----------
-
-let current: HTMLAudioElement | null = null
-function play(url: string): void {
-  current?.pause()
-  current = new Audio(url)
-  void current.play().catch(() => { /* autoplay blocked or no TTS on the server */ })
+// Polls the session while it runs; `refresh` polls again after an answer or a close-up.
+function useSession(id: string | null): { view: SessionView | null; error: string | null; refresh: () => void } {
+  // Both are kept with the session id they belong to, so a new check never shows the last one's view.
+  const [view, setView] = useState<SessionView | null>(null)
+  const [error, setError] = useState<{ id: string; message: string } | null>(null)
+  const [tick, setTick] = useState(0)
+  useEffect(() => {
+    if (!id) return
+    let stopped = false
+    let timer: ReturnType<typeof setTimeout>
+    const poll = async () => {
+      try {
+        const v = await getSession(id)
+        if (stopped) return
+        setView(v)
+        if (v.status === 'running') timer = setTimeout(poll, 1000)
+      } catch (e) {
+        if (!stopped) setError({ id, message: e instanceof Error ? e.message : String(e) })
+      }
+    }
+    void poll()
+    return () => { stopped = true; clearTimeout(timer) }
+  }, [id, tick])
+  return {
+    view: id && view?.id === id ? view : null,
+    error: id && error?.id === id ? error.message : null,
+    refresh: useCallback(() => setTick((n) => n + 1), []),
+  }
 }
-
-function PlayButton({ url, t }: { url: string; t: Strings }) {
-  return <button type="button" className="play" onClick={() => play(url)} aria-label={t.play}>▶ {t.play}</button>
-}
-
-// ---------- app ----------
 
 export default function App() {
   const [language, setLanguage] = useState<Language>(() => (localStorage.getItem('kaagaz.lang') as Language) || 'mr')
-  const [screen, setScreen] = useState<Screen>({ name: 'home' })
-  const [error, setError] = useState<string | null>(null)
-  const [progress, setProgress] = useState<number | null>(null) // upload percent; null for the sample
+  const [check, setCheck] = useState<Check>({ kind: 'idle' })
+  const [startError, setStartError] = useState<string | null>(null)
+  const [answered, setAnswered] = useState<Answered[]>([])
+  const [schemes, setSchemes] = useState<CatalogScheme[]>([])
+  const [openScheme, setOpenScheme] = useState<string | null>(null)
+  const [drawer, setDrawer] = useState(false)
+  const [sheet, setSheet] = useState(false)
   const t = STRINGS[language]
+  const sessionId = check.kind === 'session' ? check.id : null
+  const { view, error, refresh } = useSession(sessionId)
+  const scroller = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     localStorage.setItem('kaagaz.lang', language)
     document.documentElement.lang = language
   }, [language])
 
-  const run = useCallback(async (start: () => Promise<string>) => {
-    setError(null)
+  useEffect(() => {
+    let live = true
+    getSchemes(language).then((s) => { if (live) setSchemes(s) }).catch(() => { /* the sidebar stays empty */ })
+    return () => { live = false }
+  }, [language])
+
+  const onAnswered = useCallback((label: string) => {
+    if (view?.question) setAnswered((a) => [...a, { question: view.question!.screen, member: view.question!.member, answer: label }])
+    refresh()
+  }, [view, refresh])
+  const voice = useVoiceAnswer(t, sessionId, view?.status === 'waiting' ? view.question : null, onAnswered)
+
+  // Follow the conversation as it grows (not on every poll: only when something new appears).
+  const signature = [check.kind, view?.status, view?.stage, view?.question?.question_id, answered.length,
+    view?.recapture?.mode, view?.plan?.steps.length].join('|')
+  useEffect(() => {
+    const el = scroller.current
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+  }, [signature])
+
+  const begin = async (sample: boolean, start: () => Promise<string>) => {
+    setStartError(null)
+    setCheck({ kind: 'uploading', sample, percent: null })
     try {
-      setProgress(null)
-      setScreen({ name: 'uploading' })
-      setScreen({ name: 'session', id: await start() })
+      setCheck({ kind: 'session', sample, id: await start() })
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-      setScreen({ name: 'home' })
-    }
-  }, [])
-
-  return (
-    <div className="app">
-      <header>
-        <h1>{t.appName}</h1>
-        <p className="specimen" role="note">{t.specimen}</p>
-      </header>
-      {error && <p className="error" role="alert">{t.error}: {error}</p>}
-      {screen.name === 'home' && (
-        <Home t={t} language={language} setLanguage={setLanguage}
-          onSample={() => run(() => startSample(language))} onRecord={() => setScreen({ name: 'record' })} />
-      )}
-      {screen.name === 'record' && (
-        <Recorder t={t} onDone={(blob) => run(() => startUpload(blob, language, setProgress))} onCancel={() => setScreen({ name: 'home' })} />
-      )}
-      {screen.name === 'uploading' && <Uploading t={t} percent={progress} />}
-      {screen.name === 'session' && (
-        <SessionScreen t={t} id={screen.id} language={language} onRestart={() => setScreen({ name: 'home' })} />
-      )}
-    </div>
-  )
-}
-
-// ---------- upload progress ----------
-
-function Uploading({ t, percent }: { t: Strings; percent: number | null }) {
-  if (percent === null) return <p className="status" aria-live="polite">{t.working}…</p>
-  const sent = percent >= 100
-  return (
-    <main>
-      <p className="status" aria-live="polite">{sent ? t.uploaded : t.uploading} {sent ? '' : percent + '%'}</p>
-      <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}
-        aria-label={t.uploading}>
-        <div className="fill" style={{ width: percent + '%' }} />
-      </div>
-    </main>
-  )
-}
-
-// ---------- home ----------
-
-function Home({ t, language, setLanguage, onSample, onRecord }: {
-  t: Strings; language: Language; setLanguage: (l: Language) => void; onSample: () => void; onRecord: () => void
-}) {
-  return (
-    <main>
-      <p className="lead">{t.tagline}</p>
-      <h2>{t.chooseLanguage}</h2>
-      <div className="languages" role="radiogroup" aria-label={t.chooseLanguage}>
-        {(['mr', 'hi', 'en'] as Language[]).map((l) => (
-          <button key={l} type="button" role="radio" aria-checked={language === l}
-            className={language === l ? 'choice selected' : 'choice'} onClick={() => setLanguage(l)}>
-            {LANGUAGE_NAMES[l]}
-          </button>
-        ))}
-      </div>
-      <button type="button" className="primary" onClick={onSample}>{t.trySample}</button>
-      <button type="button" className="secondary" onClick={onRecord}>{t.record}</button>
-    </main>
-  )
-}
-
-// ---------- recording the sweep ----------
-
-function pickVideoType(): string | undefined {
-  return ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4']
-    .find((type) => typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(type))
-}
-
-function Recorder({ t, onDone, onCancel }: { t: Strings; onDone: (b: Blob) => void; onCancel: () => void }) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const streamRef = useRef<MediaStream | null>(null)
-  const recorderRef = useRef<MediaRecorder | null>(null)
-  const [recording, setRecording] = useState(false)
-  const [left, setLeft] = useState(MAX_RECORD_S)
-  const [failed, setFailed] = useState(false)
-  const [ready, setReady] = useState(false) // camera stream live: before that, Start would do nothing
-
-  useEffect(() => {
-    let cancelled = false
-    navigator.mediaDevices?.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false,
-    }).then((stream) => {
-      if (cancelled) { stream.getTracks().forEach((tr) => tr.stop()); return }
-      streamRef.current = stream
-      if (videoRef.current) videoRef.current.srcObject = stream
-      setReady(true)
-    }).catch(() => setFailed(true))
-    return () => {
-      cancelled = true
-      streamRef.current?.getTracks().forEach((tr) => tr.stop())
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!recording) return
-    const timer = setInterval(() => setLeft((s) => {
-      if (s <= 1) { recorderRef.current?.stop(); return 0 }
-      return s - 1
-    }), 1000)
-    return () => clearInterval(timer)
-  }, [recording])
-
-  const start = () => {
-    const stream = streamRef.current
-    if (!stream) return
-    const type = pickVideoType()
-    const recorder = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: VIDEO_BITS_PER_SECOND })
-    const chunks: Blob[] = []
-    recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data) }
-    recorder.onstop = () => {
-      setRecording(false)
-      streamRef.current?.getTracks().forEach((tr) => tr.stop())
-      onDone(new Blob(chunks, { type: recorder.mimeType || type || 'video/webm' }))
-    }
-    recorderRef.current = recorder
-    setLeft(MAX_RECORD_S)
-    recorder.start(1000)
-    setRecording(true)
-  }
-
-  if (failed) {
-    return <main><p className="error">{t.cameraError}</p><button type="button" className="secondary" onClick={onCancel}>{t.startOver}</button></main>
-  }
-  return (
-    <main>
-      {!recording && (
-        <section className="card">
-          <h2>{t.guidanceTitle}</h2>
-          <ol className="guidance">{t.guidance.map((g) => <li key={g}>{g}</li>)}</ol>
-        </section>
-      )}
-      <video ref={videoRef} className="preview" autoPlay playsInline muted />
-      {recording ? (
-        <>
-          <p className="timer" aria-live="polite">{left} {t.secondsLeft}</p>
-          <button type="button" className="primary danger" onClick={() => recorderRef.current?.stop()}>■ {t.stopRecording}</button>
-        </>
-      ) : (
-        <>
-          <button type="button" className="primary" disabled={!ready} onClick={start}>● {t.startRecording}</button>
-          <button type="button" className="secondary" onClick={onCancel}>{t.startOver}</button>
-        </>
-      )}
-    </main>
-  )
-}
-
-// ---------- a running session ----------
-
-function SessionScreen({ t, id, language, onRestart }: { t: Strings; id: string; language: Language; onRestart: () => void }) {
-  const [view, setView] = useState<SessionView | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [tick, setTick] = useState(0)
-
-  useEffect(() => {
-    let stop = false
-    let timer: ReturnType<typeof setTimeout>
-    const poll = async () => {
-      try {
-        const v = await getSession(id)
-        if (stop) return
-        setView(v)
-        if (v.status === 'running') timer = setTimeout(poll, 1000)
-      } catch (e) {
-        if (!stop) setError(e instanceof Error ? e.message : String(e))
-      }
-    }
-    void poll()
-    return () => { stop = true; clearTimeout(timer) }
-  }, [id, tick])
-
-  const resumed = () => setTick((n) => n + 1) // poll again after an answer
-
-  if (error) return <main><p className="error">{t.error}: {error}</p><button type="button" className="secondary" onClick={onRestart}>{t.startOver}</button></main>
-  if (!view) return <main><p className="status">{t.working}…</p></main>
-  if (view.status === 'done' && (view.recapture?.mode === 'sweep_again' || view.recapture?.mode === 'no_documents')) {
-    // Most documents unreadable: no plan or results built on them; only the request to record again.
-    return <main><Recapture t={t} view={view} language={language} /><button type="button" className="primary" onClick={onRestart}>{t.startOver}</button></main>
-  }
-  return (
-    <main>
-      {view.status === 'error' && <p className="error" role="alert">{t.error}: {view.error}</p>}
-      {view.status !== 'done' && <Progress t={t} view={view} />}
-      {view.status === 'waiting' && view.question && (
-        <QuestionCard key={view.question.question_id} t={t} id={id} question={view.question} onAnswered={resumed} />
-      )}
-      <Recapture t={t} view={view} language={language} onReplanned={resumed} />
-      {view.status === 'done' && view.recapture?.mode === 'close_ups' && <p className="note">{t.closeUpsNote}</p>}
-      {view.status === 'done' && <Waiting t={t} view={view} language={language} />}
-      {view.status === 'done' && <Plan t={t} id={id} view={view} />}
-      {view.household && <Results t={t} view={view} language={language} />}
-      <button type="button" className="secondary" onClick={onRestart}>{t.startOver}</button>
-    </main>
-  )
-}
-
-function Progress({ t, view }: { t: Strings; view: SessionView }) {
-  return (
-    <section className="card" aria-live="polite">
-      <h2>{t.working}</h2>
-      <ol className="stages">
-        {view.stages.map((s) => (
-          <li key={s.stage} className={s.done ? 'done' : view.stage === s.stage ? 'active' : 'todo'}>
-            <span className="mark" aria-hidden="true">{s.done ? '✓' : view.stage === s.stage ? '…' : '○'}</span>
-            {t.stages[s.stage]}
-            {s.done && s.seconds !== null && <span className="secs"> {s.seconds.toFixed(0)} s</span>}
-          </li>
-        ))}
-      </ol>
-    </section>
-  )
-}
-
-// ---------- questions: big numbered buttons first, voice as a bonus ----------
-
-function QuestionCard({ t, id, question, onAnswered }: { t: Strings; id: string; question: Question; onAnswered: () => void }) {
-  const [busy, setBusy] = useState(false)
-  const [listening, setListening] = useState(false)
-  const [note, setNote] = useState<string | null>(null)
-  const [micAllowed, setMicAllowed] = useState(true)
-  const recorderRef = useRef<MediaRecorder | null>(null)
-  const confirm = question.severity === 'confirm' || question.kind === 'compare'
-
-  const choose = async (option: number) => {
-    setBusy(true)
-    try { await answerOption(id, question.question_id, option); onAnswered() } catch (e) { setNote(String(e)); setBusy(false) }
-  }
-
-  const toggleMic = async () => {
-    if (listening) { recorderRef.current?.stop(); return }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const recorder = new MediaRecorder(stream)
-      const chunks: Blob[] = []
-      recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data) }
-      recorder.onstop = async () => {
-        stream.getTracks().forEach((tr) => tr.stop())
-        setListening(false)
-        setBusy(true)
-        try {
-          const reply = await answerAudio(id, question.question_id, await toWav16k(new Blob(chunks, { type: recorder.mimeType })))
-          if (reply.action === 'answered') { onAnswered(); return }
-          setNote(reply.action === 'ask_again' ? t.notUnderstood : t.useButtons)
-          if (reply.action === 'show_buttons') setMicAllowed(false)
-        } catch {
-          setNote(t.useButtons)
-          setMicAllowed(false)
-        }
-        setBusy(false)
-      }
-      recorderRef.current = recorder
-      recorder.start()
-      setListening(true)
-      setTimeout(() => { if (recorder.state === 'recording') recorder.stop() }, 6000)
-    } catch {
-      setMicAllowed(false)
+      setStartError(e instanceof Error ? e.message : String(e))
+      setCheck({ kind: 'idle' })
     }
   }
-
-  return (
-    <section className="card question" aria-live="polite">
-      <h2>{confirm ? t.confirmTitle : t.questionTitle}</h2>
-      {question.member && <p className="member">{question.member}</p>}
-      <div className="side-by-side">
-        {question.values.map((v, i) => (
-          <div key={i} className="spelling"><span className="doc">{t.docTypes[v.document_type] ?? v.document_type}</span><strong>{v.value}</strong></div>
-        ))}
-      </div>
-      <PlayButton url={audioUrl(id, 'question')} t={t} />
-      <div className="options">
-        {question.shown.map((label, i) => (
-          <button key={i} type="button" className="option" disabled={busy} onClick={() => choose(i)}>
-            <span className="num">{i + 1}</span><span>{label}</span>
-          </button>
-        ))}
-      </div>
-      {micAllowed && (
-        <button type="button" className={listening ? 'mic listening' : 'mic'} disabled={busy && !listening} onClick={toggleMic}>
-          🎤 {listening ? t.listening : t.mic}
-        </button>
-      )}
-      {note && <p className="note" role="status">{note}</p>}
-    </section>
-  )
-}
-
-// ---------- recapture ----------
-
-// 'Aadhaar card (name)' from the member it belongs to or the name read on it; else 'Aadhaar card 1', '… 2'
-// among the same type in the list being shown.
-function docLabel(view: SessionView, docId: string, group: string[], language: Language, t: Strings): string {
-  const ex = view.extractions?.find((e) => e.document_id === docId)
-  const type = ex?.doc_type ?? view.household?.documents[docId]?.doc_type ?? null
-  const typeName = (type && t.docTypes[type]) || t.document
-  const owner = view.household?.members.find((m) => Object.values(m.documents).some((ids) => ids.includes(docId)))
-  const f = (ex?.fields ?? {}) as Record<string, unknown>
-  const read = (language === 'en' ? f.name_en ?? f.name_mr : f.name_mr ?? f.name_en) as string | undefined
-  const name = owner && type !== 'ration_card' ? memberName(owner, language, t) : read
-  if (name) return `${typeName} (${name})`
-  const same = group.filter((d) => {
-    const e = view.extractions?.find((x) => x.document_id === d)
-    return (e?.doc_type ?? view.household?.documents[d]?.doc_type ?? null) === type
-  })
-  return same.length > 1 ? `${typeName} ${same.indexOf(docId) + 1}` : typeName
-}
-
-function Waiting({ t, view, language }: { t: Strings; view: SessionView; language: Language }) {
-  const waiting = view.waiting ?? []
-  if (!waiting.length) return null
-  const group = waiting.flatMap((w) => Object.keys(w.documents))
-  return (
-    <section className="card warn">
-      <h2>{t.waitingTitle}</h2>
-      <p>{t.waitingNote}</p>
-      <ul>
-        {waiting.map((w) => {
-          const who = language === 'en' ? w.member_name : w.member_name_mr ?? w.member_name
-          const docs = Object.keys(w.documents).map((d) => docLabel(view, d, group, language, t)).join(', ')
-          return <li key={w.id}>{t.issueTypes[w.type] ?? w.type}{who ? `: ${who}` : ''}{docs ? ` (${docs})` : ''}</li>
-        })}
-      </ul>
-    </section>
-  )
-}
-
-function Recapture({ t, view, language, onReplanned }: {
-  t: Strings; view: SessionView; language: Language; onReplanned?: () => void
-}) {
-  const r = view.recapture
-  if (!r || r.mode === 'none') return null
-  const ready = view.status === 'done' && onReplanned
-  return (
-    <section className={r.mode === 'close_ups' ? 'card warn' : 'card warn strong'}>
-      {r.mode === 'no_documents' ? <p>{t.noDocuments}</p> : r.mode === 'sweep_again' ? <p>{t.recaptureSweep}</p> : (
-        <>
-          <p>{t.recaptureCloseUps}</p>
-          <ul className="closeups">
-            {r.documents.map((d) => (
-              <li key={d}>
-                <strong>{docLabel(view, d, r.documents, language, t)}</strong>
-                {ready && <CloseUp t={t} sessionId={view.id} documentId={d} sample={view.sample} onReplanned={onReplanned} />}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-    </section>
-  )
-}
-
-function CloseUp({ t, sessionId, documentId, sample, onReplanned }: {
-  t: Strings; sessionId: string; documentId: string; sample: boolean; onReplanned: () => void
-}) {
-  const input = useRef<HTMLInputElement>(null)
-  const [busy, setBusy] = useState(false)
-  const [note, setNote] = useState<string | null>(null)
-  const send = async (photo: Blob | null) => {
-    setBusy(true)
-    setNote(null)
-    try {
-      const reply = await sendCloseup(sessionId, documentId, photo)
-      if (reply.clear) { onReplanned(); return }
-      setNote(t.stillUnclear)
-    } catch (e) {
-      setNote(e instanceof Error ? e.message : String(e))
-    }
-    setBusy(false)
+  const onSample = () => void begin(true, () => startSample(language))
+  const onRecorded = (blob: Blob) => void begin(false, () => startUpload(blob, language,
+    (percent) => setCheck((c) => (c.kind === 'uploading' ? { ...c, percent } : c))))
+  const newCheck = () => {
+    stop()
+    setCheck({ kind: 'idle' })
+    setAnswered([])
+    setStartError(null)
+    setDrawer(false)
+    setSheet(false)
   }
+
+  const busy = check.kind === 'recording' || check.kind === 'uploading' || view?.status === 'running' || view?.status === 'waiting'
+  const scheme = schemes.find((s) => s.id === openScheme)
+  const members = view?.household?.members.length ?? 0
+
   return (
-    <div className="closeup">
-      <input ref={input} type="file" accept="image/*" capture="environment" hidden
-        onChange={(e) => { const f = e.target.files?.[0]; if (f) void send(f); e.target.value = '' }} />
-      <button type="button" className="secondary" disabled={busy} onClick={() => input.current?.click()}>📷 {t.takePhoto}</button>
-      {sample && <button type="button" className="secondary" disabled={busy} onClick={() => void send(null)}>{t.useSampleCloseUp}</button>}
-      {busy && <p className="note" role="status">{t.readingPhoto}</p>}
-      {note && <p className="note" role="status">{note}</p>}
-    </div>
-  )
-}
+    <div className="shell">
+      <aside className={drawer ? 'side open' : 'side'}>
+        <Sidebar t={t} schemes={schemes} onNewCheck={newCheck} onOpenScheme={(id) => { setOpenScheme(id); setDrawer(false) }}
+          onClose={() => setDrawer(false)} />
+      </aside>
+      {drawer && <div className="scrim" onClick={() => setDrawer(false)} aria-hidden="true" />}
 
-// ---------- the plan ----------
+      <main className="center">
+        <header className="topbar">
+          <button type="button" className="icon-button only-narrow" aria-label={t.menu} onClick={() => setDrawer(true)}><Menu /></button>
+          <div className="only-narrow"><Wordmark t={t} /></div>
+          <LanguageMenu t={t} language={language} onChange={setLanguage} />
+        </header>
 
-function Fact({ t, shown }: { t: Strings; shown: Shown }) {
-  return <>{shown.text}{!shown.verified && <span className="unverified"> ({t.unverified})</span>}</>
-}
-
-function Plan({ t, id, view }: { t: Strings; id: string; view: SessionView }) {
-  const steps = view.plan?.steps ?? []
-  const display = (i: number): StepDisplay | null => view.speech?.[i]?.display ?? null
-  if (!steps.length) return <section className="card"><h2>{t.planTitle}</h2><p>{t.noPlan}</p></section>
-  const visits = new Map<number, number[]>()
-  steps.forEach((s, i) => { if (s.kind === 'fix' && s.visit) visits.set(s.visit, [...(visits.get(s.visit) ?? []), i]) })
-  const asked = steps.map((s, i) => [s, i] as const).filter(([s]) => s.kind === 'question')
-  const office = steps.map((s, i) => [s, i] as const).filter(([s]) => s.kind === 'ask_at_office')
-  return (
-    <section className="card plan">
-      <h2>{t.planTitle}</h2>
-      {[...visits.entries()].sort(([a], [b]) => a - b).map(([visit, idx]) => (
-        <div key={visit} className="visit">
-          <h3>{t.visit} {visit}{display(idx[0])?.office && <>: <Fact t={t} shown={display(idx[0])!.office!} /></>}</h3>
-          {idx.map((i) => <FixStep key={i} t={t} id={id} step={steps[i]} index={i} display={display(i)} />)}
-        </div>
-      ))}
-      {office.length > 0 && (
-        <div className="visit">
-          <h3>{t.askAtOffice}</h3>
-          {office.map(([s, i]) => <FixStep key={i} t={t} id={id} step={s} index={i} display={null} />)}
-        </div>
-      )}
-      {asked.length > 0 && (
-        <details>
-          <summary>{t.questionsAsked}</summary>
-          {asked.map(([s, i]) => <p key={i}>{s.question} → <strong>{s.answer}</strong></p>)}
-        </details>
-      )}
-    </section>
-  )
-}
-
-function FixStep({ t, id, step, index, display }: { t: Strings; id: string; step: Step; index: number; display: StepDisplay | null }) {
-  const download = () => {
-    const url = URL.createObjectURL(new Blob([step.declaration ?? ''], { type: 'text/plain;charset=utf-8' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'declaration-draft.txt'
-    a.click()
-    URL.revokeObjectURL(url)
-  }
-  return (
-    <div className="step">
-      <p className="voice">{step.voice}</p>
-      <PlayButton url={audioUrl(id, `step-${index}`)} t={t} />
-      {display && (display.bring.length > 0 || display.fee || display.time_limit) && (
-        <dl>
-          {display.bring.map((b) => <div key={b.text}><dt>{t.bring}</dt><dd><Fact t={t} shown={b} /></dd></div>)}
-          {display.fee && <div><dt>{t.fee}</dt><dd><Fact t={t} shown={display.fee} /></dd></div>}
-          {display.time_limit && <div><dt>{t.timeLimit}</dt><dd><Fact t={t} shown={display.time_limit} /></dd></div>}
-        </dl>
-      )}
-      {step.declaration && <button type="button" className="secondary" onClick={download}>⬇ {t.downloadDeclaration}</button>}
-    </div>
-  )
-}
-
-// ---------- results ----------
-
-function memberName(m: Member, language: Language, t: Strings): string {
-  const name = language === 'en' ? m.name_en ?? m.name_mr : m.name_mr ?? m.name_en
-  if (name) return name
-  return m.on_ration_card ? t.cardMember.replace('{n}', m.member_id.replace(/^r/, '')) : t.personNotOnCard
-}
-
-// Each source once per scheme (several rules often cite the same page).
-function sources(r: NonNullable<SessionView['results']>[number]): [string, string][] {
-  const seen = new Map<string, string>()
-  for (const x of r.rules) if (x.source_url && !seen.has(x.source_url)) seen.set(x.source_url, x.source)
-  return [...seen.entries()]
-}
-
-function Results({ t, view, language }: { t: Strings; view: SessionView; language: Language }) {
-  const hh = view.household!
-  const byMember = new Map<string, NonNullable<SessionView['results']>>()
-  for (const r of view.results ?? []) byMember.set(r.member_id, [...(byMember.get(r.member_id) ?? []), r])
-  const problems = hh.issues.filter((i) => i.severity !== 'info')
-  const unreadable = problems.filter((i) => i.type === 'unreadable').flatMap((i) => i.documents)
-  return (
-    <>
-      <section className="card">
-        <h2>{t.documentsTitle}</h2>
-        <ul className="docs">
-          {Object.values(hh.documents).map((d) => (
-            <li key={d.document_id}>{t.docTypes[d.doc_type ?? ''] ?? d.doc_type ?? '?'}{d.unreadable ? ` (${t.issueTypes.unreadable})` : ''}</li>
-          ))}
-        </ul>
-      </section>
-      <section className="card">
-        <h2>{t.issuesTitle}</h2>
-        {problems.length === 0 ? <p>{t.noIssues}</p> : (
-          <ul className="issues">
-            {problems.map((i, n) => {
-              const m = hh.members.find((x) => x.member_id === i.member_id)
-              // 'Could not read' names the document; other problems name the person.
-              const what = i.type === 'unreadable' && i.documents.length
-                ? docLabel(view, i.documents[0], unreadable, language, t)
-                : m ? memberName(m, language, t) : ''
-              return <li key={n} className={i.severity}>{t.issueTypes[i.type] ?? i.type}{what ? `: ${what}` : ''}</li>
-            })}
-          </ul>
-        )}
-      </section>
-      <section className="card">
-        <h2>{t.householdTitle}</h2>
-        {hh.members.map((m) => (
-          <div key={m.member_id} className="member-card">
-            <h3>{memberName(m, language, t)}{!m.on_ration_card && <span className="tag"> {t.notOnCard}</span>}</h3>
-            <p className="small">{Object.keys(m.documents).map((d) => t.docTypes[d] ?? d).join(', ')}</p>
-            <ul className="schemes">
-              {(byMember.get(m.member_id) ?? []).map((r) => (
-                <li key={r.scheme_id} className={`outcome ${r.outcome}`}>
-                  <details>
-                    <summary><strong>{r.scheme_name}</strong>: {t.outcomes[r.outcome]}</summary>
-                    <ul className="small">{(r.display?.reasons ?? r.reasons).map((x, n) => <li key={n}>{x}</li>)}</ul>
-                    {(r.display?.warnings ?? []).length > 0 && (
-                      <ul className="small warnings">{r.display!.warnings.map((x, n) => <li key={n}>{x}</li>)}</ul>
-                    )}
-                    <p className="small">{t.sources}: {sources(r).map(([url, source]) => (
-                      <a key={url} href={url} target="_blank" rel="noreferrer">{source}</a>
-                    ))}</p>
-                  </details>
-                </li>
-              ))}
-            </ul>
+        <div className="conversation" ref={scroller}>
+          <div className="conversation-inner">
+            <Chat t={t} language={language} check={check} view={view} error={startError ?? error} answered={answered}
+              voice={voice} onRecord={() => setCheck({ kind: 'recording' })} onSample={onSample} onRecorded={onRecorded}
+              onCancelRecord={() => setCheck({ kind: 'idle' })} onAnswered={onAnswered} onReplanned={refresh}
+              onNewCheck={newCheck} />
           </div>
-        ))}
-      </section>
-    </>
+        </div>
+
+        {members > 0 && (
+          <button type="button" className="family-bar only-sheet" onClick={() => setSheet(true)}>
+            <Family /><span>{t.householdTitle}</span><span className="family-count">{t.familyCount.replace('{n}', String(members))}</span>
+          </button>
+        )}
+
+        <form className="composer" onSubmit={(e) => e.preventDefault()}>
+          {/* Ask Kaagaz is wired in Phase 10. */}
+          <label className="composer-field">
+            <span className="sr-only">{t.askPlaceholder}</span>
+            <input type="text" placeholder={t.askPlaceholder} disabled />
+            <span className="soon">{t.soon}</span>
+          </label>
+          <button type="button" className={voice.listening ? 'round-button listening' : 'round-button'}
+            aria-label={voice.listening ? t.listening : t.speak} disabled={!voice.allowed || (voice.busy && !voice.listening)}
+            onClick={voice.toggle}><Mic /></button>
+          <button type="button" className="round-button" aria-label={t.camera} disabled={busy}
+            onClick={() => { newCheck(); setCheck({ kind: 'recording' }) }}><Camera /></button>
+          <button type="submit" className="round-button primary" aria-label={t.send} disabled><Send /></button>
+        </form>
+      </main>
+
+      <aside className={sheet ? 'panel open' : 'panel'} aria-label={t.matrixTitle}>
+        <HouseholdPanel t={t} view={view} language={language} schemes={schemes}
+          onOpenScheme={setOpenScheme} onClose={() => setSheet(false)} />
+      </aside>
+      {sheet && <div className="scrim sheet-scrim" onClick={() => setSheet(false)} aria-hidden="true" />}
+
+      {scheme && <SchemeCard key={scheme.id} t={t} scheme={scheme} onClose={() => setOpenScheme(null)} />}
+    </div>
   )
 }

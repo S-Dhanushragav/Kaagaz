@@ -6,6 +6,7 @@ GET  /sessions/{id}             stage progress, partial results, the pending que
 POST /sessions/{id}/answer      {question_id, option} (JSON) or a short WAV clip (form: question_id, audio)
 GET  /sessions/{id}/audio/{key} TTS WAV for 'question' or 'step-<n>'
 POST /sessions/{id}/closeup     a clearer photo of one document on the close-up list (form: document_id, photo|sample)
+GET  /schemes?lang=             the scheme catalog: each scheme's rules as lines, with status and sources (YAML only)
 """
 
 from typing import Any, Literal
@@ -137,3 +138,10 @@ def audio(request: Request, session_id: str, key: str) -> FileResponse:
     except TTSError as e:
         raise HTTPException(503, f"Speech output is not available: {e}") from e
     return FileResponse(speech.path, media_type="audio/wav", headers={"Cache-Control": "private, max-age=3600"})
+
+
+@router.get("/schemes")
+def schemes(lang: Language = "mr") -> list[dict[str, Any]]:
+    from agents.catalog import catalog
+
+    return [s.model_dump() for s in catalog(lang)]

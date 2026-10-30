@@ -30,6 +30,7 @@ class ReasonTemplates(BaseModel):
     reasons: dict[str, str]
     issues: dict[str, str]
     confirm: str
+    catalog: dict[str, str]  # scheme catalog lines (agents/catalog.py)
 
 
 @lru_cache

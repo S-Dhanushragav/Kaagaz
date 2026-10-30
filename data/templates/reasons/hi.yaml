@@ -55,3 +55,18 @@ issues:
   unreadable: "एक दस्तावेज़ पढ़ा नहीं जा सका: पहले साफ़ फ़ोटो लें।"
   expired: "आय प्रमाण पत्र पुराना हो सकता है।"
 confirm: "कृपया मिलाकर देखें: दस्तावेज़ों पर नाम की स्पेलिंग अलग हो सकती है।"
+# Scheme catalog (GET /schemes): one line per rule, from the rule's value in data/schemes. Wording only.
+catalog:
+  gender.F: "महिलाओं के लिए।"
+  gender.M: "पुरुषों के लिए।"
+  age_min: "उम्र {limit} या उससे ज़्यादा।"
+  age_max: "उम्र {limit} या उससे कम।"
+  age_below: "उम्र {limit} साल से कम।"
+  income_max: "परिवार की आय {limit} तक।"
+  income_bands: "परिवार की आय {low} तक; {low} और {high} के बीच स्रोत अलग-अलग बताते हैं।"
+  caste_household: "परिवार में किसी के पास {categories} जाति प्रमाण पत्र हो; नहीं तो दूसरा प्रमाण चाहिए।"
+  caste_applicant: "आवेदक का अपना {categories} जाति प्रमाण पत्र।"
+  documents: "दस्तावेज़: {items}।"
+  income_certificate_unless_card: "आय प्रमाण पत्र, या {cards} राशन कार्ड।"
+  every_adult_identity_card: "राशन कार्ड पर हर वयस्क का आधार कार्ड"
+  or: "या"

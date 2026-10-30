@@ -91,6 +91,9 @@ export interface Extraction {
 
 export interface WaitingIssue { id: string; type: string; member_id: string | null; member_name: string | null; member_name_mr: string | null; documents: Record<string, string> }
 
+// A document the finder has handed over, with what is known about it so far (type and name once read).
+export interface LiveDocument { id: string; doc_type: string | null; name_en: string | null; name_mr: string | null; read: boolean }
+
 export interface SessionView {
   id: string
   language: Language
@@ -102,6 +105,7 @@ export interface SessionView {
   question: Question | null
   elapsed_s: number
   found: { id: string; frames: number[]; fully_visible: boolean }[] | null
+  documents?: LiveDocument[] | null // found so far, while the finder runs (and after); crops at cropUrl()
   extractions: Extraction[] | null
   waiting: WaitingIssue[] | null
   recapture: { mode: 'none' | 'close_ups' | 'sweep_again' | 'no_documents'; documents: string[] } | null
@@ -114,6 +118,17 @@ export interface SessionView {
   plan: { steps: Step[]; source: string } | null
   speech: { index: number; kind: string; text: string; speech: string; display: StepDisplay | null }[] | null
 }
+
+export interface CatalogLine {
+  rule_id: string
+  check: string
+  text: string
+  status: 'verified' | 'conflict' | 'unverified'
+  sources: { source: string; url: string | null }[]
+  last_checked: string
+}
+
+export interface CatalogScheme { id: string; name: string; rules: CatalogLine[]; other_proof: CatalogLine[] }
 
 export interface AnswerReply { action: 'answered' | 'ask_again' | 'show_buttons'; option: number | null; say: string | null; heard?: string | null }
 
@@ -180,6 +195,10 @@ export async function sendCloseup(id: string, documentId: string, photo: Blob | 
   if (photo) form.append('photo', photo, 'closeup.jpg')
   else form.append('sample', 'true')
   return json(await fetch(`${API_URL}/sessions/${id}/closeup`, { method: 'POST', body: form }))
+}
+
+export async function getSchemes(language: Language): Promise<CatalogScheme[]> {
+  return json<CatalogScheme[]>(await fetch(`${API_URL}/schemes?lang=${language}`))
 }
 
 export const audioUrl = (id: string, key: string): string => `${API_URL}/sessions/${id}/audio/${key}`

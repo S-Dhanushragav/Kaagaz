@@ -55,3 +55,18 @@ issues:
   unreadable: "A document could not be read: take a clearer photo first."
   expired: "The income certificate may be too old."
 confirm: "Please compare: the name may be spelled differently on the documents."
+# Scheme catalog (GET /schemes): one line per rule, from the rule's value in data/schemes. Wording only.
+catalog:
+  gender.F: "For women."
+  gender.M: "For men."
+  age_min: "Age {limit} or more."
+  age_max: "Age {limit} or less."
+  age_below: "Under {limit} years of age."
+  income_max: "Family income up to {limit}."
+  income_bands: "Family income up to {low}; sources differ between {low} and {high}."
+  caste_household: "Someone in the family has a {categories} caste certificate; otherwise other proof is needed."
+  caste_applicant: "The applicant's own {categories} caste certificate."
+  documents: "Documents: {items}."
+  income_certificate_unless_card: "An income certificate, or a {cards} ration card."
+  every_adult_identity_card: "Aadhaar card of every adult on the ration card"
+  or: "or"
