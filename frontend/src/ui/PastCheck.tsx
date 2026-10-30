@@ -5,6 +5,7 @@ import type { Strings } from '../i18n'
 import { OUTCOME_MARK } from '../labels'
 import { Camera, IssueIcon } from './Icons'
 import { FamilyCard, PlanCard } from './Results'
+import SchemesCard from './SchemesCard'
 
 export function ProblemList({ t, language, problems }: { t: Strings; language: Language; problems: StoredProblem[] }) {
   return (
@@ -77,9 +78,10 @@ export function RecheckComparison({ t, language, checkId, names }: {
 }
 
 // A saved check, read-only, with a checkbox per plan step and "Check again".
-export default function PastCheck({ t, language, check, schemes, focus, onTick, onCheckAgain }: {
+export default function PastCheck({ t, language, check, schemes, focus, onTick, onCheckAgain, narrow, onOpenScheme }: {
   t: Strings; language: Language; check: CheckFull; schemes: CatalogScheme[]; focus: number | null
   onTick: (step: number, done: boolean) => void; onCheckAgain: (sample: boolean) => void
+  narrow: boolean; onOpenScheme: (id: string) => void
 }) {
   const view = checkAsView(check)
   const names = Object.fromEntries(schemes.map((s) => [s.id, s.name]))
@@ -96,6 +98,10 @@ export default function PastCheck({ t, language, check, schemes, focus, onTick, 
       {check.comparison && <ComparisonCard t={t} language={language} comparison={check.comparison} names={names} />}
       <PlanCard t={t} view={view} audioFor={(i) => storedAudioUrl(check.id, i)}
         ticks={{ done: check.steps_done, onToggle: onTick, focus }} />
+      <div className="past-wide">
+        <SchemesCard key={check.id} t={t} view={view} language={language} schemes={schemes} narrow={narrow}
+          onOpenScheme={onOpenScheme} />
+      </div>
       <section className="card-block" aria-labelledby="past-problems">
         <header className="card-head"><h2 id="past-problems">{t.issuesTitle}</h2>
           {check.data.problems.length > 0 && <span className="count">{check.data.problems.length}</span>}</header>

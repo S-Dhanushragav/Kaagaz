@@ -10,9 +10,9 @@ const svg = (size: number, body: ReactNode) => (
 
 export const Logo = ({ size = 32 }: P) => (
   <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-    <path d="M7 3h13l6 6v20H7z" fill="var(--surface)" stroke="var(--indigo)" strokeWidth="2" strokeLinejoin="round" />
-    <path d="M20 3v6h6" fill="var(--saffron-tint)" stroke="var(--saffron)" strokeWidth="2" strokeLinejoin="round" />
-    <path d="M11 15h11M11 19h11M11 23h7" stroke="var(--indigo)" strokeWidth="2" strokeLinecap="round" />
+    <path d="M7 3h13l6 6v20H7z" fill="var(--bg)" stroke="var(--accent)" strokeWidth="2" strokeLinejoin="round" />
+    <path d="M20 3v6h6" fill="var(--fill-2)" stroke="var(--accent)" strokeWidth="2" strokeLinejoin="round" />
+    <path d="M11 15h11M11 19h11M11 23h7" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" />
   </svg>
 )
 export const Mic = ({ size = 22 }: P) => svg(size, <><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></>)

@@ -4,15 +4,12 @@ import {
   tickStep, type CatalogScheme, type Started, type CheckFull, type CheckSummary, type Language, type SessionView, type UserView,
 } from './api'
 import { stop } from './audio'
-import { count } from './counts'
 import { STRINGS } from './i18n'
 import AccountMenu from './ui/AccountMenu'
 import Chat, { type Answered, type Check } from './ui/Chat'
-import HouseholdPanel from './ui/HouseholdPanel'
-import { Camera, Family, Menu, Mic, Person, Send } from './ui/Icons'
+import { Camera, Menu, Mic, Person, Send } from './ui/Icons'
 import LanguageMenu from './ui/LanguageMenu'
 import Login from './ui/Login'
-import { checkAsView } from './casefile'
 import PastCheck from './ui/PastCheck'
 import SchemeCard from './ui/SchemeCard'
 import Sidebar, { Wordmark } from './ui/Sidebar'
@@ -75,7 +72,6 @@ export default function App() {
   const [schemes, setSchemes] = useState<CatalogScheme[]>([])
   const [openScheme, setOpenScheme] = useState<string | null>(null)
   const [drawer, setDrawer] = useState(false)
-  const [sheet, setSheet] = useState(false)
   const t = STRINGS[language]
   const sessionId = check.kind === 'session' ? check.id : null
   const { view, error, refresh } = useSession(sessionId)
@@ -161,13 +157,11 @@ export default function App() {
     setRecheckOf(null)
     setCenter({ kind: 'live' })
     setDrawer(false)
-    setSheet(false)
   }
 
   const openCheck = async (id: string, focus: number | null = null) => {
     stop()
     setDrawer(false)
-    setSheet(false)
     try {
       setCenter({ kind: 'past', check: await myCheck(id), focus })
       scroller.current?.scrollTo({ top: 0 })
@@ -237,8 +231,6 @@ export default function App() {
 
   const busy = check.kind === 'recording' || check.kind === 'uploading' || view?.status === 'running' || view?.status === 'waiting'
   const scheme = schemes.find((s) => s.id === openScheme)
-  const panelView = center.kind === 'past' ? checkAsView(center.check) : view
-  const members = panelView?.household?.members.length ?? 0
 
   return (
     <div className="shell">
@@ -272,7 +264,7 @@ export default function App() {
             {flash && <p className="flash" role="status">{flash}</p>}
             {center.kind === 'past' ? (
               <PastCheck t={t} language={language} check={center.check} schemes={schemes} focus={center.focus}
-                onTick={(s, d) => void onTick(s, d)} onCheckAgain={checkAgain} />
+                onTick={(s, d) => void onTick(s, d)} onCheckAgain={checkAgain} narrow={narrow} onOpenScheme={setOpenScheme} />
             ) : (
               <Chat t={t} language={language} schemes={schemes} check={check} view={view} error={startError ?? error}
                 answered={answered} voice={voice} onRecord={() => setCheck({ kind: 'recording' })} onSample={onSample}
@@ -280,16 +272,11 @@ export default function App() {
                 onReplanned={refresh} onNewCheck={newCheck} recheck={recheckOf !== null}
                 latest={user && latest && latest.id === checks[0]?.id ? latest : null /* never an older check while the newest loads */}
                 onOpenCheck={(id, step) => void openCheck(id, step)} loggedIn={user !== null}
-                onSaveCheck={() => { if (check.kind === 'session') setLogin({ claim: { id: check.id, secret: check.guestSecret } }) }} />
+                onSaveCheck={() => { if (check.kind === 'session') setLogin({ claim: { id: check.id, secret: check.guestSecret } }) }}
+                narrow={narrow} onOpenScheme={setOpenScheme} />
             )}
           </div>
         </div>
-
-        {members > 0 && (
-          <button type="button" className="family-bar only-sheet" onClick={() => setSheet(true)}>
-            <Family /><span>{t.householdTitle}</span><span className="family-count">{count(language, 'person', members)}</span>
-          </button>
-        )}
 
         <form className="composer" onSubmit={(e) => e.preventDefault()}>
           {/* Ask Kaagaz is wired in Phase 10. */}
@@ -306,12 +293,6 @@ export default function App() {
           <button type="submit" className="round-button primary" aria-label={t.send} disabled><Send /></button>
         </form>
       </main>
-
-      <aside className={sheet ? 'panel open' : 'panel'} aria-label={t.matrixTitle}>
-        <HouseholdPanel t={t} view={panelView} language={language} schemes={schemes}
-          onOpenScheme={setOpenScheme} onClose={() => setSheet(false)} />
-      </aside>
-      {sheet && <div className="scrim sheet-scrim" onClick={() => setSheet(false)} aria-hidden="true" />}
 
       {scheme && <SchemeCard key={scheme.id} t={t} scheme={scheme} onClose={() => setOpenScheme(null)} />}
       {login && (

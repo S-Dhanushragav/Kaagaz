@@ -9,6 +9,7 @@ import { Camera, Logo } from './Icons'
 import QuestionCard from './QuestionCard'
 import Recapture from './Recapture'
 import Recorder from './Recorder'
+import SchemesCard from './SchemesCard'
 import Thumbnails from './Thumbnails'
 import { FamilyCard, PlanCard, ProblemsCard } from './Results'
 import type { Voice } from './voice'
@@ -21,9 +22,10 @@ export type Check =
 
 export interface Answered { question: string; member: string | null; answer: string }
 
-export function Bot({ children, wide }: { children: ReactNode; wide?: boolean }) {
+// `wide`: a card that fills the reading column (780 px); `full`: tables and cards that may use up to 960 px.
+export function Bot({ children, wide, full }: { children: ReactNode; wide?: boolean; full?: boolean }) {
   return (
-    <div className={wide ? 'msg bot wide' : 'msg bot'}>
+    <div className={['msg bot', wide || full ? 'wide' : '', full ? 'full' : ''].filter(Boolean).join(' ')}>
       <span className="avatar" aria-hidden="true"><Logo size={22} /></span>
       <div className="bubble">{children}</div>
     </div>
@@ -35,12 +37,13 @@ export function Me({ children }: { children: ReactNode }) {
 }
 
 export default function Chat({ t, language, schemes, check, view, error, answered, voice, onRecord, onSample, onRecorded,
-  onCancelRecord, onAnswered, onReplanned, onNewCheck, latest, recheck, onOpenCheck, loggedIn, onSaveCheck }: {
+  onCancelRecord, onAnswered, onReplanned, onNewCheck, latest, recheck, onOpenCheck, loggedIn, onSaveCheck, narrow,
+  onOpenScheme }: {
   t: Strings; language: Language; schemes: CatalogScheme[]; check: Check; view: SessionView | null; error: string | null; answered: Answered[]
   voice: Voice; onRecord: () => void; onSample: () => void; onRecorded: (b: Blob) => void; onCancelRecord: () => void
   onAnswered: (label: string) => void; onReplanned: () => void; onNewCheck: () => void
   latest: CheckFull | null; recheck: boolean; onOpenCheck: (id: string, step: number | null) => void
-  loggedIn: boolean; onSaveCheck: () => void
+  loggedIn: boolean; onSaveCheck: () => void; narrow: boolean; onOpenScheme: (id: string) => void
 }) {
   const names = Object.fromEntries(schemes.map((s) => [s.id, s.name]))
   const started = check.kind !== 'idle'
@@ -48,11 +51,13 @@ export default function Chat({ t, language, schemes, check, view, error, answere
   const stopped = view?.status === 'done' && (view.recapture?.mode === 'sweep_again' || view.recapture?.mode === 'no_documents')
   return (
     <>
+      {/* A returning user's open steps come first; the steps of how Kaagaz works are then folded away. */}
+      {latest && !started && <Bot><WelcomeBack t={t} language={language} latest={latest} onOpenCheck={onOpenCheck} /></Bot>}
       <Bot>
         <p className="lead">{t.welcome}</p>
         <p className="specimen-note">{t.specimen}</p>
+        <HowItWorks t={t} folded={!!latest} />
       </Bot>
-      {latest && !started && <Bot><WelcomeBack t={t} language={language} latest={latest} onOpenCheck={onOpenCheck} /></Bot>}
       <Bot>
         <p>{t.startPrompt}</p>
         {!started && (
@@ -97,6 +102,8 @@ export default function Chat({ t, language, schemes, check, view, error, answere
             <Bot wide><RecheckComparison key={view.check_id} t={t} language={language} checkId={view.check_id} names={names} /></Bot>
           )}
           <Bot wide><PlanCard t={t} view={view}><Feedback key={view.id} t={t} sessionId={view.id} target="plan" /></PlanCard></Bot>
+          <Bot full><SchemesCard key={view.id} t={t} view={view} language={language} schemes={schemes} narrow={narrow}
+            onOpenScheme={onOpenScheme} /></Bot>
           <Bot wide><ProblemsCard t={t} view={view} language={language} /></Bot>
           <Bot wide><FamilyCard key={view.id} t={t} view={view} language={language} names={names} /></Bot>
           {!loggedIn && view.household && (
@@ -110,6 +117,25 @@ export default function Chat({ t, language, schemes, check, view, error, answere
         </>
       )}
     </>
+  )
+}
+
+// What Kaagaz does, in four steps (the existing strings): open for a first visit, folded for a returning user.
+function HowItWorks({ t, folded }: { t: Strings; folded: boolean }) {
+  const steps = <ol className="how-steps">{t.howSteps.map((s, i) => <li key={i}>{s}</li>)}</ol>
+  if (folded) {
+    return (
+      <details className="how">
+        <summary>{t.howTitle}</summary>
+        {steps}
+      </details>
+    )
+  }
+  return (
+    <div className="how">
+      <p className="how-title">{t.howTitle}</p>
+      {steps}
+    </div>
   )
 }
 
