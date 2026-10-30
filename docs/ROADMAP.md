@@ -39,12 +39,15 @@ Also fixed: age limits in scheme reasons were shown as rupees ("minimum age of â
 - [x] Feedback moved into the database
 Status: built and tested (490 offline tests; live Postgres round trip with `pytest -m live_db`; Playwright in
 mr/hi/en at 360 and 1440 px against Neon); awaiting review; not deployed.
-Commits: e26264c, df4c1ed, bd4807b, abfed8f, 61e7584, and the docs commit.
+Commits: e26264c, df4c1ed, bd4807b, abfed8f, 61e7584, 0083612; review fixes dcf8588 and the frontend/docs commits after it.
+Changed after review: login is not the front door (the app opens into the chat as a guest; returning users with a
+token land on welcome back; a "Save this check" card after a guest check logs in and keeps that check via
+POST /sessions/{id}/claim while the session is in memory); rate limits use the proxy-added client IP (last
+X-Forwarded-For entry), 30 codes per IP per hour; the live-database test deletes its own feedback row and never
+runs the broad retention purge on the real database.
 Changed: stored checks keep no ID numbers at all (not even the last 4 digits); tokens are signed with the standard
 library (no JWT dependency); login codes and rate limits live in memory (one container), so a redeploy clears
-pending codes. Added dependency: psycopg[binary] 3. The live-database test leaves one feedback row per run.
-Before deploying: PHONE_HASH_KEY and TOKEN_SIGNING_KEY must be in the Modal secret (they were not in the local
-.env; local runs used throwaway values).
+pending codes. Added dependency: psycopg[binary] 3. PHONE_HASH_KEY and TOKEN_SIGNING_KEY are in the Modal secret.
 
 ## Phase 10: Live voice and Ask Kaagaz (Sun 2 Nov afternoon to Mon 3 Nov morning)
 - [ ] Live transcript in the text box while speaking (Muse Voice Transcribe realtime),
