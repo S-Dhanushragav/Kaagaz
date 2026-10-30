@@ -28,16 +28,23 @@ verified; hi/mr benefit text machine-translated); quiet 'not eligible' cells; mo
 Also fixed: age limits in scheme reasons were shown as rupees ("minimum age of ₹65").
 
 ## Phase 9: Login and case file (Sun 2 Nov, morning)
-- [ ] Phone login, demo-code mode, pluggable SMS adapter; Continue as guest (I, T, D)
-- [ ] Case file history in Neon Postgres (DATABASE_URL); storage behind an interface with an
+- [x] Phone login, demo-code mode, pluggable SMS adapter; Continue as guest (I, T, D)
+- [x] Case file history in Neon Postgres (DATABASE_URL); storage behind an interface with an
       in-memory version for tests (I, T)
-- [ ] Returning-user welcome with pending office visits (I, D, V)
-- [ ] Tick off plan steps as done (I, D)
-- [ ] Re-check after fixing, compared with the last check (I, T, D, V)
-- [ ] Privacy: hashed phone numbers, no images or full ID numbers stored, consent line,
+- [x] Returning-user welcome with pending office visits (I, D, V)
+- [x] Tick off plan steps as done (I, D)
+- [x] Re-check after fixing, compared with the last check (I, T, D, V)
+- [x] Privacy: hashed phone numbers, no images or full ID numbers stored, consent line,
       Delete my data, retention limit (I, T)
-- [ ] Feedback moved into the database
-Status: not started. Commits: -
+- [x] Feedback moved into the database
+Status: built and tested (490 offline tests; live Postgres round trip with `pytest -m live_db`; Playwright in
+mr/hi/en at 360 and 1440 px against Neon); awaiting review; not deployed.
+Commits: e26264c, df4c1ed, bd4807b, abfed8f, 61e7584, and the docs commit.
+Changed: stored checks keep no ID numbers at all (not even the last 4 digits); tokens are signed with the standard
+library (no JWT dependency); login codes and rate limits live in memory (one container), so a redeploy clears
+pending codes. Added dependency: psycopg[binary] 3. The live-database test leaves one feedback row per run.
+Before deploying: PHONE_HASH_KEY and TOKEN_SIGNING_KEY must be in the Modal secret (they were not in the local
+.env; local runs used throwaway values).
 
 ## Phase 10: Live voice and Ask Kaagaz (Sun 2 Nov afternoon to Mon 3 Nov morning)
 - [ ] Live transcript in the text box while speaking (Muse Voice Transcribe realtime),

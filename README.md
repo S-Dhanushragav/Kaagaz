@@ -31,7 +31,7 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 
 ## Status
 
-Phases 0-8 are built, tested and deployed (462 backend tests, no network).
+Phases 0-8 are built, tested and deployed; Phase 9 is built and tested, not deployed yet (490 backend tests, no network).
 
 | Phase | What | Status |
 |---|---|---|
@@ -45,6 +45,7 @@ Phases 0-8 are built, tested and deployed (462 backend tests, no network).
 | 7 | LangGraph pipeline (family question as an interrupt), sessions API, mobile web app, Modal + Netlify deployment | Done, deployed |
 | 7+ | Close-up loop (a clearer photo of one document re-runs household → rules → plan), "no documents" / "sweep again" stops, issues waiting for a clearer photo, scheme reasons in en/hi/mr, upload progress | Done, deployed |
 | 8 | UI redesign: chat with scheme sidebar and household matrix, live document thumbnails, result cards with Listen/Stop and Listen to all, scheme catalog (`GET /schemes`), feedback (`POST /feedback`), Aadhaar numbers blurred on thumbnails | Done, deployed |
+| 9 | Phone login (demo code, hashed numbers, signed tokens), case file on Neon Postgres (checks, step ticks, re-check comparison), welcome back, delete my data, 365-day retention | Built, awaiting review; not deployed |
 
 Remaining phases: see [docs/ROADMAP.md](docs/ROADMAP.md).
 
@@ -291,7 +292,7 @@ static Netlify site. Keys live only in a Modal secret.
 ```bash
 pip install -e "backend[deploy]"                      # the Modal CLI
 modal token new                                       # once
-modal secret create kaagaz-secrets META_API_KEY=... BASETEN_API_KEY=...
+modal secret create kaagaz-secrets META_API_KEY=... BASETEN_API_KEY=... DATABASE_URL=... PHONE_HASH_KEY=... TOKEN_SIGNING_KEY=...
 KAAGAZ_FRONTEND_ORIGIN=https://<site>.netlify.app modal deploy deploy/modal_app.py
 (cd .cache && MSYS_NO_PATHCONV=1 modal volume put --force kaagaz-cache . /)   # optional: seed the model-call cache
                                                       # (sample runs free); files land at the volume root
