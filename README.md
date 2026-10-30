@@ -293,11 +293,15 @@ pip install -e "backend[deploy]"                      # the Modal CLI
 modal token new                                       # once
 modal secret create kaagaz-secrets META_API_KEY=... BASETEN_API_KEY=...
 KAAGAZ_FRONTEND_ORIGIN=https://<site>.netlify.app modal deploy deploy/modal_app.py
-modal volume put kaagaz-cache .cache /                # optional: seed the model-call cache (sample runs free)
+(cd .cache && MSYS_NO_PATHCONV=1 modal volume put --force kaagaz-cache . /)   # optional: seed the model-call cache
+                                                      # (sample runs free); files land at the volume root
 python scripts/warmup.py https://<workspace>--kaagaz-web.modal.run   # 5 minutes before any demo
 ```
 
 - MMS-TTS models are baked into the image at build time; the model-call cache is a Modal Volume.
+- Seeding the cache: run `modal volume put` from inside `.cache` with `.` as the source, so the files land at the
+  volume root where the app reads them (`.cache /` puts them in a `/.cache` subfolder). In Git Bash on Windows,
+  `MSYS_NO_PATHCONV=1` stops `/` being rewritten into a Windows path (`C:/Program Files/Git/`).
 - `KAAGAZ_KEEP_WARM=1` at deploy keeps one container running (judging window only; it uses credits). Off by default.
 - Netlify: base directory `frontend/`, environment variable `VITE_API_URL` = the Modal URL (see `frontend/netlify.toml`).
   CORS on the backend allows only `KAAGAZ_FRONTEND_ORIGIN`.
