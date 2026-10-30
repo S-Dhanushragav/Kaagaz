@@ -14,8 +14,8 @@ export default function HouseholdPanel({ t, view, language, schemes, onOpenSchem
   const [picked, setPicked] = useState<{ member: string; scheme: string } | null>(null)
   const hh = view?.household
   const results = view?.results ?? []
-  const columns = schemes.length ? schemes.map((s) => ({ id: s.id, name: s.name }))
-    : [...new Map(results.map((r) => [r.scheme_id, { id: r.scheme_id, name: r.scheme_name }])).values()]
+  const columns = schemes.length ? schemes.map((s) => ({ id: s.id, name: s.name, short: s.short }))
+    : [...new Map(results.map((r) => [r.scheme_id, { id: r.scheme_id, name: r.scheme_name, short: r.scheme_name }])).values()]
   const result = (m: string, s: string) => results.find((r) => r.member_id === m && r.scheme_id === s)
   const chosen = picked ? result(picked.member, picked.scheme) : undefined
   const chosenMember = picked ? hh?.members.find((m) => m.member_id === picked.member) : undefined
@@ -23,10 +23,10 @@ export default function HouseholdPanel({ t, view, language, schemes, onOpenSchem
   return (
     <div className="panel-inner">
       <header className="panel-head">
-        <h2>{t.matrixTitle}</h2>
+        <h2>{view ? t.matrixTitle : t.howTitle}</h2>
         {onClose && <button type="button" className="icon-button" aria-label={t.close} onClick={onClose}><Close /></button>}
       </header>
-      {!hh || !results.length ? <p className="panel-empty">{t.panelEmpty}</p> : (
+      {!hh || !results.length ? (view ? <p className="panel-empty">{t.panelEmpty}</p> : <HowItWorks t={t} />) : (
         <>
           <div className="matrix-wrap">
             <table className="matrix">
@@ -36,7 +36,7 @@ export default function HouseholdPanel({ t, view, language, schemes, onOpenSchem
                   <td />
                   {columns.map((c) => (
                     <th key={c.id} scope="col">
-                      <button type="button" className="matrix-scheme" onClick={() => onOpenScheme(c.id)}>{c.name}</button>
+                      <button type="button" className="matrix-scheme" title={c.name} onClick={() => onOpenScheme(c.id)}>{c.short}</button>
                     </th>
                   ))}
                 </tr>
@@ -91,6 +91,15 @@ export default function HouseholdPanel({ t, view, language, schemes, onOpenSchem
         </>
       )}
     </div>
+  )
+}
+
+// Before a check: what Kaagaz does, in four steps.
+function HowItWorks({ t }: { t: Strings }) {
+  return (
+    <section className="how">
+      <ol>{t.howSteps.map((s, i) => <li key={i}><span className="how-num" aria-hidden="true">{i + 1}</span><span>{s}</span></li>)}</ol>
+    </section>
   )
 }
 

@@ -104,6 +104,11 @@ const en = {
   notHelpful: "Not helpful",
   readingSoFar: "Found so far",
   familyCount: "{n} people",
+  poweredBy: "Found with SAM 3.1 · Read with Muse Spark · Spoken with MMS-TTS",
+  howTitle: "How Kaagaz works",
+  howSteps: ["Record a slow sweep over all the family's papers.", "SAM 3.1 finds each document and Muse Spark reads it.", "Rules check 5 schemes, each with its source.", "You get a plan in your language, spoken aloud."],
+  askShort: "Ask Kaagaz",
+  benefit: "Benefit",
 }
 
 type Strings = typeof en
@@ -210,6 +215,11 @@ const hi: Strings = {
   notHelpful: "काम का नहीं",
   readingSoFar: "अब तक मिले",
   familyCount: "{n} लोग",
+  poweredBy: "SAM 3.1 से ढूँढा · Muse Spark से पढ़ा · MMS-TTS से बोला",
+  howTitle: "कागज़ कैसे काम करता है",
+  howSteps: ["परिवार के सभी कागज़ों पर धीरे-धीरे कैमरा घुमाकर रिकॉर्ड करें।", "SAM 3.1 हर दस्तावेज़ ढूँढता है और Muse Spark उसे पढ़ता है।", "नियम 5 योजनाओं को जाँचते हैं, हर नियम के स्रोत के साथ।", "आपकी भाषा में योजना, बोलकर सुनाई जाती है।"],
+  askShort: "पूछें",
+  benefit: "लाभ",
 }
 
 const mr: Strings = {
@@ -314,6 +324,11 @@ const mr: Strings = {
   notHelpful: "उपयोगी नाही",
   readingSoFar: "आतापर्यंत सापडलेली",
   familyCount: "{n} व्यक्ती",
+  poweredBy: "SAM 3.1 ने शोधले · Muse Spark ने वाचले · MMS-TTS ने बोलले",
+  howTitle: "कागज कसा काम करतो",
+  howSteps: ["कुटुंबाच्या सर्व कागदांवरून कॅमेरा हळूहळू फिरवून रेकॉर्ड करा.", "SAM 3.1 प्रत्येक कागदपत्र शोधतो आणि Muse Spark ते वाचतो.", "नियम 5 योजना तपासतात, प्रत्येक नियमाच्या स्रोतासह.", "तुमच्या भाषेत योजना, मोठ्याने ऐकवली जाते."],
+  askShort: "विचारा",
+  benefit: "लाभ",
 }
 
 export const STRINGS: Record<Language, Strings> = { en, hi, mr }

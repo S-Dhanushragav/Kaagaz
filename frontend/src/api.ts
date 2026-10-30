@@ -141,7 +141,14 @@ export interface CatalogLine {
   last_checked: string
 }
 
-export interface CatalogScheme { id: string; name: string; rules: CatalogLine[]; other_proof: CatalogLine[] }
+export interface CatalogScheme {
+  id: string
+  name: string // full name
+  short: string // short name (the household matrix)
+  benefit: { text: string; status: CatalogLine['status']; sources: CatalogLine['sources']; last_checked: string }
+  rules: CatalogLine[]
+  other_proof: CatalogLine[]
+}
 
 export interface AnswerReply { action: 'answered' | 'ask_again' | 'show_buttons'; option: number | null; say: string | null; heard?: string | null }
 

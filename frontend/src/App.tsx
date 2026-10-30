@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { getSchemes, getSession, startSample, startUpload, type CatalogScheme, type Language, type SessionView } from './api'
 import { stop } from './audio'
 import { STRINGS } from './i18n'
@@ -40,6 +40,14 @@ function useSession(id: string | null): { view: SessionView | null; error: strin
   }
 }
 
+// Phones: the composer has less room, so a shorter placeholder.
+function useNarrow(query = '(max-width: 859px)'): boolean {
+  return useSyncExternalStore(
+    (l) => { const m = window.matchMedia(query); m.addEventListener('change', l); return () => m.removeEventListener('change', l) },
+    () => window.matchMedia(query).matches,
+  )
+}
+
 export default function App() {
   const [language, setLanguage] = useState<Language>(() => (localStorage.getItem('kaagaz.lang') as Language) || 'mr')
   const [check, setCheck] = useState<Check>({ kind: 'idle' })
@@ -53,6 +61,7 @@ export default function App() {
   const sessionId = check.kind === 'session' ? check.id : null
   const { view, error, refresh } = useSession(sessionId)
   const scroller = useRef<HTMLDivElement>(null)
+  const narrow = useNarrow()
 
   useEffect(() => {
     localStorage.setItem('kaagaz.lang', language)
@@ -122,7 +131,7 @@ export default function App() {
 
         <div className="conversation" ref={scroller}>
           <div className="conversation-inner">
-            <Chat t={t} language={language} check={check} view={view} error={startError ?? error} answered={answered}
+            <Chat t={t} language={language} schemes={schemes} check={check} view={view} error={startError ?? error} answered={answered}
               voice={voice} onRecord={() => setCheck({ kind: 'recording' })} onSample={onSample} onRecorded={onRecorded}
               onCancelRecord={() => setCheck({ kind: 'idle' })} onAnswered={onAnswered} onReplanned={refresh}
               onNewCheck={newCheck} />
@@ -139,7 +148,7 @@ export default function App() {
           {/* Ask Kaagaz is wired in Phase 10. */}
           <label className="composer-field">
             <span className="sr-only">{t.askPlaceholder}</span>
-            <input type="text" placeholder={t.askPlaceholder} disabled />
+            <input type="text" placeholder={narrow ? t.askShort : t.askPlaceholder} disabled />
             <span className="soon">{t.soon}</span>
           </label>
           <button type="button" className={voice.listening ? 'round-button listening' : 'round-button'}

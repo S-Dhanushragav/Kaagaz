@@ -153,7 +153,9 @@ export function ProblemsCard({ t, view, language }: { t: Strings; view: SessionV
 
 // ---------- Your family: one collapsible row per member ----------
 
-export function FamilyCard({ t, view, language }: { t: Strings; view: SessionView; language: Language }) {
+export function FamilyCard({ t, view, language, names }: {
+  t: Strings; view: SessionView; language: Language; names: Record<string, string>
+}) {
   const hh = view.household
   const results = view.results ?? []
   const withProblems = (memberId: string) =>
@@ -184,7 +186,7 @@ export function FamilyCard({ t, view, language }: { t: Strings; view: SessionVie
                   <li key={r.scheme_id} className={`member-scheme ${r.outcome}`}>
                     <p className="member-scheme-head">
                       <span className={`cell mini ${r.outcome}`} aria-hidden="true">{OUTCOME_MARK[r.outcome]}</span>
-                      <strong>{r.scheme_name}</strong><span className="outcome-text">{t.outcomes[r.outcome]}</span>
+                      <strong>{names[r.scheme_id] ?? r.scheme_name}</strong><span className="outcome-text">{t.outcomes[r.outcome]}</span>
                     </p>
                     <ul className="why">{(r.display?.reasons ?? r.reasons).map((x, n) => <li key={n}>{x}</li>)}</ul>
                     {(r.display?.warnings ?? []).length > 0 && (

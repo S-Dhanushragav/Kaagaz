@@ -54,9 +54,21 @@ class OtherProof(_Strict):
     last_checked: date
 
 
+class Benefit(_Strict):
+    """A one-line benefit shown in the app (not used by the rules)."""
+
+    text: dict[str, str]  # by language
+    status: Literal["verified", "conflict", "unverified"]
+    source: str
+    source_url: str | None
+    last_checked: date
+
+
 class Scheme(_Strict):
     id: str
-    name: dict[str, str]
+    name: dict[str, str]  # full name by language
+    short: dict[str, str]  # short name by language (the household matrix)
+    benefit: Benefit
     rules: list[Rule]
     needs_other_proof: list[OtherProof] = []
 

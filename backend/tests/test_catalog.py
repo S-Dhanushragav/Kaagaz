@@ -47,6 +47,20 @@ def test_rule_lines_have_no_english(language: str) -> None:
             assert not re.search(r"[A-Za-z]{3,}", line.text.replace("SC", "").replace("ST", "").replace("NB", "")), line
 
 
+@pytest.mark.parametrize("language", ["en", "hi", "mr"])
+def test_names_short_names_and_benefits_in_every_language(language: str) -> None:
+    for card in catalog(language):
+        assert card.name and card.short and card.benefit.text and card.benefit.sources
+        if language != "en":
+            assert not re.search(r"[A-Za-z]", card.name + card.short), card.id
+    ladki = {c.id: c for c in catalog("mr")}["ladki_bahin"]
+    assert ladki.name == "मुख्यमंत्री माझी लाडकी बहीण योजना" and ladki.short == "लाडकी बहीण"
+    assert ladki.benefit.status == "verified" and ladki.benefit.sources[0].url == "https://myscheme.gov.in/schemes/mmlby"
+    shravanbal = {c.id: c for c in catalog("hi")}["shravanbal"]
+    assert shravanbal.short == "श्रावणबाल" and shravanbal.benefit.status == "unverified"
+    assert shravanbal.benefit.sources[0].source == "developer"
+
+
 def test_route_returns_plain_json() -> None:
     out = schemes("mr")
     assert len(out) == 5 and out[0]["rules"][0]["sources"][0]["source"]

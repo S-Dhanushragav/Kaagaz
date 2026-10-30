@@ -1,6 +1,14 @@
 # Values provided by the developer from official sources. Do not edit from memory.
 id: shravanbal
-name: {en: "Shravanbal"}
+name: {en: "Shravanbal", mr: "श्रावणबाळ सेवा राज्य निवृत्तीवेतन योजना", hi: "श्रावणबाल सेवा राज्य निवृत्तिवेतन योजना"}
+short: {en: "Shravanbal", mr: "श्रावणबाळ", hi: "श्रावणबाल"}
+# One-line benefit for the app. en from the developer; hi/mr text machine-translated from it.
+benefit:
+  text: {en: "Monthly pension for people 65 and over", mr: "65 वर्षे व त्याहून अधिक वयाच्या व्यक्तींसाठी दरमहा निवृत्तीवेतन", hi: "65 वर्ष और उससे अधिक उम्र के लोगों के लिए मासिक पेंशन"}
+  status: unverified
+  source: developer
+  source_url: null
+  last_checked: 2026-10-30
 rules:
   - id: applicant_min_age
     check: age_min  # inclusive

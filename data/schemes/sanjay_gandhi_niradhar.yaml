@@ -1,6 +1,14 @@
 # Values provided by the developer from official sources. Do not edit from memory.
 id: sanjay_gandhi_niradhar
-name: {en: "Sanjay Gandhi Niradhar"}
+name: {en: "Sanjay Gandhi Niradhar", mr: "संजय गांधी निराधार अनुदान योजना", hi: "संजय गांधी निराधार अनुदान योजना"}
+short: {en: "Sanjay Gandhi", mr: "संजय गांधी", hi: "संजय गांधी"}
+# One-line benefit for the app. en from the developer; hi/mr text machine-translated from it.
+benefit:
+  text: {en: "Monthly pension", mr: "दरमहा निवृत्तीवेतन", hi: "मासिक पेंशन"}
+  status: unverified
+  source: developer
+  source_url: null
+  last_checked: 2026-10-30
 rules:
   - id: applicant_age_below
     check: age_below  # strictly below

@@ -28,9 +28,18 @@ class CatalogLine(BaseModel):
     last_checked: str
 
 
+class CatalogBenefit(BaseModel):
+    text: str
+    status: str
+    sources: list[Source]
+    last_checked: str
+
+
 class CatalogScheme(BaseModel):
     id: str
-    name: str
+    name: str  # full name
+    short: str  # short name (the household matrix)
+    benefit: CatalogBenefit
     rules: list[CatalogLine]
     other_proof: list[CatalogLine]  # needs other proof (text as written in the YAML, English)
 
@@ -86,8 +95,14 @@ def scheme_card(scheme: Scheme, language: str) -> CatalogScheme:
                                      sources=_sources(rule), last_checked=rule.last_checked.isoformat()))
     other = [CatalogLine(rule_id=p.id, check="other_proof", text=p.text, status=p.status, sources=_sources(p),
                          last_checked=p.last_checked.isoformat()) for p in scheme.needs_other_proof]
-    name = scheme.name.get(language) or scheme.name.get("en") or scheme.id
-    return CatalogScheme(id=scheme.id, name=name, rules=lines, other_proof=other)
+
+    def pick(names: dict[str, str]) -> str:
+        return names.get(language) or names.get("en") or scheme.id
+
+    b = scheme.benefit
+    benefit = CatalogBenefit(text=pick(b.text), status=b.status, sources=_sources(b), last_checked=b.last_checked.isoformat())
+    return CatalogScheme(id=scheme.id, name=pick(scheme.name), short=pick(scheme.short), benefit=benefit, rules=lines,
+                         other_proof=other)
 
 
 def catalog(language: str) -> list[CatalogScheme]:

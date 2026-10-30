@@ -1,6 +1,14 @@
 # Values provided by the developer from official sources. Do not edit from memory.
 id: ramai_awas
-name: {en: "Ramai Awas"}
+name: {en: "Ramai Awas", mr: "रमाई आवास योजना", hi: "रमाई आवास योजना"}
+short: {en: "Ramai", mr: "रमाई", hi: "रमाई"}
+# One-line benefit for the app. en from the developer; hi/mr text machine-translated from it.
+benefit:
+  text: {en: "Grant to build a house", mr: "घर बांधण्यासाठी अनुदान", hi: "घर बनाने के लिए अनुदान"}
+  status: unverified
+  source: developer
+  source_url: null
+  last_checked: 2026-10-30
 rules:
   - id: applicant_category
     check: caste_applicant

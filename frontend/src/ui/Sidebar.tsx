@@ -36,7 +36,7 @@ export default function Sidebar({ t, schemes, onNewCheck, onOpenScheme, onClose 
             <li key={s.id}>
               <button type="button" className="scheme-link" onClick={() => onOpenScheme(s.id)}>
                 <span className="scheme-link-name">{s.name}</span>
-                <span className="scheme-link-sub">{s.rules[0]?.text}</span>
+                <span className="scheme-link-sub">{s.benefit.text}</span>
               </button>
             </li>
           ))}

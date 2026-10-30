@@ -1,6 +1,14 @@
 # Values provided by the developer from official sources. Do not edit from memory.
 id: pm_ujjwala
-name: {en: "PM Ujjwala"}
+name: {en: "PM Ujjwala", mr: "प्रधानमंत्री उज्ज्वला योजना", hi: "प्रधानमंत्री उज्ज्वला योजना"}
+short: {en: "Ujjwala", mr: "उज्ज्वला", hi: "उज्ज्वला"}
+# One-line benefit for the app. en from the developer; hi/mr text machine-translated from it.
+benefit:
+  text: {en: "LPG gas connection", mr: "एलपीजी गॅस जोडणी", hi: "एलपीजी गैस कनेक्शन"}
+  status: unverified
+  source: developer
+  source_url: null
+  last_checked: 2026-10-30
 rules:
   - id: applicant_gender
     check: gender

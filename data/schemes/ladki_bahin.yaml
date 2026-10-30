@@ -1,6 +1,14 @@
 # Values provided by the developer from official sources. Do not edit from memory.
 id: ladki_bahin
-name: {en: "Ladki Bahin"}
+name: {en: "Ladki Bahin", mr: "मुख्यमंत्री माझी लाडकी बहीण योजना", hi: "मुख्यमंत्री माझी लाडकी बहीण योजना"}
+short: {en: "Ladki Bahin", mr: "लाडकी बहीण", hi: "लाडकी बहीण"}
+# One-line benefit for the app. en from the developer; hi/mr text machine-translated from it.
+benefit:
+  text: {en: "₹1,500 per month", mr: "दरमहा ₹1,500", hi: "₹1,500 प्रति माह"}
+  status: verified
+  source: myscheme.gov.in
+  source_url: "https://myscheme.gov.in/schemes/mmlby"
+  last_checked: 2026-10-30
 rules:
   - id: applicant_gender
     check: gender

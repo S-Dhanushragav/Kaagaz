@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { Language, SessionView } from '../api'
+import type { CatalogScheme, Language, SessionView } from '../api'
 import { LANGUAGE_NAMES, type Strings } from '../i18n'
 import Feedback from './Feedback'
 import { Camera, Logo } from './Icons'
@@ -31,9 +31,9 @@ export function Me({ children }: { children: ReactNode }) {
   return <div className="msg me"><div className="bubble">{children}</div></div>
 }
 
-export default function Chat({ t, language, check, view, error, answered, voice, onRecord, onSample, onRecorded,
+export default function Chat({ t, language, schemes, check, view, error, answered, voice, onRecord, onSample, onRecorded,
   onCancelRecord, onAnswered, onReplanned, onNewCheck }: {
-  t: Strings; language: Language; check: Check; view: SessionView | null; error: string | null; answered: Answered[]
+  t: Strings; language: Language; schemes: CatalogScheme[]; check: Check; view: SessionView | null; error: string | null; answered: Answered[]
   voice: Voice; onRecord: () => void; onSample: () => void; onRecorded: (b: Blob) => void; onCancelRecord: () => void
   onAnswered: (label: string) => void; onReplanned: () => void; onNewCheck: () => void
 }) {
@@ -87,7 +87,8 @@ export default function Chat({ t, language, check, view, error, answered, voice,
           {view.recapture?.mode === 'close_ups' && <p className="system-note">{t.closeUpsNote}</p>}
           <Bot wide><PlanCard t={t} view={view}><Feedback key={view.id} t={t} sessionId={view.id} target="plan" /></PlanCard></Bot>
           <Bot wide><ProblemsCard t={t} view={view} language={language} /></Bot>
-          <Bot wide><FamilyCard key={view.id} t={t} view={view} language={language} /></Bot>
+          <Bot wide><FamilyCard key={view.id} t={t} view={view} language={language}
+            names={Object.fromEntries(schemes.map((s) => [s.id, s.name]))} /></Bot>
         </>
       )}
     </>
@@ -111,7 +112,12 @@ function Progress({ t, view }: { t: Strings; view: SessionView }) {
   const finished = view.stages.every((s) => s.done)
   if (finished) {
     const total = view.stages.reduce((sum, s) => sum + (s.seconds ?? 0), 0)
-    return <p className="progress-done"><span className="tick" aria-hidden="true">✓</span>{t.checkedIn.replace('{s}', total.toFixed(0))}</p>
+    return (
+      <>
+        <p className="progress-done"><span className="tick" aria-hidden="true">✓</span>{t.checkedIn.replace('{s}', total.toFixed(0))}</p>
+        <p className="powered-by">{t.poweredBy}</p>
+      </>
+    )
   }
   return (
     <div aria-live="polite">
@@ -128,6 +134,7 @@ function Progress({ t, view }: { t: Strings; view: SessionView }) {
           )
         })}
       </ol>
+      <p className="powered-by">{t.poweredBy}</p>
     </div>
   )
 }

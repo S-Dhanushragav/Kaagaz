@@ -36,6 +36,15 @@ export default function SchemeCard({ t, scheme, onClose }: { t: Strings; scheme:
           </div>
           <button type="button" className="icon-button" aria-label={t.close} onClick={() => ref.current?.close()}><Close /></button>
         </header>
+        <p className="benefit"><span className="eyebrow">{t.benefit}</span>
+          <span className="benefit-text">{scheme.benefit.text}</span>
+          <span className="rule-meta">
+            {scheme.benefit.status !== 'verified' && <span className={`badge ${scheme.benefit.status}`}>{t.status[scheme.benefit.status]}</span>}
+            {scheme.benefit.sources.map((s) => s.url
+              ? <a key={s.url} className="source-chip" href={s.url} target="_blank" rel="noreferrer">{s.source}<Link /></a>
+              : <span key={s.source} className="source-chip plain">{s.source}</span>)}
+          </span>
+        </p>
         <h3>{t.whoFor}</h3>
         <ul className="rule-lines">{scheme.rules.map((l) => <Line key={l.rule_id} t={t} line={l} />)}</ul>
         {scheme.other_proof.length > 0 && (
