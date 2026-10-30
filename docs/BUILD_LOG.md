@@ -45,3 +45,7 @@ All code in this repository was written during the Meta Global AI Developer Hack
 - UI fixes: scheme reasons from en/hi/mr templates per rule code (engine results now carry code + params; eligibility unchanged), amounts as ₹2,04,000, each source once per scheme, close-up and 'could not read' items name the document's owner or number.
 - Redeployed; warm-up: healthy after 29 s (cold), sample question spoken at 17 s, plan at 22 s; deployed sample close-up read clearly and re-planned in 4 s. Modal month to date $0.41 (credits).
 - 1080p at 4 Mbps lost a name on HH001 and planned a false Aadhaar enrolment: recorder stays at 1080p / 8 Mbps. Upload progress bar (XMLHttpRequest), Start disabled until the camera is live, missing identity cards wait while an identity card needs a close-up. Deployed real uncached upload (HH009, 1080p 8 Mbps, 18 MB): first spoken sentence at 66 s.
+
+## Oct 30
+- Phase 8 UI redesign: chat layout with scheme sidebar and household matrix, live document thumbnails, Listen/Listen-to-all result cards, GET /schemes, POST /feedback; fixed age limits shown as rupees.
+- Phase 8 review fixes: Aadhaar numbers blurred on identity-card thumbnails (vision model boxes the number; no box -> icon; unread documents only as a coarse preview); full and short scheme names in en/hi/mr and a one-line benefit per scheme in the YAML; quiet 'not eligible' cells and horizontal short-name headers in the matrix; model caption under progress; 'How Kaagaz works' before a check; shorter composer placeholder on phones.
