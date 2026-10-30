@@ -95,6 +95,55 @@ def summary(record: CheckRecord) -> dict[str, Any]:
     }
 
 
-def full(record: CheckRecord) -> dict[str, Any]:
+def full(record: CheckRecord, previous: CheckRecord | None = None) -> dict[str, Any]:
+    """One check in full; after "Check again", with what changed since the check it re-checked."""
     return {**summary(record), "data": record.data.model_dump(mode="json"),
-            "steps_done": {str(k): v for k, v in record.steps_done.items()}}
+            "steps_done": {str(k): v for k, v in record.steps_done.items()},
+            "comparison": {"previous_created": previous.created.isoformat(), **compare(previous.data, record.data)}
+            if previous is not None else None}
+
+
+# ---------- re-check: what changed since the last check ----------
+
+def _name_key(name_en: str | None, name_mr: str | None) -> str:
+    """Names compared case- and space-insensitively (English first: both checks read the same printed names)."""
+    return " ".join((name_en or name_mr or "").casefold().split())
+
+
+def _same_problem(a: StoredProblem, b: StoredProblem) -> bool:
+    if a.type != b.type or _name_key(a.member_name, a.member_name_mr) != _name_key(b.member_name, b.member_name_mr):
+        return False
+    return not (a.document_types or b.document_types) or bool(set(a.document_types) & set(b.document_types))
+
+
+def compare(previous: CheckData, current: CheckData) -> dict[str, Any]:
+    """Problems fixed / still open / new (matched by type, member name and document type), and scheme outcomes
+    that changed for the same person (matched by name)."""
+    unmatched = list(current.problems)
+    fixed, still = [], []
+    for p in previous.problems:
+        match = next((c for c in unmatched if _same_problem(p, c)), None)
+        if match is None:
+            fixed.append(p)
+        else:
+            unmatched.remove(match)
+            still.append(match)
+
+    def by_person(data: CheckData) -> dict[tuple[str, str], tuple[StoredMember, StoredOutcome]]:
+        members = {m.member_id: m for m in data.members}
+        out = {}
+        for o in data.outcomes:
+            m = members.get(o.member_id)
+            if m is not None:
+                out[(_name_key(m.name_en, m.name_mr), o.scheme_id)] = (m, o)
+        return out
+
+    before, after = by_person(previous), by_person(current)
+    changed = []
+    for key, (m, o) in after.items():
+        old = before.get(key)
+        if old is not None and old[1].outcome != o.outcome:
+            changed.append({"member_name": m.name_en, "member_name_mr": m.name_mr, "scheme_id": o.scheme_id,
+                            "before": old[1].outcome, "after": o.outcome})
+    dump = lambda ps: [p.model_dump(mode="json") for p in ps]  # noqa: E731
+    return {"fixed": dump(fixed), "still_open": dump(still), "new": dump(unmatched), "outcomes_changed": changed}

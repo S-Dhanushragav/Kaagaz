@@ -140,7 +140,9 @@ def _check(request: Request, user: User, check_id: str) -> Any:
 
 @router.get("/me/checks/{check_id}")
 def my_check(request: Request, check_id: str, user: User = Depends(current_user)) -> dict[str, Any]:
-    return full(_check(request, user, check_id))
+    check = _check(request, user, check_id)
+    previous = store(request).get_check(user.id, check.previous_id) if check.previous_id else None
+    return full(check, previous)
 
 
 @router.patch("/me/checks/{check_id}/steps/{step}")

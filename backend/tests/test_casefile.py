@@ -113,6 +113,9 @@ def test_case_file_api_ticks_rechecks_and_deletes_everything(setup, monkeypatch)
     _finish(manager, second)
     newest = client.get("/me/checks", headers=h).json()[0]
     assert newest["previous_id"] == row["id"]
+    comparison = client.get(f"/me/checks/{newest['id']}", headers=h).json()["comparison"]
+    assert comparison["fixed"] == [] and comparison["new"] == [] and comparison["still_open"]  # the same family
+    assert client.get(f"/me/checks/{row['id']}", headers=h).json()["comparison"] is None
     assert client.patch("/me", json={"language": "hi"}, headers=h).json()["language"] == "hi"
 
     assert client.delete("/me", headers=h).status_code == 204
