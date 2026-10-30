@@ -9,7 +9,9 @@ import { toWav16k } from './wav'
 type Screen = { name: 'home' } | { name: 'record' } | { name: 'uploading' } | { name: 'session'; id: string }
 
 const MAX_RECORD_S = 45
-const VIDEO_BITS_PER_SECOND = 4_000_000 // 720p cap: ~22 MB for 45 s (server limit 60 MB)
+// 1080p at 8 Mbps: ~20 MB for a 20 s sweep, ~45 MB at most (server limit 60 MB). At 720p the ration card often
+// could not be read (HH001 test: 3 false 'add to ration card' steps; at 1080p none).
+const VIDEO_BITS_PER_SECOND = 8_000_000
 
 // ---------- audio playback: one sentence at a time ----------
 
@@ -111,7 +113,7 @@ function Recorder({ t, onDone, onCancel }: { t: Strings; onDone: (b: Blob) => vo
   useEffect(() => {
     let cancelled = false
     navigator.mediaDevices?.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false,
+      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false,
     }).then((stream) => {
       if (cancelled) { stream.getTracks().forEach((tr) => tr.stop()); return }
       streamRef.current = stream

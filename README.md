@@ -108,6 +108,16 @@ real upload; target: first spoken sentence within 60 s)
 - Reading quality drops on re-encoded, phone-like video: the HH001 upload produced 3 "add to the ration card" steps
   (1 planted) and asked for close-ups of 3 documents. If most documents are unreadable the app asks for a new sweep
   and shows nothing else.
+- **Recording size matters more than bitrate.** HH001 as an upload, scored against its ground truth:
+
+  | Upload | Frames the reader saw | Names read right | Ration card read | Plan |
+  |---|---|---|---|---|
+  | 720p, 4 Mbps (server cap 1080 px) | 608×1080 | 6/6 | no (close-up asked) | 3 "add to ration card" + 1 enrolment (3 false) |
+  | 1080p, 8 Mbps (server cap 1080 px) | 608×1080 | 6/6 | no | the same 4 steps |
+  | **1080p, 8 Mbps (server keeps 1920 px)** | 1080×1920 | **11/11** | **yes** | **1 "add to ration card" (the planted error)** |
+
+  The app now records 1080p at 8 Mbps and the server keeps up to 1920 px (`UPLOAD_LONG_SIDE`). The cost is upload
+  size: ~20 MB for a 20 s sweep (the 63 s timing above was a 10 MB upload).
 - Modal cost of the deploy (two image builds) and these test runs: **$0.02 metered, covered by credits** (billing may
   lag; an idle container stays up 20 minutes after the last request).
 

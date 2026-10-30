@@ -91,7 +91,7 @@ class SessionManager:
         session_id = video.parent.name
         normalized = video.with_name("video.mp4")
         try:
-            seconds = normalize_upload(video, normalized, settings.max_video_s)
+            seconds = normalize_upload(video, normalized, settings.max_video_s, settings.upload_long_side)
         except (ValueError, RuntimeError) as e:
             shutil.rmtree(video.parent, ignore_errors=True)
             raise SessionError(422, str(e)) from e

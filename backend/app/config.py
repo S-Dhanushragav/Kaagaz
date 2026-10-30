@@ -76,6 +76,7 @@ class Settings(BaseSettings):
     session_ttl_s: int = Field(3600, gt=0)  # session data (results, crops) deleted after this
     max_video_s: float = 45.0
     max_video_mb: float = 60.0
+    upload_long_side: int = 1920  # uploads are re-encoded with at most this long side (1080p keeps full size)
     sample_video: str = "synthetic/videos/HH009/sweep.mp4"  # relative to the repo root
     cors_origins: str = "http://localhost:5173"  # comma-separated; the deployed frontend's origin only
     sessions_dir: Path = Path("tmp/sessions")

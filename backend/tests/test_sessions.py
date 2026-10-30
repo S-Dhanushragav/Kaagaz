@@ -87,7 +87,7 @@ def test_upload_too_long_is_rejected_and_deleted(manager, monkeypatch) -> None:
     folder = manager.new_upload_folder()
     upload = folder / "upload.bin"
     upload.write_bytes(b"x")
-    monkeypatch.setattr(frames, "normalize_upload", lambda src, dst, max_s: (dst.write_bytes(b"v"), 60.0)[1])
+    monkeypatch.setattr(frames, "normalize_upload", lambda src, dst, max_s, long_side=1920: (dst.write_bytes(b"v"), 60.0)[1])
     with pytest.raises(SessionError) as e:
         manager.start_upload(upload, "mr")
     assert e.value.status == 413 and not folder.exists()
@@ -99,7 +99,7 @@ def test_upload_runs_and_the_video_is_deleted_after_finding(manager, monkeypatch
     folder = manager.new_upload_folder()
     upload = folder / "upload.bin"
     upload.write_bytes(b"x")
-    monkeypatch.setattr(frames, "normalize_upload", lambda src, dst, max_s: (dst.write_bytes(b"v"), 20.0)[1])
+    monkeypatch.setattr(frames, "normalize_upload", lambda src, dst, max_s, long_side=1920: (dst.write_bytes(b"v"), 20.0)[1])
     session = manager.start_upload(upload, "mr")
     assert _wait(manager, session.id)["status"] == "waiting"
     assert not (folder / "upload.bin").exists() and not (folder / "video.mp4").exists()
