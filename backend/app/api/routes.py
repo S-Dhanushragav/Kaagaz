@@ -7,6 +7,7 @@ POST /sessions/{id}/answer      {question_id, option} (JSON) or a short WAV clip
 GET  /sessions/{id}/audio/{key} TTS WAV for 'question' or 'step-<n>'
 GET  /sessions/{id}/crops/{doc}  thumbnail of a found document's best crop (from memory; gone with the session)
 POST /sessions/{id}/closeup     a clearer photo of one document on the close-up list (form: document_id, photo|sample)
+POST /sessions/{id}/claim       logged in after a guest check: save that check to the case file (Bearer token)
 POST /feedback                  {session_id, target, value, comment}: thumbs up/down, stored anonymously
 GET  /schemes?lang=             the scheme catalog: each scheme's rules as lines, with status and sources (YAML only)
 """
@@ -17,7 +18,7 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, Uplo
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
 
-from app.api.account import optional_user
+from app.api.account import current_user, optional_user
 from app.config import get_settings
 from app.feedback import Feedback, record
 from app.sessions import SessionError, SessionManager
@@ -136,6 +137,15 @@ async def closeup(request: Request, session_id: str, document_id: str = Form(...
         else:
             raise HTTPException(422, "Send a photo, or sample=true for the sample family.")
         return sessions.closeup(session_id, document_id, data)
+    except SessionError as e:
+        raise _fail(e) from e
+
+
+@router.post("/sessions/{session_id}/claim")
+def claim(request: Request, session_id: str, user: Any = Depends(current_user)) -> dict[str, Any]:
+    """After logging in from the "Save this check" card: keep the guest's check (only while it is still in memory)."""
+    try:
+        return {"check_id": manager(request).claim(session_id, user.id)}
     except SessionError as e:
         raise _fail(e) from e
 

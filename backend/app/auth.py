@@ -27,7 +27,7 @@ CODE_TTL_S = 600
 MAX_ATTEMPTS = 5
 TOKEN_TTL_S = 30 * 24 * 3600
 STARTS_PER_NUMBER = (3, 600)  # at most 3 codes per number per 10 minutes
-STARTS_PER_IP = (10, 3600)  # at most 10 codes per IP per hour
+STARTS_PER_IP = (30, 3600)  # at most 30 codes per IP per hour (a shared phone or office network)
 
 
 class AuthError(Exception):

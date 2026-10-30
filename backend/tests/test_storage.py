@@ -92,7 +92,12 @@ def test_deleting_a_user_deletes_everything(store) -> None:
 
 def test_retention_purge_and_feedback(store, user) -> None:
     check = store.save_check(user.id, uuid.uuid4().hex[:12], "mr", _data())
-    assert store.purge_checks(datetime.now(timezone.utc) - timedelta(days=365)) == 0
-    store.purge_checks(datetime.now(timezone.utc) + timedelta(seconds=5))  # everything older than "soon"
-    assert store.get_check(user.id, check.id) is None
-    store.add_feedback(FeedbackEntry(session_id="0123456789ab", target="plan", value="up", comment=None))
+    store.purge_checks(datetime.now(timezone.utc) - timedelta(days=365))
+    assert store.get_check(user.id, check.id) is not None  # a new check survives the 365-day purge
+    if isinstance(store, MemoryStore):  # never on the live database: it would purge every user's checks
+        store.purge_checks(datetime.now(timezone.utc) + timedelta(seconds=5))  # everything older than "soon"
+        assert store.get_check(user.id, check.id) is None
+    marker = f"store test {uuid.uuid4().hex}"
+    store.add_feedback(FeedbackEntry(session_id="0123456789ab", target="plan", value="up", comment=marker))
+    if not isinstance(store, MemoryStore):  # the live database: leave no test row behind
+        assert store._exec("DELETE FROM feedback WHERE comment = %s", (marker,)) == 1

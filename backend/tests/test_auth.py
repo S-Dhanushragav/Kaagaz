@@ -4,7 +4,7 @@ tokens (forged, expired, deleted user), demo vs sms mode, and the HTTP routes wi
 import pytest
 from fastapi.testclient import TestClient
 
-from app.auth import (CODE_TTL_S, MAX_ATTEMPTS, TOKEN_TTL_S, AuthError, AuthService, normalize_phone,
+from app.auth import (CODE_TTL_S, MAX_ATTEMPTS, STARTS_PER_IP, TOKEN_TTL_S, AuthError, AuthService, normalize_phone,
                       phone_hash)
 from storage.store import MemoryStore
 
@@ -85,12 +85,10 @@ def test_rate_limits_per_number_and_per_ip() -> None:
     assert e.value.status == 429
     clock.t += 601
     auth.start(PHONE, "ip-a")  # ten minutes later
-    for i in range(6):
-        auth.start(f"98765432{i:02d}", "ip-c")
-    for i in range(4):
-        auth.start(f"97765432{i:02d}", "ip-c")
+    for i in range(STARTS_PER_IP[0]):
+        auth.start(f"90000000{i:02d}", "ip-c")
     with pytest.raises(AuthError) as e:
-        auth.start("9666666666", "ip-c")  # 11th number from one IP within the hour
+        auth.start("9666666666", "ip-c")  # one more number from the same IP within the hour
     assert e.value.status == 429
 
 
@@ -139,3 +137,20 @@ def test_routes_with_a_bearer_header(monkeypatch) -> None:
     pre = client.options("/me", headers={"Origin": "http://localhost:5173", "Access-Control-Request-Method": "DELETE",
                                          "Access-Control-Request-Headers": "authorization"})
     assert pre.status_code == 200 and "DELETE" in pre.headers["access-control-allow-methods"]
+
+
+def test_a_spoofed_first_forwarded_entry_does_not_bypass_the_ip_limit(monkeypatch) -> None:
+    """The client can put anything first in X-Forwarded-For; Modal's proxy appends the real address last."""
+    from app.main import app
+
+    auth, _, _ = _auth()
+    monkeypatch.setattr(app.state, "auth", auth, raising=False)
+    client = TestClient(app)
+    limit = STARTS_PER_IP[0]
+    for i in range(limit):
+        spoofed = {"X-Forwarded-For": f"10.0.0.{i}, 203.0.113.7"}  # a new fake first entry every time
+        assert client.post("/auth/start", json={"phone": f"90000000{i:02d}"}, headers=spoofed).status_code == 200
+    blocked = client.post("/auth/start", json={"phone": "9666666666"}, headers={"X-Forwarded-For": "10.9.9.9, 203.0.113.7"})
+    assert blocked.status_code == 429
+    other = client.post("/auth/start", json={"phone": "9666666666"}, headers={"X-Forwarded-For": "203.0.113.8"})
+    assert other.status_code == 200  # another real address is not affected

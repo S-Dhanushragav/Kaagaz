@@ -58,8 +58,10 @@ def current_user(request: Request) -> User:
 
 
 def client_ip(request: Request) -> str:
-    forwarded = request.headers.get("x-forwarded-for", "")
-    return forwarded.split(",")[0].strip() or (request.client.host if request.client else "unknown")
+    """The address Modal's proxy saw: the *last* X-Forwarded-For entry (the proxy appends it). Earlier entries are
+    whatever the client sent, so they cannot be trusted for rate limits."""
+    hops = [h.strip() for h in request.headers.get("x-forwarded-for", "").split(",") if h.strip()]
+    return hops[-1] if hops else (request.client.host if request.client else "unknown")
 
 
 def user_view(user: User) -> dict[str, Any]:

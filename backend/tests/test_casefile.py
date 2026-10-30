@@ -123,3 +123,36 @@ def test_case_file_api_ticks_rechecks_and_deletes_everything(setup, monkeypatch)
     assert client.get("/me", headers=h).status_code == 401  # the token no longer works
     with pytest.raises(SessionError):
         manager.answer_option(second, "x", 0)  # (the finished sessions themselves expire on their own)
+
+
+def test_a_guest_check_is_saved_when_the_family_logs_in_afterwards(setup) -> None:
+    manager, store, auth = setup
+    guest = manager.start_sample("en")
+    _finish(manager, guest.id)
+    assert store.checks == {}  # nothing stored for a guest
+    _, user_id = _login(auth)
+    check_id = manager.claim(guest.id, user_id)
+    (record,) = store.list_checks(user_id)
+    assert record.id == check_id and record.session_id == guest.id
+    assert manager.claim(guest.id, user_id) == check_id  # claiming twice changes nothing
+    with pytest.raises(SessionError) as e:
+        manager.claim(guest.id, "someone-else")
+    assert e.value.status == 409
+    with pytest.raises(SessionError) as e:
+        manager.claim("gone", user_id)
+    assert e.value.status == 404
+
+
+def test_claim_route_needs_a_login(setup, monkeypatch) -> None:
+    from app.main import app
+
+    manager, store, auth = setup
+    for name, value in (("store", store), ("auth", auth), ("sessions", manager)):
+        monkeypatch.setattr(app.state, name, value, raising=False)
+    client = TestClient(app)
+    guest = client.post("/sessions/sample", json={"language": "mr"}).json()["id"]
+    _finish(manager, guest)
+    assert client.post(f"/sessions/{guest}/claim").status_code == 401
+    token, user_id = _login(auth)
+    saved = client.post(f"/sessions/{guest}/claim", headers={"Authorization": f"Bearer {token}"}).json()
+    assert saved["check_id"] == store.list_checks(user_id)[0].id

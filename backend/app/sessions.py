@@ -278,6 +278,21 @@ class SessionManager:
         except Exception:  # noqa: BLE001 - the family still sees their results
             logger.exception("saving the check of session %s failed", session.id)
 
+    def claim(self, session_id: str, user_id: str) -> str | None:
+        """A guest logs in after their check: attach the session (if still in memory) and save its check.
+        Returns the stored check id, or None when there is nothing worth keeping."""
+        session = self.get(session_id)
+        with session.lock:
+            if session.user_id not in (None, user_id):
+                raise SessionError(409, "This check belongs to someone else.")
+            if session.status not in ("done", "waiting", "running"):
+                raise SessionError(409, "This check cannot be saved.")
+            session.user_id = user_id
+            finished = session.status == "done"
+        if finished and session.check_id is None:
+            self._save(session)
+        return session.check_id  # a running check is saved when it finishes
+
     def forget_user(self, user_id: str) -> None:
         """After 'Delete my data': running sessions of this user become guest sessions (nothing more is saved)."""
         for s in list(self.sessions.values()):
