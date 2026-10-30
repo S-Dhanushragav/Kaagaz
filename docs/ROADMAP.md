@@ -45,6 +45,11 @@ token land on welcome back; a "Save this check" card after a guest check logs in
 POST /sessions/{id}/claim while the session is in memory); rate limits use the proxy-added client IP (last
 X-Forwarded-For entry), 30 codes per IP per hour; the live-database test deletes its own feedback row and never
 runs the broad retention purge on the real database.
+Follow-up before deploy (750b4e1, 1cb9fd3, bf6daef, and the docs commit): honest demo-login text and notice; one
+plural helper for every count; guests keep working when the database is down (fast 503s for login and saving);
+a guest secret is needed to claim a session; production refuses to start without 32-byte login keys
+(KAAGAZ_ENV=local for development keys); masked client IPs in logs; live database tests only with KAAGAZ_LIVE_DB=1;
+Could-not-read lines name the person; ask-at-the-office sentences say what the problem is.
 Changed: stored checks keep no ID numbers at all (not even the last 4 digits); tokens are signed with the standard
 library (no JWT dependency); login codes and rate limits live in memory (one container), so a redeploy clears
 pending codes. Added dependency: psycopg[binary] 3. PHONE_HASH_KEY and TOKEN_SIGNING_KEY are in the Modal secret.

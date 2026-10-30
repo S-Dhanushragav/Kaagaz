@@ -31,7 +31,7 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 
 ## Status
 
-Phases 0-8 are built, tested and deployed; Phase 9 is built and tested, not deployed yet (490 backend tests, no network).
+Phases 0-8 are built, tested and deployed; Phase 9 is built and tested, not deployed yet (505 backend tests and 8 frontend tests, no network).
 
 | Phase | What | Status |
 |---|---|---|
@@ -313,8 +313,9 @@ From `backend/` unless noted. Costs are for a cold cache; cached calls are free.
 
 | What | Command | Cost |
 |---|---|---|
-| All tests (no network) | `pytest -q` | free |
-| API server | `uvicorn app.main:app --reload` | free |
+| All tests (no network; the in-memory store) | `pytest -q` | free |
+| Live database tests (Neon; `DATABASE_URL_TEST` if set) | `KAAGAZ_LIVE_DB=1 pytest -q -m live_db` | free |
+| API server (local: development login keys; `DATABASE_URL=` for the in-memory store, as the Playwright runs use) | `KAAGAZ_ENV=local uvicorn app.main:app --reload` | free |
 | Smoke test one image | `python scripts/smoke_test.py path/to/specimen.jpg` | ~$0.004 |
 | Regenerate v1 households (repo root) | `python -m synthetic.generate --n 10 --seed 42` | free |
 | Regenerate sweep videos (repo root) | `python -m synthetic.video` (one: `--video HH009`) | free |
@@ -327,7 +328,7 @@ From `backend/` unless noted. Costs are for a cold cache; cached calls are free.
 | Voice round trip (repo root, `tts` extra) | `python eval/run_voice_roundtrip.py` | < $0.01 |
 | Warm up / time the deployed app (repo root) | `python scripts/warmup.py <backend URL>` | small |
 | Rebuild sample close-ups (repo root) | `python scripts/make_sample_closeups.py` | free (cached) |
-| Frontend (from `frontend/`) | `npm run dev` / `npm run build` | free |
+| Frontend (from `frontend/`) | `npm run dev` / `npm run build` / `npm test` | free |
 
 Every eval script has `--dry-run` (or prints its call count) and saves a summary to `eval/results/` and per-document
 details to `eval/results/raw/` (gitignored).
