@@ -16,10 +16,15 @@ then the re-check comparison. Login, history, Ask Kaagaz and the UI redesign sta
 - [x] Scheme catalog from verified YAML with sources, GET /schemes (I, T)
 - [x] Feedback on answers and plans (I) (on the plan now; the component takes `answer:<id>` for Phase 10)
 - [x] Layout ready for login and history (T) ("Your checks" placeholder in the sidebar)
-Status: built and tested with Playwright at 360 and 1440 px in mr/hi/en; awaiting screenshot review; not deployed.
-Commits: 0a7af4c, 06fbdc5, a035d08, 083f376, and the docs commit.
+Status: deployed 2026-10-30 (Modal backend, then Netlify); live site checked in Marathi at 360 and 1440 px.
+Warm-up on the deployed backend: question spoken at 12.4 s, plan at 17.0 s (cached sample, warm container).
+Commits: 0a7af4c, 06fbdc5, a035d08, 083f376, cf5de94; review fixes d311233, 95f9419, 1aa698f.
 Changed: the catalog's rule lines are new wording in data/templates/reasons/*.yaml (`catalog`); the Marathi lines
-are machine-drafted (added after the native-speaker review). Scheme names stay English (the YAML has `en` only).
+are machine-drafted (added after the native-speaker review). Added after review: Aadhaar numbers blurred on
+identity-card thumbnails (vision model boxes the number; no box -> icon; unread documents only as a coarse preview);
+full and short scheme names in en/hi/mr and a one-line benefit per scheme in the YAML (only Ladki Bahin's is
+verified; hi/mr benefit text machine-translated); quiet 'not eligible' cells; model caption under progress;
+'How Kaagaz works' before a check.
 Also fixed: age limits in scheme reasons were shown as rupees ("minimum age of ₹65").
 
 ## Phase 9: Login and case file (Sun 2 Nov, morning)
