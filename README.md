@@ -31,8 +31,10 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 
 ## Status
 
-Phases 0-8 are built, tested and deployed; Phases 9, 9b, 9c and 10 are built and tested, not deployed yet (584 backend tests and 18 frontend tests, no network).
-Phase 9c (real-input rescue) was added after a manual phone test failed on all 9 real videos; it is awaiting review before Phase 10.
+Phases 0-10 are built, tested and deployed (584 backend tests and 18 frontend tests, no network). Last deploy
+1 Nov 2026: login and case file, the layout pass, real-input rescue and Ask Kaagaz (typed and spoken) are live;
+the sample family runs end to end in production (first spoken sentence 18 s, plan 23 s). Next: Phase 11, more
+Indian languages.
 
 | Phase | What | Status |
 |---|---|---|
@@ -46,11 +48,11 @@ Phase 9c (real-input rescue) was added after a manual phone test failed on all 9
 | 7 | LangGraph pipeline (family question as an interrupt), sessions API, mobile web app, Modal + Netlify deployment | Done, deployed |
 | 7+ | Close-up loop (a clearer photo of one document re-runs household → rules → plan), "no documents" / "sweep again" stops, issues waiting for a clearer photo, scheme reasons in en/hi/mr, upload progress | Done, deployed |
 | 8 | UI redesign: chat with scheme sidebar and household matrix, live document thumbnails, result cards with Listen/Stop and Listen to all, scheme catalog (`GET /schemes`), feedback (`POST /feedback`), Aadhaar numbers blurred on thumbnails | Done, deployed |
-| 9 | Phone login (demo code, hashed numbers, signed tokens), case file on Neon Postgres (checks, step ticks, re-check comparison), welcome back, delete my data, 365-day retention | Built, awaiting review; not deployed |
-| 9b | Layout: two columns with the schemes matrix and office visits inline in the result, centred reading column, How Kaagaz works in the welcome, light neutral palette, composer clear of the home bar and keyboard | Built; not deployed |
-| 10 (part 2) | Ask by voice: push-to-talk mic (timer, level meter, 30 s), clip converted by ffmpeg and transcribed by Muse Voice Transcribe into the box to check before sending, spoken questions' answers played aloud; nothing of the audio kept, transcripts not cached or logged | Built; not deployed |
-| 10 (part 1) | Ask Kaagaz, typed: an agent on Muse Spark Open (Baseten) answers questions about the 5 schemes and the family's check through read-only tools; every answer fact-checked by code before it is shown (numbers, schemes, offices, fees, eligibility from the rules engine only); sources, Listen, "Add a photo" chips, suggested questions; per-session and per-IP limits | Built; not deployed |
-| 9c | Real-input rescue: upright crops (text orientation), tracks split when documents are shown one at a time, cut-off documents read, duplicates merged; partial results ("Read clearly" / "Need a clearer photo", plan held when most are unclear) instead of a hard stop; photo mode (Add photos, up to 12, EXIF stripped, two agreeing reads) | Built, awaiting review; not deployed |
+| 9 | Phone login (demo code, hashed numbers, signed tokens), case file on Neon Postgres (checks, step ticks, re-check comparison), welcome back, delete my data, 365-day retention | Done, deployed |
+| 9b | Layout: two columns with the schemes matrix and office visits inline in the result, centred reading column, How Kaagaz works in the welcome, light neutral palette, composer clear of the home bar and keyboard | Done, deployed |
+| 9c | Real-input rescue: upright crops (text orientation), tracks split when documents are shown one at a time, cut-off documents read, duplicates merged; partial results ("Read clearly" / "Need a clearer photo", plan held when most are unclear) instead of a hard stop; photo mode (Add photos, up to 12, EXIF stripped, two agreeing reads) | Done, deployed |
+| 10 (part 1) | Ask Kaagaz, typed: an agent on Muse Spark Open (Baseten) answers questions about the 5 schemes and the family's check through read-only tools; every answer fact-checked by code before it is shown (numbers, schemes, offices, fees, eligibility from the rules engine only); sources, Listen, "Add a photo" chips, suggested questions; per-session and per-IP limits | Done, deployed |
+| 10 (part 2) | Ask by voice: push-to-talk mic (timer, level meter, 30 s), clip converted by ffmpeg and transcribed by Muse Voice Transcribe into the box to check before sending, spoken questions' answers played aloud; nothing of the audio kept, transcripts not cached or logged | Done, deployed |
 
 Remaining phases: see [docs/ROADMAP.md](docs/ROADMAP.md).
 

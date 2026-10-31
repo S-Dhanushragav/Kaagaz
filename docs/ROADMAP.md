@@ -38,7 +38,7 @@ Also fixed: age limits in scheme reasons were shown as rupees ("minimum age of â
       Delete my data, retention limit (I, T)
 - [x] Feedback moved into the database
 Status: built and tested (490 offline tests; live Postgres round trip with `pytest -m live_db`; Playwright in
-mr/hi/en at 360 and 1440 px against Neon); awaiting review; not deployed.
+mr/hi/en at 360 and 1440 px against Neon); deployed 2026-11-01.
 Commits: e26264c, df4c1ed, bd4807b, abfed8f, 61e7584, 0083612; review fixes dcf8588 and the frontend/docs commits after it.
 Changed after review: login is not the front door (the app opens into the chat as a guest; returning users with a
 token land on welcome back; a "Save this check" card after a guest check logs in and keeps that check via
@@ -59,7 +59,7 @@ pending codes. Added dependency: psycopg[binary] 3. PHONE_HASH_KEY and TOKEN_SIG
 - [x] Centred reading column, composer lined up with it and clear of the home bar and keyboard (D)
 - [x] How Kaagaz works in the welcome; light neutral palette in CSS variables (D, CV)
 - [x] Cell detail names whose document could not be read (I)
-Status: built and tested (12 frontend tests); not deployed. Commits: dcba1fb, e4821b5.
+Status: built and tested (12 frontend tests); deployed 2026-11-01. Commits: dcba1fb, e4821b5.
 
 ## Phase 9c: Real-input rescue (before Phase 10)
 Why: a manual phone test (documents on a laptop screen, filmed with a phone) failed 9 of 9 videos with "Many
@@ -83,7 +83,7 @@ Not deployed or pushed until reviewed.
 - [x] New en/hi/mr strings (Marathi and Hindi machine-drafted, listed for review)
 - [x] Tests: orientation, appearance split, triage, photo finder, photo sessions and API; Playwright on the real
       videos, real-video frames as photos, HH009 photos and the sample in mr/hi/en at 360 and 1440 px (30 runs)
-Status: built and tested; awaiting review; not deployed or pushed. Commits: -
+Status: built and tested; deployed 2026-11-01. Commits: 86beb78.
 Open: the household builder flags a missing ration-card colour as "could not read" while the card is not on the
 clearer-photo list (decision field, not a key field), so the sample shows the card under "Read clearly" and in
 Problems found; the 720p sweep (video 728) still holds with many unclear documents and one agreed wrong digit.
@@ -99,12 +99,14 @@ Problems found; the 720p sweep (video 728) still holds with many unclear documen
       eligibility (rules engine only), language, length; one retry, then "not sure" with the check's own line (M, T, Ag)
 - [x] Answers spoken with MMS-TTS (Listen on every answer) (I, M, D)
 - [x] Suggested questions from the family's own problems; "Add a photo" chips open the close-up flow (I, D)
-Status: built and tested, not deployed or pushed. Ask eval: 30 questions, 26/26 answered correctly, 4/4 refused,
+Status: built, tested and deployed 2026-11-01 (Modal backend). Ask eval: 30 questions, 26/26 answered correctly, 4/4 refused,
 0 wrong answers shown (eval/results/ask_20261101-030333.json). Speech: synthetic MMS-TTS clips only so far (WER en 0.06,
 hi 0.19, mr 0.25; 11/12 transcripts still get the right answer; eval/results/asr_20261101-033631.json); stop to text
 2.4-3.9 s locally, 2.9-3.7 s on throttled Slow 4G. The owner's own recordings are still to be run
 (`python eval/run_asr_eval.py --clips <folder>`).
-Commits: part 1 63165bf; part 2 (this commit)
+Commits: part 1 63165bf; part 2 1458f3e.
+Production check: /ask answers in 8 s from a cold container; spoken question to text 2.3-4.7 s from India to
+Modal us-east (server share 1.3-1.9 s); the sample family's plan at 23 s.
 Changed: spoken questions' transcripts are never written to the disk cache (privacy; transcription costs $0.18 an hour).
 Open: scheme YAML has no verified "where to apply" yet (the agent says to ask at the office; TODO for the developer).
 

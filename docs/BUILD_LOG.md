@@ -63,3 +63,4 @@ transcript neither cached nor logged, counted against the question limits with a
 check, spoken questions' answers auto-played (iPhone-safe priming); ASR_LANGUAGES config for Phase 11. Synthetic clips:
 WER en 0.06 / hi 0.19 / mr 0.25, 11/12 right answers; stop to text 2.4-3.9 s (Slow 4G 2.9-3.7 s); Playwright fake mic
 mr/hi/en at 360 and 1440 px.
+- Deployed Phases 9-10 to Modal (login keys from the secret, CORS for the Netlify site): /ask and /ask/transcribe work in production (spoken question to text 2.3-4.7 s from India); sample family plan at 23 s, first spoken sentence 18 s.
