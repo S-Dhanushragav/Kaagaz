@@ -1,0 +1,328 @@
+{
+ "source": "session",
+ "language": "en",
+ "data": {
+  "members": [
+   {
+    "member_id": "r1",
+    "name_mr": "आदित्य योगेश भोसले",
+    "name_en": "Aditya Yogesh Bhosale",
+    "relation_en": "Self",
+    "age": 48,
+    "on_ration_card": true
+   },
+   {
+    "member_id": "r2",
+    "name_mr": "सविता आदित्य भोसले",
+    "name_en": "Savita Aditya Bhosale",
+    "relation_en": "Wife",
+    "age": 46,
+    "on_ration_card": true
+   },
+   {
+    "member_id": "r3",
+    "name_mr": "लता आदित्य भोसले",
+    "name_en": "Lata Aditya Bhosale",
+    "relation_en": "Daughter",
+    "age": 12,
+    "on_ration_card": true
+   }
+  ],
+  "documents": [
+   "caste_certificate",
+   "caste_certificate",
+   "identity_card",
+   "identity_card",
+   "identity_card",
+   "income_certificate",
+   "ration_card"
+  ],
+  "problems": [
+   {
+    "type": "name_mismatch",
+    "member_id": "r3",
+    "member_name": "Lata Aditya Bhosale",
+    "member_name_mr": "लता आदित्य भोसले",
+    "document_types": [
+     "caste_certificate",
+     "identity_card",
+     "ration_card"
+    ],
+    "waiting": false
+   },
+   {
+    "type": "expired",
+    "member_id": "r1",
+    "member_name": "Aditya Yogesh Bhosale",
+    "member_name_mr": "आदित्य योगेश भोसले",
+    "document_types": [
+     "income_certificate"
+    ],
+    "waiting": false
+   },
+   {
+    "type": "unreadable",
+    "member_id": "r2",
+    "member_name": "Savita Aditya Bhosale",
+    "member_name_mr": "सविता आदित्य भोसले",
+    "document_types": [
+     "identity_card"
+    ],
+    "waiting": false
+   },
+   {
+    "type": "unreadable",
+    "member_id": null,
+    "member_name": "Aditya Yogesh Bhosale",
+    "member_name_mr": "आदित्य योगेश भोसले",
+    "document_types": [
+     "ration_card"
+    ],
+    "waiting": false
+   },
+   {
+    "type": "unreadable",
+    "member_id": "r1",
+    "member_name": "Aditya Yogesh Bhosale",
+    "member_name_mr": "आदित्य योगेश भोसले",
+    "document_types": [
+     "identity_card"
+    ],
+    "waiting": false
+   }
+  ],
+  "outcomes": [
+   {
+    "member_id": "r1",
+    "scheme_id": "ladki_bahin",
+    "outcome": "not_eligible",
+    "reasons": [
+     "The scheme is for a woman."
+    ],
+    "warnings": [
+     "The income certificate was issued on 27/02/2022, before 01/04/2026: it may need renewal. Check at the office."
+    ]
+   },
+   {
+    "member_id": "r1",
+    "scheme_id": "pm_ujjwala",
+    "outcome": "not_eligible",
+    "reasons": [
+     "The scheme is for a woman."
+    ],
+    "warnings": []
+   },
+   {
+    "member_id": "r1",
+    "scheme_id": "ramai_awas",
+    "outcome": "not_eligible",
+    "reasons": [
+     "Family income ₹2,04,000 is above ₹1,50,000."
+    ],
+    "warnings": [
+     "The income certificate was issued on 27/02/2022, before 01/04/2026: it may need renewal. Check at the office."
+    ]
+   },
+   {
+    "member_id": "r1",
+    "scheme_id": "sanjay_gandhi_niradhar",
+    "outcome": "not_eligible",
+    "reasons": [
+     "Family income ₹2,04,000 is above the limit of ₹21,000."
+    ],
+    "warnings": [
+     "The income certificate was issued on 27/02/2022, before 01/04/2026: it may need renewal. Check at the office."
+    ]
+   },
+   {
+    "member_id": "r1",
+    "scheme_id": "shravanbal",
+    "outcome": "not_eligible",
+    "reasons": [
+     "Age 48 is under the minimum age of 65.",
+     "Family income ₹2,04,000 is above the limit of ₹21,000."
+    ],
+    "warnings": [
+     "The income certificate was issued on 27/02/2022, before 01/04/2026: it may need renewal. Check at the office."
+    ]
+   },
+   {
+    "member_id": "r2",
+    "scheme_id": "ladki_bahin",
+    "outcome": "blocked_by_issues",
+    "reasons": [
+     "A document could not be read: take a clearer photo first."
+    ],
+    "warnings": [
+     "The income certificate was issued on 27/02/2022, before 01/04/2026: it may need renewal. Check at the office."
+    ]
+   },
+   {
+    "member_id": "r2",
+    "scheme_id": "pm_ujjwala",
+    "outcome": "blocked_by_issues",
+    "reasons": [
+     "A document could not be read: take a clearer photo first."
+    ],
+    "warnings": []
+   },
+   {
+    "member_id": "r2",
+    "scheme_id": "ramai_awas",
+    "outcome": "not_eligible",
+    "reasons": [
+     "Family income ₹2,04,000 is above ₹1,50,000."
+    ],
+    "warnings": [
+     "The income certificate was issued on 27/02/2022, before 01/04/2026: it may need renewal. Check at the office."
+    ]
+   },
+   {
+    "member_id": "r2",
+    "scheme_id": "sanjay_gandhi_niradhar",
+    "outcome": "not_eligible",
+    "reasons": [
+     "Family income ₹2,04,000 is above the limit of ₹21,000."
+    ],
+    "warnings": [
+     "The income certificate was issued on 27/02/2022, before 01/04/2026: it may need renewal. Check at the office."
+    ]
+   },
+   {
+    "member_id": "r2",
+    "scheme_id": "shravanbal",
+    "outcome": "not_eligible",
+    "reasons": [
+     "Age 46 is under the minimum age of 65.",
+     "Family income ₹2,04,000 is above the limit of ₹21,000."
+    ],
+    "warnings": [
+     "The income certificate was issued on 27/02/2022, before 01/04/2026: it may need renewal. Check at the office."
+    ]
+   },
+   {
+    "member_id": "r3",
+    "scheme_id": "ladki_bahin",
+    "outcome": "not_eligible",
+    "reasons": [
+     "Age 12 is under the minimum age of 21."
+    ],
+    "warnings": [
+     "The income certificate was issued on 27/02/2022, before 01/04/2026: it may need renewal. Check at the office."
+    ]
+   },
+   {
+    "member_id": "r3",
+    "scheme_id": "pm_ujjwala",
+    "outcome": "not_eligible",
+    "reasons": [
+     "Age 12 is under the minimum age of 18."
+    ],
+    "warnings": []
+   },
+   {
+    "member_id": "r3",
+    "scheme_id": "ramai_awas",
+    "outcome": "not_eligible",
+    "reasons": [
+     "Family income ₹2,04,000 is above ₹1,50,000."
+    ],
+    "warnings": [
+     "The income certificate was issued on 27/02/2022, before 01/04/2026: it may need renewal. Check at the office."
+    ]
+   },
+   {
+    "member_id": "r3",
+    "scheme_id": "sanjay_gandhi_niradhar",
+    "outcome": "not_eligible",
+    "reasons": [
+     "Family income ₹2,04,000 is above the limit of ₹21,000."
+    ],
+    "warnings": [
+     "The income certificate was issued on 27/02/2022, before 01/04/2026: it may need renewal. Check at the office."
+    ]
+   },
+   {
+    "member_id": "r3",
+    "scheme_id": "shravanbal",
+    "outcome": "not_eligible",
+    "reasons": [
+     "Age 12 is under the minimum age of 65.",
+     "Family income ₹2,04,000 is above the limit of ₹21,000."
+    ],
+    "warnings": [
+     "The income certificate was issued on 27/02/2022, before 01/04/2026: it may need renewal. Check at the office."
+    ]
+   }
+  ],
+  "steps": [
+   {
+    "index": 1,
+    "kind": "fix",
+    "visit": 1,
+    "office": {
+     "text": "Tahsil office",
+     "verified": true
+    },
+    "voice": "Apply for a new income certificate on the Aaple Sarkar portal or at an Aaple Sarkar Seva Kendra; the Tahsil office issues it. The law sets 15 days for this office.",
+    "speech": "Apply for a new income certificate on the Aaple Sarkar portal or at an Aaple Sarkar Seva Kendra; the Tahsil office issues it. The law sets fifteen days for this office.",
+    "bring": [],
+    "fee": null,
+    "time_limit": {
+     "text": "15 days",
+     "verified": true
+    },
+    "member_id": "r1"
+   },
+   {
+    "index": 2,
+    "kind": "ask_at_office",
+    "visit": null,
+    "office": null,
+    "voice": "The name on Lata Aditya Bhosale's caste certificate is spelled differently from their other documents. Ask the office what to do.",
+    "speech": "The name on Lata Aditya Bhosale's caste certificate is spelled differently from their other documents. Ask the office what to do.",
+    "bring": [],
+    "fee": null,
+    "time_limit": null,
+    "member_id": "r3"
+   }
+  ],
+  "answers": [
+   {
+    "question": "Lata Aditya Bhosale: caste certificate, ration card, Aadhaar card: which one is correct?",
+    "answer": "Lata Aditya Bhosale"
+   }
+  ]
+ },
+ "member_documents": {
+  "r1": [
+   "caste_certificate",
+   "identity_card",
+   "income_certificate"
+  ],
+  "r2": [
+   "identity_card"
+  ],
+  "r3": [
+   "caste_certificate",
+   "identity_card"
+  ]
+ },
+ "unclear": [
+  {
+   "document_id": "doc03",
+   "document_type": "identity_card",
+   "member_id": "r2"
+  },
+  {
+   "document_id": "doc06",
+   "document_type": "identity_card",
+   "member_id": "r1"
+  },
+  {
+   "document_id": "doc08",
+   "document_type": null,
+   "member_id": null
+  }
+ ]
+}

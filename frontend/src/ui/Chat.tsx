@@ -40,13 +40,14 @@ export function Me({ children }: { children: ReactNode }) {
 
 export default function Chat({ t, language, schemes, check, view, error, answered, voice, onRecord, onPhotos, onSample,
   onRecorded, onPhotosChosen, onCancelRecord, onAnswered, onReplanned, onNewCheck, onRecordAgain, onPhotosAgain, latest,
-  recheck, onOpenCheck, loggedIn, onSaveCheck, narrow, onOpenScheme }: {
+  recheck, onOpenCheck, loggedIn, onSaveCheck, narrow, onOpenScheme, beforeCheck }: {
   t: Strings; language: Language; schemes: CatalogScheme[]; check: Check; view: SessionView | null; error: string | null; answered: Answered[]
   voice: Voice; onRecord: () => void; onPhotos: () => void; onSample: () => void; onRecorded: (b: Blob) => void
   onPhotosChosen: (photos: File[]) => void; onRecordAgain: () => void; onPhotosAgain: () => void; onCancelRecord: () => void
   onAnswered: (label: string) => void; onReplanned: () => void; onNewCheck: () => void
   latest: CheckFull | null; recheck: boolean; onOpenCheck: (id: string, step: number | null) => void
   loggedIn: boolean; onSaveCheck: () => void; narrow: boolean; onOpenScheme: (id: string) => void
+  beforeCheck?: ReactNode // questions asked before the check started (Ask Kaagaz)
 }) {
   const names = Object.fromEntries(schemes.map((s) => [s.id, s.name]))
   const started = check.kind !== 'idle'
@@ -78,6 +79,7 @@ export default function Chat({ t, language, schemes, check, view, error, answere
           </div>
         )}
       </Bot>
+      {beforeCheck}
       {started && <Me>{recheck ? `${t.checkAgain}: ${startedAs}` : startedAs}</Me>}
 
       {check.kind === 'recording' && <Bot wide><Recorder t={t} onDone={onRecorded} onCancel={onCancelRecord} /></Bot>}

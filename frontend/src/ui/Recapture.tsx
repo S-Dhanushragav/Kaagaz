@@ -75,7 +75,7 @@ export default function Recapture({ t, view, language, onReplanned, onAddPhotos,
   )
 }
 
-function CloseUp({ t, sessionId, documentId, sample, onReplanned }: {
+export function CloseUp({ t, sessionId, documentId, sample, onReplanned }: {
   t: Strings; sessionId: string; documentId: string; sample: boolean; onReplanned: () => void
 }) {
   const camera = useRef<HTMLInputElement>(null)

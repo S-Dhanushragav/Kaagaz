@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import {
-  ApiError, claimSession, getMe, getSchemes, getSession, hasToken, myCheck, myChecks, setMyLanguage, setToken, startPhotos, startSample,
-  startUpload,
-  tickStep, type CatalogScheme, type Started, type CheckFull, type CheckSummary, type Language, type SessionView, type UserView,
+  ApiError, askKaagaz, askSuggestions, claimSession, getMe, getSchemes, getSession, hasToken, myCheck, myChecks, setMyLanguage,
+  setToken, startPhotos, startSample, startUpload,
+  tickStep, type AskContext, type CatalogScheme, type Started, type CheckFull, type CheckSummary, type Language, type SessionView,
+  type UserView,
 } from './api'
 import { stop } from './audio'
 import { preparePhoto } from './photos'
 import { STRINGS } from './i18n'
 import AccountMenu from './ui/AccountMenu'
+import { AskThread, Suggestions, type AskItem } from './ui/Ask'
 import Chat, { type Answered, type Check } from './ui/Chat'
 import { Camera, Menu, Mic, Person, Send } from './ui/Icons'
 import LanguageMenu from './ui/LanguageMenu'
@@ -74,11 +76,45 @@ export default function App() {
   const [schemes, setSchemes] = useState<CatalogScheme[]>([])
   const [openScheme, setOpenScheme] = useState<string | null>(null)
   const [drawer, setDrawer] = useState(false)
+  const [asks, setAsks] = useState<AskItem[]>([])
+  const [draft, setDraft] = useState('')
+  const [suggestedFor, setSuggestedFor] = useState<{ key: string; items: string[] }>({ key: '', items: [] })
+  const askCount = useRef(0)
   const t = STRINGS[language]
   const sessionId = check.kind === 'session' ? check.id : null
   const { view, error, refresh } = useSession(sessionId)
   const scroller = useRef<HTMLDivElement>(null)
   const narrow = useNarrow()
+
+  // Ask Kaagaz: about the saved check on screen, or the live check once it has finished; else the 5 schemes only.
+  const pastId = center.kind === 'past' ? center.check.id : null
+  const liveDone = view?.status === 'done' ? sessionId : null
+  const askContext: AskContext = useMemo(() => (pastId ? { checkId: pastId } : liveDone ? { sessionId: liveDone } : {}),
+    [pastId, liveDone])
+  const contextKey = pastId ?? liveDone ?? ''
+  useEffect(() => {
+    if (!contextKey) return
+    let live = true
+    askSuggestions(language, askContext).then((items) => { if (live) setSuggestedFor({ key: contextKey, items }) })
+      .catch(() => { /* no suggestions: the box still works */ })
+    return () => { live = false }
+  }, [contextKey, askContext, language, view?.plan?.steps.length])
+  const suggested = contextKey && suggestedFor.key === contextKey ? suggestedFor.items : []
+  const asking = asks.some((a) => !a.reply && !a.error)
+  const send = async (text: string) => {
+    const question = text.trim()
+    if (!question || asking) return
+    const key = ++askCount.current
+    setDraft('')
+    setAsks((a) => [...a, { key, context: contextKey, question, reply: null, error: null }])
+    try {
+      const reply = await askKaagaz(question, language, askContext)
+      setAsks((a) => a.map((x) => (x.key === key ? { ...x, reply } : x)))
+    } catch (e) {
+      const error = e instanceof ApiError && e.status === 429 ? e.message : t.askError
+      setAsks((a) => a.map((x) => (x.key === key ? { ...x, error } : x)))
+    }
+  }
 
   useEffect(() => {
     localStorage.setItem('kaagaz.lang', language)
@@ -136,6 +172,11 @@ export default function App() {
     const el = scroller.current
     if (el && center.kind === 'live') el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
   }, [signature, center.kind])
+  const askSignature = asks.map((a) => `${a.key}${a.reply ? 'r' : a.error ? 'e' : ''}`).join('|')
+  useEffect(() => {
+    const el = scroller.current
+    if (el && askSignature) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+  }, [askSignature])
 
   const begin = async (sample: boolean, start: () => Promise<Started>, photos = false) => {
     setStartError(null)
@@ -167,11 +208,13 @@ export default function App() {
     setRecheckOf(null)
     setCenter({ kind: 'live' })
     setDrawer(false)
+    setAsks([])
   }
 
   const openCheck = async (id: string, focus: number | null = null) => {
     stop()
     setDrawer(false)
+    setAsks([])
     try {
       setCenter({ kind: 'past', check: await myCheck(id), focus })
       scroller.current?.scrollTo({ top: 0 })
@@ -197,13 +240,18 @@ export default function App() {
     }
   }
 
-  const checkAgain = (sample: boolean) => {
+  const checkAgain = (sample: boolean, photos = false) => {
     if (center.kind !== 'past') return
     const id = center.check.id
     newCheck()
     setRecheckOf(id)
     if (sample) void begin(true, () => startSample(language, id))
-    else setCheck({ kind: 'recording' })
+    else setCheck({ kind: photos ? 'photos' : 'recording' })
+  }
+  // An answer's "Add a photo" chip for a document there is no close-up for: add photos (of a saved check: check again).
+  const addPhotos = () => {
+    if (center.kind === 'past') checkAgain(false, true)
+    else { newCheck(); setCheck({ kind: 'photos' }) }
   }
 
   const changeLanguage = (l: Language) => {
@@ -286,24 +334,28 @@ export default function App() {
                 latest={user && latest && latest.id === checks[0]?.id ? latest : null /* never an older check while the newest loads */}
                 onOpenCheck={(id, step) => void openCheck(id, step)} loggedIn={user !== null}
                 onSaveCheck={() => { if (check.kind === 'session') setLogin({ claim: { id: check.id, secret: check.guestSecret } }) }}
-                narrow={narrow} onOpenScheme={setOpenScheme} />
+                narrow={narrow} onOpenScheme={setOpenScheme}
+                beforeCheck={<AskThread t={t} items={asks.filter((a) => !a.context)} sessionId={null} sample={false}
+                  onReplanned={refresh} onAddPhotos={addPhotos} />} />
             )}
+            {!asks.some((a) => a.context === contextKey) && <Suggestions t={t} items={suggested} onPick={(q) => void send(q)} />}
+            <AskThread t={t} items={center.kind === 'past' ? asks : asks.filter((a) => a.context)}
+              sessionId={askContext.sessionId ?? null} sample={!!view?.sample} onReplanned={refresh} onAddPhotos={addPhotos} />
           </div>
         </div>
 
-        <form className="composer" onSubmit={(e) => e.preventDefault()}>
-          {/* Ask Kaagaz is wired in Phase 10. */}
+        <form className="composer" onSubmit={(e) => { e.preventDefault(); void send(draft) }}>
           <label className="composer-field">
             <span className="sr-only">{t.askPlaceholder}</span>
-            <input type="text" placeholder={narrow ? t.askShort : t.askPlaceholder} disabled />
-            <span className="soon">{t.soon}</span>
+            <input type="text" placeholder={narrow ? t.askShort : t.askPlaceholder} value={draft} maxLength={500}
+              enterKeyHint="send" onChange={(e) => setDraft(e.target.value)} />
           </label>
           <button type="button" className={voice.listening ? 'round-button listening' : 'round-button'}
             aria-label={voice.listening ? t.listening : t.speak} disabled={!voice.allowed || (voice.busy && !voice.listening)}
             onClick={voice.toggle}><Mic /></button>
           <button type="button" className="round-button" aria-label={t.camera} disabled={busy}
             onClick={() => { newCheck(); setCheck({ kind: 'recording' }) }}><Camera /></button>
-          <button type="submit" className="round-button primary" aria-label={t.send} disabled><Send /></button>
+          <button type="submit" className="round-button primary" aria-label={t.send} disabled={!draft.trim() || asking}><Send /></button>
         </form>
       </main>
 

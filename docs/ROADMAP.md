@@ -89,14 +89,18 @@ clearer-photo list (decision field, not a key field), so the sample shows the ca
 Problems found; the 720p sweep (video 728) still holds with many unclear documents and one agreed wrong digit.
 
 ## Phase 10: Live voice and Ask Kaagaz (Sun 2 Nov afternoon to Mon 3 Nov morning)
-- [ ] Live transcript in the text box while speaking (Muse Voice Transcribe realtime),
-      editable before sending; backend relays audio so the key never reaches the browser
-      (I, M, T, D)
-- [ ] Ask Kaagaz agent on Muse Spark Open (Baseten): questions about the 5 schemes and the
-      family's case file, answered through tools (I, M, D, Ag, OW)
-- [ ] Every fact in an answer checked against verified data before it is shown (M, T, Ag)
-- [ ] Answers spoken with MMS-TTS (I, M, D)
-Status: not started. Commits: -
+- [ ] Spoken questions, push-to-talk (changed from a realtime live transcript): the clip is transcribed with Muse
+      Voice Transcribe into the text box to check before sending; the answer to a spoken question is played (I, M, T, D)
+- [x] Ask Kaagaz agent on Muse Spark Open (Baseten): questions about the 5 schemes and the
+      family's check (live or saved), answered through 8 read-only tools (I, M, D, Ag, OW)
+- [x] Every fact in an answer checked against verified data before it is shown: numbers, schemes, offices, fees,
+      eligibility (rules engine only), language, length; one retry, then "not sure" with the check's own line (M, T, Ag)
+- [x] Answers spoken with MMS-TTS (Listen on every answer) (I, M, D)
+- [x] Suggested questions from the family's own problems; "Add a photo" chips open the close-up flow (I, D)
+Status: part 1 (typed Ask Kaagaz) built and tested, not deployed or pushed; part 2 (voice) next. Eval: 30 questions,
+26/26 answered correctly, 4/4 refused, 0 wrong answers shown (eval/results/ask_20261101-030333.json).
+Commits: part 1 -
+Open: scheme YAML has no verified "where to apply" yet (the agent says to ask at the office; TODO for the developer).
 
 ## Phase 11: More Indian languages (Mon 3 Nov afternoon)
 - [ ] Tamil, Telugu, Kannada: voice in and out (I, M, D, CV)

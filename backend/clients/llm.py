@@ -7,7 +7,9 @@ Images must already be prepared (see `vision.images.encode_for_llm`).
 """
 
 import base64
+import json
 import logging
+import re
 from functools import lru_cache
 from typing import Any, Callable, Mapping, Sequence
 
@@ -25,6 +27,10 @@ MAX_IMAGES = 3
 
 class LLMError(RuntimeError):
     pass
+
+
+class EmptyResponse(LLMError):
+    """The model returned neither text nor tool calls."""
 
 
 class TokenUsage(BaseModel):
@@ -247,6 +253,36 @@ class ChatResponse(BaseModel):
     cached: bool = False
 
 
+# Muse Spark Open on Baseten sometimes writes a tool call as text instead of `tool_calls`:
+# <x:invoke name="reply"><x:parameter name="kind">answer</x:parameter>...</x:invoke>
+_TEXT_CALL = re.compile(r"<(?:\w+:)?invoke name=\"([^\"]+)\">(.*?)</(?:\w+:)?invoke>", re.DOTALL)
+_TEXT_PARAM = re.compile(r"<(?:\w+:)?parameter name=\"([^\"]+)\">(.*?)</(?:\w+:)?parameter>", re.DOTALL)
+
+
+def recover_text_tool_calls(content: str | None, tool_names: set[str]) -> list[ToolCall]:
+    """Tool calls written as markup in the reply text (only for tools that were offered)."""
+    calls = []
+    for n, m in enumerate(_TEXT_CALL.finditer(content or "")):
+        if m.group(1) not in tool_names:
+            continue
+        args: dict[str, Any] = {}
+        for name, raw in _TEXT_PARAM.findall(m.group(2)):
+            try:
+                value = json.loads(raw)
+                args[name] = value if isinstance(value, (list, dict)) else raw.strip()
+            except json.JSONDecodeError:
+                args[name] = raw.strip()
+        calls.append(ToolCall(id=f"text-call-{n}", name=m.group(1), arguments=json.dumps(args, ensure_ascii=False)))
+    return calls
+
+
+def _with_recovered_calls(result: ChatResponse, tools: Sequence[Mapping[str, Any]] | None) -> ChatResponse:
+    if result.tool_calls or not tools:
+        return result
+    calls = recover_text_tool_calls(result.content, {t["function"]["name"] for t in tools})
+    return result.model_copy(update={"tool_calls": calls, "content": None}) if calls else result
+
+
 def chat(
     messages: Sequence[Mapping[str, Any]],
     *,
@@ -255,11 +291,15 @@ def chat(
     temperature: float = 0.0,
     max_tokens: int | None = None,
     overrides: Mapping[str, Any] | None = None,
+    timeout: float | None = None,
+    tool_choice: str | None = None,
 ) -> ChatResponse:
     """One turn of a tool-calling conversation (OpenAI Chat Completions `tools`).
 
     `messages` is the whole conversation so far, in OpenAI format (text only). The cache key is
     the full conversation plus the tools, so a replayed agent run costs nothing.
+    `timeout` (seconds, no retries) is for interactive callers; it does not change the reply, so it is not in the key.
+    `tool_choice` ("required": the model must call a tool) is sent only when given.
     """
     settings = get_settings()
     resolved = settings.resolve(task, overrides)
@@ -269,20 +309,25 @@ def chat(
     key = make_key({
         "kind": "chat", "task": resolved.task, "provider": resolved.provider, "model": resolved.model,
         "reasoning_effort": resolved.reasoning_effort, "messages": list(messages), "tools": list(tools or []),
-        "temperature": temperature, "max_tokens": max_tokens,
+        "temperature": temperature, "max_tokens": max_tokens, **({"tool_choice": tool_choice} if tool_choice else {}),
     })
     hit = cache.get(key)
     if hit is not None:
-        return ChatResponse.model_validate({**hit, "cached": True})
+        return _with_recovered_calls(ChatResponse.model_validate({**hit, "cached": True}), tools)
 
     params: dict[str, Any] = {"model": resolved.model, "messages": list(messages), "temperature": temperature,
                               "max_tokens": max_tokens}
     if tools:
         params["tools"] = list(tools)
+        if tool_choice:
+            params["tool_choice"] = tool_choice
     if resolved.reasoning_effort is not None:
         params["reasoning_effort"] = resolved.reasoning_effort
     label = f"{resolved.provider}/{resolved.model}"
-    resp = _client(resolved.base_url, resolved.api_key.get_secret_value()).chat.completions.create(**params)
+    client = _client(resolved.base_url, resolved.api_key.get_secret_value())
+    if timeout is not None:
+        client = client.with_options(timeout=timeout, max_retries=0)
+    resp = client.chat.completions.create(**params)
     if not resp.choices:
         raise LLMError(f"No choices in response from {label}")
     choice = resp.choices[0]
@@ -292,7 +337,7 @@ def chat(
     calls = [ToolCall(id=c.id, name=c.function.name, arguments=c.function.arguments or "{}")
              for c in (message.tool_calls or [])]
     if message.content is None and not calls:
-        raise LLMError(f"Empty response from {label} (finish_reason={choice.finish_reason})")
+        raise EmptyResponse(f"Empty response from {label} (finish_reason={choice.finish_reason})")
     usage = TokenUsage()
     if resp.usage is not None:
         usage = TokenUsage(prompt_tokens=resp.usage.prompt_tokens or 0,
@@ -304,4 +349,4 @@ def chat(
     cache.set(key, result.model_dump())
     logger.info("LLM chat [%s] %s: %d prompt + %d completion tokens, %d tool calls", task, label,
                 usage.prompt_tokens, usage.completion_tokens, len(calls))
-    return result
+    return _with_recovered_calls(result, tools)

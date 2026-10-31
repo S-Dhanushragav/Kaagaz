@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.account import router as account_router
+from app.api.ask import AskService, router as ask_router
 from app.api.routes import router
 from app.auth import AuthService, auth_keys
 from app.config import get_settings
@@ -51,6 +52,8 @@ async def lifespan(app: FastAPI):
         phone_key, token_key = auth_keys(s.kaagaz_env, s.phone_hash_key.get_secret_value(),
                                          s.token_signing_key.get_secret_value())  # refuses to start without keys
         app.state.auth = AuthService(app.state.store, phone_key, token_key, mode=s.auth_mode)
+    if not hasattr(app.state, "ask"):
+        app.state.ask = AskService()
     if not hasattr(app.state, "sessions"):
         app.state.sessions = SessionManager(store=app.state.store)
     app.state.sessions.start_cleanup_loop()
@@ -68,6 +71,7 @@ app.add_middleware(
 )
 app.include_router(router)
 app.include_router(account_router)
+app.include_router(ask_router)
 
 
 @app.exception_handler(StoreUnavailable)

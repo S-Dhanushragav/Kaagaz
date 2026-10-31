@@ -1,0 +1,34 @@
+# Ask Kaagaz: every sentence the app adds around an answer (agents/ask.py), suggested questions and chip labels.
+# The model writes only the answer itself; refusals, fallbacks and notes come from here.
+# Placeholders: {member} {document} {office} {scheme}.
+language: en
+replies:
+  out_of_scope: "I can only help with your documents and these 5 Maharashtra schemes: Ladki Bahin, PM Ujjwala, Ramai Awas, Sanjay Gandhi Niradhar and Shravanbal. Ask me who can apply, which documents are needed, or what your check found."
+  id_number: "I never read out or ask for Aadhaar or other ID numbers. I can tell you which documents you need and what your check found."
+  other_language: "I can answer in English, Hindi or Marathi. Please ask again in one of these languages."
+  not_sure: "I'm not sure. Here is what your check says:"
+  not_sure_no_check: "I'm not sure. Here is what the scheme rules say:"
+  not_sure_nothing: "I'm not sure. Please ask at the office."
+  unavailable: "Sorry, I could not answer just now. Please try again in a minute; your check is not affected."
+  check_at_office: "Some of this is not confirmed by an official source yet: check it at the office."
+  limit: "You have asked many questions this hour. Please try again later."
+lines:
+  outcome: "{member}, {scheme}: {reason}"
+  problem: "{member}: {reason}"
+  step: "{text}"
+  scheme: "{scheme}: {text}"
+chips:
+  photo: "Add a photo: {document}"
+  document_of: "{member}: {document}"
+  unknown: "paper not identified"
+suggestions:  # after a check, from this family's own problems (agents/ask_tools.py suggestions)
+  missing_document: "Where do I get a {document} for {member}?"
+  unclear: "Why does {member}'s {document} need a clearer photo?"
+  unclear_unknown: "Which documents need a clearer photo?"
+  expired: "Why does {member} need a new income certificate?"
+  name_mismatch: "What do we do about the spelling of {member}'s name?"
+  dob_mismatch: "What do we do about {member}'s date of birth?"
+  not_on_ration_card: "{member} is not on the ration card. What do we do?"
+  office: "What do I take to the {office}?"
+  which_missing: "Which documents are missing?"
+  schemes: "Which schemes can {member} apply for?"

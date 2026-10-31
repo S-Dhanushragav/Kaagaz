@@ -1,6 +1,6 @@
 """Settings loaded from the repo-root .env file (see .env.example).
 
-LLM calls are routed per task ("vision", "agent", "text"): each task picks a provider,
+LLM calls are routed per task ("vision", "agent", "text", "ask"): each task picks a provider,
 and the provider + task decide the model, reasoning effort, and max tokens.
 """
 
@@ -14,7 +14,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 Provider = Literal["meta", "baseten"]
-Task = Literal["vision", "agent", "text"]
+Task = Literal["vision", "agent", "text", "ask"]
 
 OVERRIDABLE = frozenset({"provider", "model", "reasoning_effort", "max_tokens"})
 
@@ -43,16 +43,19 @@ class Settings(BaseSettings):
     vision_provider: Provider | None = None
     agent_provider: Provider | None = None
     text_provider: Provider | None = None
+    ask_provider: Provider | None = "baseten"  # Ask Kaagaz runs on Muse Spark Open
 
     # Per-task reasoning effort; None = parameter not sent
     vision_reasoning_effort: str | None = None
     agent_reasoning_effort: str | None = None
     text_reasoning_effort: str | None = None
+    ask_reasoning_effort: str | None = "low"
 
     # Per-task output budget (includes reasoning tokens)
     vision_max_tokens: int = Field(4000, gt=0)
     agent_max_tokens: int = Field(6000, gt=0)
     text_max_tokens: int = Field(4000, gt=0)
+    ask_max_tokens: int = Field(1200, gt=0)  # short answers; reasoning counts too
 
     # Meta Model API
     meta_api_key: SecretStr = SecretStr("")
@@ -60,6 +63,7 @@ class Settings(BaseSettings):
     meta_vision_model: str = ""
     meta_agent_model: str = ""
     meta_text_model: str = ""
+    meta_ask_model: str = ""  # only if ASK_PROVIDER=meta
     meta_transcribe_model: str = ""  # used by clients/transcribe.py
     asr_keyword_languages: str = "en"  # comma-separated: languages that send keyword biasing (it hurt hi/mr)
     meta_segment_model: str = ""  # used by clients/segmenter.py (not built yet)
@@ -96,15 +100,23 @@ class Settings(BaseSettings):
     tts_model_hi: str = ""
     tts_model_mr: str = ""
 
+    # Ask Kaagaz (agents/ask.py, app/api/ask.py)
+    ask_per_session_hour: int = Field(20, ge=0)  # questions per session (or saved check) per hour
+    ask_per_ip_hour: int = Field(60, ge=0)  # questions per client IP per hour
+    ask_timeout_s: float = Field(20.0, gt=0)  # then a friendly fallback
+    ask_max_tool_calls: int = Field(4, ge=0)  # data tools per question (the final reply is not counted)
+
     cache_dir: Path = Path(".cache")
 
     @field_validator(
         "vision_provider",
         "agent_provider",
         "text_provider",
+        "ask_provider",
         "vision_reasoning_effort",
         "agent_reasoning_effort",
         "text_reasoning_effort",
+        "ask_reasoning_effort",
         mode="before",
     )
     @classmethod
@@ -114,7 +126,7 @@ class Settings(BaseSettings):
             return value or None
         return value
 
-    @field_validator("vision_max_tokens", "agent_max_tokens", "text_max_tokens", mode="before")
+    @field_validator("vision_max_tokens", "agent_max_tokens", "text_max_tokens", "ask_max_tokens", mode="before")
     @classmethod
     def _blank_is_default(cls, value: Any, info: ValidationInfo) -> Any:
         if isinstance(value, str) and not value.strip():

@@ -1,0 +1,166 @@
+"""Ask Kaagaz API (agents/ask.py).
+
+POST /ask               {question, language, session_id? | check_id?} -> a checked answer (never an error: if the model
+                        is slow or down, a friendly fallback). A finished live session, or a saved check of the
+                        logged-in user, is attached as the family's context; otherwise only scheme questions.
+GET  /ask/suggestions   ?language=&session_id=|check_id= -> up to 3 questions about this family (templates, no model)
+GET  /ask/audio/{id}    an answer read aloud (MMS-TTS); answers are kept in memory for an hour
+
+Limits: ASK_PER_SESSION_HOUR questions per session or saved check, ASK_PER_IP_HOUR per client IP (the last
+X-Forwarded-For entry, as for login). Question text and names are never logged; agents/ask.py logs token counts.
+"""
+
+import logging
+import secrets
+import threading
+import time
+from collections import deque
+from typing import Any, Literal
+
+from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import FileResponse
+from pydantic import BaseModel, Field
+
+from app.api.account import client_ip, optional_user
+from app.config import get_settings
+from app.sessions import SessionError
+
+logger = logging.getLogger(__name__)
+router = APIRouter()
+Language = Literal["en", "hi", "mr"]
+ANSWER_TTL_S = 3600
+MAX_ANSWERS = 2000
+
+
+class AskRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=500)
+    language: Language = "mr"
+    session_id: str | None = Field(None, max_length=64)
+    check_id: str | None = Field(None, max_length=64)
+
+
+class AskService:
+    """Rate limits (sliding hour) and the answers kept for Listen. One process: in memory."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._hits: dict[str, deque[float]] = {}
+        self._answers: dict[str, tuple[float, str, str]] = {}  # id -> (created, text to speak, language)
+
+    def take(self, limits: list[tuple[str, int]], now: float | None = None) -> bool:
+        """Count one question against every (key, limit), or none if any is used up."""
+        now = time.time() if now is None else now
+        with self._lock:
+            windows = []
+            for key, limit in limits:
+                hits = self._hits.setdefault(key, deque())
+                while hits and now - hits[0] >= 3600:
+                    hits.popleft()
+                if len(hits) >= limit:
+                    return False
+                windows.append(hits)
+            for hits in windows:
+                hits.append(now)
+            return True
+
+    def remember(self, text: str, language: str) -> str:
+        answer_id = secrets.token_urlsafe(12)
+        with self._lock:
+            now = time.time()
+            if len(self._answers) >= MAX_ANSWERS:
+                self._answers = {k: v for k, v in self._answers.items() if now - v[0] < ANSWER_TTL_S}
+            self._answers[answer_id] = (now, text, language)
+        return answer_id
+
+    def recall(self, answer_id: str) -> tuple[str, str] | None:
+        with self._lock:
+            entry = self._answers.get(answer_id)
+        if entry is None or time.time() - entry[0] >= ANSWER_TTL_S:
+            return None
+        return entry[1], entry[2]
+
+
+def service(request: Request) -> AskService:
+    if not hasattr(request.app.state, "ask"):
+        request.app.state.ask = AskService()
+    return request.app.state.ask
+
+
+def context(request: Request, user: Any, session_id: str | None, check_id: str | None) -> tuple[Any, str]:
+    """(FamilyContext or None, rate-limit key). A saved check needs its owner's login; a live session is attached once
+    it has finished (a running one answers scheme questions only)."""
+    from agents.ask_tools import FamilyContext
+
+    if check_id:
+        record = request.app.state.store.get_check(user.id, check_id) if user is not None else None
+        if record is None:
+            raise HTTPException(404, "No such check.")
+        return FamilyContext.from_check(record), f"check:{check_id}"
+    if session_id:
+        sessions = request.app.state.sessions
+        try:
+            session = sessions.get(session_id)
+        except SessionError as e:
+            raise HTTPException(e.status, e.message) from e
+        if session.status != "done":
+            return None, f"session:{session_id}"
+        view = sessions.view(session_id)
+        if not (view.get("household") or view.get("recapture")):
+            return None, f"session:{session_id}"
+        return FamilyContext.from_view(view), f"session:{session_id}"
+    return None, ""
+
+
+def limits(request: Request, key: str) -> list[tuple[str, int]]:
+    s = get_settings()
+    out = [(f"ip:{client_ip(request)}", s.ask_per_ip_hour)]
+    if key:
+        out.append((key, s.ask_per_session_hour))
+    return out
+
+
+@router.post("/ask")
+def ask_question(request: Request, body: AskRequest, user: Any = Depends(optional_user)) -> dict[str, Any]:
+    from agents.ask import AskAnswer, ask
+    from agents.ask_tools import load_ask
+
+    ctx, key = context(request, user, body.session_id, body.check_id)
+    asks = service(request)
+    if not asks.take(limits(request, key)):
+        raise HTTPException(429, load_ask(body.language).replies["limit"])
+    try:
+        answer = ask(body.question, body.language, ctx)
+    except Exception:  # noqa: BLE001 - the app keeps working whatever happens here
+        logger.exception("ask failed")
+        answer = AskAnswer(kind="unavailable", text=load_ask(body.language).replies["unavailable"])
+    spoken = " ".join(x for x in (answer.text, answer.note) if x)
+    return {"id": asks.remember(spoken, body.language), "kind": answer.kind, "text": answer.text, "note": answer.note,
+            "sources": [s.model_dump() for s in answer.sources], "chips": [c.model_dump() for c in answer.chips]}
+
+
+@router.get("/ask/suggestions")
+def ask_suggestions(request: Request, language: Language = "mr", session_id: str | None = None,
+                    check_id: str | None = None, user: Any = Depends(optional_user)) -> list[str]:
+    from agents.ask_tools import suggestions
+
+    ctx, _ = context(request, user, session_id, check_id)
+    return suggestions(ctx, language) if ctx is not None else []
+
+
+@router.get("/ask/audio/{answer_id}")
+def ask_audio(request: Request, answer_id: str) -> FileResponse:
+    from agents.ask import answer_speech
+
+    found = service(request).recall(answer_id)
+    if found is None:
+        raise HTTPException(404, "No such answer (answers are kept for an hour).")
+    text, language = found
+    try:
+        from clients.tts import TTSError, synthesize
+    except ImportError as e:
+        raise HTTPException(503, "Speech output is not available on this server.") from e
+    try:
+        speech = synthesize(answer_speech(text, language), language)
+    except TTSError as e:
+        raise HTTPException(503, f"Speech output is not available: {e}") from e
+    return FileResponse(speech.path, media_type="audio/wav", headers={"Cache-Control": "private, max-age=3600"})

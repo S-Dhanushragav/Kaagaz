@@ -403,3 +403,38 @@ export async function claimSession(sessionId: string, guestSecret: string): Prom
 export async function getAuthConfig(): Promise<{ mode: 'demo' | 'sms' }> {
   return json(await fetch(`${API_URL}/auth/config`))
 }
+
+// ---------- Ask Kaagaz ----------
+
+// An "Add a photo" button the answer offers: closeup opens Take a photo / Upload for a document waiting for a clearer
+// photo (live checks); add_photos starts adding photos (a missing document, or a saved check).
+export interface AskChip {
+  id: string; kind: 'closeup' | 'add_photos'; document_id: string | null; document_type: string | null
+  member_id: string | null; label: string
+}
+export interface AskReply {
+  id: string // for the answer's audio
+  kind: 'answer' | 'out_of_scope' | 'id_number' | 'other_language' | 'not_sure' | 'unavailable'
+  text: string
+  note: string | null // "check it at the office"
+  sources: { label: string; url: string }[]
+  chips: AskChip[]
+}
+// The family the question is about: a finished live check, a saved check (logged in), or none (schemes only).
+export interface AskContext { sessionId?: string; checkId?: string }
+
+export async function askKaagaz(question: string, language: Language, context: AskContext): Promise<AskReply> {
+  return json(await fetch(`${API_URL}/ask`, {
+    method: 'POST', headers: headers({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify({ question, language, session_id: context.sessionId ?? null, check_id: context.checkId ?? null }),
+  }))
+}
+
+export async function askSuggestions(language: Language, context: AskContext): Promise<string[]> {
+  const q = new URLSearchParams({ language })
+  if (context.sessionId) q.set('session_id', context.sessionId)
+  if (context.checkId) q.set('check_id', context.checkId)
+  return json(await fetch(`${API_URL}/ask/suggestions?${q}`, { headers: headers() }))
+}
+
+export const askAudioUrl = (id: string): string => `${API_URL}/ask/audio/${encodeURIComponent(id)}`
