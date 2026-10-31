@@ -80,7 +80,7 @@ def test_graph_pauses_for_the_family_and_resumes_to_a_spoken_plan(tmp_path) -> N
     assert "नंबर एक" in q["speech"] and len(q["shown"]) == 3 and q["values"]
     assert runtime("s1").images["rc"] == [b"jpg1", b"jpg2"]  # crops kept for the name verifier
     assert set(paused["timings"]) == set(STAGES[:4])  # plan_fixes is paused
-    assert paused["recapture"]["mode"] in ("none", "close_ups", "sweep_again")
+    assert paused["recapture"]["mode"] in ("none", "close_ups")
 
     answer = next(i for i, o in enumerate(q["options"]) if "Sunil Ramesh Patil" in o)
     done = graph.invoke(Command(resume=answer), config)
@@ -105,8 +105,8 @@ def test_sample_video_is_not_deleted(tmp_path) -> None:
     drop("s2")
 
 
-def test_sweep_again_stops_after_reading(tmp_path) -> None:
-    """Most documents unreadable: ask for a new sweep; no household, rules, questions or plan."""
+def test_hold_stops_after_reading(tmp_path) -> None:
+    """Most documents unclear: hold for clearer photos; no household, rules, questions or plan."""
     video = tmp_path / "upload.mp4"
     video.write_bytes(b"video")
     deps = _deps([])
@@ -115,7 +115,7 @@ def test_sweep_again_stops_after_reading(tmp_path) -> None:
     deps.new_reader = lambda: FakeReader(blurry)
     out = build_graph(deps).invoke({"session_id": "s3", "language": "mr", "video_path": str(video), "delete_video": True,
                                     "reference_date": "2026-10-27"}, {"configurable": {"thread_id": "s3"}})
-    assert out["recapture"]["mode"] == "sweep_again" and "__interrupt__" not in out
+    assert out["recapture"]["mode"] == "hold" and "__interrupt__" not in out
     assert "household" not in out and "plan" not in out and set(out["timings"]) == {"find_documents", "read_documents"}
     drop("s3")
 
@@ -140,6 +140,6 @@ def test_video_without_documents_stops_after_reading(tmp_path) -> None:
                                           "id1": DocumentExtraction(document_id="id1", unreadable=True)})
     out = build_graph(deps).invoke({"session_id": "s4", "language": "en", "video_path": str(video), "delete_video": True,
                                     "reference_date": "2026-10-27"}, {"configurable": {"thread_id": "s4"}})
-    assert out["recapture"] == {"mode": "no_documents", "documents": [], "reasons": {}}
+    assert out["recapture"] == {"mode": "no_documents", "documents": [], "reasons": {}, "unidentified": [], "read": 0}
     assert "household" not in out and "plan" not in out and "results" not in out
     drop("s4")

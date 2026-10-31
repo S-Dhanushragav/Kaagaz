@@ -27,6 +27,7 @@ class KaagazState(TypedDict, total=False):
     session_id: str
     language: Language
     video_path: str | None
+    photo_paths: list[str] | None  # photo mode: the uploaded photos (deleted right after finding)
     delete_video: bool  # uploads are deleted right after finding; the bundled sample is not
     reference_date: str  # ISO date the rules are checked on
     found: list[dict[str, Any]]  # per document: id, frames, fully visible

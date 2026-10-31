@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import type { Strings } from '../i18n'
 
 const MAX_RECORD_S = 45
-// 1080p at 8 Mbps: ~20 MB for a 20 s sweep, ~45 MB at most (server limit 60 MB). At 720p the ration card often
-// could not be read (HH001 test: 3 false 'add to ration card' steps; at 1080p none).
-const VIDEO_BITS_PER_SECOND = 8_000_000
+// The camera's highest resolution (the server scales uploads to 1920 px on the long side) at 10 Mbps: ~25 MB for a
+// 20 s sweep, ~56 MB at most (server limit 60 MB). At 720p the ration card often could not be read (HH001 test: 3 false
+// 'add to ration card' steps; at 1080p none), and small Marathi text on a certificate is a few pixels tall.
+const VIDEO_BITS_PER_SECOND = 10_000_000
+const CAMERA = { facingMode: 'environment', width: { ideal: 3840 }, height: { ideal: 2160 } }
 
 function pickVideoType(): string | undefined {
   return ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4']
@@ -19,14 +21,16 @@ export default function Recorder({ t, onDone, onCancel }: { t: Strings; onDone: 
   const [left, setLeft] = useState(MAX_RECORD_S)
   const [failed, setFailed] = useState(false)
   const [ready, setReady] = useState(false) // camera stream live: before that, Start would do nothing
+  const [size, setSize] = useState<{ w: number; h: number } | null>(null) // what the camera really delivers
+  const gallery = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     let cancelled = false
-    navigator.mediaDevices?.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false,
-    }).then((stream) => {
+    navigator.mediaDevices?.getUserMedia({ video: CAMERA, audio: false }).then((stream) => {
       if (cancelled) { stream.getTracks().forEach((tr) => tr.stop()); return }
       streamRef.current = stream
+      const { width, height } = stream.getVideoTracks()[0]?.getSettings() ?? {}
+      if (width && height) setSize({ w: width, h: height })
       if (videoRef.current) videoRef.current.srcObject = stream
       setReady(true)
     }).catch(() => setFailed(true))
@@ -63,11 +67,25 @@ export default function Recorder({ t, onDone, onCancel }: { t: Strings; onDone: 
     setRecording(true)
   }
 
+  // A video already on the phone (or computer) instead of recording now.
+  const chooser = (
+    <input ref={gallery} type="file" accept="video/*" hidden
+      onChange={(e) => {
+        const f = e.target.files?.[0]
+        e.target.value = ''
+        if (f) { streamRef.current?.getTracks().forEach((tr) => tr.stop()); onDone(f) }
+      }} />
+  )
+  const chooseButton = <button type="button" className="button" onClick={() => gallery.current?.click()}>{t.chooseVideo}</button>
   if (failed) {
     return (
       <div className="recorder">
         <p className="alert">{t.cameraError}</p>
-        <button type="button" className="button" onClick={onCancel}>{t.startOver}</button>
+        {chooser}
+        <div className="button-row">
+          {chooseButton}
+          <button type="button" className="button" onClick={onCancel}>{t.startOver}</button>
+        </div>
       </div>
     )
   }
@@ -83,11 +101,14 @@ export default function Recorder({ t, onDone, onCancel }: { t: Strings; onDone: 
         <video ref={videoRef} className="preview" autoPlay playsInline muted />
         {recording && <span className="rec-badge" aria-live="polite">● {left} {t.secondsLeft}</span>}
       </div>
+      {size && <p className="note camera-size">{t.cameraResolution.replace('{w}', String(size.w)).replace('{h}', String(size.h))}</p>}
+      {chooser}
       {recording ? (
         <button type="button" className="button primary danger" onClick={() => recorderRef.current?.stop()}>■ {t.stopRecording}</button>
       ) : (
         <div className="button-row">
           <button type="button" className="button primary" disabled={!ready} onClick={start}>● {t.startRecording}</button>
+          {chooseButton}
           <button type="button" className="button" onClick={onCancel}>{t.startOver}</button>
         </div>
       )}

@@ -54,6 +54,40 @@ Changed: stored checks keep no ID numbers at all (not even the last 4 digits); t
 library (no JWT dependency); login codes and rate limits live in memory (one container), so a redeploy clears
 pending codes. Added dependency: psycopg[binary] 3. PHONE_HASH_KEY and TOKEN_SIGNING_KEY are in the Modal secret.
 
+## Phase 9b: Layout pass
+- [x] Two-column layout: schemes matrix and office visits inline in the result (replaces the household panel) (I, D)
+- [x] Centred reading column, composer lined up with it and clear of the home bar and keyboard (D)
+- [x] How Kaagaz works in the welcome; light neutral palette in CSS variables (D, CV)
+- [x] Cell detail names whose document could not be read (I)
+Status: built and tested (12 frontend tests); not deployed. Commits: dcba1fb, e4821b5.
+
+## Phase 9c: Real-input rescue (before Phase 10)
+Why: a manual phone test (documents on a laptop screen, filmed with a phone) failed 9 of 9 videos with "Many
+documents were not clear" or "no documents found"; showing documents one at a time stuck on the first one; upload
+took 10-60 s, about 2 minutes in total. SAM found the documents, but every crop thumbnail was rotated 90°.
+Not deployed or pushed until reviewed.
+- [x] Part A, diagnose: per-stage dump for each real video (scripts/diagnose_video.py), compared with HH009
+- [x] Part A, fix: upright crops (frame-aligned corners + text orientation, tests at 0°, ±30°, ±45°, ±90°, 180°,
+      portrait, landscape and table), tracks split where the document in the box is swapped (one-at-a-time), cut-off
+      documents read instead of dropped. Rotation metadata and variable frame rate: already handled by the upload
+      normalization (frames checked upright, 24.93 s of 24.96 s kept); no change needed.
+- [x] Part A: recorder asks for the camera's highest resolution at 10 Mbps and shows what the camera delivers
+- [x] Part A: gates. Edge-contact gate recalibrated on data (4 of 4 cut-off documents in the real video read every
+      key field right); frame agreement unchanged. Finder eval misreads before/after: 0/0/2/0 and 0/0/2/0.
+- [x] Part B: triage after reading (duplicates merged, background dropped, unidentified listed), "Read clearly" /
+      "Need a clearer photo" with Take photo and Upload, 'hold' when more than half are unclear (continues once
+      clearer photos bring it to half), "Add photos" / "Record again" on the no-documents stop
+- [x] Part C: photo mode (Add photos, camera or gallery, up to 12; Record also takes a gallery video), browser resize to
+      2000 px JPEG without EXIF, SAM 3.1 per photo (inline image), two reads per document that must agree, "Uploading
+      3 of 5" progress. Photo eval EV001-EV010: 73/74 documents right (1 wrong value), two per photo 72/74.
+- [x] New en/hi/mr strings (Marathi and Hindi machine-drafted, listed for review)
+- [x] Tests: orientation, appearance split, triage, photo finder, photo sessions and API; Playwright on the real
+      videos, real-video frames as photos, HH009 photos and the sample in mr/hi/en at 360 and 1440 px (30 runs)
+Status: built and tested; awaiting review; not deployed or pushed. Commits: -
+Open: the household builder flags a missing ration-card colour as "could not read" while the card is not on the
+clearer-photo list (decision field, not a key field), so the sample shows the card under "Read clearly" and in
+Problems found; the 720p sweep (video 728) still holds with many unclear documents and one agreed wrong digit.
+
 ## Phase 10: Live voice and Ask Kaagaz (Sun 2 Nov afternoon to Mon 3 Nov morning)
 - [ ] Live transcript in the text box while speaking (Muse Voice Transcribe realtime),
       editable before sending; backend relays audio so the key never reaches the browser

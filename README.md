@@ -31,7 +31,8 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 
 ## Status
 
-Phases 0-8 are built, tested and deployed; Phase 9 is built and tested, not deployed yet (505 backend tests and 8 frontend tests, no network).
+Phases 0-8 are built, tested and deployed; Phases 9, 9b and 9c are built and tested, not deployed yet (553 backend tests and 14 frontend tests, no network).
+Phase 9c (real-input rescue) was added after a manual phone test failed on all 9 real videos; it is awaiting review before Phase 10.
 
 | Phase | What | Status |
 |---|---|---|
@@ -46,6 +47,8 @@ Phases 0-8 are built, tested and deployed; Phase 9 is built and tested, not depl
 | 7+ | Close-up loop (a clearer photo of one document re-runs household → rules → plan), "no documents" / "sweep again" stops, issues waiting for a clearer photo, scheme reasons in en/hi/mr, upload progress | Done, deployed |
 | 8 | UI redesign: chat with scheme sidebar and household matrix, live document thumbnails, result cards with Listen/Stop and Listen to all, scheme catalog (`GET /schemes`), feedback (`POST /feedback`), Aadhaar numbers blurred on thumbnails | Done, deployed |
 | 9 | Phone login (demo code, hashed numbers, signed tokens), case file on Neon Postgres (checks, step ticks, re-check comparison), welcome back, delete my data, 365-day retention | Built, awaiting review; not deployed |
+| 9b | Layout: two columns with the schemes matrix and office visits inline in the result, centred reading column, How Kaagaz works in the welcome, light neutral palette, composer clear of the home bar and keyboard | Built; not deployed |
+| 9c | Real-input rescue: upright crops (text orientation), tracks split when documents are shown one at a time, cut-off documents read, duplicates merged; partial results ("Read clearly" / "Need a clearer photo", plan held when most are unclear) instead of a hard stop; photo mode (Add photos, up to 12, EXIF stripped, two agreeing reads) | Built, awaiting review; not deployed |
 
 Remaining phases: see [docs/ROADMAP.md](docs/ROADMAP.md).
 
@@ -138,8 +141,9 @@ real upload; target: first spoken sentence within 60 s)
 - Reading quality on phone-like video: at the current setting HH001 plans exactly its planted error; the HH009 upload
   caught the expired income certificate but not the name mismatch, because one Aadhaar card was unclear. That card is
   put on the close-up list, everything that depends on it (who is on the ration card, a "missing" Aadhaar card) waits
-  for the clearer photo, and the close-up re-runs the household, rules and plan. If most documents are unreadable the
-  app asks for a new sweep; if no documents are found it says so; in both cases nothing else is shown.
+  for the clearer photo, and the close-up re-runs the household, rules and plan. If more than half of the documents
+  are unclear the plan is held until clearer photos arrive (each unclear document is named, with Take photo and
+  Upload); if no documents are found it says so and offers Add photos or Record again.
 - **Recording size matters more than bitrate.** HH001 as an upload, scored against its ground truth:
 
   | Upload | Frames the reader saw | Names read right | Ration card read | Plan |
@@ -163,23 +167,33 @@ compare the rules with themselves.
 
 ```
 phone video ──► find_documents ──► read_documents ──► build_household ──► check_rules ──► plan_fixes ──► speak
-               (SAM 3.1, OpenCV)   (Muse Spark)       (deterministic +     (deterministic) (the agent;   (templates,
-                                                       name re-read)                        asks family)  MMS-TTS)
+ or photos     (SAM 3.1, OpenCV)   (Muse Spark,       (deterministic +     (deterministic) (the agent;   (templates,
+                                    then triage)       name re-read)                        asks family)  MMS-TTS)
                                         │                                       ▲
-                                        └── "sweep again" / "no documents": stop │ close-up photo of one document
+                                        └── "hold" / "no documents": stop        │ clearer photo of one document
                                                                                 └── re-runs from build_household
 ```
 
 1. **Find** ([graph/nodes/find_documents.py](backend/graph/nodes/find_documents.py)). The video is resampled to 5 fps at
    720p and sent to **SAM 3.1** (Files API + Responses API) with the prompt "document". Tracks are cleaned (split at time
-   gaps, tiny/short/duplicate tracks dropped, tracks never fully in view dropped). For each document the sharpest 2–3
+   gaps and where the document inside the box is swapped for another, which happens when documents are shown one at a
+   time in the same spot; tiny/short/duplicate tracks dropped). For each document the sharpest 2–3
    frames, at least 0.5 s apart (0.2 s fallback), are chosen; only those masks are decoded, then each crop is cut from the
-   full-resolution frame and straightened (mask → 4 corners → perspective warp). Frames live in `tmp/` and are deleted
-   after the run.
+   full-resolution frame and straightened (mask → 4 corners → perspective warp, turned by at most 45°), and turned
+   upright by its text ([vision/orient.py](backend/vision/orient.py): text-line direction, then the Devanagari headline
+   for which end is up; all crops of a document judged together). Frames live in `tmp/` and are deleted after the run.
+   **Photo mode** ([graph/nodes/find_photos.py](backend/graph/nodes/find_photos.py)): up to 12 photos, resized to
+   2000 px and stripped of EXIF in the browser; SAM 3.1 on each photo (several documents per photo), the same upright
+   crops; a photo where nothing is found is read whole.
 2. **Read** ([graph/nodes/read_documents.py](backend/graph/nodes/read_documents.py)). One structured-output call per frame
    classifies and extracts with a JSON schema generated from Pydantic models. Output is normalized, validated, and retried
    once with the errors; if it still fails, the document is marked unreadable. For video, decision fields need 2 frames
-   that agree. Documents start reading as soon as their crops are ready (8 calls in parallel).
+   that agree; a photo gives one view, so it is read twice (the crop and a contrast-evened copy) and the two reads
+   must agree the same way. Documents start reading as soon as their crops are ready (8 calls in parallel).
+   **Triage** ([graph/nodes/triage.py](backend/graph/nodes/triage.py)) then sorts the reads: the same document read
+   twice is merged (shared certificate/card number, Aadhaar last 4, or same type and name), an item read as no known
+   type is dropped if SAM was unsure (score < 0.6) or else listed as "looked like a document", and a document that
+   touched the frame edge in every frame goes on the clearer-photo list if its read is missing anything.
 3. **Build the household** ([graph/nodes/build_household.py](backend/graph/nodes/build_household.py)). The ration card's
    member list defines the household. Other documents are linked by name across scripts (Devanagari transliteration +
    rapidfuzz): score ≥ 90 links, 70–90 asks the text model and logs its reason, < 70 means the person is not on the ration
@@ -194,8 +208,10 @@ phone video ──► find_documents ──► read_documents ──► build_ho
    `not_eligible`, `blocked_by_issues` (fix these first), `check_at_office`, or `eligible_on_documents`, plus the rules
    used (value, status, source), the reasons, and what the documents can't show (`needs_other_proof`). **No LLM call
    decides eligibility.** `confirm` issues are listed with the result (`to_confirm`, and in `warnings`), never blocking.
-5. **Recapture plan.** If more than half the documents need a retake: "sweep again"; otherwise a list of documents to
-   photograph close up.
+5. **Recapture plan.** Documents read clearly go ahead. Some unclear: they are listed (Take photo / Upload) and the
+   plan goes ahead, with the issues that depend on them waiting. More than half unclear: "hold", the matrix and plan
+   wait until enough clearer photos arrive ("We read 2 of 6 documents. Add a clearer photo of these 4 to continue.").
+   Nothing read: stop, with Add photos and Record again.
 6. **Plan the fixes** ([agents/fix_planner.py](backend/agents/fix_planner.py)). The one agent: Muse Spark in a tool loop
    (`lookup_fix_procedure`, `get_office_info`, `ask_family`, `draft_declaration`, `submit_plan`) over the fix knowledge
    base in [data/fixes/](data/fixes/) (8 procedures; every fact has its own status and source). Code verifies every
@@ -210,13 +226,16 @@ phone video ──► find_documents ──► read_documents ──► build_ho
    need that review.**
 8. **Run it as a graph** ([graph/build.py](backend/graph/build.py)). The steps above are a LangGraph graph with one shared
    state. When the agent asks the family a question, the graph pauses (an interrupt) and resumes with the answer; the
-   answer is remembered if the plan is rebuilt later. A "sweep again" or "no documents found" result stops after reading.
-   A close-up photo of a document on the close-up list replaces its reading and re-runs household → rules → plan →
-   speak; issues involving a document still waiting for a close-up are listed, not planned.
-9. **The app** ([frontend/](frontend/)). Language choice, sample family or camera recording (1080p, up to 45 s, upload
-   progress), stage progress, questions as large numbered buttons (plus a mic: answers are matched only by number words),
-   the plan grouped by office visit with a play button per sentence, scheme results per member with reasons and
-   sources, and the close-up list with "Take a photo". Served from Netlify; the API runs on Modal.
+   answer is remembered if the plan is rebuilt later. A "hold" or "no documents found" result stops after reading.
+   A clearer photo of a listed document (or of an item that looked like a document) replaces its reading and re-runs
+   household → rules → plan → speak (a held run goes ahead once at most half are unclear); issues involving a document
+   still waiting for a photo are listed, not planned.
+9. **The app** ([frontend/](frontend/)). Language choice, sample family, camera recording (the camera's highest
+   resolution at 10 Mbps, up to 45 s; or a video chosen from the gallery) or Add photos (camera or gallery, up to 12),
+   upload progress ("Uploading 3 of 5" for photos), stage progress, questions as large numbered buttons (plus a mic:
+   answers are matched only by number words), "Read clearly" and "Need a clearer photo" lists, the plan grouped by office
+   visit with a play button per sentence, and scheme results per member with reasons and sources. Served from Netlify;
+   the API runs on Modal.
 
 ### Meta models used
 
@@ -322,6 +341,8 @@ From `backend/` unless noted. Costs are for a cold cache; cached calls are free.
 | Regenerate EV001–EV030 (repo root) | `python -m synthetic.generate_eval` | free |
 | Reader eval (repo root) | `python eval/run_reader_eval.py --model muse-spark-1.3` | ~$0.23 |
 | Finder + reader eval (repo root) | `python eval/run_finder_eval.py --prompts document` (`--debug` keeps contact sheets in `tmp/`) | ~$0.40 |
+| Photo mode eval (repo root) | `python eval/run_photo_eval.py --households 10` (`--pairs`: two documents per photo) | ~$0.50 |
+| Diagnose one real video, every stage (repo root) | `python scripts/diagnose_video.py <video> <out dir>` | ~$0.05 |
 | Household eval, ground truth (repo root) | `python eval/run_household_eval.py --mode truth` | free |
 | Household eval, end to end (repo root) | `python eval/run_household_eval.py --mode e2e` (`--dry-run` first) | ~$0.90 |
 | Fix planner eval, 10 households (repo root) | `python eval/run_fix_planner_eval.py` (`--dry-run` first) | ~$0.25 |
@@ -355,8 +376,14 @@ details to `eval/results/raw/` (gitignored).
 - Display-only fields (addresses, office names, certificate numbers, relation) are read from one frame and can be wrong.
 - Mask decoding with Meta's pure-Python parser is the slowest local step (~10 s per video, run in parallel processes).
 - A document seen only briefly in a video may get two frames very close together; its agreement is marked `weak`.
-- Duplicates of the same document across two tracks are kept in the finder output; merging happens in the household
-  builder (same ID last 4 + same date of birth).
+- Duplicates of the same document across two tracks are merged after reading only when they share an identifying
+  detail that was read (a number, Aadhaar last 4, or type + name); two blurry views with no readable name both stay
+  on the clearer-photo list.
+- Which way is up is found from the Devanagari headline. An upside-down ration card (its table weakens that signal) is
+  left upside down rather than risk turning upright blurry crops over; a document lying upside down is rare.
+- At 720p from a distance (documents about 350 px tall in the frame) both frames can agree on a wrong digit: on a real
+  test video one Aadhaar card's last 4 was read as 3398 instead of 3388 by both frames. Photo mode or a closer, slower
+  recording avoids this.
 - Synthetic documents follow simplified layouts; real documents will need schema adjustments.
 - Hindi voice templates (their wording of offices, documents and cautions, and the number words used for speech) are machine-drafted and
   have not been reviewed by a native speaker. The Marathi templates have been reviewed by one.

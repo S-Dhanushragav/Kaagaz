@@ -4,6 +4,7 @@ ticked, and "Delete my data" removes everything, through the HTTP API."""
 
 import json
 import time
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -191,3 +192,28 @@ def test_could_not_read_names_whose_document_it_is() -> None:
         (None, "Aditya Yogesh Bhosale", ["identity_card"]),  # the name read on it
         (None, None, ["caste_certificate"]),  # nobody known: the document only
     ]
+
+
+def test_photo_upload_api_limits_and_starts_a_photo_session(setup, monkeypatch) -> None:
+    import cv2
+    import numpy as np
+
+    from app.main import app
+
+    manager, store, auth = setup
+    from tests.test_graph import _deps
+
+    deps = _deps([])
+    deps.find_photos = lambda photos, on_document: deps.find(Path("unused.mp4"), on_document)
+    manager.graph = build_graph(deps)
+    for name, value in (("store", store), ("auth", auth), ("sessions", manager)):
+        monkeypatch.setattr(app.state, name, value, raising=False)
+    client = TestClient(app)
+    jpeg = cv2.imencode(".jpg", np.full((300, 400, 3), 180, np.uint8))[1].tobytes()
+    too_many = [("photos", (f"p{i}.jpg", jpeg, "image/jpeg")) for i in range(13)]
+    assert client.post("/sessions/photos", files=too_many, data={"language": "en"}).status_code == 422
+    started = client.post("/sessions/photos", files=too_many[:3], data={"language": "en"})
+    assert started.status_code == 200 and started.json()["guest_secret"]
+    view = _finish(manager, started.json()["id"])
+    assert view["kind"] == "photos" and view["status"] == "done" and view["plan"]
+    assert not list((manager.folder(view["id"])).glob("*.jpg"))  # photos deleted after finding

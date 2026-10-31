@@ -4,15 +4,21 @@ import type { Strings } from '../i18n'
 import { docLabel } from '../labels'
 import { DocIcon } from './Icons'
 
-// Each document's crop as soon as the finder hands it over; its label fills in once it has been read.
+// Each document's crop as soon as the finder hands it over; its label fills in once it has been read. Once reading
+// is done and some documents need a clearer photo, this lists only the documents read clearly (the others are listed,
+// with their photo buttons, under "Need a clearer photo").
 export default function Thumbnails({ t, view, language }: { t: Strings; view: SessionView; language: Language }) {
-  const docs = view.documents ?? []
+  const all = view.documents ?? []
+  const r = view.recapture
+  const sorted = r && r.mode !== 'no_documents' && (r.documents.length > 0 || (r.unidentified ?? []).length > 0)
+  const docs = sorted ? all.filter((d) => !r.documents.includes(d.id) && !(r.unidentified ?? []).includes(d.id)) : all
   if (!docs.length) return null
-  const ids = docs.map((d) => d.id)
+  const ids = all.map((d) => d.id)
   const finding = !view.stages.find((s) => s.stage === 'find_documents')?.done
+  const title = finding ? t.readingSoFar : sorted ? t.readClearly : t.documentsTitle
   return (
     <div className="thumbs-block">
-      <p className="thumbs-title">{finding ? t.readingSoFar : t.documentsTitle} <span className="count">{docs.length}</span></p>
+      <p className="thumbs-title">{title} <span className="count">{docs.length}</span></p>
       <ul className="thumbs">
         {docs.map((d) => {
           // Until a document is read the server sends only a coarse preview; a clear close-up replaces the crop.
@@ -30,7 +36,7 @@ export default function Thumbnails({ t, view, language }: { t: Strings; view: Se
 }
 
 // The crop, or a document icon when the server will not show it (an identity number it could not locate).
-function Crop({ src }: { src: string }) {
+export function Crop({ src }: { src: string }) {
   const [failed, setFailed] = useState(false)
   if (failed) return <span className="thumb-icon"><DocIcon /></span>
   return <img src={src} alt="" loading="lazy" onError={() => setFailed(true)} />

@@ -156,3 +156,29 @@ def _found_three(find):
         return result.model_copy(update={"documents": [*result.documents, extra]})
 
     return wrapped
+
+
+def test_hold_waits_for_photos_then_continues_to_the_plan(monkeypatch, tmp_path) -> None:
+    """2 of 3 documents unclear: no plan yet; a clear photo of one brings it to half, and the plan is made."""
+    sample = tmp_path / "sample.mp4"
+    sample.write_bytes(b"video")
+    s = get_settings()
+    monkeypatch.setattr(s, "sample_video", str(sample))
+    monkeypatch.setattr(s, "sessions_dir", tmp_path / "sessions")
+    deps = _deps([])
+    rekha = _id("id2", "रेखा सुनील पाटील", "Rekha Sunil Patil", "01/01/1990", "F", "5555")
+    blurry = {"id1": SUNEEL_ID.model_copy(update={"needs_retake": True, "retake_reasons": ["dob missing"]}),
+              "id2": rekha.model_copy(update={"needs_retake": True, "retake_reasons": ["dob missing"]})}
+    deps.new_reader = lambda: FakeReader({"rc": _card(SUNIL), **blurry})
+    deps.find = _found_three(deps.find)
+    deps.llm = lambda messages, **kw: _turn(_call("submit_plan", steps=[_step("income_certificate_new", ["i1"], member_id=None)]))
+    m = SessionManager(graph=build_graph(deps))
+    m.reader = _read(SUNIL_ID)
+    session = m.start_sample("en")
+    held = _wait(m, session.id)
+    assert held["recapture"]["mode"] == "hold" and held["recapture"]["documents"] == ["id1", "id2"]
+    assert held["status"] == "done" and held["plan"] is None and held["household"] is None
+    assert m.closeup(session.id, "id1", PHOTO) == {"clear": True, "missing": []}
+    after = _wait(m, session.id)
+    assert after["recapture"]["mode"] == "close_ups" and after["recapture"]["documents"] == ["id2"]
+    assert after["plan"] is not None and after["household"] is not None

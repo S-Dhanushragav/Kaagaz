@@ -255,6 +255,26 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
 .closeups { list-style: none; margin: 0; padding: 0; }
 .closeups li { border-top: 1px solid var(--line); padding: 10px 0; }
 .closeups li:first-child { border-top: none; }
+.closeups li { display: flex; gap: 12px; align-items: flex-start; }
+.closeup-thumb {
+  flex: 0 0 76px; height: 76px; display: flex; align-items: center; justify-content: center; padding: 4px;
+  border-radius: 8px; background: var(--fill); border: 1px solid var(--line);
+}
+.closeup-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 2px; }
+.closeup-body { flex: 1; min-width: 0; }
+.closeup-body .button-row { margin-top: 6px; }
+.recapture .thumbs-title { margin-top: 10px; }
+
+/* photo mode */
+.photo-picker h3 { margin-top: 0; }
+.photo-grid { list-style: none; margin: 0 0 6px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+.photo-grid li { position: relative; aspect-ratio: 3 / 4; border-radius: 8px; overflow: hidden; background: var(--fill); border: 1px solid var(--line); }
+.photo-grid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-remove {
+  position: absolute; top: 4px; right: 4px; width: 32px; height: 32px; border-radius: 16px; border: none;
+  background: rgba(26, 26, 26, 0.7); color: #fff; font-size: 1.1rem; line-height: 1; cursor: pointer;
+}
+.camera-size { margin: 6px 0 0; font-size: 0.82rem; }
 
 /* result cards */
 .card-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }

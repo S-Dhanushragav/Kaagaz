@@ -24,6 +24,14 @@ class SessionRuntime:
             if document_id not in self.found:
                 self.found.append(document_id)
 
+    def remove_documents(self, document_ids: list[str]) -> None:
+        """Forget documents dropped after reading (background items, duplicates): no thumbnail, no crops."""
+        with self.lock:
+            for d in document_ids:
+                self.images.pop(d, None)
+                self.thumbs.pop(d, None)
+            self.found = [d for d in self.found if d not in document_ids]
+
     def thumb_lock(self, document_id: str) -> threading.Lock:
         with self.lock:
             return self.thumb_locks.setdefault(document_id, threading.Lock())

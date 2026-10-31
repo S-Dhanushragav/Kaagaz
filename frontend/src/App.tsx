@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import {
-  ApiError, claimSession, getMe, getSchemes, getSession, hasToken, myCheck, myChecks, setMyLanguage, setToken, startSample, startUpload,
+  ApiError, claimSession, getMe, getSchemes, getSession, hasToken, myCheck, myChecks, setMyLanguage, setToken, startPhotos, startSample,
+  startUpload,
   tickStep, type CatalogScheme, type Started, type CheckFull, type CheckSummary, type Language, type SessionView, type UserView,
 } from './api'
 import { stop } from './audio'
+import { preparePhoto } from './photos'
 import { STRINGS } from './i18n'
 import AccountMenu from './ui/AccountMenu'
 import Chat, { type Answered, type Check } from './ui/Chat'
@@ -135,12 +137,12 @@ export default function App() {
     if (el && center.kind === 'live') el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
   }, [signature, center.kind])
 
-  const begin = async (sample: boolean, start: () => Promise<Started>) => {
+  const begin = async (sample: boolean, start: () => Promise<Started>, photos = false) => {
     setStartError(null)
-    setCheck({ kind: 'uploading', sample, percent: null })
+    setCheck({ kind: 'uploading', sample, percent: null, photos: photos ? { sent: 0, total: 0 } : null })
     try {
       const started = await start()
-      setCheck({ kind: 'session', sample, id: started.id, guestSecret: started.guestSecret })
+      setCheck({ kind: 'session', sample, id: started.id, guestSecret: started.guestSecret, photos })
     } catch (e) {
       setStartError(e instanceof Error ? e.message : String(e))
       setCheck({ kind: 'idle' })
@@ -149,6 +151,14 @@ export default function App() {
   const onSample = () => void begin(true, () => startSample(language, recheckOf))
   const onRecorded = (blob: Blob) => void begin(false, () => startUpload(blob, language,
     (percent) => setCheck((c) => (c.kind === 'uploading' ? { ...c, percent } : c)), recheckOf))
+  // Photo mode: each photo is resized and re-encoded first (no EXIF leaves the phone), then all are sent at once.
+  const onPhotosChosen = (files: File[]) => void begin(false, async () => {
+    const photos = await Promise.all(files.map(preparePhoto))
+    const progress = (sent: number, total: number) =>
+      setCheck((c) => (c.kind === 'uploading' ? { ...c, photos: { sent, total } } : c))
+    progress(0, photos.length)
+    return startPhotos(photos, language, progress, recheckOf)
+  }, true)
   const newCheck = () => {
     stop()
     setCheck({ kind: 'idle' })
@@ -267,9 +277,12 @@ export default function App() {
                 onTick={(s, d) => void onTick(s, d)} onCheckAgain={checkAgain} narrow={narrow} onOpenScheme={setOpenScheme} />
             ) : (
               <Chat t={t} language={language} schemes={schemes} check={check} view={view} error={startError ?? error}
-                answered={answered} voice={voice} onRecord={() => setCheck({ kind: 'recording' })} onSample={onSample}
-                onRecorded={onRecorded} onCancelRecord={() => setCheck({ kind: 'idle' })} onAnswered={onAnswered}
+                answered={answered} voice={voice} onRecord={() => setCheck({ kind: 'recording' })}
+                onPhotos={() => setCheck({ kind: 'photos' })} onSample={onSample} onRecorded={onRecorded}
+                onPhotosChosen={onPhotosChosen} onCancelRecord={() => setCheck({ kind: 'idle' })} onAnswered={onAnswered}
                 onReplanned={refresh} onNewCheck={newCheck} recheck={recheckOf !== null}
+                onRecordAgain={() => { newCheck(); setCheck({ kind: 'recording' }) }}
+                onPhotosAgain={() => { newCheck(); setCheck({ kind: 'photos' }) }}
                 latest={user && latest && latest.id === checks[0]?.id ? latest : null /* never an older check while the newest loads */}
                 onOpenCheck={(id, step) => void openCheck(id, step)} loggedIn={user !== null}
                 onSaveCheck={() => { if (check.kind === 'session') setLogin({ claim: { id: check.id, secret: check.guestSecret } }) }}

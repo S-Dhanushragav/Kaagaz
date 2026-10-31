@@ -29,8 +29,9 @@ sys.path[:0] = [str(ROOT / "backend"), str(ROOT)]
 
 from clients.segmenter import Sam31ApiSegmenter  # noqa: E402
 from eval.run_reader_eval import expected_fields  # noqa: E402
-from graph.nodes.find_documents import FindResult, find_documents, plan_recapture  # noqa: E402
+from graph.nodes.find_documents import FindResult, find_documents  # noqa: E402
 from graph.nodes.read_documents import StreamingReader  # noqa: E402
+from graph.nodes.triage import seen_from, triage  # noqa: E402
 from synthetic.scoring import FieldScore, score_fields  # noqa: E402
 
 VIDEOS = ROOT / "synthetic" / "videos"
@@ -149,12 +150,14 @@ def evaluate_video(video_id: str, prompts: list[str], read: bool, debug: bool) -
         tokens_in = sum(r.usage.prompt_tokens for r in reads)
         tokens_out = sum(r.usage.completion_tokens for r in reads)
         cost += tokens_in * LLM_INPUT_PER_TOKEN + tokens_out * LLM_OUTPUT_PER_TOKEN
-        plan = plan_recapture(result, {k: r.extraction for k, r in reads_by_id.items()})
+        sorted_reads = triage(seen_from(result), reads_by_id)  # as the app does: duplicates merged, background dropped
+        plan = sorted_reads.plan
         row["reading"] = {
             "classified": classified,
             "weak_agreements": sum(r.extraction.agreement_strength == "weak" for r in reads),
             "relaxed_selection": sum(f.relaxed_selection for f in result.documents),
             "recapture": plan.model_dump(),
+            "dropped_after_reading": sorted_reads.dropped,
             "needs_retake": sum(r.extraction.needs_retake for r in reads),
             "needs_retake_docs": [d["doc"] for d in details if d["needs_retake"]],
             "model_calls": sum(len(r.frame_reads) or 1 for r in reads),

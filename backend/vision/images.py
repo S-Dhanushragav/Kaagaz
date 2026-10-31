@@ -40,3 +40,13 @@ def encode_for_llm(
     if not ok:
         raise ValueError("JPEG encoding failed")
     return buf.tobytes()
+
+
+def second_read_variant(image: np.ndarray) -> np.ndarray:
+    """The same document with local contrast evened out (CLAHE on lightness), for a second independent read of a
+    single photo: different pixels, so it is a separate model call (and cache entry), yet the same text."""
+    if image.ndim == 2:
+        image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+    lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+    lab[:, :, 0] = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8)).apply(lab[:, :, 0])
+    return cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)

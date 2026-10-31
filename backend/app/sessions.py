@@ -3,6 +3,8 @@ the app runs as one process/container).
 
 - An uploaded video is normalized (constant 30 fps), checked against the size and length caps, and deleted
   by the graph as soon as the finder is done. The bundled sample is never deleted.
+- Photo mode: up to MAX_PHOTOS photos (resized and stripped of EXIF in the browser), each checked to be an image,
+  deleted by the graph as soon as the finder is done.
 - The graph pauses at a family question; `answer` resumes it with an option index (spoken answers are matched
   to an option first; only a match resumes).
 - Each document is listed as soon as the finder hands it over (`documents`, with its type and name once read);
@@ -36,6 +38,8 @@ from graph.state import STAGES
 logger = logging.getLogger(__name__)
 
 Status = Literal["running", "waiting", "done", "error"]
+Kind = Literal["video", "photos", "sample"]
+MAX_PHOTOS = 12
 SHOWN_AS_IS = ("ration_card", "income_certificate", "caste_certificate")  # thumbnails without masking
 
 
@@ -75,6 +79,7 @@ class Session:
     id: str
     language: str
     sample: bool
+    kind: Kind = "video"
     created: float = field(default_factory=time.time)
     status: Status = "running"
     error: str | None = None
@@ -145,6 +150,31 @@ class SessionManager:
             raise SessionError(413, f"The video is longer than {settings.max_video_s:.0f} seconds.")
         return self._start(session_id, normalized, language, sample=False, user_id=user_id, recheck_of=recheck_of)
 
+    def start_photos(self, photos: list[Path], language: str, user_id: str | None = None,
+                     recheck_of: str | None = None) -> Session:
+        """`photos` are the saved uploads inside one new session folder (already size-checked)."""
+        import cv2
+        import numpy as np
+
+        folder = photos[0].parent if photos else None
+        if not photos or len(photos) > MAX_PHOTOS:
+            if folder:
+                shutil.rmtree(folder, ignore_errors=True)
+            raise SessionError(422, f"Send between 1 and {MAX_PHOTOS} photos.")
+        for photo in photos:
+            if cv2.imdecode(np.fromfile(str(photo), dtype=np.uint8), cv2.IMREAD_REDUCED_GRAYSCALE_8) is None:
+                shutil.rmtree(folder, ignore_errors=True)
+                raise SessionError(422, "One of the files is not a photo.")
+        session = Session(id=folder.name, language=language, sample=False, kind="photos", user_id=user_id,
+                          recheck_of=recheck_of)
+        with self._lock:
+            self.sessions[session.id] = session
+        state = {"session_id": session.id, "language": language, "video_path": None,
+                 "photo_paths": [str(p) for p in photos], "delete_video": True,
+                 "reference_date": date.today().isoformat()}
+        self._run(session, state)
+        return session
+
     def start_sample(self, language: str, user_id: str | None = None, recheck_of: str | None = None) -> Session:
         video = REPO_ROOT / get_settings().sample_video
         if not video.exists():
@@ -160,7 +190,8 @@ class SessionManager:
 
     def _start(self, session_id: str, video: Path, language: str, sample: bool, user_id: str | None = None,
                recheck_of: str | None = None) -> Session:
-        session = Session(id=session_id, language=language, sample=sample, user_id=user_id, recheck_of=recheck_of)
+        session = Session(id=session_id, language=language, sample=sample, kind="sample" if sample else "video",
+                          user_id=user_id, recheck_of=recheck_of)
         with self._lock:
             self.sessions[session_id] = session
         state = {"session_id": session_id, "language": language, "video_path": str(video), "delete_video": not sample,
@@ -209,7 +240,8 @@ class SessionManager:
         if not values.get("extractions") and rt.reader is not None:
             reads = {k: r.extraction.model_dump(mode="json") for k, r in rt.reader.done().items()}
         documents = live_documents(rt.found_ids(), values.get("extractions") or [], reads)
-        return {"id": session.id, "language": session.language, "sample": session.sample, "status": session.status,
+        return {"id": session.id, "language": session.language, "sample": session.sample, "kind": session.kind,
+                "status": session.status,
                 "error": session.error, "stage": current, "stages": stages, "question": session.question,
                 "elapsed_s": round(time.time() - session.created, 1), "documents": documents,
                 "check_id": session.check_id, "recheck_of": session.recheck_of,

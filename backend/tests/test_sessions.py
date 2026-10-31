@@ -222,3 +222,45 @@ def test_unread_documents_get_an_unreadable_preview_and_others_their_crop(manage
     assert card.std() > 40 and unread.std() < 20  # the ration card as it is; the unread one only as blocks
     with pytest.raises(SessionError):
         manager.thumbnail(session.id, "nope")
+
+
+def _photo(path: Path) -> Path:
+    import cv2
+    import numpy as np
+
+    cv2.imwrite(str(path), np.full((300, 400, 3), 180, np.uint8))
+    return path
+
+
+def test_photo_session_runs_the_same_pipeline_and_deletes_the_photos(manager) -> None:
+    from tests.test_graph import _deps
+
+    deps = _deps([])
+    seen: list[list[Path]] = []
+
+    def find_photos(photos, on_document):
+        seen.append(list(photos))
+        assert all(p.exists() for p in photos)
+        return deps.find(Path("unused.mp4"), on_document)  # the fake finder's two documents
+
+    deps.find_photos = find_photos
+    m = SessionManager(graph=build_graph(deps))
+    folder = m.new_upload_folder()
+    photos = [_photo(folder / "a.jpg"), _photo(folder / "b.jpg")]
+    session = m.start_photos(photos, "en")
+    view = _wait(m, session.id)
+    assert view["kind"] == "photos" and view["status"] == "waiting" and view["household"]
+    assert seen == [photos] and not any(p.exists() for p in photos)
+
+
+def test_photo_session_checks_count_and_content(manager) -> None:
+    folder = manager.new_upload_folder()
+    with pytest.raises(SessionError) as e:
+        manager.start_photos([_photo(folder / f"{i}.jpg") for i in range(13)], "en")
+    assert e.value.status == 422 and not folder.exists()
+    folder = manager.new_upload_folder()
+    bad = folder / "x.jpg"
+    bad.write_bytes(b"not a photo")
+    with pytest.raises(SessionError):
+        manager.start_photos([_photo(folder / "ok.jpg"), bad], "en")
+    assert not folder.exists()

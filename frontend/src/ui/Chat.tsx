@@ -8,6 +8,7 @@ import { RecheckComparison } from './PastCheck'
 import { Camera, Logo } from './Icons'
 import QuestionCard from './QuestionCard'
 import Recapture from './Recapture'
+import PhotoPicker from './PhotoPicker'
 import Recorder from './Recorder'
 import SchemesCard from './SchemesCard'
 import Thumbnails from './Thumbnails'
@@ -17,8 +18,9 @@ import type { Voice } from './voice'
 export type Check =
   | { kind: 'idle' }
   | { kind: 'recording' }
-  | { kind: 'uploading'; sample: boolean; percent: number | null }
-  | { kind: 'session'; sample: boolean; id: string; guestSecret: string }
+  | { kind: 'photos' } // choosing photos
+  | { kind: 'uploading'; sample: boolean; percent: number | null; photos?: { sent: number; total: number } | null }
+  | { kind: 'session'; sample: boolean; id: string; guestSecret: string; photos?: boolean }
 
 export interface Answered { question: string; member: string | null; answer: string }
 
@@ -36,19 +38,27 @@ export function Me({ children }: { children: ReactNode }) {
   return <div className="msg me"><div className="bubble">{children}</div></div>
 }
 
-export default function Chat({ t, language, schemes, check, view, error, answered, voice, onRecord, onSample, onRecorded,
-  onCancelRecord, onAnswered, onReplanned, onNewCheck, latest, recheck, onOpenCheck, loggedIn, onSaveCheck, narrow,
-  onOpenScheme }: {
+export default function Chat({ t, language, schemes, check, view, error, answered, voice, onRecord, onPhotos, onSample,
+  onRecorded, onPhotosChosen, onCancelRecord, onAnswered, onReplanned, onNewCheck, onRecordAgain, onPhotosAgain, latest,
+  recheck, onOpenCheck, loggedIn, onSaveCheck, narrow, onOpenScheme }: {
   t: Strings; language: Language; schemes: CatalogScheme[]; check: Check; view: SessionView | null; error: string | null; answered: Answered[]
-  voice: Voice; onRecord: () => void; onSample: () => void; onRecorded: (b: Blob) => void; onCancelRecord: () => void
+  voice: Voice; onRecord: () => void; onPhotos: () => void; onSample: () => void; onRecorded: (b: Blob) => void
+  onPhotosChosen: (photos: File[]) => void; onRecordAgain: () => void; onPhotosAgain: () => void; onCancelRecord: () => void
   onAnswered: (label: string) => void; onReplanned: () => void; onNewCheck: () => void
   latest: CheckFull | null; recheck: boolean; onOpenCheck: (id: string, step: number | null) => void
   loggedIn: boolean; onSaveCheck: () => void; narrow: boolean; onOpenScheme: (id: string) => void
 }) {
   const names = Object.fromEntries(schemes.map((s) => [s.id, s.name]))
   const started = check.kind !== 'idle'
-  const sample = check.kind !== 'idle' && check.kind !== 'recording' && check.sample
-  const stopped = view?.status === 'done' && (view.recapture?.mode === 'sweep_again' || view.recapture?.mode === 'no_documents')
+  const sample = (check.kind === 'uploading' || check.kind === 'session') && check.sample
+  const photos = check.kind === 'photos' || (check.kind === 'uploading' && !!check.photos) || (check.kind === 'session' && !!check.photos)
+  const startedAs = sample ? t.trySample : photos ? t.addPhotos : t.record
+  const mode = view?.recapture?.mode
+  // no_documents: nothing to build on (start again with photos or a recording). hold: more than half need a clearer
+  // photo, so the matrix and plan wait until enough photos have come in.
+  const stopped = view?.status === 'done' && mode === 'no_documents'
+  const held = view?.status === 'done' && mode === 'hold'
+  const sorting = !!view?.recapture && (mode !== 'none' || (view.recapture.unidentified ?? []).length > 0)
   return (
     <>
       {/* A returning user's open steps come first; the steps of how Kaagaz works are then folded away. */}
@@ -63,14 +73,16 @@ export default function Chat({ t, language, schemes, check, view, error, answere
         {!started && (
           <div className="button-row start">
             <button type="button" className="button primary big" onClick={onRecord}><Camera />{t.record}</button>
+            <button type="button" className="button big" onClick={onPhotos}>{t.addPhotos}</button>
             <button type="button" className="button big" onClick={onSample}>{t.trySample}</button>
           </div>
         )}
       </Bot>
-      {started && <Me>{recheck ? `${t.checkAgain}: ${sample ? t.trySample : t.record}` : sample ? t.trySample : t.record}</Me>}
+      {started && <Me>{recheck ? `${t.checkAgain}: ${startedAs}` : startedAs}</Me>}
 
       {check.kind === 'recording' && <Bot wide><Recorder t={t} onDone={onRecorded} onCancel={onCancelRecord} /></Bot>}
-      {check.kind === 'uploading' && <Bot><Uploading t={t} percent={check.percent} /></Bot>}
+      {check.kind === 'photos' && <Bot wide><PhotoPicker t={t} onDone={onPhotosChosen} onCancel={onCancelRecord} /></Bot>}
+      {check.kind === 'uploading' && <Bot><Uploading t={t} percent={check.percent} photos={check.photos ?? null} /></Bot>}
       {error && <Bot><p className="alert" role="alert">{t.error}: {error}</p></Bot>}
 
       {view && view.language !== language && (
@@ -90,11 +102,12 @@ export default function Chat({ t, language, schemes, check, view, error, answere
         </Bot>
       )}
       {view?.status === 'error' && <Bot><p className="alert" role="alert">{t.error}: {view.error}</p></Bot>}
-      {view && view.recapture && view.recapture.mode !== 'none' && (
-        <Bot wide><Recapture t={t} view={view} language={language} onReplanned={stopped ? undefined : onReplanned} /></Bot>
+      {view && sorting && (
+        <Bot wide><Recapture t={t} view={view} language={language} onReplanned={stopped ? undefined : onReplanned}
+          onAddPhotos={onPhotosAgain} onRecordAgain={onRecordAgain} /></Bot>
       )}
-      {stopped && <Bot><button type="button" className="button primary" onClick={onNewCheck}>{t.newCheck}</button></Bot>}
-      {view?.status === 'done' && !stopped && (
+      {held && <Bot><button type="button" className="button" onClick={onNewCheck}>{t.newCheck}</button></Bot>}
+      {view?.status === 'done' && !stopped && !held && (
         <>
           {view.recapture?.mode === 'close_ups' && <p className="system-note">{t.closeUpsNote}</p>}
           {view.check_id && <p className="system-note saved">✓ {t.savedNote}</p>}
@@ -168,7 +181,20 @@ function WelcomeBack({ t, language, latest, onOpenCheck }: {
   )
 }
 
-function Uploading({ t, percent }: { t: Strings; percent: number | null }) {
+function Uploading({ t, percent, photos }: { t: Strings; percent: number | null; photos: { sent: number; total: number } | null }) {
+  if (photos) {
+    if (!photos.total) return <p className="status" aria-live="polite">{t.preparingPhotos}</p>
+    const now = Math.min(photos.sent + 1, photos.total)
+    const sent = photos.sent >= photos.total
+    return (
+      <div className="upload">
+        <p className="status" aria-live="polite">{sent ? t.working : t.uploadingPhotos.replace('{n}', String(now)).replace('{total}', String(photos.total))}</p>
+        <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={photos.total} aria-valuenow={photos.sent} aria-label={t.uploading}>
+          <div className="fill" style={{ width: (100 * photos.sent) / photos.total + '%' }} />
+        </div>
+      </div>
+    )
+  }
   if (percent === null) return <p className="status" aria-live="polite">{t.working}…</p>
   const sent = percent >= 100
   return (
@@ -182,7 +208,8 @@ function Uploading({ t, percent }: { t: Strings; percent: number | null }) {
 }
 
 function Progress({ t, language, view }: { t: Strings; language: Language; view: SessionView }) {
-  const finished = view.stages.every((s) => s.done)
+  // Finished, or stopped after reading (no documents, or waiting for clearer photos): the time the run took.
+  const finished = view.stages.every((s) => s.done) || view.status === 'done'
   if (finished) {
     const total = view.stages.reduce((sum, s) => sum + (s.seconds ?? 0), 0)
     return (

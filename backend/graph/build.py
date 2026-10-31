@@ -4,8 +4,10 @@ find_documents -> read_documents -> build_household -> check_rules -> plan_fixes
 
 - find_documents streams each document to the reader as soon as its crops are ready (reading overlaps finding);
   an uploaded video is deleted as soon as the finder is done.
-- read_documents collects the reads (frame agreement) and makes the recapture plan; if most documents need a
-  new sweep, or no documents were found at all, the run ends there (nothing is built on those reads).
+- read_documents collects the reads (frame agreement), sorts them (graph/nodes/triage.py: background items and
+  duplicates dropped, documents cut off by the frame edge put on the clearer-photo list) and makes the recapture
+  plan; if more than half need a clearer photo ('hold'), or no documents were found at all, the run stops there
+  until clearer photos arrive (nothing is built on those reads).
 - build_household uses the name verifier (re-reads crops) and the adjudicator.
 - plan_fixes pauses at each family question (LangGraph interrupt) and resumes with the answer.
 - speak prepares the TTS text for every step and synthesizes the first sentence.
@@ -25,10 +27,11 @@ from langgraph.graph import END, START, StateGraph
 from clients.llm import chat
 from graph.nodes.build_household import build_household, llm_adjudicator, llm_name_verifier
 from graph.nodes.check_rules import check_rules
-from graph.nodes.find_documents import FindResult, FoundDocument, RecapturePlan, find_documents, plan_recapture
+from graph.nodes.find_documents import FindResult, FoundDocument, RecapturePlan, find_documents
 from graph.nodes.plan_fixes import remembered_answers, run_planner
 from graph.nodes.read_documents import StreamingReader
 from graph.nodes.speak import speak
+from graph.nodes.triage import seen_from, triage
 from graph.runtime import runtime
 from graph.state import STAGES, KaagazState
 from rules.engine import SchemeResult
@@ -42,6 +45,13 @@ def _real_find(video: Path, on_document: Callable[[FoundDocument], None]) -> Fin
     from clients.segmenter import Sam31ApiSegmenter
 
     return find_documents(video, segmenter=Sam31ApiSegmenter(), on_document=on_document)
+
+
+def _real_find_photos(photos: list[Path], on_document: Callable[[FoundDocument], None]) -> FindResult:
+    from clients.segmenter import Sam31ApiSegmenter
+    from graph.nodes.find_photos import find_in_photos
+
+    return find_in_photos(photos, segmenter=Sam31ApiSegmenter(), on_document=on_document)
 
 
 def _real_tts() -> Callable[[str, str], Any] | None:
@@ -59,6 +69,7 @@ def _real_tts() -> Callable[[str, str], Any] | None:
 @dataclass
 class Deps:
     find: Callable[[Path, Callable[[FoundDocument], None]], FindResult] = _real_find
+    find_photos: Callable[[list[Path], Callable[[FoundDocument], None]], FindResult] = _real_find_photos
     new_reader: Callable[[], Any] = field(default=lambda: StreamingReader(agreement=True))
     verifier: Callable[[dict[str, list[bytes]]], Any] = llm_name_verifier
     adjudicator: Callable[[date], Any] = llm_adjudicator
@@ -70,7 +81,7 @@ def default_deps() -> Deps:
     return Deps(tts=_real_tts())
 
 
-STOP_MODES = ("sweep_again", "no_documents")  # record again: nothing is built on these reads
+STOP_MODES = ("hold", "no_documents")  # wait for clearer photos: nothing is built on these reads
 
 
 def no_documents(extractions: list[DocumentExtraction]) -> bool:
@@ -101,6 +112,16 @@ def build_graph(deps: Deps | None = None, checkpointer: Any = None) -> Any:
             rt.add_document(d.document.id, d.document.images)  # shown as a thumbnail right away
             rt.reader.submit(d.document)
 
+        if state.get("photo_paths"):
+            photos = [Path(p) for p in state["photo_paths"]]
+            try:
+                result = deps.find_photos(photos, on_document)
+            finally:
+                for photo in photos:
+                    photo.unlink(missing_ok=True)  # uploaded photos never outlive the run
+            rt.find_result = result
+            found = [{"id": d.document.id, "frames": [], "fully_visible": d.fully_visible} for d in result.documents]
+            return {"found": found, "photo_paths": None, "log": [f"found {len(found)} documents in {len(photos)} photos"]}
         video = Path(state["video_path"])
         try:
             result = deps.find(video, on_document)
@@ -117,14 +138,19 @@ def build_graph(deps: Deps | None = None, checkpointer: Any = None) -> Any:
         rt = runtime(state["session_id"])
         with rt.reader as reader:
             reads = reader.results()
-        extractions = {k: r.extraction for k, r in reads.items()}
-        recapture = plan_recapture(rt.find_result, extractions) if rt.find_result else None
+        result = triage(seen_from(rt.find_result), reads) if rt.find_result else None
+        extractions = result.extractions if result else {k: r.extraction for k, r in reads.items()}
+        recapture = result.plan if result else RecapturePlan(mode="none")
+        if result and result.dropped:
+            rt.remove_documents(result.dropped)
         if no_documents(list(extractions.values())):
-            recapture = RecapturePlan(mode="no_documents")
+            recapture = RecapturePlan(mode="no_documents", read=recapture.read)
         tokens = sum(r.usage.prompt_tokens + r.usage.completion_tokens for r in reads.values())
+        log = [f"read {len(extractions)} documents"]
+        if result and result.duplicates:
+            log.append(f"merged duplicates: {result.duplicates}")
         return {"extractions": [e.model_dump(mode="json") for e in extractions.values()],
-                "recapture": recapture.model_dump(mode="json") if recapture else {"mode": "none"},
-                "usage": {"read_tokens": tokens}, "log": [f"read {len(extractions)} documents"]}
+                "recapture": recapture.model_dump(mode="json"), "usage": {"read_tokens": tokens}, "log": log}
 
     def household(state: KaagazState) -> dict[str, Any]:
         rt = runtime(state["session_id"])

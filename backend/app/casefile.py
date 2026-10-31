@@ -12,7 +12,7 @@ from storage.models import (CheckData, CheckRecord, StoredAnswer, StoredFact, St
                             StoredProblem, StoredStep)
 from vision.text import redact_identity_numbers
 
-STOP_MODES = ("sweep_again", "no_documents")  # nothing is built on these reads: nothing to keep
+STOP_MODES = ("hold", "no_documents")  # nothing is built on these reads: nothing to keep
 
 
 def _t(text: Any) -> str | None:
@@ -38,7 +38,7 @@ def document_owner(view: dict[str, Any], doc_id: str) -> tuple[str | None, str |
 
 
 def worth_keeping(view: dict[str, Any]) -> bool:
-    """A finished run with results (not stopped for a new sweep). The caller knows the run has finished."""
+    """A finished run with results (not stopped for clearer photos). The caller knows the run has finished."""
     return bool(view.get("household")) and (view.get("recapture") or {}).get("mode") not in STOP_MODES
 
 

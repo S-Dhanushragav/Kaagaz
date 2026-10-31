@@ -3,12 +3,14 @@
 Plain function for now; it becomes a LangGraph node later. Steps:
 1. resample: low-fps 720p copy for the segmenter + full-resolution JPEGs of the same frames (tmp/)
 2. segment: tracks from the segmenter (one request per prompt)
-3. clean: drop tiny/short tracks, remove heavy duplicates
+3. clean: split tracks at time gaps and where the document in the box changes (documents shown one at a time in
+   the same spot keep one SAM id), drop tiny/short tracks, remove heavy duplicates
 4. select: per track, frames where the document is fully in view; sharpness is measured on the
    box region of the full-resolution frame, so no mask is decoded yet; keep the sharpest 2-3,
    spread apart in time
 5. deskew: decode only the chosen masks (in parallel processes; SAM mask decoding is slow pure
-   Python), mask -> 4 corners -> upright crop from full resolution -> DocumentInput
+   Python), mask -> 4 corners -> crop from full resolution -> text turned upright (all crops of a document
+   judged together, vision/orient.py) -> DocumentInput
 Frames are deleted after the run. With debug=True a contact sheet of the chosen crops is kept in tmp/.
 """
 
@@ -28,10 +30,11 @@ from clients.segmenter import Segmenter, Track, TrackFrame, decode_mask_spec
 from graph.nodes.read_documents import DocumentInput
 from schemas.documents import DocumentExtraction
 from vision.deskew import deskew
-from vision.frames import full_frame_path, resample_video
+from vision.frames import ResampledVideo, full_frame_path, resample_video
 from vision.images import encode_for_llm
+from vision.orient import rotate_quarters, text_rotation
 from vision.quality import Candidate, select_frames, sharpness, touches_edge, visible_estimate
-from vision.tracks import box_area, clean_tracks
+from vision.tracks import box_area, box_signature, clean_tracks
 
 TMP = Path(__file__).resolve().parents[3] / "tmp"
 MAX_CANDIDATES_PER_TRACK = 12
@@ -43,11 +46,20 @@ FALLBACK_MIN_GAP_S = 0.2
 
 
 class RecapturePlan(BaseModel):
-    """What the app should ask for after reading (used in Phase 7)."""
+    """What the app asks for after reading (graph/nodes/triage.py builds it).
 
-    mode: Literal["none", "close_ups", "sweep_again", "no_documents"]
-    documents: list[str] = []  # document ids that need a retake (for close_ups)
+    - none: every document was read clearly.
+    - close_ups: some documents need a clearer photo (`documents`); the rest goes ahead and issues that depend
+      on those documents wait.
+    - hold: more than half of the documents need a clearer photo; the matrix and plan wait until photos arrive.
+    - no_documents: nothing (or almost nothing) was read as one of the four documents.
+    """
+
+    mode: Literal["none", "close_ups", "hold", "no_documents"]
+    documents: list[str] = []  # document ids that need a clearer photo
     reasons: dict[str, list[str]] = {}
+    unidentified: list[str] = []  # looked like a document but was not read as any known type
+    read: int = 0  # documents read as a known type (clearly or not)
 
 
 class FoundDocument(BaseModel):
@@ -58,6 +70,7 @@ class FoundDocument(BaseModel):
     methods: list[str]  # deskew method per chosen frame
     sharpness: list[float]
     fully_visible: bool  # False if the document was never seen without touching the frame edge
+    score: float | None = None  # mean SAM confidence over the track
     relaxed_selection: bool = False  # frames chosen with the fallback (closer in time, 80% visible)
 
 
@@ -74,15 +87,23 @@ class FindResult(BaseModel):
 
 
 def plan_recapture(result: FindResult, extractions: Mapping[str, DocumentExtraction]) -> RecapturePlan:
-    """'sweep_again' if more than half of the found documents need a retake, else 'close_ups' for those
-    documents ('none' if no document needs one). `extractions` maps document id -> extraction."""
-    retake = {d.document.id: extractions[d.document.id].retake_reasons
-              for d in result.documents
-              if d.document.id in extractions and extractions[d.document.id].needs_retake}
+    return recapture_plan([d.document.id for d in result.documents], extractions)
+
+
+def recapture_plan(document_ids: Sequence[str], extractions: Mapping[str, DocumentExtraction]) -> RecapturePlan:
+    """'hold' if more than half of the documents read as a known type need a retake, else 'close_ups' for those
+    documents ('none' if none does). Items read as no known type ('other') are listed as unidentified and do not
+    count. `extractions` maps document id -> extraction."""
+    ids = [i for i in document_ids if i in extractions]
+    unidentified = [i for i in ids if extractions[i].doc_type == "other"]
+    known = [i for i in ids if i not in unidentified]
+    retake = {i: extractions[i].retake_reasons for i in known if extractions[i].needs_retake}
     if not retake:
-        return RecapturePlan(mode="none")
-    mode = "sweep_again" if len(retake) > len(result.documents) / 2 else "close_ups"
-    return RecapturePlan(mode=mode, documents=sorted(retake), reasons=retake)
+        mode = "none"
+    else:
+        mode = "hold" if len(retake) > len(known) / 2 else "close_ups"
+    return RecapturePlan(mode=mode, documents=sorted(retake), reasons=retake, unidentified=unidentified,
+                         read=len(known))
 
 
 def _candidates(track: Track, size: tuple[int, int], min_visible: float = MIN_VISIBLE) -> tuple[list[int], bool]:
@@ -94,6 +115,34 @@ def _candidates(track: Track, size: tuple[int, int], min_visible: float = MIN_VI
     pool = [f for f in pool if visible_estimate(box_area(track.frames[f].box), ref) >= min_visible]
     pool.sort(key=lambda f: box_area(track.frames[f].box), reverse=True)
     return pool[:MAX_CANDIDATES_PER_TRACK], fully_visible
+
+
+def _mean_score(track: Track) -> float | None:
+    scores = [f.score for f in track.frames.values() if f.score is not None]
+    return round(float(np.mean(scores)), 3) if scores else None
+
+
+def _signatures(tracks: list[Track], rs: ResampledVideo, size: tuple[int, int]) -> dict[str, dict[int, np.ndarray]]:
+    """Per track and segmenter frame: a small grey picture of the box region (see vision.tracks.split_on_appearance).
+    Each kept frame is read once, at half size and in grey."""
+    by_frame: dict[int, list[Track]] = {}
+    for t in tracks:
+        for f in t.frames:
+            by_frame.setdefault(f, []).append(t)
+    out: dict[str, dict[int, np.ndarray]] = {}
+    frames_dir = Path(rs.frames_dir)
+    for f, ts in by_frame.items():
+        if f >= len(rs.source_indices):
+            continue
+        gray = cv2.imread(str(full_frame_path(frames_dir, rs.source_indices[f])), cv2.IMREAD_REDUCED_GRAYSCALE_2)
+        if gray is None:
+            continue
+        scale = (gray.shape[1] / size[0], gray.shape[0] / size[1])
+        for t in ts:
+            sig = box_signature(gray, t.frames[f].box, scale)
+            if sig is not None:
+                out.setdefault(t.track_id, {})[f] = sig
+    return out
 
 
 def _box_crop(image: np.ndarray, box: tuple[float, float, float, float], scale: tuple[float, float]) -> np.ndarray:
@@ -142,7 +191,7 @@ def find_documents(
         timings.update(seg.timings)  # upload_s / segment_s of the original call
 
         t0 = time.perf_counter()
-        report = clean_tracks(seg.tracks, seg.frame_size)
+        report = clean_tracks(seg.tracks, seg.frame_size, signatures=_signatures(seg.tracks, rs, seg.frame_size))
         timings["cleanup_s"] = time.perf_counter() - t0
 
         # Select frames by box-region sharpness (no mask decoding).
@@ -159,9 +208,8 @@ def find_documents(
         partial, relaxed = [], []
         for track in report.kept:
             frames, fully_visible = _candidates(track, seg.frame_size, min_visible=MIN_VISIBLE)
-            if not fully_visible:  # only ever seen cut off by the frame edge: can't be read completely
+            if not fully_visible:  # only ever seen cut off by the frame edge: read, but ask for a clearer photo
                 partial.append(track.track_id)
-                continue
             by_src: dict[int, TrackFrame] = {}
             scored: dict[int, Candidate] = {}
 
@@ -204,11 +252,15 @@ def find_documents(
             kept = []
             for (cand, _), mask in zip(picks, masks):
                 try:
-                    kept.append((cand, deskew(image(cand.frame), mask)))
+                    kept.append((cand, deskew(image(cand.frame), mask, upright=False)))
                 except ValueError:
                     continue
             if not kept:
                 return
+            # All crops of one document are judged together for which way is up, and turned the same way.
+            turns = text_rotation(*[res.crop for _, res in kept]).turns
+            for _, res in kept:
+                res.crop, res.quad, res.turns = rotate_quarters(res.crop, turns), np.roll(res.quad, turns, axis=0), turns
             crops = [res.crop for _, res in kept]
             doc = FoundDocument(
                 document=DocumentInput(id=f"doc{pi + 1:02d}", images=[encode_for_llm(c) for c in crops],
@@ -220,6 +272,7 @@ def find_documents(
                 methods=[res.method for _, res in kept],
                 sharpness=[round(c.sharpness, 1) for c, _ in kept],
                 fully_visible=fully_visible,
+                score=_mean_score(track),
             )
             found_by_plan[pi], crops_by_plan[pi] = doc, crops
             if on_document is not None:

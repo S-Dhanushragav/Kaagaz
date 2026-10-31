@@ -1,0 +1,461 @@
+[
+  {
+    "video": "HH001",
+    "prompts": [
+      "document"
+    ],
+    "present": 6,
+    "found": 6,
+    "duplicates": 0,
+    "false_detections": 1,
+    "crop_iou_mean": 0.962,
+    "crop_iou_min": 0.946,
+    "missed": [],
+    "tracks_raw": 7,
+    "dropped": {
+      "split": 0,
+      "short": 0,
+      "small": 0,
+      "duplicate": 0,
+      "partial": 1
+    },
+    "deskew_methods": {
+      "quad": 19
+    },
+    "billed_frames": 100,
+    "timings": {
+      "resample_s": 7.5,
+      "segmenter_wall_s": 0.084,
+      "upload_s": 5.057,
+      "segment_s": 7.866,
+      "cleanup_s": 2.443,
+      "select_s": 0.985,
+      "decode_deskew_s": 13.49,
+      "find_total_s": 24.58,
+      "read_after_find_s": 0.0,
+      "upload_to_answer_s": 29.92
+    },
+    "reading": {
+      "classified": 6,
+      "weak_agreements": 2,
+      "relaxed_selection": 3,
+      "recapture": {
+        "mode": "close_ups",
+        "documents": [
+          "doc04",
+          "doc06"
+        ],
+        "reasons": {
+          "doc04": [
+            "name_mr/name_en missing",
+            "dob missing"
+          ],
+          "doc06": [
+            "dob missing"
+          ]
+        },
+        "unidentified": [],
+        "read": 6
+      },
+      "dropped_after_reading": [
+        "doc02"
+      ],
+      "needs_retake": 3,
+      "needs_retake_docs": [
+        "identity_card_m2",
+        "identity_card_m1"
+      ],
+      "model_calls": 19,
+      "fields": {
+        "correct": 49,
+        "wrong": 0,
+        "null": 9,
+        "total": 58
+      },
+      "per_type": {
+        "caste_certificate": {
+          "correct": 22,
+          "wrong": 0,
+          "null": 0,
+          "total": 22
+        },
+        "identity_card": {
+          "correct": 5,
+          "wrong": 0,
+          "null": 7,
+          "total": 12
+        },
+        "income_certificate": {
+          "correct": 10,
+          "wrong": 0,
+          "null": 0,
+          "total": 10
+        },
+        "ration_card": {
+          "correct": 12,
+          "wrong": 0,
+          "null": 2,
+          "total": 14
+        }
+      },
+      "tokens": {
+        "prompt": 18045,
+        "completion": 14301
+      }
+    },
+    "cost_usd": 0.1033
+  },
+  {
+    "video": "HH008",
+    "prompts": [
+      "document"
+    ],
+    "present": 8,
+    "found": 8,
+    "duplicates": 0,
+    "false_detections": 2,
+    "crop_iou_mean": 0.957,
+    "crop_iou_min": 0.944,
+    "missed": [],
+    "tracks_raw": 8,
+    "dropped": {
+      "split": 5,
+      "short": 3,
+      "small": 0,
+      "duplicate": 0,
+      "partial": 2
+    },
+    "deskew_methods": {
+      "quad": 24
+    },
+    "billed_frames": 100,
+    "timings": {
+      "resample_s": 7.495,
+      "segmenter_wall_s": 0.082,
+      "upload_s": 8.012,
+      "segment_s": 8.4,
+      "cleanup_s": 2.509,
+      "select_s": 1.145,
+      "decode_deskew_s": 12.952,
+      "find_total_s": 24.25,
+      "read_after_find_s": 0.0,
+      "upload_to_answer_s": 33.08
+    },
+    "reading": {
+      "classified": 8,
+      "weak_agreements": 0,
+      "relaxed_selection": 1,
+      "recapture": {
+        "mode": "close_ups",
+        "documents": [
+          "doc04",
+          "doc05",
+          "doc10"
+        ],
+        "reasons": {
+          "doc04": [
+            "dob missing"
+          ],
+          "doc05": [
+            "dob missing"
+          ],
+          "doc10": [
+            "dob missing"
+          ]
+        },
+        "unidentified": [
+          "doc09"
+        ],
+        "read": 8
+      },
+      "dropped_after_reading": [
+        "doc02"
+      ],
+      "needs_retake": 4,
+      "needs_retake_docs": [
+        "identity_card_m3",
+        "identity_card_m1",
+        "identity_card_m2"
+      ],
+      "model_calls": 24,
+      "fields": {
+        "correct": 87,
+        "wrong": 0,
+        "null": 4,
+        "total": 91
+      },
+      "per_type": {
+        "caste_certificate": {
+          "correct": 22,
+          "wrong": 0,
+          "null": 0,
+          "total": 22
+        },
+        "identity_card": {
+          "correct": 21,
+          "wrong": 0,
+          "null": 3,
+          "total": 24
+        },
+        "income_certificate": {
+          "correct": 10,
+          "wrong": 0,
+          "null": 0,
+          "total": 10
+        },
+        "ration_card": {
+          "correct": 34,
+          "wrong": 0,
+          "null": 1,
+          "total": 35
+        }
+      },
+      "tokens": {
+        "prompt": 19707,
+        "completion": 17436
+      }
+    },
+    "cost_usd": 0.1187
+  },
+  {
+    "video": "HH009",
+    "prompts": [
+      "document"
+    ],
+    "present": 7,
+    "found": 7,
+    "duplicates": 0,
+    "false_detections": 3,
+    "crop_iou_mean": 0.957,
+    "crop_iou_min": 0.941,
+    "missed": [],
+    "tracks_raw": 8,
+    "dropped": {
+      "split": 2,
+      "short": 0,
+      "small": 0,
+      "duplicate": 0,
+      "partial": 3
+    },
+    "deskew_methods": {
+      "quad": 22
+    },
+    "billed_frames": 100,
+    "timings": {
+      "resample_s": 7.534,
+      "segmenter_wall_s": 0.081,
+      "upload_s": 7.065,
+      "segment_s": 7.998,
+      "cleanup_s": 2.566,
+      "select_s": 1.201,
+      "decode_deskew_s": 13.812,
+      "find_total_s": 25.29,
+      "read_after_find_s": 0.0,
+      "upload_to_answer_s": 32.74
+    },
+    "reading": {
+      "classified": 7,
+      "weak_agreements": 2,
+      "relaxed_selection": 2,
+      "recapture": {
+        "mode": "close_ups",
+        "documents": [
+          "doc03",
+          "doc06"
+        ],
+        "reasons": {
+          "doc03": [
+            "dob missing"
+          ],
+          "doc06": [
+            "dob missing"
+          ]
+        },
+        "unidentified": [
+          "doc08"
+        ],
+        "read": 7
+      },
+      "dropped_after_reading": [
+        "doc04",
+        "doc02"
+      ],
+      "needs_retake": 4,
+      "needs_retake_docs": [
+        "identity_card_m2",
+        "identity_card_m1"
+      ],
+      "model_calls": 22,
+      "fields": {
+        "correct": 72,
+        "wrong": 2,
+        "null": 4,
+        "total": 78
+      },
+      "per_type": {
+        "caste_certificate": {
+          "correct": 20,
+          "wrong": 2,
+          "null": 0,
+          "total": 22
+        },
+        "identity_card": {
+          "correct": 14,
+          "wrong": 0,
+          "null": 4,
+          "total": 18
+        },
+        "income_certificate": {
+          "correct": 10,
+          "wrong": 0,
+          "null": 0,
+          "total": 10
+        },
+        "ration_card": {
+          "correct": 28,
+          "wrong": 0,
+          "null": 0,
+          "total": 28
+        }
+      },
+      "tokens": {
+        "prompt": 18789,
+        "completion": 15952
+      }
+    },
+    "cost_usd": 0.1113
+  },
+  {
+    "video": "HH008_hard",
+    "prompts": [
+      "document"
+    ],
+    "present": 8,
+    "found": 8,
+    "duplicates": 1,
+    "false_detections": 2,
+    "crop_iou_mean": 0.957,
+    "crop_iou_min": 0.938,
+    "missed": [],
+    "tracks_raw": 8,
+    "dropped": {
+      "split": 6,
+      "short": 3,
+      "small": 0,
+      "duplicate": 0,
+      "partial": 2
+    },
+    "deskew_methods": {
+      "quad": 26
+    },
+    "billed_frames": 63,
+    "timings": {
+      "resample_s": 4.833,
+      "segmenter_wall_s": 0.079,
+      "upload_s": 5.101,
+      "segment_s": 7.269,
+      "cleanup_s": 1.534,
+      "select_s": 0.891,
+      "decode_deskew_s": 14.452,
+      "find_total_s": 21.84,
+      "read_after_find_s": 0.0,
+      "upload_to_answer_s": 29.3
+    },
+    "reading": {
+      "classified": 7,
+      "weak_agreements": 1,
+      "relaxed_selection": 3,
+      "recapture": {
+        "mode": "hold",
+        "documents": [
+          "doc01",
+          "doc02",
+          "doc06",
+          "doc07",
+          "doc08",
+          "doc11"
+        ],
+        "reasons": {
+          "doc01": [
+            "frames do not agree on the document type ({'identity_card': 1, 'other': 1})"
+          ],
+          "doc02": [
+            "name_mr/name_en missing",
+            "dob missing",
+            "id_number missing"
+          ],
+          "doc06": [
+            "name_mr/name_en missing",
+            "dob missing",
+            "id_number missing"
+          ],
+          "doc07": [
+            "name_mr/name_en missing",
+            "dob missing"
+          ],
+          "doc08": [
+            "name_mr/name_en missing",
+            "dob missing",
+            "id_number missing"
+          ],
+          "doc11": [
+            "members.name_mr/members.name_en missing"
+          ]
+        },
+        "unidentified": [
+          "doc09"
+        ],
+        "read": 9
+      },
+      "dropped_after_reading": [
+        "doc04"
+      ],
+      "needs_retake": 7,
+      "needs_retake_docs": [
+        "identity_card_m4",
+        "identity_card_m2",
+        "identity_card_m3",
+        "ration_card",
+        "identity_card_m1"
+      ],
+      "model_calls": 26,
+      "fields": {
+        "correct": 65,
+        "wrong": 0,
+        "null": 26,
+        "total": 91
+      },
+      "per_type": {
+        "caste_certificate": {
+          "correct": 22,
+          "wrong": 0,
+          "null": 0,
+          "total": 22
+        },
+        "identity_card": {
+          "correct": 1,
+          "wrong": 0,
+          "null": 23,
+          "total": 24
+        },
+        "income_certificate": {
+          "correct": 10,
+          "wrong": 0,
+          "null": 0,
+          "total": 10
+        },
+        "ration_card": {
+          "correct": 32,
+          "wrong": 0,
+          "null": 3,
+          "total": 35
+        }
+      },
+      "tokens": {
+        "prompt": 22069,
+        "completion": 21227
+      }
+    },
+    "cost_usd": 0.1304
+  }
+]

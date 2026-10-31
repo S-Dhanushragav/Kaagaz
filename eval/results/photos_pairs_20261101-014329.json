@@ -1,0 +1,999 @@
+{
+  "summary": {
+    "households": 10,
+    "documents": 74,
+    "success": 72,
+    "success_rate": 0.973,
+    "correct": 848,
+    "wrong": 2,
+    "null": 4,
+    "extra": 0,
+    "time_s": {
+      "mean": 7.3,
+      "max": 8.8
+    },
+    "pairs": true
+  },
+  "rows": [
+    {
+      "household": "EV001",
+      "photos": 3,
+      "documents": 5,
+      "success": 5,
+      "found_docs": 5,
+      "extra": [],
+      "dropped": [],
+      "unidentified": [],
+      "mode": "none",
+      "correct": 55,
+      "wrong": 0,
+      "null": 0,
+      "timings": {
+        "find_s": 8.76,
+        "total_s": 8.77,
+        "segment_s": 8.487
+      },
+      "model_calls": 10,
+      "details": [
+        {
+          "truth": "ration_card",
+          "found": "doc01a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m1",
+          "found": "doc01b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m2",
+          "found": "doc02b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "income_certificate_m1",
+          "found": "doc02a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m1",
+          "found": "doc03a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        }
+      ]
+    },
+    {
+      "household": "EV002",
+      "photos": 4,
+      "documents": 7,
+      "success": 7,
+      "found_docs": 7,
+      "extra": [],
+      "dropped": [],
+      "unidentified": [],
+      "mode": "none",
+      "correct": 78,
+      "wrong": 0,
+      "null": 1,
+      "timings": {
+        "find_s": 8.831,
+        "total_s": 8.83,
+        "segment_s": 8.837
+      },
+      "model_calls": 14,
+      "details": [
+        {
+          "truth": "ration_card",
+          "found": "doc01a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m1",
+          "found": "doc01b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m2",
+          "found": "doc02b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": [
+            "name_mr"
+          ]
+        },
+        {
+          "truth": "identity_card_m3",
+          "found": "doc02a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "income_certificate_m1",
+          "found": "doc03b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m1",
+          "found": "doc03a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m2",
+          "found": "doc04a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        }
+      ]
+    },
+    {
+      "household": "EV003",
+      "photos": 4,
+      "documents": 8,
+      "success": 8,
+      "found_docs": 8,
+      "extra": [],
+      "dropped": [],
+      "unidentified": [],
+      "mode": "none",
+      "correct": 92,
+      "wrong": 0,
+      "null": 0,
+      "timings": {
+        "find_s": 5.627,
+        "total_s": 5.63,
+        "segment_s": 8.581
+      },
+      "model_calls": 16,
+      "details": [
+        {
+          "truth": "ration_card",
+          "found": "doc01a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m1",
+          "found": "doc01b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m2",
+          "found": "doc02b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m3",
+          "found": "doc02a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m4",
+          "found": "doc03b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "income_certificate_m1",
+          "found": "doc03a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m1",
+          "found": "doc04b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m2",
+          "found": "doc04a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        }
+      ]
+    },
+    {
+      "household": "EV004",
+      "photos": 4,
+      "documents": 7,
+      "success": 6,
+      "found_docs": 7,
+      "extra": [],
+      "dropped": [],
+      "unidentified": [],
+      "mode": "none",
+      "correct": 87,
+      "wrong": 1,
+      "null": 0,
+      "timings": {
+        "find_s": 6.678,
+        "total_s": 6.68,
+        "segment_s": 8.156
+      },
+      "model_calls": 14,
+      "details": [
+        {
+          "truth": "ration_card",
+          "found": "doc01a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m1",
+          "found": "doc01b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m2",
+          "found": "doc02b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m4",
+          "found": "doc02a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": false,
+          "wrong": [
+            {
+              "field": "name_mr",
+              "expected": "ओंकार अद्वैत घोडके",
+              "got": "ऑंकार अद्वैत घोडके"
+            }
+          ],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m5",
+          "found": "doc03b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "income_certificate_m1",
+          "found": "doc03a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m1",
+          "found": "doc04a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        }
+      ]
+    },
+    {
+      "household": "EV005",
+      "photos": 5,
+      "documents": 9,
+      "success": 9,
+      "found_docs": 9,
+      "extra": [],
+      "dropped": [],
+      "unidentified": [],
+      "mode": "none",
+      "correct": 100,
+      "wrong": 0,
+      "null": 0,
+      "timings": {
+        "find_s": 7.14,
+        "total_s": 7.14,
+        "segment_s": 10.195
+      },
+      "model_calls": 18,
+      "details": [
+        {
+          "truth": "ration_card",
+          "found": "doc01a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m1",
+          "found": "doc01b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m2",
+          "found": "doc02b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m3",
+          "found": "doc02a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m4",
+          "found": "doc03b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m5",
+          "found": "doc03a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m6",
+          "found": "doc04b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "income_certificate_m1",
+          "found": "doc04a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m1",
+          "found": "doc05a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        }
+      ]
+    },
+    {
+      "household": "EV006",
+      "photos": 3,
+      "documents": 5,
+      "success": 5,
+      "found_docs": 5,
+      "extra": [],
+      "dropped": [],
+      "unidentified": [],
+      "mode": "none",
+      "correct": 57,
+      "wrong": 0,
+      "null": 0,
+      "timings": {
+        "find_s": 7.513,
+        "total_s": 7.51,
+        "segment_s": 6.432
+      },
+      "model_calls": 10,
+      "details": [
+        {
+          "truth": "ration_card",
+          "found": "doc01a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m1",
+          "found": "doc01b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m2",
+          "found": "doc02b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m3",
+          "found": "doc02a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "income_certificate_m1",
+          "found": "doc03a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        }
+      ]
+    },
+    {
+      "household": "EV007",
+      "photos": 4,
+      "documents": 8,
+      "success": 8,
+      "found_docs": 8,
+      "extra": [],
+      "dropped": [],
+      "unidentified": [],
+      "mode": "none",
+      "correct": 92,
+      "wrong": 0,
+      "null": 0,
+      "timings": {
+        "find_s": 6.832,
+        "total_s": 6.83,
+        "segment_s": 8.547
+      },
+      "model_calls": 16,
+      "details": [
+        {
+          "truth": "ration_card",
+          "found": "doc01a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m1",
+          "found": "doc01b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m2",
+          "found": "doc02b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m3",
+          "found": "doc02a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m4",
+          "found": "doc03b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "income_certificate_m1",
+          "found": "doc03a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m1",
+          "found": "doc04b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m3",
+          "found": "doc04a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        }
+      ]
+    },
+    {
+      "household": "EV008",
+      "photos": 4,
+      "documents": 8,
+      "success": 8,
+      "found_docs": 8,
+      "extra": [],
+      "dropped": [],
+      "unidentified": [],
+      "mode": "none",
+      "correct": 94,
+      "wrong": 0,
+      "null": 0,
+      "timings": {
+        "find_s": 6.518,
+        "total_s": 6.52,
+        "segment_s": 7.184
+      },
+      "model_calls": 16,
+      "details": [
+        {
+          "truth": "ration_card",
+          "found": "doc01a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m1",
+          "found": "doc01b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m2",
+          "found": "doc02b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m3",
+          "found": "doc02a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m4",
+          "found": "doc03b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m5",
+          "found": "doc03a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "income_certificate_m1",
+          "found": "doc04b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m1",
+          "found": "doc04a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        }
+      ]
+    },
+    {
+      "household": "EV009",
+      "photos": 5,
+      "documents": 9,
+      "success": 8,
+      "found_docs": 9,
+      "extra": [],
+      "dropped": [],
+      "unidentified": [],
+      "mode": "none",
+      "correct": 108,
+      "wrong": 1,
+      "null": 3,
+      "timings": {
+        "find_s": 8.134,
+        "total_s": 8.13,
+        "segment_s": 10.428
+      },
+      "model_calls": 18,
+      "details": [
+        {
+          "truth": "ration_card",
+          "found": "doc01a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": [
+            "members[1].name_mr"
+          ]
+        },
+        {
+          "truth": "identity_card_m1",
+          "found": "doc01b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": [
+            "name_en"
+          ]
+        },
+        {
+          "truth": "identity_card_m2",
+          "found": "doc02b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": false,
+          "wrong": [
+            {
+              "field": "name_mr",
+              "expected": "प्रियांका ऋग्वेद ठोंबरे",
+              "got": "प्रियंका ऋग्वेद ठोंबरे"
+            }
+          ],
+          "null": [
+            "name_en"
+          ]
+        },
+        {
+          "truth": "identity_card_m3",
+          "found": "doc02a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m4",
+          "found": "doc03b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m6",
+          "found": "doc03a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "income_certificate_m1",
+          "found": "doc04b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m1",
+          "found": "doc04a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m3",
+          "found": "doc05a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        }
+      ]
+    },
+    {
+      "household": "EV010",
+      "photos": 4,
+      "documents": 8,
+      "success": 8,
+      "found_docs": 8,
+      "extra": [],
+      "dropped": [],
+      "unidentified": [],
+      "mode": "none",
+      "correct": 85,
+      "wrong": 0,
+      "null": 0,
+      "timings": {
+        "find_s": 7.287,
+        "total_s": 7.29,
+        "segment_s": 8.782
+      },
+      "model_calls": 16,
+      "details": [
+        {
+          "truth": "ration_card",
+          "found": "doc01a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m1",
+          "found": "doc01b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m2",
+          "found": "doc02b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m3",
+          "found": "doc02a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "identity_card_m4",
+          "found": "doc03b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "income_certificate_m1",
+          "found": "doc03a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m1",
+          "found": "doc04b",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        },
+        {
+          "truth": "caste_certificate_m3",
+          "found": "doc04a",
+          "type_ok": true,
+          "clear": true,
+          "retake_reasons": [],
+          "success": true,
+          "wrong": [],
+          "null": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 ﻿"""HTTP API for the mobile web app.
 
 POST /sessions                  video upload + language -> session (videos capped at 45 s and ~60 MB)
+POST /sessions/photos           1-12 photos + language -> session (photo mode; each photo at most 15 MB)
 POST /sessions/sample           the bundled sample family's sweep video, no upload
 GET  /sessions/{id}             stage progress, partial results, the pending question
 POST /sessions/{id}/answer      {question_id, option} (JSON) or a short WAV clip (form: question_id, audio)
@@ -80,6 +81,37 @@ async def create_session(request: Request, video: UploadFile = File(...), langua
             f.write(chunk)
     try:
         session = sessions.start_upload(raw, language, user_id=user.id if user else None, recheck_of=previous)
+    except SessionError as e:
+        raise _fail(e) from e
+    return {"id": session.id, "guest_secret": session.guest_secret}
+
+
+@router.post("/sessions/photos")
+async def create_photo_session(request: Request, photos: list[UploadFile] = File(...), language: Language = Form("mr"),
+                               recheck_of: str | None = Form(None),
+                               user: Any = Depends(optional_user)) -> dict[str, Any]:
+    from app.sessions import MAX_PHOTOS
+
+    sessions = manager(request)
+    previous = _recheck(request, user, recheck_of)
+    if not 1 <= len(photos) <= MAX_PHOTOS:
+        raise HTTPException(422, f"Send between 1 and {MAX_PHOTOS} photos.")
+    try:
+        sessions.check_rate()
+    except SessionError as e:
+        raise _fail(e) from e
+    folder = sessions.new_upload_folder()
+    saved = []
+    for i, photo in enumerate(photos):
+        data = await photo.read(MAX_PHOTO_BYTES + 1)
+        if len(data) > MAX_PHOTO_BYTES:
+            sessions.delete(folder.name)
+            raise HTTPException(413, "A photo is larger than 15 MB.")
+        path = folder / f"photo{i + 1:02d}.jpg"
+        path.write_bytes(data)
+        saved.append(path)
+    try:
+        session = sessions.start_photos(saved, language, user_id=user.id if user else None, recheck_of=previous)
     except SessionError as e:
         raise _fail(e) from e
     return {"id": session.id, "guest_secret": session.guest_secret}

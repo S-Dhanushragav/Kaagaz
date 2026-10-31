@@ -1,6 +1,6 @@
 """Segmenter clients (one place for SAM calls). Backend chosen by SEGMENTER in .env.
 
-- sam31_api: SAM 3.1 on the Meta Model API (Files API upload + Responses API).
+- sam31_api: SAM 3.1 on the Meta Model API (Files API upload + Responses API for video; an inline image for photos).
 - sam3_modal: SAM 3 open weights on Modal. Stub for later, behind the same interface.
 
 A segmenter takes a video and short noun-phrase prompts (one concept per request) and returns
@@ -93,6 +93,10 @@ class Segmenter(Protocol):
     def segment_video(self, path: Path, prompts: Sequence[str]) -> SegmentResult: ...
 
 
+class ImageSegmenter(Protocol):
+    def segment_image(self, jpeg: bytes, size: tuple[int, int], prompt: str = "document") -> SegmentResult: ...
+
+
 MIN_BILLED_FRAMES = 50  # each SAM 3.1 video request is billed for at least 50 frames
 SAM_METADATA = {"include_confidence": "true", "mask_encoding": "one_bit"}
 
@@ -161,6 +165,35 @@ class Sam31ApiSegmenter:
         timings = {"upload_s": round(upload_s, 3), "segment_s": round(segment_s, 3)}
         cache.set(key, {"text": resp.output_text, "timings": timings})
         return RawSegmentation(text=resp.output_text, prompt=prompt, timings=timings)
+
+    def segment_image(self, jpeg: bytes, size: tuple[int, int], prompt: str = "document") -> SegmentResult:
+        """One photo (JPEG bytes, `size` = width, height). The output has the video format with a single frame 0,
+        so each detection is a one-frame track. Cached by model + image bytes + prompt + metadata."""
+        import base64
+        import time
+
+        from openai import OpenAI
+
+        from clients.cache import DiskCache, make_key
+
+        cache = DiskCache(self.cache_dir)
+        key = make_key({"provider": "meta", "model": self.model, "image": jpeg, "prompt": prompt, "metadata": SAM_METADATA})
+        hit = cache.get(key)
+        if hit is None:
+            client = OpenAI(base_url=self.base_url, api_key=self.api_key.get_secret_value())
+            t0 = time.perf_counter()
+            resp = client.responses.create(
+                model=self.model,
+                input=[{"role": "user", "content": [
+                    {"type": "input_image", "image_url": "data:image/jpeg;base64," + base64.b64encode(jpeg).decode()},
+                    {"type": "input_text", "text": prompt},
+                ]}],
+                metadata=SAM_METADATA,
+            )
+            hit = {"text": resp.output_text, "timings": {"segment_s": round(time.perf_counter() - t0, 3)}}
+            cache.set(key, hit)
+        return SegmentResult(tracks=parse_sam_output(hit["text"], prompt, size), frame_size=size, billed_frames=1,
+                             timings=hit["timings"])
 
     def segment_video(self, path: Path, prompts: Sequence[str]) -> SegmentResult:
         """One request per prompt (SAM has no multi-concept syntax); tracks from all prompts together."""

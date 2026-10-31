@@ -14,7 +14,7 @@ from synthetic.video import VideoSpec, build_scene, iter_frames
 from vision.deskew import deskew, order_corners, quad_from_mask
 from vision.frames import probe_video, resample_video
 from vision.quality import Candidate, select_frames, sharpness, touches_edge
-from vision.tracks import box_iou, clean_tracks
+from vision.tracks import appearance_similarity, box_iou, box_signature, clean_tracks
 
 # ---------- frames ----------
 
@@ -160,6 +160,44 @@ def test_tracks_split_at_time_gaps() -> None:
     assert [k.track_id for k in clean_tracks([t2], (720, 1280)).kept] == ["document:2"]
 
 
+def _pattern(seed: int) -> np.ndarray:
+    """A textured grey picture (different seeds: different documents)."""
+    return np.random.default_rng(seed).integers(0, 255, (128, 96)).astype(np.uint8)
+
+
+def test_tracks_split_where_the_document_is_swapped() -> None:
+    """Documents shown one at a time in the same spot keep one SAM id and no gap: split where the content changes."""
+    box = (0, 0, 96, 128)
+    t = _track("document:1", {f: box for f in range(12)})
+    pictures = {f: _pattern(1 if f < 6 else 2) for f in range(12)}
+    sigs = {"document:1": {f: box_signature(p, box) for f, p in pictures.items()}}
+    r = clean_tracks([t], (720, 1280), signatures=sigs)
+    assert [sorted(k.frames) for k in r.kept] == [list(range(6)), list(range(6, 12))]
+    assert r.split == ["document:1"] and [k.track_id for k in r.kept] == ["document:1~1", "document:1~2"]
+
+
+def test_appearance_does_not_split_while_the_view_keeps_changing() -> None:
+    """A sweep: the box content drifts for several frames in a row (no steady frames around the drop)."""
+    box = (0, 0, 96, 128)
+    base = _pattern(3).astype(float)
+    pictures = {}
+    for f in range(10):  # each frame a bit further from the last: low similarity on several steps in a row
+        noise = np.random.default_rng(100 + f).normal(0, 60 if 3 <= f <= 6 else 1, base.shape)
+        pictures[f] = np.clip(base + noise, 0, 255).astype(np.uint8)
+    sigs = {"document:1": {f: box_signature(p, box) for f, p in pictures.items()}}
+    steps = [appearance_similarity(sigs["document:1"][f], sigs["document:1"][f + 1]) for f in range(9)]
+    assert sum(s < 0.75 for s in steps) >= 2  # the drift is really there
+    r = clean_tracks([_track("document:1", {f: box for f in range(10)})], (720, 1280), signatures=sigs)
+    assert [k.track_id for k in r.kept] == ["document:1"]
+
+
+def test_box_signature_ignores_featureless_and_tiny_regions() -> None:
+    assert box_signature(np.full((64, 64), 128, np.uint8), (0, 0, 64, 64)) is None
+    assert box_signature(_pattern(1), (0, 0, 20, 20)) is None
+    sig = box_signature(_pattern(1), (0, 0, 96, 128))
+    assert sig is not None and abs(float(sig.mean())) < 1e-4 and abs(appearance_similarity(sig, sig) - 1) < 1e-3
+
+
 # ---------- offline end-to-end ----------
 
 COLORS = {"a": (0, 0, 255), "b": (0, 200, 0), "c": (255, 0, 0)}
@@ -303,4 +341,4 @@ def test_recapture_plan() -> None:
     plan = plan_recapture(result, {f"doc{i}": _ex(f"doc{i}", i < 2) for i in range(4)})  # exactly half
     assert plan.mode == "close_ups" and plan.documents == ["doc0", "doc1"]
     assert plan.reasons["doc0"] == ["dob missing"]
-    assert plan_recapture(result, {f"doc{i}": _ex(f"doc{i}", i < 3) for i in range(4)}).mode == "sweep_again"
+    assert plan_recapture(result, {f"doc{i}": _ex(f"doc{i}", i < 3) for i in range(4)}).mode == "hold"

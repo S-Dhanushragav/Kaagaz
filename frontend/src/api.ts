@@ -1,4 +1,5 @@
 // Client for the Kaagaz backend (backend/app/api/routes.py).
+import { photosSent } from './photos'
 
 export const API_URL: string = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
 
@@ -111,6 +112,7 @@ export interface SessionView {
   id: string
   language: Language
   sample: boolean
+  kind?: 'video' | 'photos' | 'sample'
   status: 'running' | 'waiting' | 'done' | 'error'
   error: string | null
   stage: Stage | null
@@ -124,7 +126,10 @@ export interface SessionView {
   extractions: Extraction[] | null
   issues: PlannerIssue[] | null // the problems the plan is for
   waiting: WaitingIssue[] | null
-  recapture: { mode: 'none' | 'close_ups' | 'sweep_again' | 'no_documents'; documents: string[] } | null
+  // close_ups: some documents need a clearer photo (the rest goes ahead); hold: more than half do, so the matrix and
+  // plan wait for photos; no_documents: nothing was read. unidentified: items that looked like documents but were
+  // not read as any type; read: documents read as a known type (clearly or not).
+  recapture: { mode: 'none' | 'close_ups' | 'hold' | 'no_documents'; documents: string[]; unidentified?: string[]; read?: number } | null
   household: {
     members: Member[]
     documents: Record<string, { document_id: string; doc_type: string | null; unreadable: boolean }>
@@ -224,6 +229,33 @@ export function startUpload(video: Blob, language: Language, onProgress?: (perce
     xhr.responseType = 'json'
     xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress?.(Math.round((e.loaded / e.total) * 100)) }
     xhr.upload.onload = () => onProgress?.(100)
+    xhr.onload = () => {
+      const body = xhr.response as { id?: string; guest_secret?: string; detail?: string } | null
+      if (xhr.status >= 200 && xhr.status < 300 && body?.id) resolve({ id: body.id, guestSecret: body.guest_secret ?? '' })
+      else reject(new Error(body?.detail ?? `HTTP ${xhr.status}`))
+    }
+    xhr.onerror = () => reject(new Error('network error'))
+    xhr.ontimeout = () => reject(new Error('timed out'))
+    xhr.send(form)
+  })
+}
+
+// Photo mode: up to 12 photos (already resized and stripped of EXIF in the browser, see photos.ts) in one request.
+// `onProgress` gets how many photos have been sent so far (by bytes), for "Uploading 3 of 5".
+export function startPhotos(photos: Blob[], language: Language, onProgress?: (sent: number, total: number) => void,
+  recheckOf: string | null = null): Promise<Started> {
+  const form = new FormData()
+  form.append('language', language)
+  if (recheckOf) form.append('recheck_of', recheckOf)
+  photos.forEach((p, i) => form.append('photos', p, `photo${i + 1}.jpg`))
+  const sizes = photos.map((p) => p.size)
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', `${API_URL}/sessions/photos`)
+    if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`)
+    xhr.responseType = 'json'
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress?.(photosSent(e.loaded / e.total, sizes), photos.length) }
+    xhr.upload.onload = () => onProgress?.(photos.length, photos.length)
     xhr.onload = () => {
       const body = xhr.response as { id?: string; guest_secret?: string; detail?: string } | null
       if (xhr.status >= 200 && xhr.status < 300 && body?.id) resolve({ id: body.id, guestSecret: body.guest_secret ?? '' })
