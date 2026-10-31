@@ -66,6 +66,10 @@ class Settings(BaseSettings):
     meta_ask_model: str = ""  # only if ASK_PROVIDER=meta
     meta_transcribe_model: str = ""  # used by clients/transcribe.py
     asr_keyword_languages: str = "en"  # comma-separated: languages that send keyword biasing (it hurt hi/mr)
+    # Speech input languages: code:name the API biases on (its English language names). Add a language here only;
+    # e.g. ",ta:Tamil,te:Telugu,kn:Kannada" (Phase 11).
+    asr_languages: str = "en:English,hi:Hindi,mr:Marathi"
+    max_question_audio_s: float = Field(30.0, gt=0)  # spoken Ask questions (the app stops recording at 30 s)
     meta_segment_model: str = ""  # used by clients/segmenter.py (not built yet)
 
     # Baseten (Muse Spark Open): one model for all tasks
@@ -132,6 +136,12 @@ class Settings(BaseSettings):
         if isinstance(value, str) and not value.strip():
             return cls.model_fields[info.field_name].default
         return value
+
+    @property
+    def asr_language_names(self) -> dict[str, str]:
+        """Speech-input language code -> the name Muse Voice Transcribe biases on (from ASR_LANGUAGES)."""
+        pairs = (item.split(":", 1) for item in self.asr_languages.split(",") if ":" in item)
+        return {code.strip(): name.strip() for code, name in pairs if code.strip() and name.strip()}
 
     @property
     def cache_path(self) -> Path:

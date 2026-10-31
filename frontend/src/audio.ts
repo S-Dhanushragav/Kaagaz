@@ -16,9 +16,21 @@ function set(next: State): void {
   listeners.forEach((l) => l())
 }
 
+// iPhone Safari plays audio only from an element first played during a tap. `prime` (called in the tap that sends a
+// spoken question) starts such an element with a moment of silence; the next `play` uses it for the answer.
+const SILENCE = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA='
+let primed: HTMLAudioElement | null = null
+
+export function prime(): void {
+  const el = new Audio(SILENCE)
+  el.play().catch(() => { /* nothing to unlock here */ })
+  primed = el
+}
+
 function start(key: string, queue: string[], group: string | null): void {
   audio?.pause()
-  const el = new Audio()
+  const el = primed ?? new Audio()
+  primed = null
   audio = el
   const next = () => {
     if (audio !== el) return // stopped or replaced meanwhile

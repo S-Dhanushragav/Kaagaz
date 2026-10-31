@@ -56,3 +56,10 @@ All code in this repository was written during the Meta Global AI Developer Hack
 
 ## Nov 1
 - Phase 10 part 1, Ask Kaagaz (typed): a LangGraph agent on Muse Spark Open (Baseten, task 'ask', tool_choice required, 20 s deadline, at most 4 lookups) with 8 read-only tools over the scheme YAML, data/fixes and the family's live or saved check (document text only in *_from_document fields); every answer fact-checked by code (numbers incl. number words, schemes, offices, fees, eligibility vs the rules engine, overclaims, language, length, ID numbers), one retry, then 'not sure' + the check's own line; refusals, notes and chip labels from en/hi/mr templates; chips and sources from tool results; 3 suggested questions from the family's problems; answers read aloud; 20 questions/session/hour and 60/IP/hour. Eval (30 questions, en/hi/mr, recorded replays): 26/26 answered correctly, 4/4 refused, 0 wrong answers shown; earlier live runs caught a wrong 'fix the Aadhaar' answer for a mismatch the family had settled (fixed in the prompt).
+- Phase 10 part 2, voice questions: Muse Voice Transcribe file endpoint checked for mr/hi/en and mixed Marathi-English
+(supported; language bias needed, keywords kept English-only); push-to-talk mic in the composer (timer, live level meter,
+30 s stop, WebM/Opus or MP4/AAC), POST /ask/transcribe (ffmpeg in memory + a temp file deleted at once, silence check,
+transcript neither cached nor logged, counted against the question limits with a one-use ticket), words into the box to
+check, spoken questions' answers auto-played (iPhone-safe priming); ASR_LANGUAGES config for Phase 11. Synthetic clips:
+WER en 0.06 / hi 0.19 / mr 0.25, 11/12 right answers; stop to text 2.4-3.9 s (Slow 4G 2.9-3.7 s); Playwright fake mic
+mr/hi/en at 360 and 1440 px.

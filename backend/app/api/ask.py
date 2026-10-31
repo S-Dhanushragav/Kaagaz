@@ -1,12 +1,17 @@
 """Ask Kaagaz API (agents/ask.py).
 
-POST /ask               {question, language, session_id? | check_id?} -> a checked answer (never an error: if the model
-                        is slow or down, a friendly fallback). A finished live session, or a saved check of the
-                        logged-in user, is attached as the family's context; otherwise only scheme questions.
+POST /ask               {question, language, session_id? | check_id?, voice_ticket?} -> a checked answer (never an
+                        error: if the model is slow or down, a friendly fallback). A finished live session, or a saved
+                        check of the logged-in user, is attached as the family's context; otherwise only scheme questions.
+POST /ask/transcribe    a spoken question (form: audio, language, session_id? | check_id?) -> {text, voice_ticket,
+                        timings}: the text goes into the box for the family to check; nothing is sent automatically.
+                        It counts as a question; the ticket lets the /ask that follows go uncounted. The audio is
+                        converted in memory and a temporary file deleted at once; the transcript is neither cached nor
+                        logged.
 GET  /ask/suggestions   ?language=&session_id=|check_id= -> up to 3 questions about this family (templates, no model)
 GET  /ask/audio/{id}    an answer read aloud (MMS-TTS); answers are kept in memory for an hour
 
-Limits: ASK_PER_SESSION_HOUR questions per session or saved check, ASK_PER_IP_HOUR per client IP (the last
+Limits (typed and spoken questions alike): ASK_PER_SESSION_HOUR questions per session or saved check, ASK_PER_IP_HOUR per client IP (the last
 X-Forwarded-For entry, as for login). Question text and names are never logged; agents/ask.py logs token counts.
 """
 
@@ -17,7 +22,7 @@ import time
 from collections import deque
 from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
@@ -30,6 +35,8 @@ router = APIRouter()
 Language = Literal["en", "hi", "mr"]
 ANSWER_TTL_S = 3600
 MAX_ANSWERS = 2000
+TICKET_TTL_S = 600
+MAX_QUESTION_AUDIO_BYTES = 4 * 1024 * 1024  # 30 s of AAC or Opus is well under 1 MB
 
 
 class AskRequest(BaseModel):
@@ -37,6 +44,7 @@ class AskRequest(BaseModel):
     language: Language = "mr"
     session_id: str | None = Field(None, max_length=64)
     check_id: str | None = Field(None, max_length=64)
+    voice_ticket: str | None = Field(None, max_length=64)  # from POST /ask/transcribe: already counted
 
 
 class AskService:
@@ -46,6 +54,7 @@ class AskService:
         self._lock = threading.Lock()
         self._hits: dict[str, deque[float]] = {}
         self._answers: dict[str, tuple[float, str, str]] = {}  # id -> (created, text to speak, language)
+        self._tickets: dict[str, tuple[float, str]] = {}  # voice ticket -> (created, limit key it was counted under)
 
     def take(self, limits: list[tuple[str, int]], now: float | None = None) -> bool:
         """Count one question against every (key, limit), or none if any is used up."""
@@ -62,6 +71,23 @@ class AskService:
             for hits in windows:
                 hits.append(now)
             return True
+
+    def ticket(self, key: str) -> str:
+        """A spoken question was counted when it was transcribed: the ask that follows is not counted again."""
+        t = secrets.token_urlsafe(16)
+        with self._lock:
+            now = time.time()
+            self._tickets = {k: v for k, v in self._tickets.items() if now - v[0] < TICKET_TTL_S}
+            self._tickets[t] = (now, key)
+        return t
+
+    def use_ticket(self, ticket: str | None, key: str) -> bool:
+        """One use, for the same session or check, within 10 minutes."""
+        if not ticket:
+            return False
+        with self._lock:
+            entry = self._tickets.pop(ticket, None)
+        return entry is not None and entry[1] == key and time.time() - entry[0] < TICKET_TTL_S
 
     def remember(self, text: str, language: str) -> str:
         answer_id = secrets.token_urlsafe(12)
@@ -126,7 +152,7 @@ def ask_question(request: Request, body: AskRequest, user: Any = Depends(optiona
 
     ctx, key = context(request, user, body.session_id, body.check_id)
     asks = service(request)
-    if not asks.take(limits(request, key)):
+    if not asks.use_ticket(body.voice_ticket, key) and not asks.take(limits(request, key)):
         raise HTTPException(429, load_ask(body.language).replies["limit"])
     try:
         answer = ask(body.question, body.language, ctx)
@@ -164,3 +190,62 @@ def ask_audio(request: Request, answer_id: str) -> FileResponse:
     except TTSError as e:
         raise HTTPException(503, f"Speech output is not available: {e}") from e
     return FileResponse(speech.path, media_type="audio/wav", headers={"Cache-Control": "private, max-age=3600"})
+
+
+def _keywords(language: str, ctx: Any) -> list[str] | None:
+    """Words to bias recognition toward (scheme and family names), only for ASR_KEYWORD_LANGUAGES (it hurt hi/mr)."""
+    from rules.loader import load_schemes
+
+    if language not in {x.strip() for x in get_settings().asr_keyword_languages.split(",")}:
+        return None
+    words = [s.short.get(language) or s.short["en"] for s in load_schemes()]
+    if ctx is not None:
+        names = [(m.name_en if language == "en" else m.name_mr) or m.name_en for m in ctx.data.members]  # its own script
+        words += [n.split()[0] for n in names if n and n.split()]
+    return list(dict.fromkeys(words))
+
+
+@router.post("/ask/transcribe")
+async def ask_transcribe(request: Request, audio: UploadFile = File(...), language: str = Form("mr"),
+                         session_id: str | None = Form(None), check_id: str | None = Form(None),
+                         user: Any = Depends(optional_user)) -> dict[str, Any]:
+    from starlette.concurrency import run_in_threadpool
+
+    from app.audio import AudioError, to_wav16k
+    from clients.transcribe import TranscribeError, transcribe
+
+    settings = get_settings()
+    if language not in settings.asr_language_names:
+        raise HTTPException(422, {"code": "language", "message": "Speech input is not available in this language."})
+    data = await audio.read(MAX_QUESTION_AUDIO_BYTES + 1)
+    if len(data) > MAX_QUESTION_AUDIO_BYTES:
+        raise HTTPException(413, {"code": "too_long", "message": "The recording is too long."})
+    ctx, key = context(request, user, session_id, check_id)
+    asks = service(request)
+    if not asks.take(limits(request, key)):
+        from agents.ask_tools import load_ask
+
+        raise HTTPException(429, {"code": "limit", "message": load_ask(language).replies["limit"]
+                                  if language in ("en", "hi", "mr") else "Too many questions this hour."})
+    start = time.perf_counter()
+    try:
+        wav, seconds = await run_in_threadpool(to_wav16k, data, settings.max_question_audio_s)
+    except AudioError as e:
+        raise HTTPException(422, {"code": e.code, "message": str(e)}) from e
+    finally:
+        del data
+    converted = time.perf_counter()
+    try:
+        heard = await run_in_threadpool(lambda: transcribe(wav, language, _keywords(language, ctx), cache=False))
+    except TranscribeError as e:
+        logger.warning("question transcription failed: %s", type(e).__name__)
+        raise HTTPException(503, {"code": "unavailable", "message": "Speech input is not available right now."}) from e
+    done = time.perf_counter()
+    text = heard.text.strip()
+    if not text:
+        raise HTTPException(422, {"code": "silent", "message": "nothing was heard"})
+    logger.info("question transcribed [%s]: %.1f s audio, convert %.2f s, transcribe %.2f s", language, seconds,
+                converted - start, done - converted)
+    return {"text": text, "voice_ticket": asks.ticket(key),
+            "timings": {"audio_s": round(seconds, 2), "convert_s": round(converted - start, 2),
+                        "transcribe_s": round(done - converted, 2)}}

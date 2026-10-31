@@ -164,10 +164,12 @@ export interface AnswerReply { action: 'answered' | 'ask_again' | 'show_buttons'
 export class ApiError extends Error {
   status: number
   attemptsLeft: number | null
-  constructor(status: number, message: string, attemptsLeft: number | null = null) {
+  code: string | null // e.g. 'silent' for a spoken question nothing was heard in
+  constructor(status: number, message: string, attemptsLeft: number | null = null, code: string | null = null) {
     super(message)
     this.status = status
     this.attemptsLeft = attemptsLeft
+    this.code = code
   }
 }
 
@@ -175,12 +177,13 @@ async function json<T>(res: Response): Promise<T> {
   if (!res.ok) {
     let message = res.statusText
     let attemptsLeft: number | null = null
+    let code: string | null = null
     try {
       const detail = (await res.json()).detail
       if (typeof detail === 'string') message = detail
-      else if (detail?.message) { message = detail.message; attemptsLeft = detail.attempts_left ?? null }
+      else if (detail?.message) { message = detail.message; attemptsLeft = detail.attempts_left ?? null; code = detail.code ?? null }
     } catch { /* not JSON */ }
-    throw new ApiError(res.status, message, attemptsLeft)
+    throw new ApiError(res.status, message, attemptsLeft, code)
   }
   if (res.status === 204) return undefined as T
   return res.json() as Promise<T>
@@ -423,11 +426,26 @@ export interface AskReply {
 // The family the question is about: a finished live check, a saved check (logged in), or none (schemes only).
 export interface AskContext { sessionId?: string; checkId?: string }
 
-export async function askKaagaz(question: string, language: Language, context: AskContext): Promise<AskReply> {
+// `voiceTicket`: the question was spoken and already counted when it was transcribed.
+export async function askKaagaz(question: string, language: Language, context: AskContext,
+  voiceTicket: string | null = null): Promise<AskReply> {
   return json(await fetch(`${API_URL}/ask`, {
     method: 'POST', headers: headers({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ question, language, session_id: context.sessionId ?? null, check_id: context.checkId ?? null }),
+    body: JSON.stringify({ question, language, session_id: context.sessionId ?? null, check_id: context.checkId ?? null,
+      voice_ticket: voiceTicket }),
   }))
+}
+
+export interface Transcribed { text: string; voice_ticket: string; timings: { audio_s: number; convert_s: number; transcribe_s: number } }
+
+// A spoken question (WebM/Opus or MP4/AAC as recorded): the backend converts and transcribes it; nothing is kept.
+export async function transcribeQuestion(audio: Blob, language: Language, context: AskContext): Promise<Transcribed> {
+  const form = new FormData()
+  form.append('audio', audio, audio.type.includes('mp4') ? 'question.mp4' : 'question.webm')
+  form.append('language', language)
+  if (context.sessionId) form.append('session_id', context.sessionId)
+  if (context.checkId) form.append('check_id', context.checkId)
+  return json(await fetch(`${API_URL}/ask/transcribe`, { method: 'POST', headers: headers(), body: form }))
 }
 
 export async function askSuggestions(language: Language, context: AskContext): Promise<string[]> {

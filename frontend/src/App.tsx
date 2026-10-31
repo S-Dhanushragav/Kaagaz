@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import {
-  ApiError, askKaagaz, askSuggestions, claimSession, getMe, getSchemes, getSession, hasToken, myCheck, myChecks, setMyLanguage,
+  ApiError, askAudioUrl, askKaagaz, askSuggestions, claimSession, getMe, getSchemes, getSession, hasToken, myCheck, myChecks, setMyLanguage,
   setToken, startPhotos, startSample, startUpload,
   tickStep, type AskContext, type CatalogScheme, type Started, type CheckFull, type CheckSummary, type Language, type SessionView,
   type UserView,
 } from './api'
-import { stop } from './audio'
+import { play, prime, stop } from './audio'
 import { preparePhoto } from './photos'
 import { STRINGS } from './i18n'
 import AccountMenu from './ui/AccountMenu'
@@ -18,6 +18,8 @@ import PastCheck from './ui/PastCheck'
 import SchemeCard from './ui/SchemeCard'
 import Sidebar, { Wordmark } from './ui/Sidebar'
 import { useVoiceAnswer } from './ui/voice'
+import { useAskVoice } from './ui/askVoice'
+import { MAX_SECONDS, clock } from './recording'
 
 // Polls the session while it runs; `refresh` polls again after an answer or a close-up.
 function useSession(id: string | null): { view: SessionView | null; error: string | null; refresh: () => void } {
@@ -101,15 +103,27 @@ export default function App() {
   }, [contextKey, askContext, language, view?.plan?.steps.length])
   const suggested = contextKey && suggestedFor.key === contextKey ? suggestedFor.items : []
   const asking = asks.some((a) => !a.reply && !a.error)
+  // A spoken question: its words wait in the box with this ticket until the family taps Send.
+  const [voiceTicket, setVoiceTicket] = useState<string | null>(null)
+  const input = useRef<HTMLInputElement>(null)
+  const askVoice = useAskVoice(t, language, askContext, (text, result) => {
+    setDraft(text)
+    setVoiceTicket(result.voice_ticket)
+    input.current?.focus()
+  })
   const send = async (text: string) => {
     const question = text.trim()
     if (!question || asking) return
     const key = ++askCount.current
+    const ticket = voiceTicket
+    if (ticket) prime()  // in the Send tap, so the answer can be played on an iPhone too
     setDraft('')
+    setVoiceTicket(null)
     setAsks((a) => [...a, { key, context: contextKey, question, reply: null, error: null }])
     try {
-      const reply = await askKaagaz(question, language, askContext)
+      const reply = await askKaagaz(question, language, askContext, ticket)
       setAsks((a) => a.map((x) => (x.key === key ? { ...x, reply } : x)))
+      if (ticket) play(`ask:${reply.id}`, askAudioUrl(reply.id))  // spoken questions get a spoken answer
     } catch (e) {
       const error = e instanceof ApiError && e.status === 429 ? e.message : t.askError
       setAsks((a) => a.map((x) => (x.key === key ? { ...x, error } : x)))
@@ -344,15 +358,39 @@ export default function App() {
           </div>
         </div>
 
+        {(askVoice.phase !== 'idle' || askVoice.note || voiceTicket) && (
+          <div className="voice-panel" role="status" aria-live="polite" data-stt-ms={askVoice.lastMs ?? undefined}>
+            {askVoice.phase === 'listening' && (
+              <>
+                <span className="rec-dot" aria-hidden="true" />
+                <span className="voice-text">{t.askListening}</span>
+                <span className="rec-time">{clock(askVoice.seconds)} / {clock(MAX_SECONDS)}</span>
+                <span className="level" aria-hidden="true"><span style={{ width: `${Math.round(askVoice.level * 100)}%` }} /></span>
+              </>
+            )}
+            {askVoice.phase === 'writing' && <span className="voice-text">{t.askWriting}</span>}
+            {askVoice.phase === 'idle' && (askVoice.note
+              ? <span className="voice-text note">{askVoice.note}</span>
+              : <span className="voice-text">{t.askCheckText}</span>)}
+          </div>
+        )}
         <form className="composer" onSubmit={(e) => { e.preventDefault(); void send(draft) }}>
           <label className="composer-field">
             <span className="sr-only">{t.askPlaceholder}</span>
-            <input type="text" placeholder={narrow ? t.askShort : t.askPlaceholder} value={draft} maxLength={500}
-              enterKeyHint="send" onChange={(e) => setDraft(e.target.value)} />
+            <input ref={input} type="text" placeholder={narrow ? t.askShort : t.askPlaceholder} value={draft} maxLength={500}
+              enterKeyHint="send" onChange={(e) => { setDraft(e.target.value); if (!e.target.value) setVoiceTicket(null) }} />
           </label>
-          <button type="button" className={voice.listening ? 'round-button listening' : 'round-button'}
-            aria-label={voice.listening ? t.listening : t.speak} disabled={!voice.allowed || (voice.busy && !voice.listening)}
-            onClick={voice.toggle}><Mic /></button>
+          {/* The mic answers the family question while one is waiting; otherwise it asks Kaagaz. */}
+          {voice.allowed ? (
+            <button type="button" className={voice.listening ? 'round-button listening' : 'round-button'}
+              aria-label={voice.listening ? t.listening : t.speak} disabled={voice.busy && !voice.listening}
+              onClick={voice.toggle}><Mic /></button>
+          ) : (
+            <button type="button" className={askVoice.phase === 'listening' ? 'round-button listening' : 'round-button'}
+              aria-label={askVoice.phase === 'listening' ? t.askListening : t.askByVoice}
+              aria-pressed={askVoice.phase === 'listening'} disabled={askVoice.phase === 'writing' || asking}
+              onClick={askVoice.toggle}><Mic /></button>
+          )}
           <button type="button" className="round-button" aria-label={t.camera} disabled={busy}
             onClick={() => { newCheck(); setCheck({ kind: 'recording' }) }}><Camera /></button>
           <button type="submit" className="round-button primary" aria-label={t.send} disabled={!draft.trim() || asking}><Send /></button>

@@ -1,0 +1,282 @@
+{
+ "summary": {
+  "source": "synthetic (MMS-TTS)",
+  "en": {
+   "clips": 4,
+   "wer": 0.062,
+   "cer": 0.059,
+   "mean_transcribe_s": 2.19,
+   "right_answers": "4/4"
+  },
+  "hi": {
+   "clips": 4,
+   "wer": 0.194,
+   "cer": 0.11,
+   "mean_transcribe_s": 2.37,
+   "right_answers": "3/4"
+  },
+  "mr": {
+   "clips": 4,
+   "wer": 0.25,
+   "cer": 0.076,
+   "mean_transcribe_s": 2.27,
+   "right_answers": "4/4"
+  },
+  "baseten_tokens": 185264,
+  "audio_minutes": 1.0
+ },
+ "rows": [
+  {
+   "file": "mr_01.webm",
+   "lang": "mr",
+   "mixed": false,
+   "reference": "लाडकी बहीण योजनेसाठी वयाची अट काय आहे?",
+   "heard": "लाटकी बरीन योजनेसाठी वयाची आठ काय आहे?",
+   "audio_s": 5.18,
+   "transcribe_s": 2.62,
+   "word_errors": 3,
+   "words": 7,
+   "char_errors": 5,
+   "chars": 31,
+   "answer_to_reference": "लाडकी बहीण योजनेसाठी वय 21 ते 65 वर्षे लागते. ही महिला अर्जदारांसाठी आहे आणि दरमहा ₹1,500 मिळतात. अंतिम पात्रता कार्यालय ठरवेल.",
+   "answer_to_transcript": "लाडकी बहीण योजनेसाठी वय 21 ते 65 वर्षे लागते. ही योजना महिलांसाठी आहे आणि दरमहा ₹1,500 मिळतात. अधिक माहितीसाठी कार्यालयात विचारा.",
+   "kinds": [
+    "answer",
+    "answer"
+   ],
+   "right_answer": true,
+   "tokens": 17700
+  },
+  {
+   "file": "mr_02.webm",
+   "lang": "mr",
+   "mixed": false,
+   "reference": "सविता यांचे आधार कार्ड पुन्हा का लागते?",
+   "heard": "स्वीता यांचे आधार कार्ड पुन्हा काल आते?",
+   "audio_s": 4.59,
+   "transcribe_s": 2.05,
+   "word_errors": 3,
+   "words": 7,
+   "char_errors": 4,
+   "chars": 32,
+   "answer_to_reference": "तुमच्या तपासणीत सविता आदित्य भोसले यांचे आधार कार्डचा फोटो अस्पष्ट आल्याने वाचता आला नाही, म्हणून पुन्हा स्पष्ट फोटो लागतो. तसेच रेशन कार्ड आणि आदित्य यांचे आधार कार्डही स्पष्ट लागते. उत्पन्न दाखला जुना असू शकतो, कार्यालयात विचारा.",
+   "answer_to_transcript": "तुमच्या तपासणीत सविता आदित्य भोसले यांचे आधार कार्डचा फोटो अस्पष्ट आला आहे, त्यामुळे वाचता आले नाही. कृपया त्याच आधार कार्डचा पुन्हा स्पष्ट फोटो काढून जोडा, मग तपासणी पूर्ण होईल.",
+   "kinds": [
+    "answer",
+    "answer"
+   ],
+   "right_answer": true,
+   "tokens": 10802
+  },
+  {
+   "file": "mr_03.webm",
+   "lang": "mr",
+   "mixed": false,
+   "reference": "आदित्य यांना नवीन उत्पन्नाचा दाखला कुठे मिळेल?",
+   "heard": "आदित्य, यांना नवीन उत्पन्नाचा दाखला कुठे मिळेल?",
+   "audio_s": 5.79,
+   "transcribe_s": 2.21,
+   "word_errors": 0,
+   "words": 7,
+   "char_errors": 0,
+   "chars": 39,
+   "answer_to_reference": "तुमच्या तपासणीनुसार आदित्य योगेश भोसले यांना नवीन उत्पन्नाचा दाखला हवा आहे. तो आपले सरकार पोर्टलवर किंवा आपले सरकार सेवा केंद्रावर अर्ज करून मिळेल, तहसील कार्यालय तो देते. कायद्याने यासाठी 15 दिवसांची मुदत आहे.",
+   "answer_to_transcript": "तुमच्या तपासणीनुसार आदित्य योगेश भोसले यांना नवीन उत्पन्नाचा दाखला हवा आहे. तो तहसील कार्यालयातून मिळतो. आपले सरकार पोर्टलवर किंवा आपले सरकार सेवा केंद्रावर अर्ज करा, तहसील कार्यालय दाखला देते. कायद्यानुसार या कार्यालयासाठी 15 दिवसांची मुदत आहे.",
+   "kinds": [
+    "answer",
+    "answer"
+   ],
+   "right_answer": true,
+   "tokens": 10431
+  },
+  {
+   "file": "mr_04.webm",
+   "lang": "mr",
+   "mixed": true,
+   "reference": "लाडकी बहीण साठी इन्कम लिमिट किती आहे?",
+   "heard": "लारकी बहीण साठी इन्कम लिमिट किती आहे?",
+   "audio_s": 5.05,
+   "transcribe_s": 2.2,
+   "word_errors": 1,
+   "words": 7,
+   "char_errors": 1,
+   "chars": 30,
+   "answer_to_reference": "लाडकी बहीण योजनेसाठी कुटुंबाचे वार्षिक उत्पन्न ₹2,50,000 पर्यंत असावे लागते. यासाठी उत्पन्नाचा दाखला लागतो, पण तुमच्याकडे पिवळे किंवा केशरी रेशन कार्ड असेल तर दाखल्याशिवायही उत्पन्नाची अट पूर्ण होते असे मानले जाते. कार्यालयात खात्री करा.",
+   "answer_to_transcript": "लाडकी बहीण योजनेसाठी कुटुंबाचे वार्षिक उत्पन्न 250000 रुपयांपर्यंत असावे लागते. यासाठी उत्पन्नाचा दाखला लागतो, पण तुमच्याकडे पिवळे किंवा केशरी रेशन कार्ड असेल तर दाखल्याची गरज नाही. अंतिम निर्णय कार्यालय घेईल.",
+   "kinds": [
+    "answer",
+    "answer"
+   ],
+   "right_answer": true,
+   "tokens": 17864
+  },
+  {
+   "file": "hi_05.webm",
+   "lang": "hi",
+   "mixed": false,
+   "reference": "लाडकी बहीण योजना में हर महीने कितने पैसे मिलते हैं?",
+   "heard": "लाडली बहना योजना में हर महीने कितने पैसे मिलते हैं?",
+   "audio_s": 5.36,
+   "transcribe_s": 2.49,
+   "word_errors": 2,
+   "words": 10,
+   "char_errors": 3,
+   "chars": 41,
+   "answer_to_reference": "लाडकी बहीण योजना में हर महीने 1,500 रुपये मिलते हैं।",
+   "answer_to_transcript": "मुख्यमंत्री माझी लाडकी बहीण योजना में 1,500 रुपये प्रति माह मिलते हैं। यह जानकारी सत्यापित है।",
+   "kinds": [
+    "answer",
+    "answer"
+   ],
+   "right_answer": true,
+   "tokens": 17325
+  },
+  {
+   "file": "hi_06.webm",
+   "lang": "hi",
+   "mixed": false,
+   "reference": "लता के नाम की स्पेलिंग अलग क्यों है?",
+   "heard": "नता के नाम की स्पेलिंग में अलग क्यों है?",
+   "audio_s": 4.76,
+   "transcribe_s": 2.22,
+   "word_errors": 2,
+   "words": 8,
+   "char_errors": 4,
+   "chars": 28,
+   "answer_to_reference": "आपकी जाँच में लता आदित्य भोसले के नाम की स्पेलिंग जाति प्रमाण पत्र, पहचान पत्र और राशन कार्ड पर अलग-अलग मिली है। कागज़ ने आपसे पूछा था कि कौन सी स्पेलिंग सही है। इसके लिए योजना कहती है कि कार्यालय में पूछें कि क्या करना है, कागज़ यह नहीं बताता कि कौन सा दस्तावेज़ सुधारना है।",
+   "answer_to_transcript": "आपकी जाँच में लता आदित्य भोसले के नाम की स्पेलिंग जाति प्रमाण पत्र, पहचान पत्र और राशन कार्ड पर अलग-अलग मिली है। कौन सा सही है यह परिवार से पूछा गया है, इसलिए कागज़ खुद ठीक न करें। ऑफिस में पूछें कि क्या करना है, वही बताएंगे।",
+   "kinds": [
+    "answer",
+    "answer"
+   ],
+   "right_answer": true,
+   "tokens": 10621
+  },
+  {
+   "file": "hi_07.webm",
+   "lang": "hi",
+   "mixed": false,
+   "reference": "संजय गांधी निराधार योजना के लिए आय सीमा क्या है?",
+   "heard": "संजय गांधी निराधार योजना के लिए आए सीमा क्या है?",
+   "audio_s": 6.0,
+   "transcribe_s": 2.37,
+   "word_errors": 1,
+   "words": 10,
+   "char_errors": 1,
+   "chars": 38,
+   "answer_to_reference": "आपकी जाँच के अनुसार संजय गांधी निराधार योजना के लिए परिवार की आय ₹21,000 तक होनी चाहिए और उम्र 65 साल से कम होनी चाहिए। अंतिम फैसला कार्यालय करेगा, वहाँ जाकर पुष्टि कर लें।",
+   "answer_to_transcript": "संजय गांधी निराधार योजना के लिए आपकी जाँच के अनुसार उम्र 65 साल से कम होनी चाहिए। यह नियम सत्यापित है। अन्य नियमों और आवेदन की जगह के लिए कार्यालय में पूछें।",
+   "kinds": [
+    "answer",
+    "answer"
+   ],
+   "right_answer": false,
+   "tokens": 23203
+  },
+  {
+   "file": "hi_08.webm",
+   "lang": "hi",
+   "mixed": true,
+   "reference": "मेरी फैमिली के कौन से डॉक्युमेंट्स मिसिंग हैं?",
+   "heard": "मेरीमेरी फैमिली के कौन से एक्यूमेट्स मिसिंग हैं?",
+   "audio_s": 4.89,
+   "transcribe_s": 2.39,
+   "word_errors": 2,
+   "words": 8,
+   "char_errors": 8,
+   "chars": 38,
+   "answer_to_reference": "आपकी जाँच में कोई डॉक्युमेंट पूरी तरह मिसिंग नहीं है। लेकिन 3 डॉक्युमेंट की फोटो साफ नहीं है इसलिए दोबारा साफ फोटो चाहिए: सविता आदित्य भोसले का आधार कार्ड, आदित्य योगेश भोसले का आधार कार्ड और राशन कार्ड। एक कागज पहचाना नहीं गया। आदित्य का आय प्रमाण पत्र पुराना हो सकता है, ऑफिस में पूछ लें।",
+   "answer_to_transcript": "आपकी जाँच में कोई दस्तावेज़ पूरी तरह मिसिंग नहीं है, लेकिन कुछ फोटो साफ नहीं हैं। सविता आदित्य भोसले और आदित्य योगेश भोसले के आधार कार्ड और राशन कार्ड की साफ फोटो दोबारा जोड़ें। आदित्य का आय प्रमाण पत्र पुराना हो सकता है, नया बनवाना पड़ सकता है। एक कागज पहचाना नहीं गया।",
+   "kinds": [
+    "answer",
+    "answer"
+   ],
+   "right_answer": true,
+   "tokens": 14291
+  },
+  {
+   "file": "en_09.webm",
+   "lang": "en",
+   "mixed": false,
+   "reference": "Who can apply for Ladki Bahin?",
+   "heard": "Who can play for Ladki Bahin?",
+   "audio_s": 3.96,
+   "transcribe_s": 2.0,
+   "word_errors": 1,
+   "words": 6,
+   "char_errors": 3,
+   "chars": 24,
+   "answer_to_reference": "Ladki Bahin gives ₹1,500 per month. It is for women age 21 or more and 65 or less, with family income up to ₹2,50,000. You need an income certificate, or a yellow or orange ration card can show income if you have no certificate. The office makes the final decision. Check at the office about the income-tax payer rule.",
+   "answer_to_transcript": "Ladki Bahin gives ₹1,500 per month. It is for women age 21 to 65 with family income up to ₹2,50,000. You need an income certificate, or a yellow or orange ration card can work instead. Ask at the office to confirm details.",
+   "kinds": [
+    "answer",
+    "answer"
+   ],
+   "right_answer": true,
+   "tokens": 16759
+  },
+  {
+   "file": "en_10.webm",
+   "lang": "en",
+   "mixed": false,
+   "reference": "Why does Savita need a clearer photo of her Aadhaar card?",
+   "heard": "Why does Savita need a clearer photo of her Aditya card?",
+   "audio_s": 5.26,
+   "transcribe_s": 2.19,
+   "word_errors": 1,
+   "words": 11,
+   "char_errors": 5,
+   "chars": 46,
+   "answer_to_reference": "Your check shows Savita Aditya Bhosale's Aadhaar card could not be read clearly, so a clearer photo is needed to verify her details. Please retake the photo with good light and all corners visible.",
+   "answer_to_transcript": "Your check shows Savita Aditya Bhosale's Aadhaar card could not be read clearly, so a clearer photo is needed to check her details. Please add a new photo that is clear and not blurry.",
+   "kinds": [
+    "answer",
+    "answer"
+   ],
+   "right_answer": true,
+   "tokens": 14540
+  },
+  {
+   "file": "en_11.webm",
+   "lang": "en",
+   "mixed": false,
+   "reference": "How long does the new income certificate take?",
+   "heard": "How long does the new income certificate take?",
+   "audio_s": 4.7,
+   "transcribe_s": 2.3,
+   "word_errors": 0,
+   "words": 8,
+   "char_errors": 0,
+   "chars": 38,
+   "answer_to_reference": "Your check shows Aditya Yogesh Bhosale needs a new income certificate. You apply on the Aaple Sarkar portal or at an Aaple Sarkar Seva Kendra and the Tahsil office issues it. The law sets 15 days for this office.",
+   "answer_to_transcript": "Your check shows Aditya Yogesh Bhosale needs a new income certificate. You apply on the Aaple Sarkar portal or at an Aaple Sarkar Seva Kendra and the Tahsil office issues it. The law sets 15 days for this office.",
+   "kinds": [
+    "answer",
+    "answer"
+   ],
+   "right_answer": true,
+   "tokens": 10472
+  },
+  {
+   "file": "en_12.webm",
+   "lang": "en",
+   "mixed": false,
+   "reference": "Where do I get a caste certificate?",
+   "heard": "where do I get a caste certificate?",
+   "audio_s": 4.19,
+   "transcribe_s": 2.28,
+   "word_errors": 0,
+   "words": 7,
+   "char_errors": 0,
+   "chars": 28,
+   "answer_to_reference": "Your check shows you can get a caste certificate at the Sub-Divisional Officer / Deputy Collector. Apply there for the certificate. The time limit is set by the district under the Right to Public Services Act, so confirm details at the office.",
+   "answer_to_transcript": "Your check shows you can get a caste certificate at the Sub-Divisional Officer / Deputy Collector. Apply there for the certificate. The time limit is set by the district under the Right to Public Services Act, so confirm details at the office.",
+   "kinds": [
+    "answer",
+    "answer"
+   ],
+   "right_answer": true,
+   "tokens": 21256
+  }
+ ]
+}

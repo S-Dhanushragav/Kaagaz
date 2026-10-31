@@ -89,17 +89,23 @@ clearer-photo list (decision field, not a key field), so the sample shows the ca
 Problems found; the 720p sweep (video 728) still holds with many unclear documents and one agreed wrong digit.
 
 ## Phase 10: Live voice and Ask Kaagaz (Sun 2 Nov afternoon to Mon 3 Nov morning)
-- [ ] Spoken questions, push-to-talk (changed from a realtime live transcript): the clip is transcribed with Muse
-      Voice Transcribe into the text box to check before sending; the answer to a spoken question is played (I, M, T, D)
+- [x] Spoken questions, push-to-talk (changed from a realtime live transcript): tap to start and stop (30 s at most,
+      timer and level meter), the clip (WebM/Opus or MP4/AAC) converted by ffmpeg and transcribed with Muse Voice
+      Transcribe (file endpoint, language bias) into the text box to check before sending; the answer to a spoken
+      question plays by itself (I, M, T, D)
 - [x] Ask Kaagaz agent on Muse Spark Open (Baseten): questions about the 5 schemes and the
       family's check (live or saved), answered through 8 read-only tools (I, M, D, Ag, OW)
 - [x] Every fact in an answer checked against verified data before it is shown: numbers, schemes, offices, fees,
       eligibility (rules engine only), language, length; one retry, then "not sure" with the check's own line (M, T, Ag)
 - [x] Answers spoken with MMS-TTS (Listen on every answer) (I, M, D)
 - [x] Suggested questions from the family's own problems; "Add a photo" chips open the close-up flow (I, D)
-Status: part 1 (typed Ask Kaagaz) built and tested, not deployed or pushed; part 2 (voice) next. Eval: 30 questions,
-26/26 answered correctly, 4/4 refused, 0 wrong answers shown (eval/results/ask_20261101-030333.json).
-Commits: part 1 -
+Status: built and tested, not deployed or pushed. Ask eval: 30 questions, 26/26 answered correctly, 4/4 refused,
+0 wrong answers shown (eval/results/ask_20261101-030333.json). Speech: synthetic MMS-TTS clips only so far (WER en 0.06,
+hi 0.19, mr 0.25; 11/12 transcripts still get the right answer; eval/results/asr_20261101-033631.json); stop to text
+2.4-3.9 s locally, 2.9-3.7 s on throttled Slow 4G. The owner's own recordings are still to be run
+(`python eval/run_asr_eval.py --clips <folder>`).
+Commits: part 1 63165bf; part 2 (this commit)
+Changed: spoken questions' transcripts are never written to the disk cache (privacy; transcription costs $0.18 an hour).
 Open: scheme YAML has no verified "where to apply" yet (the agent says to ask at the office; TODO for the developer).
 
 ## Phase 11: More Indian languages (Mon 3 Nov afternoon)

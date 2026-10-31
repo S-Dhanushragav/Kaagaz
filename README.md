@@ -31,7 +31,7 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 
 ## Status
 
-Phases 0-8 are built, tested and deployed; Phases 9, 9b, 9c and 10 part 1 are built and tested, not deployed yet (577 backend tests and 14 frontend tests, no network).
+Phases 0-8 are built, tested and deployed; Phases 9, 9b, 9c and 10 are built and tested, not deployed yet (584 backend tests and 18 frontend tests, no network).
 Phase 9c (real-input rescue) was added after a manual phone test failed on all 9 real videos; it is awaiting review before Phase 10.
 
 | Phase | What | Status |
@@ -48,6 +48,7 @@ Phase 9c (real-input rescue) was added after a manual phone test failed on all 9
 | 8 | UI redesign: chat with scheme sidebar and household matrix, live document thumbnails, result cards with Listen/Stop and Listen to all, scheme catalog (`GET /schemes`), feedback (`POST /feedback`), Aadhaar numbers blurred on thumbnails | Done, deployed |
 | 9 | Phone login (demo code, hashed numbers, signed tokens), case file on Neon Postgres (checks, step ticks, re-check comparison), welcome back, delete my data, 365-day retention | Built, awaiting review; not deployed |
 | 9b | Layout: two columns with the schemes matrix and office visits inline in the result, centred reading column, How Kaagaz works in the welcome, light neutral palette, composer clear of the home bar and keyboard | Built; not deployed |
+| 10 (part 2) | Ask by voice: push-to-talk mic (timer, level meter, 30 s), clip converted by ffmpeg and transcribed by Muse Voice Transcribe into the box to check before sending, spoken questions' answers played aloud; nothing of the audio kept, transcripts not cached or logged | Built; not deployed |
 | 10 (part 1) | Ask Kaagaz, typed: an agent on Muse Spark Open (Baseten) answers questions about the 5 schemes and the family's check through read-only tools; every answer fact-checked by code before it is shown (numbers, schemes, offices, fees, eligibility from the rules engine only); sources, Listen, "Add a photo" chips, suggested questions; per-session and per-IP limits | Built; not deployed |
 | 9c | Real-input rescue: upright crops (text orientation), tracks split when documents are shown one at a time, cut-off documents read, duplicates merged; partial results ("Read clearly" / "Need a clearer photo", plan held when most are unclear) instead of a hard stop; photo mode (Add photos, up to 12, EXIF stripped, two agreeing reads) | Built, awaiting review; not deployed |
 
@@ -116,6 +117,15 @@ definitely eligible?", a made-up scheme, a made-up fee, Tamil, Marathi mixed wit
   it (telling the family to correct Lata's Aadhaar card although they had said its spelling was right). The prompt now
   defers mismatches to the plan, and that case is in the eval.
 - Replays are recorded in [eval/fixtures/ask/](eval/fixtures/ask/), so the eval runs offline for free.
+
+**Ask by voice** (Muse Voice Transcribe, file endpoint, language bias; 12 questions spoken by MMS-TTS, incl. mixed
+Marathi-English and Hindi-English and family names, sent as WebM/Opus as Android Chrome records them: a weak proxy for
+real voices)
+- Word error rate: English 0.06, Hindi 0.19, Marathi 0.25 (character error rate 0.06 / 0.11 / 0.08); scheme names suffer
+  most (लाडकी बहीण → "लाटकी बरीन"). 11/12 transcripts still got the right answer; the miss heard आय सीमा as "आए सीमा".
+  That is why the words go into the box to check and are never sent by themselves.
+- Stop to text: 2.4-3.9 s (local), 2.9-3.7 s with the browser throttled to Slow 4G; ffmpeg 0.1 s, transcription
+  1.9-2.8 s for 4-5 s clips (10-25 KB).
 
 **Voice round trip** (MMS-TTS speaks 8 answers + 2 non-answers per language; Muse Voice Transcribe hears them;
 answers are matched by number words only, spelling-tolerant). Synthetic speech of isolated words, so a weak proxy
@@ -359,6 +369,7 @@ From `backend/` unless noted. Costs are for a cold cache; cached calls are free.
 | Household eval, end to end (repo root) | `python eval/run_household_eval.py --mode e2e` (`--dry-run` first) | ~$0.90 |
 | Fix planner eval, 10 households (repo root) | `python eval/run_fix_planner_eval.py` (`--dry-run` first) | ~$0.25 |
 | Ask Kaagaz eval, 30 questions (repo root) | `python eval/run_ask_eval.py` (recorded replies, free); `--live` re-records | free / ~210k Baseten tokens |
+| Voice questions eval (repo root): your recordings / synthetic | `python eval/run_asr_eval.py --clips <folder>` / `--synthetic` (`--no-answers`: recognition only) | < $0.01 Meta + ~190k Baseten tokens |
 | Voice round trip (repo root, `tts` extra) | `python eval/run_voice_roundtrip.py` | < $0.01 |
 | Warm up / time the deployed app (repo root) | `python scripts/warmup.py <backend URL>` | small |
 | Rebuild sample close-ups (repo root) | `python scripts/make_sample_closeups.py` | free (cached) |

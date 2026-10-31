@@ -14,7 +14,6 @@ import urllib.error
 import urllib.request
 import uuid
 import wave
-from typing import Literal
 
 from pydantic import BaseModel
 
@@ -23,8 +22,7 @@ from clients.cache import DiskCache, make_key
 
 logger = logging.getLogger(__name__)
 
-Language = Literal["en", "hi", "mr"]
-LANGUAGE_NAMES = {"en": "English", "hi": "Hindi", "mr": "Marathi"}  # the API biases on English language names
+Language = str  # a code in ASR_LANGUAGES (app/config.py): en, hi, mr; more by configuration only
 RATES = (16000, 24000)
 # Interactive (the family is waiting): 10 s timeout, one retry, then the caller shows buttons.
 INTERACTIVE_TIMEOUT_S, INTERACTIVE_RETRIES, INTERACTIVE_BACKOFF_S = 10.0, 1, 0.5
@@ -90,21 +88,25 @@ def _post(url: str, body: bytes, content_type: str, api_key: str, timeout_s: flo
 
 def transcribe(audio: bytes, language: Language | None = None, keywords: list[str] | None = None, *,
                timeout_s: float = INTERACTIVE_TIMEOUT_S, retries: int = INTERACTIVE_RETRIES,
-               backoff_s: float = INTERACTIVE_BACKOFF_S) -> Transcript:
-    """Transcribe one WAV clip. `language` biases recognition (omit to auto-detect). Defaults are the
-    interactive settings (10 s timeout, one retry); evals pass EVAL_SETTINGS."""
+               backoff_s: float = INTERACTIVE_BACKOFF_S, cache: bool = True) -> Transcript:
+    """Transcribe one WAV clip. `language` biases recognition (omit to auto-detect); it must be in ASR_LANGUAGES.
+    Defaults are the interactive settings (10 s timeout, one retry); evals pass EVAL_SETTINGS.
+    `cache=False` (a family's spoken question): the transcript is never written to disk."""
     settings = get_settings()
     if not settings.meta_transcribe_model or not settings.meta_base_url:
         raise TranscribeError("META_TRANSCRIBE_MODEL and META_BASE_URL must be set")
     check_wav(audio)
     request: dict = {"model": settings.meta_transcribe_model, "audioEncoding": "WAV", "mode": "PUSH_TO_TALK"}
     if language:
-        request["languageBias"] = [LANGUAGE_NAMES[language]]
+        names = settings.asr_language_names
+        if language not in names:
+            raise TranscribeError(f"speech input is not set up for {language!r} (ASR_LANGUAGES)")
+        request["languageBias"] = [names[language]]
     if keywords:
         request["keywords"] = list(dict.fromkeys(keywords))
-    cache = DiskCache(settings.cache_path)
+    disk = DiskCache(settings.cache_path) if cache else None
     key = make_key({"kind": "asr", "url": settings.meta_base_url, "request": request, "audio": audio})
-    hit = cache.get(key)
+    hit = disk.get(key) if disk else None
     if hit is not None:
         return Transcript.model_validate({**hit, "cached": True})
 
@@ -115,6 +117,7 @@ def transcribe(audio: bytes, language: Language | None = None, keywords: list[st
     elapsed = time.perf_counter() - start
     result = Transcript(text=(reply.get("transcript") or "").strip(), audio_ms=int(reply.get("audioDurationMs") or 0),
                         request_s=round(elapsed, 3))
-    cache.set(key, result.model_dump())
+    if disk:
+        disk.set(key, result.model_dump())
     logger.info("transcribe [%s] %d ms audio in %.1f s", language or "auto", result.audio_ms, elapsed)
     return result
