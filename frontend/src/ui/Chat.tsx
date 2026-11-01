@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { CatalogScheme, CheckFull, Language, SessionView } from '../api'
-import { LANGUAGE_NAMES, type Strings } from '../i18n'
+import { LANGUAGE_NAMES, MUSE_SPARK_OPEN_NOTICE, type Strings } from '../i18n'
 import Feedback from './Feedback'
 import { formatDate } from '../casefile'
 import { count } from '../counts'
@@ -138,11 +138,13 @@ export default function Chat({ t, language, schemes, check, view, error, answere
 // What Kaagaz does, in four steps (the existing strings): open for a first visit, folded for a returning user.
 function HowItWorks({ t, folded }: { t: Strings; folded: boolean }) {
   const steps = <ol className="how-steps">{t.howSteps.map((s, i) => <li key={i}>{s}</li>)}</ol>
+  const notice = <p className="powered-by" lang="en">{MUSE_SPARK_OPEN_NOTICE}</p>
   if (folded) {
     return (
       <details className="how">
         <summary>{t.howTitle}</summary>
         {steps}
+        {notice}
       </details>
     )
   }
@@ -150,6 +152,7 @@ function HowItWorks({ t, folded }: { t: Strings; folded: boolean }) {
     <div className="how">
       <p className="how-title">{t.howTitle}</p>
       {steps}
+      {notice}
     </div>
   )
 }

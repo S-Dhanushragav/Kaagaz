@@ -3,7 +3,7 @@
 // (backend templates, no model).
 import { useState } from 'react'
 import { askAudioUrl, type AskChip, type AskReply } from '../api'
-import type { Strings } from '../i18n'
+import { MUSE_SPARK_OPEN_NOTICE, type Strings } from '../i18n'
 import { Camera, Link } from './Icons'
 import ListenButton from './ListenButton'
 import { Bot, Me } from './Chat'
@@ -74,6 +74,7 @@ function Answer({ t, reply, sessionId, sample, onReplanned, onAddPhotos }: {
         <CloseUp key={open.id} t={t} sessionId={sessionId} documentId={open.document_id} sample={sample}
           onReplanned={() => { setOpen(null); onReplanned() }} />
       )}
+      <p className="powered-by" lang="en">{MUSE_SPARK_OPEN_NOTICE}</p>
     </div>
   )
 }

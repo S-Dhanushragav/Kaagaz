@@ -590,5 +590,8 @@ export const STRINGS: Record<Language, Strings> = { en, hi, mr, ta, te, kn }
 export const LANGUAGES: Language[] = ['mr', 'hi', 'en', 'ta', 'te', 'kn']
 export const LANGUAGE_NAMES: Record<Language, string> = { mr: 'मराठी', hi: 'हिंदी', en: 'English', ta: 'தமிழ்', te: 'తెలుగు', kn: 'ಕನ್ನಡ' }
 // Not reviewed by a native speaker: the language menu marks them "machine-translated" (in their own script)
+// Licence notice required by Meta's Muse Model License for Ask Kaagaz (Muse Spark Open): shown as is, in English, in
+// every language (it is a notice, not UI text to translate).
+export const MUSE_SPARK_OPEN_NOTICE = 'Built with Muse Spark Open'
 export const MACHINE_TRANSLATED: ReadonlySet<Language> = new Set(['ta', 'te', 'kn'])
 export type { Strings }

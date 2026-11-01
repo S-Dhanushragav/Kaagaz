@@ -230,11 +230,13 @@ machine-translated.
   [mms-tts-tel](https://huggingface.co/facebook/mms-tts-tel), [mms-tts-kan](https://huggingface.co/facebook/mms-tts-kan).
   Fine for this demo; a commercial deployment needs another TTS. The weights are downloaded when the image is built
   and not redistributed in the repository.
-- **Muse Spark Open** (weights, served by Baseten): Meta's Muse Model License. Coverage of the release reports a
-  "Built with Muse Spark Open" notice requirement and a separate agreement for API hosts above $20M a year
-  ([BuildMVPFast](https://www.buildmvpfast.com/blog/meta-muse-spark-open-license-self-host-2026),
-  [The New Stack](https://thenewstack.io/meta-muse-spark-open/)). [PLACEHOLDER: confirm against the license text and
-  link it; check whether the app must show the notice.] Baseten's use is under [PLACEHOLDER: Baseten terms link].
+- **Muse Spark Open** (weights, served by Baseten): Meta's Muse Model License, as stated on the
+  [model card](https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B) (primary source). The license asks
+  products built on the model to show "Built with Muse Spark Open", and API hosts above $20M a year need a separate
+  agreement (secondary: [BuildMVPFast](https://www.buildmvpfast.com/blog/meta-muse-spark-open-license-self-host-2026)).
+  **Built with Muse Spark Open:** the app shows this notice, in English in all six languages, under every Ask Kaagaz
+  answer and in the "How Kaagaz works" card; the README and this writeup show it too. Baseten's use is under
+  [PLACEHOLDER: Baseten terms link].
 - **Muse Spark, SAM 3.1, Muse Voice Transcribe:** called through the Meta Model API ([docs](https://dev.meta.ai/docs))
   under its terms. [PLACEHOLDER: Meta Model API terms link; SAM 3.1 licence name and link.] The `meta-sam-parser`
   package is distributed by Meta under the SAM License.

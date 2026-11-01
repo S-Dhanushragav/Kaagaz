@@ -6,6 +6,10 @@ documents to household members, checks them against each other and against schem
 voice, in Marathi, Hindi, English, Tamil, Telugu or Kannada.
 
 Built for the **Meta Global AI Developer Hackathon**, Indie Developer track, theme "Build for Your World".
+
+**Built with Muse Spark Open.** Ask Kaagaz runs on Meta's Muse Spark Open (Muse Model License,
+[model card](https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B)); the app shows this notice under every Ask
+answer and in "How Kaagaz works".
 All code in this repository was written during the hackathon (from Oct 27, 2026); see [docs/BUILD_LOG.md](docs/BUILD_LOG.md).
 
 > **Synthetic data only.** Every document in this repository is generated, bilingual, and watermarked **SPECIMEN**.
