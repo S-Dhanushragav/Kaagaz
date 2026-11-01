@@ -3,7 +3,7 @@
 **Kaagaz** (कागज़, "paper") is a voice-first agent that checks a family's welfare documents before they apply for a scheme.
 A family member sweeps a phone camera once across the family's papers. Kaagaz finds each document, reads it, links the
 documents to household members, checks them against each other and against scheme rules, and explains what to fix, by
-voice, in Marathi or Hindi.
+voice, in Marathi, Hindi, English, Tamil, Telugu or Kannada.
 
 Built for the **Meta Global AI Developer Hackathon**, Indie Developer track, theme "Build for Your World".
 All code in this repository was written during the hackathon (from Oct 27, 2026); see [docs/BUILD_LOG.md](docs/BUILD_LOG.md).
@@ -22,7 +22,7 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 
 ## Try it
 
-- **App:** https://kaagaz-demo.netlify.app (mobile-first; Marathi, Hindi or English). "Try with a sample family" runs a
+- **App:** https://kaagaz-demo.netlify.app (mobile-first; Marathi, Hindi, English, and machine-translated Tamil, Telugu and Kannada). "Try with a sample family" runs a
   bundled sweep video of synthetic SPECIMEN documents; "Record your documents" uses the phone camera (up to 45 s).
 - **Backend API:** https://s-dhanushragav--kaagaz-web.us-east.modal.run (`/health`; endpoints in
   [app/api/routes.py](backend/app/api/routes.py)).
@@ -31,10 +31,10 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 
 ## Status
 
-Phases 0-10 are built, tested and deployed; Phase 11 (Tamil, Telugu, Kannada) is built and tested, not deployed yet
-(752 backend tests and 32 frontend tests, no network). Last deploy 1 Nov 2026: login and case file, the layout pass,
-real-input rescue and Ask Kaagaz (typed and spoken) are live; the sample family runs end to end in production (first
-spoken sentence 18 s, plan 23 s).
+Phases 0-11 are built, tested and deployed (752 backend tests and 32 frontend tests, no network). Last deploy
+1 Nov 2026: Tamil, Telugu and Kannada (voice in and out, Ask Kaagaz in all six languages), spoken answers unlocked on
+phones, earlier checks of a visit kept, and a daily Baseten budget with Muse Spark fallback are live on top of login and
+case file, the layout pass, real-input rescue and Ask Kaagaz. Next: Phase 12, freeze and submit.
 
 | Phase | What | Status |
 |---|---|---|
@@ -53,7 +53,7 @@ spoken sentence 18 s, plan 23 s).
 | 9c | Real-input rescue: upright crops (text orientation), tracks split when documents are shown one at a time, cut-off documents read, duplicates merged; partial results ("Read clearly" / "Need a clearer photo", plan held when most are unclear) instead of a hard stop; photo mode (Add photos, up to 12, EXIF stripped, two agreeing reads) | Done, deployed |
 | 10 (part 1) | Ask Kaagaz, typed: an agent on Muse Spark Open (Baseten) answers questions about the 5 schemes and the family's check through read-only tools; every answer fact-checked by code before it is shown (numbers, schemes, offices, fees, eligibility from the rules engine only); sources, Listen, "Add a photo" chips, suggested questions; per-session and per-IP limits | Done, deployed |
 | 10 (part 2) | Ask by voice: push-to-talk mic (timer, level meter, 30 s), clip converted by ffmpeg and transcribed by Muse Voice Transcribe into the box to check before sending, spoken questions' answers played aloud; nothing of the audio kept, transcripts not cached or logged | Done, deployed |
-| 11 | Tamil, Telugu, Kannada with voice in and out: Muse Spark translations back-translated and checked by Muse Spark Open (reviewed fixes, [report](docs/TRANSLATION_REPORT.md)), marked machine-translated; Ask and its fact check in all six languages; spoken answers unlocked on phones; Baseten daily budget with Muse Spark fallback | Done, not deployed |
+| 11 | Tamil, Telugu, Kannada with voice in and out: Muse Spark translations back-translated and checked by Muse Spark Open (reviewed fixes, [report](docs/TRANSLATION_REPORT.md)), marked machine-translated; Ask and its fact check in all six languages; spoken answers unlocked on phones; Baseten daily budget with Muse Spark fallback | Done, deployed |
 
 Remaining phases: see [docs/ROADMAP.md](docs/ROADMAP.md).
 
@@ -110,7 +110,11 @@ All numbers are on synthetic SPECIMEN data; result files are in [eval/results/](
 - Spoken sentences and questions come from templates, not the agent; offices, fees, time limits and documents are
   checked against [data/fixes/](data/fixes/) before a plan is accepted.
 
-**Ask Kaagaz** (30 questions in en/hi/mr: 8 on the schemes, 14 on the sample family, 9 of them on missing or problem
+**Ask Kaagaz, six languages** (Phase 11: 49 questions, 18 new in Tamil, Telugu and Kannada, 4 on the family and 2 on
+the schemes each, plus a Bengali question): **48 handled right, 1 "not sure", 0 wrong answers shown**; ~7.7k tokens
+(~$0.011 at Baseten's $1.25/$4.25 per million) per question. Translations: [docs/TRANSLATION_REPORT.md](docs/TRANSLATION_REPORT.md).
+
+**Ask Kaagaz** (Phase 10: 30 questions in en/hi/mr: 8 on the schemes, 14 on the sample family, 9 of them on missing or problem
 documents, 8 adversarial: another state's scheme, an Aadhaar number, instructions planted in a document field, "am I
 definitely eligible?", a made-up scheme, a made-up fee, Tamil, Marathi mixed with English; Muse Spark Open on Baseten)
 - **26/26 answered correctly, 4/4 correctly refused, 0 wrong answers shown**; "Add a photo" chips offered on 4/4
@@ -162,7 +166,7 @@ real upload; target: first spoken sentence within 60 s)
   (12 s upload of 18 MB from a desktop line; on slow mobile data the upload alone takes longer, which the app
   now shows as a progress bar). Full-size frames make "find" slower (29 s vs 19 s at 720p): frame sampling and
   mask decoding on CPU. The trade is deliberate: at 720p the ration card often could not be read (see below).
-- A cold container adds ~29 s (start + loading three TTS models): run `scripts/warmup.py` 5 minutes before a demo.
+- A cold container adds ~29 s or more (start + loading six TTS models): run `scripts/warmup.py` 5 minutes before a demo.
 - Reading quality on phone-like video: at the current setting HH001 plans exactly its planted error; the HH009 upload
   caught the expired income certificate but not the name mismatch, because one Aadhaar card was unclear. That card is
   put on the close-up list, everything that depends on it (who is on the ration card, a "missing" Aadhaar card) waits
@@ -439,7 +443,8 @@ backend/
 data/
   schemes/        scheme rules (YAML, with sources)
   fixes/          fix procedures (YAML, status and source per fact)
-  templates/      voice sentences (en/hi/mr), scheme reasons (en/hi/mr), declaration draft
+  templates/      voice sentences, scheme reasons and Ask replies per language (ta/te/kn generated), declaration draft
+  translations/   reviewed fixes to the machine translations (scripts/translate.py)
   sample/         bundled close-up photos for the sample family
 deploy/           Modal app (backend container)
 scripts/          warm-up / timing check, sample close-up builder
