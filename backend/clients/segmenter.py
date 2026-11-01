@@ -11,8 +11,10 @@ SAM 3.1 output is special-token text, one line per frame (parsed with Meta's met
 Each mask covers its box (H x W of the box), placed at the box's top-left corner.
 """
 
+import base64
 import logging
 import re
+import zlib
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Protocol, Sequence
@@ -43,12 +45,31 @@ class MaskSpec:
     frame_size: tuple[int, int]  # width, height
 
 
-def decode_mask_spec(spec: MaskSpec) -> np.ndarray:
-    """Full-frame bool mask. Uses Meta's decoder; pure Python, ~0.1-3 s per mask depending on size."""
+def _decode_raster(spec: MaskSpec) -> np.ndarray:
+    """The mask's own (height, width) bool raster. Meta's decoder is pure Python (~5 s of one CPU core for a
+    document-sized mask at 1280 px), so the result is kept in the disk cache, keyed by a hash of the payload: a repeat
+    (the sample family, a warm-up) skips the decode. The cached SAM response already holds the same mask."""
+    from app.config import get_settings
+    from clients.cache import DiskCache, make_key
+
+    cache = DiskCache(get_settings().cache_path)
+    key = make_key({"decoded": "sam_mask", "encoding": spec.encoding, "payload": spec.payload,
+                    "width": spec.width, "height": spec.height})
+    hit = cache.get(key)
+    if hit is not None:
+        bits = np.frombuffer(zlib.decompress(base64.b64decode(hit["bits"])), np.uint8)
+        return np.unpackbits(bits, count=spec.width * spec.height).reshape(spec.height, spec.width).astype(bool)
     raster = decode_mask_to_raster(
         SegmentationMask(encoding=spec.encoding, payload=spec.payload, width=spec.width, height=spec.height)
     )
     local = np.frombuffer(raster, np.uint8).reshape(spec.height, spec.width).astype(bool)
+    cache.set(key, {"bits": base64.b64encode(zlib.compress(np.packbits(local).tobytes())).decode("ascii")})
+    return local
+
+
+def decode_mask_spec(spec: MaskSpec) -> np.ndarray:
+    """Full-frame bool mask (decoded once per distinct mask, see `_decode_raster`)."""
+    local = _decode_raster(spec)
     fw, fh = spec.frame_size
     full = np.zeros((fh, fw), bool)
     h, w = min(spec.height, fh - spec.top), min(spec.width, fw - spec.left)

@@ -59,8 +59,10 @@ def _deps(tts_calls: list) -> Deps:
     def llm(messages, **kwargs):  # deterministic per conversation, like the disk cache: replays are identical
         return turns[sum(1 for m in messages if m["role"] == "assistant")]
 
-    return Deps(find=find, new_reader=lambda: FakeReader(extractions), verifier=lambda images: None,
+    deps = Deps(find=find, new_reader=lambda: FakeReader(extractions), verifier=lambda images: None,
                 adjudicator=lambda ref: _no_llm, llm=llm, tts=lambda text, lang: tts_calls.append((lang, text)))
+    deps.find_photos = lambda photos, on_document: deps.find(None, on_document)  # the sample family's photos
+    return deps
 
 
 def test_graph_pauses_for_the_family_and_resumes_to_a_spoken_plan(tmp_path) -> None:

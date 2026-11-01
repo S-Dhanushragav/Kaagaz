@@ -1,4 +1,5 @@
-"""Issue detection on the evaluation set EV001-EV030, against the planted errors.
+"""Issue detection on the evaluation set EV001-EV030 (minus the held-out sample family, eval/eval_set.py), against
+the planted errors.
 
 Usage (from the repo root, with the backend venv):
     python eval/run_household_eval.py --mode truth              # documents from ground truth: no reader calls
@@ -30,6 +31,7 @@ from graph.nodes.build_household import (  # noqa: E402
 from graph.nodes.read_documents import DocumentInput, read_documents  # noqa: E402
 from rules.engine import evaluate  # noqa: E402
 from schemas.documents import DocumentExtraction  # noqa: E402
+from eval.eval_set import folders as eval_folders  # noqa: E402
 from synthetic.truth import extractions_from_truth, match_issues  # noqa: E402
 from vision.images import encode_for_llm, read_image  # noqa: E402
 from vision.text import comparison_key, mask_identity_number  # noqa: E402
@@ -45,7 +47,7 @@ AVG_PROMPT_TOKENS, AVG_COMPLETION_TOKENS = 1431, 515
 
 
 def load() -> list[dict[str, Any]]:
-    return [json.loads(p.read_text(encoding="utf-8")) for p in sorted(EVAL.glob("EV*/ground_truth.json"))]
+    return [json.loads((f / "ground_truth.json").read_text(encoding="utf-8")) for f in eval_folders()]
 
 
 def read_all(gts: list[dict[str, Any]], model: str) -> tuple[dict[str, list], dict[str, dict[str, list[bytes]]], dict[str, Any]]:

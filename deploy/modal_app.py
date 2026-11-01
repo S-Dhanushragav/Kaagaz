@@ -5,6 +5,9 @@ Deploy (from the repo root, with the `deploy` extra):
     KAAGAZ_FRONTEND_ORIGIN=https://<site>.netlify.app modal deploy deploy/modal_app.py
 Keep one container warm during judging (costs credits while it runs; off by default):
     KAAGAZ_KEEP_WARM=1 KAAGAZ_FRONTEND_ORIGIN=... modal deploy deploy/modal_app.py
+Judging week (scripts/load_test.py, eval/results/load_*.json): min_containers=1 (KAAGAZ_KEEP_WARM=1), max_containers=1,
+40 concurrent requests per container (polls are cheap), MAX_RUNNING_CHECKS=4 checks at once (more wait in line and the
+app says Kaagaz is busy). One warm container at cpu=4, 8 GiB: 4 x $0.0000131 + 8 x $0.00000222 per second = ~$6.06 a day.
 
 - One container at most: sessions (paused graphs) live in memory, so every request must reach the same process.
 - MMS-TTS models are downloaded while the image builds, not on the first request.

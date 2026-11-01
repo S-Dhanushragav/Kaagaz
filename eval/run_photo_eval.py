@@ -32,6 +32,7 @@ sys.path[:0] = [str(ROOT / "backend"), str(ROOT)]
 
 from clients.segmenter import Sam31ApiSegmenter  # noqa: E402
 from eval.run_reader_eval import expected_fields  # noqa: E402
+from eval.eval_set import folders as eval_folders  # noqa: E402
 from graph.nodes.find_photos import find_in_photos  # noqa: E402
 from graph.nodes.read_documents import StreamingReader  # noqa: E402
 from graph.nodes.triage import seen_from, triage  # noqa: E402
@@ -120,7 +121,7 @@ def main() -> None:
     parser.add_argument("--pairs", action="store_true", help="two documents per photo")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
-    folders = sorted(EVAL.glob("EV*"))[: args.households]
+    folders = eval_folders()[: args.households]
     if args.dry_run:
         n = sum(len(json.loads((f / "ground_truth.json").read_text(encoding="utf-8"))["documents"]) for f in folders)
         print(f"{len(folders)} households, {n} documents: ~{n if not args.pairs else (n + 1) // 2} SAM images, ~{2 * n} reads")

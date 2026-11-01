@@ -119,6 +119,7 @@ export interface SessionView {
   stages: { stage: Stage; done: boolean; seconds: number | null }[]
   question: Question | null
   elapsed_s: number
+  queue_position?: number | null // waiting for a free turn: 1 = next in line (the server is busy)
   found: { id: string; frames: number[]; fully_visible: boolean }[] | null
   documents?: LiveDocument[] | null // found so far, while the finder runs (and after); crops at cropUrl()
   check_id?: string | null // logged in: the saved check
@@ -208,10 +209,13 @@ function headers(extra: Record<string, string> = {}): Record<string, string> {
 // A started check: its id, and the guest secret that lets this browser (only) save it after logging in.
 export interface Started { id: string; guestSecret: string }
 
+// The sample family's photos; ?sample=video in the page address runs the bundled sweep video instead (testing).
+const SAMPLE_SOURCE = new URLSearchParams(globalThis.location?.search ?? '').get('sample') === 'video' ? 'video' : 'photos'
+
 export async function startSample(language: Language, recheckOf: string | null = null): Promise<Started> {
   const res = await fetch(`${API_URL}/sessions/sample`, {
     method: 'POST', headers: headers({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ language, recheck_of: recheckOf }),
+    body: JSON.stringify({ language, recheck_of: recheckOf, source: SAMPLE_SOURCE }),
   })
   const body = await json<{ id: string; guest_secret: string }>(res)
   return { id: body.id, guestSecret: body.guest_secret }

@@ -2,7 +2,10 @@
 the app runs as one process/container).
 
 - An uploaded video is normalized (constant 30 fps), checked against the size and length caps, and deleted
-  by the graph as soon as the finder is done. The bundled sample is never deleted.
+  by the graph as soon as the finder is done.
+- The sample family is a set of bundled SPECIMEN photos (SAMPLE_PHOTOS) run through photo mode like any upload:
+  copied into the session folder, so the graph deletes only the copies. The bundled sweep video (SAMPLE_VIDEO) is
+  still reachable as source "video" for testing; it is never deleted.
 - Photo mode: up to MAX_PHOTOS photos (resized and stripped of EXIF in the browser), each checked to be an image,
   deleted by the graph as soon as the finder is done.
 - The graph pauses at a family question; `answer` resumes it with an option index (spoken answers are matched
@@ -11,6 +14,8 @@ the app runs as one process/container).
   its thumbnail is made from the best crop in memory only, with identity numbers blurred (see `thumbnail`).
 - Everything a session holds (folder, crops, checkpoint, results) is deleted `session_ttl_s` after it started.
 - Uploads are rate-limited per hour; the sample is not counted (its model calls are cached).
+- At most MAX_RUNNING_CHECKS graph runs at once; the rest wait in line, first come first served, and the view
+  reports their place in line (queue_position) so the app can say Kaagaz is busy.
 - A logged-in user's session saves its check (app/casefile.py) to the case-file store when it finishes, and
   updates it after a close-up re-plan. Guest sessions are never stored.
 """
@@ -39,6 +44,7 @@ logger = logging.getLogger(__name__)
 
 Status = Literal["running", "waiting", "done", "error"]
 Kind = Literal["video", "photos", "sample"]
+SampleSource = Literal["photos", "video"]
 MAX_PHOTOS = 12
 SHOWN_AS_IS = ("ration_card", "income_certificate", "caste_certificate")  # thumbnails without masking
 
@@ -80,6 +86,7 @@ class Session:
     language: str
     sample: bool
     kind: Kind = "video"
+    sample_name: str | None = None  # the sample's folder name (EV012, HH009): its bundled close-ups
     created: float = field(default_factory=time.time)
     status: Status = "running"
     error: str | None = None
@@ -108,6 +115,9 @@ class SessionManager:
         self.sessions: dict[str, Session] = {}
         self.uploads: list[float] = []  # start times of upload sessions (rate limit)
         self._lock = threading.Lock()
+        self._turns = threading.Condition()  # the line for MAX_RUNNING_CHECKS
+        self._running = 0
+        self._line: list[str] = []  # session ids waiting for a turn, first come first served
 
     # ---------- paths ----------
 
@@ -175,13 +185,43 @@ class SessionManager:
         self._run(session, state)
         return session
 
-    def start_sample(self, language: str, user_id: str | None = None, recheck_of: str | None = None) -> Session:
-        video = REPO_ROOT / get_settings().sample_video
-        if not video.exists():
-            raise SessionError(503, "The sample video is not available on this server.")
+    @staticmethod
+    def sample_photos() -> list[Path]:
+        folder = REPO_ROOT / get_settings().sample_photos
+        return sorted(folder.glob("*.jpg")) if folder.is_dir() else []
+
+    def start_sample(self, language: str, user_id: str | None = None, recheck_of: str | None = None,
+                     source: SampleSource = "photos") -> Session:
+        """The sample family through the real pipeline: its bundled photos in photo mode (default), or the bundled
+        sweep video (testing)."""
+        settings = get_settings()
         session_id = uuid.uuid4().hex[:12]
-        self.folder(session_id).mkdir(parents=True, exist_ok=True)
-        return self._start(session_id, video, language, sample=True, user_id=user_id, recheck_of=recheck_of)
+        if source == "video":
+            video = REPO_ROOT / settings.sample_video
+            if not video.exists():
+                raise SessionError(503, "The sample video is not available on this server.")
+            self.folder(session_id).mkdir(parents=True, exist_ok=True)
+            return self._start(session_id, video, language, sample=True, user_id=user_id, recheck_of=recheck_of,
+                               sample_name=video.parent.name)
+        photos = self.sample_photos()
+        if not photos:
+            raise SessionError(503, "The sample family is not available on this server.")
+        folder = self.folder(session_id)
+        folder.mkdir(parents=True, exist_ok=True)
+        copies = []
+        for i, photo in enumerate(photos[:MAX_PHOTOS]):  # the graph deletes these copies after finding
+            copy = folder / f"photo{i + 1:02d}.jpg"
+            shutil.copyfile(photo, copy)
+            copies.append(copy)
+        session = Session(id=session_id, language=language, sample=True, kind="sample", user_id=user_id,
+                          recheck_of=recheck_of, sample_name=photos[0].parent.name)
+        with self._lock:
+            self.sessions[session.id] = session
+        state = {"session_id": session.id, "language": language, "video_path": None,
+                 "photo_paths": [str(p) for p in copies], "delete_video": True,
+                 "reference_date": date.today().isoformat()}
+        self._run(session, state)
+        return session
 
     def new_upload_folder(self) -> Path:
         folder = self.folder(uuid.uuid4().hex[:12])
@@ -189,9 +229,9 @@ class SessionManager:
         return folder
 
     def _start(self, session_id: str, video: Path, language: str, sample: bool, user_id: str | None = None,
-               recheck_of: str | None = None) -> Session:
+               recheck_of: str | None = None, sample_name: str | None = None) -> Session:
         session = Session(id=session_id, language=language, sample=sample, kind="sample" if sample else "video",
-                          user_id=user_id, recheck_of=recheck_of)
+                          user_id=user_id, recheck_of=recheck_of, sample_name=sample_name)
         with self._lock:
             self.sessions[session_id] = session
         state = {"session_id": session_id, "language": language, "video_path": str(video), "delete_video": not sample,
@@ -199,8 +239,35 @@ class SessionManager:
         self._run(session, state)
         return session
 
+    # ---------- the line ----------
+
+    def _wait_turn(self, session_id: str) -> None:
+        with self._turns:
+            self._line.append(session_id)
+            while self._running >= get_settings().max_running_checks or self._line[0] != session_id:
+                self._turns.wait()
+            self._line.pop(0)
+            self._running += 1
+            self._turns.notify_all()  # the next in line may have a free turn too
+
+    def _end_turn(self) -> None:
+        with self._turns:
+            self._running -= 1
+            self._turns.notify_all()
+
+    def queue_position(self, session_id: str) -> int | None:
+        """1 = next in line; None = not waiting."""
+        with self._turns:
+            return self._line.index(session_id) + 1 if session_id in self._line else None
+
+    def load(self) -> dict[str, int]:
+        with self._turns:
+            return {"running_checks": self._running, "waiting_checks": len(self._line),
+                    "max_running_checks": get_settings().max_running_checks}
+
     def _run(self, session: Session, graph_input: Any) -> None:
         def work() -> None:
+            self._wait_turn(session.id)
             try:
                 out = self.graph.invoke(graph_input, session.config)
                 interrupts = out.get("__interrupt__") if isinstance(out, dict) else None
@@ -215,6 +282,8 @@ class SessionManager:
                 logger.exception("session %s failed", session.id)
                 with session.lock:
                     session.status, session.error = "error", f"{type(e).__name__}: {e}"
+            finally:
+                self._end_turn()
 
         session.status = "running"
         threading.Thread(target=work, daemon=True, name=f"session-{session.id}").start()
@@ -245,6 +314,7 @@ class SessionManager:
                 "error": session.error, "stage": current, "stages": stages, "question": session.question,
                 "elapsed_s": round(time.time() - session.created, 1), "documents": documents,
                 "check_id": session.check_id, "recheck_of": session.recheck_of,
+                "queue_position": self.queue_position(session.id) if session.status == "running" else None,
                 **{k: values.get(k) for k in keys}}
 
     def thumbnail(self, session_id: str, document_id: str) -> bytes:
@@ -404,8 +474,7 @@ class SessionManager:
         session = self.get(session_id)
         if not session.sample:
             raise SessionError(409, "Sample close-ups are only for the sample family.")
-        video = Path(get_settings().sample_video)
-        path = REPO_ROOT / "data" / "sample" / "closeups" / video.parent.name / f"{Path(document_id).name}.jpg"
+        path = REPO_ROOT / "data" / "sample" / "closeups" / (session.sample_name or "") / f"{Path(document_id).name}.jpg"
         if not path.exists():
             raise SessionError(404, "No sample close-up for this document.")
         return path.read_bytes()

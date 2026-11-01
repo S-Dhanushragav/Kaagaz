@@ -2,7 +2,8 @@
 
 POST /sessions                  video upload + language -> session (videos capped at 45 s and ~60 MB)
 POST /sessions/photos           1-12 photos + language -> session (photo mode; each photo at most 15 MB)
-POST /sessions/sample           the bundled sample family's sweep video, no upload
+POST /sessions/sample           the bundled sample family's photos through photo mode, no upload
+                                ({"source": "video"}: the bundled sweep video, for testing)
 GET  /sessions/{id}             stage progress, partial results, the pending question
 POST /sessions/{id}/answer      {question_id, option} (JSON) or a short WAV clip (form: question_id, audio)
 GET  /sessions/{id}/audio/{key} TTS WAV for 'question' or 'step-<n>'
@@ -41,6 +42,7 @@ def _fail(e: SessionError) -> HTTPException:
 
 class SampleRequest(BaseModel):
     language: Language = "mr"
+    source: Literal["photos", "video"] = "photos"
     recheck_of: str | None = None  # "Check again" on a stored check (logged in only)
 
 
@@ -121,7 +123,8 @@ async def create_photo_session(request: Request, photos: list[UploadFile] = File
 def create_sample(request: Request, body: SampleRequest, user: Any = Depends(optional_user)) -> dict[str, Any]:
     previous = _recheck(request, user, body.recheck_of)
     try:
-        session = manager(request).start_sample(body.language, user_id=user.id if user else None, recheck_of=previous)
+        session = manager(request).start_sample(body.language, user_id=user.id if user else None, recheck_of=previous,
+                                                source=body.source)
         return {"id": session.id, "guest_secret": session.guest_secret}
     except SessionError as e:
         raise _fail(e) from e

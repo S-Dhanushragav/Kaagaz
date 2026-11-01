@@ -83,8 +83,9 @@ def store_unavailable(request: Request, exc: StoreUnavailable) -> JSONResponse:
 
 
 @app.get("/health")
-def health() -> dict[str, object]:
+def health(request: Request) -> dict[str, object]:
     from app.config import REPO_ROOT
+    from app.sessions import SessionManager
     from clients import budget
 
     s = get_settings()
@@ -97,7 +98,19 @@ def health() -> dict[str, object]:
     return {
         "status": "ok",
         "providers": {"vision": s.vision_provider, "agent": s.agent_provider, "text": s.text_provider},
-        "sample": (REPO_ROOT / s.sample_video).exists(),
+        "sample": bool(SessionManager.sample_photos()),  # the sample family's photos
+        "sample_video": (REPO_ROOT / s.sample_video).exists(),  # the sweep video, for testing
+        "load": sessions.load() if (sessions := getattr(request.app.state, "sessions", None)) else None,
+        # Which secrets are set (never their values): the freeze check compares them with what production needs.
+        "configured": {name: bool(getattr(s, name).get_secret_value()) for name in
+                       ("meta_api_key", "baseten_api_key", "database_url", "phone_hash_key", "token_signing_key")},
+        "auth_mode": s.auth_mode,
+        # Non-secret settings the freeze check compares with .env.example (scripts/freeze_check.py).
+        "settings": {"META_VISION_MODEL": s.meta_vision_model, "META_AGENT_MODEL": s.meta_agent_model,
+                     "BASETEN_MODEL": s.baseten_model, "META_SEGMENT_MODEL": s.meta_segment_model,
+                     "META_TRANSCRIBE_MODEL": s.meta_transcribe_model, "ASK_PROVIDER": s.ask_provider,
+                     "SAMPLE_PHOTOS": s.sample_photos, "MAX_RUNNING_CHECKS": str(s.max_running_checks),
+                     "BASETEN_DAILY_TOKENS": str(s.baseten_daily_tokens), "AUTH_MODE": s.auth_mode},
         "tts_models_loaded": tts_loaded,  # None: the tts extra is not installed
         "baseten_budget": budget.status(),  # today's tokens, refusals and fallbacks to Muse Spark (counts only)
     }

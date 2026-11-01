@@ -67,3 +67,18 @@ def test_empty_output_is_no_tracks() -> None:
 def test_modal_backend_is_a_stub(tmp_path: Path) -> None:
     with pytest.raises(NotImplementedError):
         Sam3ModalSegmenter().segment_video(tmp_path / "v.mp4", ["document"])
+
+
+def test_decoded_masks_are_cached(tracks, monkeypatch, tmp_path: Path) -> None:
+    """Meta's decoder is slow pure Python: a mask decoded once comes from the disk cache, bit for bit, after that."""
+    import clients.segmenter as segmenter
+    from app.config import get_settings
+
+    monkeypatch.setattr(get_settings(), "cache_dir", tmp_path)
+    calls = []
+    real = segmenter.decode_mask_to_raster
+    monkeypatch.setattr(segmenter, "decode_mask_to_raster", lambda mask: calls.append(1) or real(mask))
+    spec = next(f.mask_spec for t in tracks for f in t.frames.values() if f.mask_spec is not None)
+    first = segmenter.decode_mask_spec(spec)
+    again = segmenter.decode_mask_spec(spec)
+    assert len(calls) == 1 and np.array_equal(first, again) and again.dtype == bool and again.any()

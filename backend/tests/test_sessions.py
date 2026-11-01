@@ -35,6 +35,60 @@ def _wait(manager: SessionManager, session_id: str, timeout: float = 15.0) -> di
     raise AssertionError("session did not settle")
 
 
+def test_sample_runs_its_photos_through_photo_mode(manager: SessionManager, monkeypatch, tmp_path) -> None:
+    """The sample family's bundled photos go to the photo finder as copies: the bundle stays, the copies go."""
+    bundle = tmp_path / "EV000"
+    bundle.mkdir()
+    for n in (1, 2):
+        (bundle / f"photo0{n}.jpg").write_bytes(b"jpg")
+    monkeypatch.setattr(get_settings(), "sample_photos", str(bundle))  # absolute: REPO_ROOT / abs == abs
+    session = manager.start_sample("en")
+    view = _wait(manager, session.id)
+    assert view["sample"] and view["kind"] == "sample" and session.sample_name == "EV000"
+    assert view["status"] == "waiting" and [d["id"] for d in view["documents"]] == ["rc", "id1"]
+    assert sorted(p.name for p in bundle.iterdir()) == ["photo01.jpg", "photo02.jpg"]  # never deleted
+    assert not list(manager.folder(session.id).glob("*.jpg"))  # the copies are gone after finding
+
+
+def test_sample_without_photos_is_unavailable(manager: SessionManager, monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(get_settings(), "sample_photos", str(tmp_path / "missing"))
+    with pytest.raises(SessionError) as e:
+        manager.start_sample("en")
+    assert e.value.status == 503
+
+
+def test_busy_server_puts_checks_in_line(manager: SessionManager, monkeypatch) -> None:
+    """Over MAX_RUNNING_CHECKS a check waits its turn and reports its place in line; it runs when a turn frees."""
+    import threading
+
+    monkeypatch.setattr(get_settings(), "max_running_checks", 1)
+    gate = threading.Event()
+    graph = manager.graph
+
+    class Slow:  # the first run holds its turn until the gate opens
+        def __getattr__(self, name):
+            return getattr(graph, name)
+
+        def invoke(self, *args, **kwargs):
+            gate.wait(10)
+            return graph.invoke(*args, **kwargs)
+
+    manager.graph = Slow()
+    first = manager.start_sample("en")
+    end = time.time() + 5
+    while manager.load()["running_checks"] < 1 and time.time() < end:
+        time.sleep(0.01)
+    second = manager.start_sample("en")
+    while manager.queue_position(second.id) is None and time.time() < end:
+        time.sleep(0.01)
+    assert manager.view(second.id)["queue_position"] == 1 and manager.view(first.id)["queue_position"] is None
+    assert manager.load() == {"running_checks": 1, "waiting_checks": 1, "max_running_checks": 1}
+    gate.set()
+    assert _wait(manager, first.id)["status"] == "waiting"
+    assert _wait(manager, second.id)["status"] == "waiting" and manager.queue_position(second.id) is None
+    assert manager.load()["running_checks"] == 0
+
+
 def test_sample_session_pauses_resumes_and_reports_progress(manager: SessionManager) -> None:
     session = manager.start_sample("en")
     view = _wait(manager, session.id)

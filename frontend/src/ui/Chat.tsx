@@ -209,6 +209,12 @@ function Uploading({ t, percent, photos }: { t: Strings; percent: number | null;
   )
 }
 
+// Waiting for a free turn on a busy server: say so, instead of a silent wait.
+function busy(t: Strings, position: number | null | undefined): string {
+  if (!position) return t.working
+  return position === 1 ? t.busyNext : t.busyInLine.replace('{n}', String(position))
+}
+
 function Progress({ t, language, view }: { t: Strings; language: Language; view: SessionView }) {
   // Finished, or stopped after reading (no documents, or waiting for clearer photos): the time the run took.
   const finished = view.stages.every((s) => s.done) || view.status === 'done'
@@ -223,7 +229,7 @@ function Progress({ t, language, view }: { t: Strings; language: Language; view:
   }
   return (
     <div aria-live="polite">
-      <p className="status">{t.working}</p>
+      <p className="status">{busy(t, view.queue_position)}</p>
       <ol className="stages">
         {view.stages.map((s) => {
           const state = s.done ? 'done' : view.stage === s.stage ? 'active' : 'todo'

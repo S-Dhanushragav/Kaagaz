@@ -77,7 +77,7 @@ class Settings(BaseSettings):
     baseten_model: str = ""
     # Daily token budget for Baseten across every task (Ask, back-translation, a photo second read or the fix planner
     # when routed there); 0 = no Baseten calls. clients/budget.py.
-    baseten_daily_tokens: int = Field(2_000_000, ge=0)
+    baseten_daily_tokens: int = Field(5_000_000, ge=0)
     # Tasks that are sent to Muse Spark (Meta Model API, META_<TASK>_MODEL) when Baseten fails or the budget is used
     # up. Ask is not among them: it shows its friendly "unavailable" reply instead.
     baseten_fallback_tasks: str = "vision,agent"
@@ -93,7 +93,12 @@ class Settings(BaseSettings):
     max_video_s: float = 45.0
     max_video_mb: float = 60.0
     upload_long_side: int = 1920  # uploads are re-encoded with at most this long side (1080p keeps full size)
-    sample_video: str = "synthetic/videos/HH009/sweep.mp4"  # relative to the repo root
+    # The sample family: its photos go through photo mode (relative to the repo root); the HH009 sweep video stays
+    # reachable as POST /sessions/sample {"source": "video"} for testing.
+    sample_photos: str = "data/sample/EV012"
+    sample_video: str = "synthetic/videos/HH009/sweep.mp4"
+    # Checks that run at once (find -> plan); more wait in line and the app says Kaagaz is busy (app/sessions.py).
+    max_running_checks: int = Field(4, ge=1)
     cors_origins: str = "http://localhost:5173"  # comma-separated; the deployed frontend's origin only
     sessions_dir: Path = Path("tmp/sessions")
 

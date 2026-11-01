@@ -89,10 +89,15 @@ def test_close_ups_only_for_listed_documents_and_real_photos(manager) -> None:
 
 
 def test_sample_close_ups_are_bundled_for_the_sample_only(manager, monkeypatch) -> None:
+    photos = manager.start_sample("en")  # the sample family's photos (EV012)
+    _wait(manager, photos.id)
+    assert manager.sample_closeup(photos.id, "doc06a")[:2] == b"\xff\xd8"  # the clear photo of the blurred one
     monkeypatch.setattr(get_settings(), "sample_video", "synthetic/videos/HH009/sweep.mp4")
-    s = manager.start_sample("en")
+    s = manager.start_sample("en", source="video")  # the sweep video keeps its own close-ups
     _wait(manager, s.id)
     assert manager.sample_closeup(s.id, "doc02")[:2] == b"\xff\xd8"  # the bundled JPEG
+    with pytest.raises(SessionError):
+        manager.sample_closeup(s.id, "doc06a")
     with pytest.raises(SessionError):
         manager.sample_closeup(s.id, "doc99")
     manager.sessions[s.id].sample = False

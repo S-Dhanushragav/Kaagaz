@@ -27,6 +27,7 @@ from agents.answers import NOT_SURE, keywords, match_answer, question_prompt, us
 from agents.fix_planner import planner_issues  # noqa: E402
 from agents.speech import speech_text  # noqa: E402
 from clients.transcribe import EVAL_SETTINGS, transcribe  # noqa: E402
+from eval.eval_set import folders as eval_folders  # noqa: E402
 from clients.tts import synthesize  # noqa: E402
 from graph.nodes.build_household import build_household  # noqa: E402
 from synthetic.truth import extractions_from_truth  # noqa: E402
@@ -52,7 +53,7 @@ def prompts() -> dict[str, list]:
     """Prompts for real EV questions: a name differing in Devanagari, one differing only in English spelling,
     and a date of birth."""
     picked: dict[str, object] = {}
-    for path in sorted(EVAL.glob("EV*/ground_truth.json")):
+    for path in (f / "ground_truth.json" for f in eval_folders()):
         gt = json.loads(path.read_text(encoding="utf-8"))
         hh = build_household(extractions_from_truth(gt), date.fromisoformat(gt["reference_date"]))
         for issue in planner_issues(hh):

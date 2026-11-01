@@ -21,6 +21,8 @@ const en = {
   uploading: 'Sending the video…',
   uploaded: 'Video sent. Preparing it…',
   working: 'Checking your documents',
+  busyNext: "Kaagaz is busy, you're next in line",
+  busyInLine: "Kaagaz is busy, you're number {n} in line",
   stages: {
     find_documents: 'Finding documents', read_documents: 'Reading documents', build_household: 'Matching people',
     check_rules: 'Checking scheme rules', plan_fixes: 'Planning fixes', speak: 'Preparing speech',
@@ -214,6 +216,8 @@ const hi: Strings = {
   uploading: 'वीडियो भेजा जा रहा है…',
   uploaded: 'वीडियो भेज दिया। तैयार किया जा रहा है…',
   working: 'आपके दस्तावेज़ जाँचे जा रहे हैं',
+  busyNext: 'कागज़ अभी व्यस्त है, अगली बारी आपकी है',
+  busyInLine: 'कागज़ अभी व्यस्त है, कतार में आपका नंबर {n} है',
   stages: {
     find_documents: 'दस्तावेज़ ढूँढना', read_documents: 'दस्तावेज़ पढ़ना', build_household: 'लोगों का मिलान',
     check_rules: 'योजना के नियम जाँचना', plan_fixes: 'सुधार की योजना', speak: 'आवाज़ तैयार करना',
@@ -405,6 +409,8 @@ const mr: Strings = {
   uploading: 'व्हिडिओ पाठवत आहोत…',
   uploaded: 'व्हिडिओ पाठवला. तयार करत आहोत…',
   working: 'तुमची कागदपत्रे तपासत आहोत',
+  busyNext: 'कागज सध्या व्यस्त आहे, पुढचा नंबर तुमचा आहे',
+  busyInLine: 'कागज सध्या व्यस्त आहे, रांगेत तुमचा नंबर {n} आहे',
   stages: {
     find_documents: 'कागदपत्रे शोधणे', read_documents: 'कागदपत्रे वाचणे', build_household: 'व्यक्ती जुळवणे',
     check_rules: 'योजनेचे नियम तपासणे', plan_fixes: 'दुरुस्तीची योजना', speak: 'आवाज तयार करणे',
