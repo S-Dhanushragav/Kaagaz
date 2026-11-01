@@ -84,6 +84,7 @@ def store_unavailable(request: Request, exc: StoreUnavailable) -> JSONResponse:
 @app.get("/health")
 def health() -> dict[str, object]:
     from app.config import REPO_ROOT
+    from clients import budget
 
     s = get_settings()
     try:
@@ -97,4 +98,5 @@ def health() -> dict[str, object]:
         "providers": {"vision": s.vision_provider, "agent": s.agent_provider, "text": s.text_provider},
         "sample": (REPO_ROOT / s.sample_video).exists(),
         "tts_models_loaded": tts_loaded,  # None: the tts extra is not installed
+        "baseten_budget": budget.status(),  # today's tokens, refusals and fallbacks to Muse Spark (counts only)
     }

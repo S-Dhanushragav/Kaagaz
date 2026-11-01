@@ -363,3 +363,23 @@ def test_saved_checks_need_their_owner(api) -> None:
     assert client.get("/ask/suggestions", params={"language": "en"}).json() == []
     assert client.get("/ask/audio/nope").status_code == 404
     assert client.post("/ask", json={"question": "", "language": "en"}).status_code == 422
+
+
+def test_answer_speech_is_made_ahead_of_listen(tmp_path: Path) -> None:
+    """Listen does not wait for TTS: the speech starts as soon as the answer is remembered, and only once."""
+    from app.api.ask import AskService
+
+    made: list[tuple[str, str]] = []
+
+    def speaker(text: str, language: str) -> Path:
+        made.append((text, language))
+        out = tmp_path / f"{len(made)}.wav"
+        out.write_bytes(b"RIFF")
+        return out
+
+    service = AskService(speaker=speaker, ready=lambda: True)
+    answer_id = service.remember("उत्तर", "mr")
+    assert service.speech(answer_id) == tmp_path / "1.wav"
+    assert service.speech(answer_id) == tmp_path / "1.wav"
+    assert made == [("उत्तर", "mr")]
+    assert AskService(speaker=speaker, ready=lambda: False).speech("x") is None  # not ready: made on Listen

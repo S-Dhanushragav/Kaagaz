@@ -2,6 +2,10 @@
 # Placeholders: {member} {document} {office} {scheme}. Names and documents stay labels ("{member}: ..."): Marathi
 # would inflect them before a postposition.
 language: mr
+brand: "कागज"  # the app's name, spelled as the UI spells it (frontend/src/i18n.ts appName)
+brand_wrong:  # an answer that names the app any of these ways is rejected (agents/ask_check.py)
+  - '(?<![\u0900-\u097f])कागद(?:कडे|कडून|ला|ने|च्या|ची|चा|चे|मध्ये)?(?![\u0900-\u097f])'
+  - '(?i)\bkaa?gh?aa?[zdj]\b'
 replies:
   out_of_scope: "मी फक्त तुमची कागदपत्रे आणि महाराष्ट्रातील या 5 योजनांबद्दल मदत करू शकतो: लाडकी बहीण, प्रधानमंत्री उज्ज्वला, रमाई आवास, संजय गांधी निराधार आणि श्रावणबाळ. कोण अर्ज करू शकते, कोणती कागदपत्रे लागतात, किंवा तुमच्या तपासणीत काय आढळले ते विचारा."
   id_number: "मी आधार किंवा इतर ओळख क्रमांक वाचून दाखवत नाही आणि विचारतही नाही. कोणती कागदपत्रे लागतात आणि तुमच्या तपासणीत काय आढळले ते मी सांगू शकतो."

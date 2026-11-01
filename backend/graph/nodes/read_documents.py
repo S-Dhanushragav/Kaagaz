@@ -50,6 +50,9 @@ class DocumentInput(BaseModel):
     id: str
     images: list[bytes] = Field(min_length=1, max_length=3)  # prepared JPEGs of one document
     frame_times_s: list[float] | None = None  # capture time of each image (video crops), for agreement strength
+    # provider for each image's read, with agreement (None: the configured one); photo mode's second read may go to
+    # another model (PHOTO_SECOND_READ_PROVIDER). A Baseten read falls back to Muse Spark in clients/llm.py.
+    read_providers: list[str | None] | None = None
 
 
 class ReadResult(BaseModel):
@@ -316,13 +319,16 @@ class StreamingReader:
         self._docs.shutdown(wait=True)
         self._calls.shutdown(wait=True)
 
-    def _read_one(self, doc: DocumentInput) -> ReadResult:
-        return read_document(doc, overrides=self.overrides, llm=self.llm)
+    def _read_one(self, doc: DocumentInput, provider: str | None = None) -> ReadResult:
+        overrides = {**(self.overrides or {}), "provider": provider} if provider else self.overrides
+        return read_document(doc, overrides=overrides, llm=self.llm)
 
     def _read_agreed(self, doc: DocumentInput) -> ReadResult:
         start = time.perf_counter()
         singles = [DocumentInput(id=f"{doc.id}#f{i + 1}", images=[img]) for i, img in enumerate(doc.images)]
-        frame_results = [f.result() for f in [self._calls.submit(self._read_one, s) for s in singles]]
+        providers = doc.read_providers or [None] * len(singles)
+        frame_results = [f.result() for f in [self._calls.submit(self._read_one, s, p)
+                                              for s, p in zip(singles, providers)]]
         return ReadResult(
             extraction=agree_extractions(doc.id, [r.extraction for r in frame_results], times_s=doc.frame_times_s),
             usage=_sum_usage(frame_results),

@@ -2,6 +2,9 @@
 # The model writes only the answer itself; refusals, fallbacks and notes come from here.
 # Placeholders: {member} {document} {office} {scheme}.
 language: en
+brand: "Kaagaz"  # the app's name, spelled as the UI spells it (frontend/src/i18n.ts appName)
+brand_wrong:  # an answer that names the app any of these ways is rejected (agents/ask_check.py)
+  - '(?i)\b(?:kagaz|kaghaz|kagad|kaagad|kagaj|kaagaj|kaagaaz)\b'
 replies:
   out_of_scope: "I can only help with your documents and these 5 Maharashtra schemes: Ladki Bahin, PM Ujjwala, Ramai Awas, Sanjay Gandhi Niradhar and Shravanbal. Ask me who can apply, which documents are needed, or what your check found."
   id_number: "I never read out or ask for Aadhaar or other ID numbers. I can tell you which documents you need and what your check found."

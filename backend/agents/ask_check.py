@@ -20,6 +20,7 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Iterable
 
+from agents.ask_tools import load_ask
 from agents.voice import load_voice
 from rules.loader import load_schemes
 from vision.text import redact_identity_numbers
@@ -307,6 +308,9 @@ def check(text: str, language: str, ev: Evidence) -> list[str]:
         if any(not any(u in s.casefold() for u in UNSURE_WORDS) for s in fee_sentences):
             failures.append("No fee was looked up: say Kaagaz has no fee information and to ask at the office.")
     failures += eligibility_failures(text, ev)
+    brand = load_ask(language).brand
+    if any(re.search(rx, text) for rx in load_ask(language).brand_wrong):
+        failures.append(f"The app's name is written {brand} in this language: never any other spelling.")
     letters = len(DEVANAGARI.findall(text)) + len(LATIN.findall(text))
     if letters:
         share = len(DEVANAGARI.findall(text)) / letters

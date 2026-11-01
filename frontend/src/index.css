@@ -249,6 +249,10 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
 .listen:hover, .listen-all:hover { background: var(--fill); }
 .listen.playing, .listen-all.playing { background: var(--ink); border-color: var(--ink); color: var(--bg); }
 .listen-all { margin-left: auto; min-height: 46px; }
+/* The browser would not start a spoken answer without a tap: ask for it plainly. */
+.listen.blocked { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent) inset; font-weight: 700; }
+.listen .dots { width: 14px; height: 14px; margin-left: 2px; border-radius: 50%; border: 2px solid currentColor;
+  border-right-color: transparent; animation: spin 0.8s linear infinite; }
 
 /* recapture */
 .recapture-lead { font-weight: 600; }

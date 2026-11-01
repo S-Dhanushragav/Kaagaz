@@ -353,7 +353,8 @@ def ask(question: str, language: str, ctx: FamilyContext | None = None, *, llm: 
     check_line = ("A check of this family is attached: use the family tools." if ctx is not None
                   else "No check is attached yet: answer only about the 5 schemes; for questions about the family's "
                        "own documents, say to run a check first.")
-    system = PROMPT.replace("{language_name}", LANGUAGE_NAMES[language]).replace("{check_line}", check_line)
+    system = (PROMPT.replace("{language_name}", LANGUAGE_NAMES[language]).replace("{check_line}", check_line)
+              .replace("{brand}", load_ask(language).brand))
     state: AskState = {"messages": [{"role": "system", "content": system}, {"role": "user", "content": question}],
                        "status": "think", "tool_calls": 0, "attempts": 0, "turns": 0, "usage": {}, "trace": []}
     config = {"configurable": {"toolbox": toolbox, "llm": llm, "deadline": start + timeout_s, "language": language,

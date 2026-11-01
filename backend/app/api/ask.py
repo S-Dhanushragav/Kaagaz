@@ -9,7 +9,8 @@ POST /ask/transcribe    a spoken question (form: audio, language, session_id? | 
                         converted in memory and a temporary file deleted at once; the transcript is neither cached nor
                         logged.
 GET  /ask/suggestions   ?language=&session_id=|check_id= -> up to 3 questions about this family (templates, no model)
-GET  /ask/audio/{id}    an answer read aloud (MMS-TTS); answers are kept in memory for an hour
+GET  /ask/audio/{id}    an answer read aloud (MMS-TTS); answers are kept in memory for an hour. Speech starts being made
+                        as soon as the answer exists (when the TTS model is loaded), so Listen does not wait for it.
 
 Limits (typed and spoken questions alike): ASK_PER_SESSION_HOUR questions per session or saved check, ASK_PER_IP_HOUR per client IP (the last
 X-Forwarded-For entry, as for login). Question text and names are never logged; agents/ask.py logs token counts.
@@ -20,7 +21,9 @@ import secrets
 import threading
 import time
 from collections import deque
-from typing import Any, Literal
+from concurrent.futures import Future, ThreadPoolExecutor
+from pathlib import Path
+from typing import Any, Callable, Literal
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse
@@ -47,13 +50,33 @@ class AskRequest(BaseModel):
     voice_ticket: str | None = Field(None, max_length=64)  # from POST /ask/transcribe: already counted
 
 
-class AskService:
-    """Rate limits (sliding hour) and the answers kept for Listen. One process: in memory."""
+def speak(text: str, language: str) -> Path:
+    """The WAV of an answer (MMS-TTS, cached on disk by text)."""
+    from agents.ask import answer_speech
+    from clients.tts import synthesize
 
-    def __init__(self) -> None:
+    return synthesize(answer_speech(text, language), language).path
+
+
+def _tts_ready() -> bool:
+    """Speak ahead only where the TTS models are loaded (the server preloads them; tests and dev may not)."""
+    try:
+        from clients.tts import _load
+    except ImportError:
+        return False
+    return _load.cache_info().currsize > 0
+
+
+class AskService:
+    """Rate limits (sliding hour), the answers kept for Listen, and their speech made ahead. One process: in memory."""
+
+    def __init__(self, speaker: Callable[[str, str], Path] | None = speak, ready: Callable[[], bool] = _tts_ready) -> None:
         self._lock = threading.Lock()
         self._hits: dict[str, deque[float]] = {}
         self._answers: dict[str, tuple[float, str, str]] = {}  # id -> (created, text to speak, language)
+        self._speech: dict[str, Future[Path]] = {}  # id -> speech being made (or made) ahead of Listen
+        self._speaker, self._ready = speaker, ready
+        self._pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="ask-tts")
         self._tickets: dict[str, tuple[float, str]] = {}  # voice ticket -> (created, limit key it was counted under)
 
     def take(self, limits: list[tuple[str, int]], now: float | None = None) -> bool:
@@ -95,8 +118,18 @@ class AskService:
             now = time.time()
             if len(self._answers) >= MAX_ANSWERS:
                 self._answers = {k: v for k, v in self._answers.items() if now - v[0] < ANSWER_TTL_S}
+                self._speech = {k: v for k, v in self._speech.items() if k in self._answers}
             self._answers[answer_id] = (now, text, language)
+            if self._speaker is not None and text and self._ready():
+                self._speech[answer_id] = self._pool.submit(self._speaker, text, language)
         return answer_id
+
+    def speech(self, answer_id: str) -> Path | None:
+        """The answer's WAV if it was made ahead (waits for it if it is still being made); None: make it now.
+        Raises what making it raised."""
+        with self._lock:
+            future = self._speech.get(answer_id)
+        return None if future is None else future.result()
 
     def recall(self, answer_id: str) -> tuple[str, str] | None:
         with self._lock:
@@ -175,21 +208,20 @@ def ask_suggestions(request: Request, language: Language = "mr", session_id: str
 
 @router.get("/ask/audio/{answer_id}")
 def ask_audio(request: Request, answer_id: str) -> FileResponse:
-    from agents.ask import answer_speech
-
-    found = service(request).recall(answer_id)
+    asks = service(request)
+    found = asks.recall(answer_id)
     if found is None:
         raise HTTPException(404, "No such answer (answers are kept for an hour).")
     text, language = found
     try:
-        from clients.tts import TTSError, synthesize
+        from clients.tts import TTSError
     except ImportError as e:
         raise HTTPException(503, "Speech output is not available on this server.") from e
     try:
-        speech = synthesize(answer_speech(text, language), language)
+        path = asks.speech(answer_id) or speak(text, language)
     except TTSError as e:
         raise HTTPException(503, f"Speech output is not available: {e}") from e
-    return FileResponse(speech.path, media_type="audio/wav", headers={"Cache-Control": "private, max-age=3600"})
+    return FileResponse(path, media_type="audio/wav", headers={"Cache-Control": "private, max-age=3600"})
 
 
 def _keywords(language: str, ctx: Any) -> list[str] | None:

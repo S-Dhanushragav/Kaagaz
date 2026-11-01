@@ -22,6 +22,7 @@ from typing import Callable, Sequence
 import cv2
 import numpy as np
 
+from app.config import get_settings
 from clients.segmenter import ImageSegmenter, Track, decode_mask_spec
 from graph.nodes.find_documents import FindResult, FoundDocument
 from graph.nodes.read_documents import DocumentInput
@@ -53,7 +54,9 @@ def _detections(tracks: list[Track], size: tuple[int, int]) -> list[Track]:
 
 def _document(doc_id: str, crop: np.ndarray, score: float | None, method: str, quad: list[list[float]]) -> FoundDocument:
     images = [encode_for_llm(crop), encode_for_llm(second_read_variant(crop))]
-    return FoundDocument(document=DocumentInput(id=doc_id, images=images), track_id=doc_id, source_frames=[],
+    second = get_settings().photo_second_read_provider  # None: both reads by the vision model
+    document = DocumentInput(id=doc_id, images=images, read_providers=[None, second] if second else None)
+    return FoundDocument(document=document, track_id=doc_id, source_frames=[],
                          quads=[quad], methods=[method], sharpness=[], fully_visible=True, score=score)
 
 

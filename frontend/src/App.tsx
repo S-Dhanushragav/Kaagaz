@@ -5,7 +5,7 @@ import {
   tickStep, type AskContext, type CatalogScheme, type Started, type CheckFull, type CheckSummary, type Language, type SessionView,
   type UserView,
 } from './api'
-import { play, prime, stop } from './audio'
+import { play, stop, unlock } from './audio'
 import { preparePhoto } from './photos'
 import { STRINGS } from './i18n'
 import AccountMenu from './ui/AccountMenu'
@@ -61,6 +61,23 @@ function useNarrow(query = '(max-width: 859px)'): boolean {
 
 type Center = { kind: 'live' } | { kind: 'past'; check: CheckFull; focus: number | null }
 
+// Checks from this visit. "New check" (or the camera, or Check again) keeps the check on screen here, with the family's
+// answers and the Ask thread, so it can be opened again while the server still has it (sessions last an hour).
+// Kept in this tab only (sessionStorage), for guests and logged-in users alike.
+export interface Visit {
+  id: string; at: string; head: string | null
+  check: Extract<Check, { kind: 'session' }>; answered: Answered[]; asks: AskItem[]
+}
+const VISIT_TTL_MS = 55 * 60 * 1000
+function loadVisits(): Visit[] {
+  try {
+    const all = JSON.parse(sessionStorage.getItem('kaagaz.visits') ?? '[]') as Visit[]
+    return all.filter((v) => Date.now() - Date.parse(v.at) < VISIT_TTL_MS)
+  } catch {
+    return []
+  }
+}
+
 export default function App() {
   const [language, setLanguage] = useState<Language>(() => (localStorage.getItem('kaagaz.lang') as Language) || 'mr')
   const [user, setUser] = useState<UserView | null>(null)
@@ -79,6 +96,7 @@ export default function App() {
   const [openScheme, setOpenScheme] = useState<string | null>(null)
   const [drawer, setDrawer] = useState(false)
   const [asks, setAsks] = useState<AskItem[]>([])
+  const [visits, setVisits] = useState<Visit[]>(loadVisits)
   const [draft, setDraft] = useState('')
   const [suggestedFor, setSuggestedFor] = useState<{ key: string; items: string[] }>({ key: '', items: [] })
   const askCount = useRef(0)
@@ -116,7 +134,7 @@ export default function App() {
     if (!question || asking) return
     const key = ++askCount.current
     const ticket = voiceTicket
-    if (ticket) prime()  // in the Send tap, so the answer can be played on an iPhone too
+    unlock()  // in the Send tap, so a spoken answer can play on a phone (iPhone Safari) seconds later
     setDraft('')
     setVoiceTicket(null)
     setAsks((a) => [...a, { key, context: contextKey, question, reply: null, error: null }])
@@ -129,6 +147,8 @@ export default function App() {
       setAsks((a) => a.map((x) => (x.key === key ? { ...x, error } : x)))
     }
   }
+
+  useEffect(() => { sessionStorage.setItem('kaagaz.visits', JSON.stringify(visits)) }, [visits])
 
   useEffect(() => {
     localStorage.setItem('kaagaz.lang', language)
@@ -214,7 +234,30 @@ export default function App() {
     progress(0, photos.length)
     return startPhotos(photos, language, progress, recheckOf)
   }, true)
+  // The live check on screen, kept in "Earlier in this visit" before something replaces it.
+  const keep = (others: Visit[] = visits): Visit[] => {
+    if (check.kind !== 'session' || center.kind !== 'live' || !view || view.status === 'error') return others
+    const first = view.household?.members[0]
+    const head = first ? (language === 'en' ? first.name_en ?? first.name_mr : first.name_mr ?? first.name_en) : null
+    const earlier = others.find((v) => v.id === check.id)
+    const visit: Visit = { id: check.id, at: earlier?.at ?? new Date().toISOString(), head, check, answered, asks }
+    return [visit, ...others.filter((v) => v.id !== check.id)].slice(0, 5)
+  }
+  const openVisit = (id: string) => {
+    const visit = visits.find((v) => v.id === id)
+    if (!visit) return
+    stop()
+    setVisits(keep(visits).filter((v) => v.id !== id).concat(visit).sort((a, b) => b.at.localeCompare(a.at)))
+    setCheck(visit.check)
+    setAnswered(visit.answered)
+    setAsks(visit.asks)
+    setStartError(null)
+    setRecheckOf(null)
+    setCenter({ kind: 'live' })
+    setDrawer(false)
+  }
   const newCheck = () => {
+    setVisits(keep())
     stop()
     setCheck({ kind: 'idle' })
     setAnswered([])
@@ -310,6 +353,8 @@ export default function App() {
         <Sidebar t={t} language={language} schemes={schemes} onNewCheck={newCheck}
           onOpenScheme={(id) => { setOpenScheme(id); setDrawer(false) }} onClose={() => setDrawer(false)}
           user={user} checks={checks} openCheck={center.kind === 'past' ? center.check.id : null}
+          visits={visits} openVisit={center.kind === 'live' && check.kind === 'session' ? check.id : null}
+          onOpenVisit={openVisit}
           onOpenCheck={(id) => void openCheck(id)} onLogin={() => { setDrawer(false); setLogin({ claim: null }) }} />
       </aside>
       {drawer && <div className="scrim" onClick={() => setDrawer(false)} aria-hidden="true" />}
@@ -389,7 +434,7 @@ export default function App() {
             <button type="button" className={askVoice.phase === 'listening' ? 'round-button listening' : 'round-button'}
               aria-label={askVoice.phase === 'listening' ? t.askListening : t.askByVoice}
               aria-pressed={askVoice.phase === 'listening'} disabled={askVoice.phase === 'writing' || asking}
-              onClick={askVoice.toggle}><Mic /></button>
+              onClick={() => { unlock(); askVoice.toggle() }}><Mic /></button>
           )}
           <button type="button" className="round-button" aria-label={t.camera} disabled={busy}
             onClick={() => { newCheck(); setCheck({ kind: 'recording' }) }}><Camera /></button>

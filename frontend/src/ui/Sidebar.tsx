@@ -1,4 +1,5 @@
 import type { CatalogScheme, CheckSummary, Language, UserView } from '../api'
+import type { Visit } from '../App'
 import type { Strings } from '../i18n'
 import { Close, Logo, Plus } from './Icons'
 import { formatDateTime } from '../casefile'
@@ -14,10 +15,11 @@ export function Wordmark({ t }: { t: Strings }) {
 }
 
 export default function Sidebar({ t, language, schemes, onNewCheck, onOpenScheme, onClose, user, checks, openCheck,
-  onOpenCheck, onLogin }: {
+  onOpenCheck, onLogin, visits, openVisit, onOpenVisit }: {
   t: Strings; language: Language; schemes: CatalogScheme[]; onNewCheck: () => void; onOpenScheme: (id: string) => void
   onClose?: () => void; user: UserView | null; checks: CheckSummary[]; openCheck: string | null
   onOpenCheck: (id: string) => void; onLogin: () => void
+  visits: Visit[]; openVisit: string | null; onOpenVisit: (id: string) => void
 }) {
   return (
     <nav className="sidebar" aria-label={t.menu}>
@@ -27,6 +29,23 @@ export default function Sidebar({ t, language, schemes, onNewCheck, onOpenScheme
       </div>
       <p className="demo-note">{t.demoNote}</p>
       <button type="button" className="button primary new-check" onClick={onNewCheck}><Plus />{t.newCheck}</button>
+
+      {visits.some((v) => v.id !== openVisit) && (
+        <section className="sidebar-section">
+          <h2 className="eyebrow">{t.thisVisit}</h2>
+          <ul className="check-list">
+            {visits.filter((v) => v.id !== openVisit).map((v) => (
+              <li key={v.id}>
+                <button type="button" className="check-link" onClick={() => onOpenVisit(v.id)}>
+                  <span className="check-date">{formatDateTime(v.at, language)}</span>
+                  {v.head && <span className="check-head">{v.head}</span>}
+                  {v.asks.length > 0 && <span className="check-open done">{t.askShort}: {v.asks.length}</span>}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="sidebar-section">
         <h2 className="eyebrow">{t.yourChecks}</h2>

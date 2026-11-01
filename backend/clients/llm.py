@@ -13,10 +13,11 @@ import re
 from functools import lru_cache
 from typing import Any, Callable, Mapping, Sequence
 
-from openai import BadRequestError, OpenAI, UnprocessableEntityError
+from openai import APIError, BadRequestError, OpenAI, UnprocessableEntityError
 from pydantic import BaseModel
 
-from app.config import ResolvedModel, Task, get_settings
+from app.config import ResolvedModel, Settings, Task, get_settings
+from clients import budget
 from clients.cache import DiskCache, make_key
 
 logger = logging.getLogger(__name__)
@@ -31,6 +32,35 @@ class LLMError(RuntimeError):
 
 class EmptyResponse(LLMError):
     """The model returned neither text nor tool calls."""
+
+
+class BudgetExhausted(LLMError):
+    """Today's Baseten token budget is used up and this task has no fallback (clients/budget.py)."""
+
+
+def _fallback(settings: Settings, task: Task, overrides: Mapping[str, Any] | None,
+              resolved: ResolvedModel) -> dict[str, Any] | None:
+    """Overrides that send a Baseten call to Muse Spark instead, if this task may fall back (else None)."""
+    if resolved.provider != "baseten" or task not in settings.fallback_tasks:
+        return None
+    model = getattr(settings, f"meta_{task}_model", "")
+    if not (model and settings.meta_base_url and settings.meta_api_key.get_secret_value()):
+        return None
+    return {**(overrides or {}), "provider": "meta", "model": model}
+
+
+def _before_baseten(settings: Settings, task: Task, overrides: Mapping[str, Any] | None,
+                    resolved: ResolvedModel) -> dict[str, Any] | None:
+    """Called before a Baseten request (not for cache hits): fallback overrides if today's budget is used up.
+    Raises BudgetExhausted when it is used up and the task cannot fall back."""
+    if resolved.provider != "baseten" or not budget.exhausted():
+        return None
+    fallback = _fallback(settings, task, overrides, resolved)
+    if fallback is None:
+        budget.refused(task)
+        raise BudgetExhausted(f"Baseten daily token budget ({settings.baseten_daily_tokens}) is used up")
+    budget.fallback(task, "budget")
+    return fallback
 
 
 class TokenUsage(BaseModel):
@@ -165,6 +195,26 @@ def complete(
         logger.debug("LLM cache hit %s", key[:12])
         return LLMResponse.model_validate({**hit, "cached": True})
 
+    call = dict(prompt=prompt, task=task, images=images, image_mime=image_mime, system=system, temperature=temperature,
+                max_tokens=max_tokens, response_format=response_format, redact=redact)
+    switch = _before_baseten(settings, task, overrides, resolved)
+    if switch is not None:
+        return complete(**call, overrides=switch)
+    try:
+        result = _complete_call(resolved, task, cache, key, prompt, images, image_mime, system, temperature, max_tokens,
+                                response_format, redact)
+    except (LLMError, APIError):
+        fallback = _fallback(settings, task, overrides, resolved)
+        if fallback is None:
+            raise
+        budget.fallback(task, "error")
+        return complete(**call, overrides=fallback)
+    return result
+
+
+def _complete_call(resolved: ResolvedModel, task: Task, cache: DiskCache, key: str, prompt: str, images: Sequence[bytes],
+                   image_mime: str, system: str | None, temperature: float, max_tokens: int,
+                   response_format: dict[str, Any] | None, redact: Callable[[str], str] | None) -> LLMResponse:
     params: dict[str, Any] = {
         "model": resolved.model,
         "messages": _build_messages(prompt, system, images, image_mime),
@@ -192,6 +242,8 @@ def complete(
     if not resp.choices:
         raise LLMError(f"No choices in response from {label}")
     choice = resp.choices[0]
+    if resolved.provider == "baseten" and resp.usage is not None:
+        budget.add(resp.usage.total_tokens or 0)  # counted whether or not the reply is usable
     # Reasoning tokens count toward max_tokens; running out mid-reasoning gives
     # finish_reason="length" with content=None. Truncated output is never cached.
     if choice.finish_reason == "length":
@@ -315,6 +367,24 @@ def chat(
     if hit is not None:
         return _with_recovered_calls(ChatResponse.model_validate({**hit, "cached": True}), tools)
 
+    call = dict(messages=messages, task=task, tools=tools, temperature=temperature, max_tokens=max_tokens,
+                timeout=timeout, tool_choice=tool_choice)
+    switch = _before_baseten(settings, task, overrides, resolved)
+    if switch is not None:
+        return chat(**call, overrides=switch)
+    try:
+        return _chat_call(resolved, task, cache, key, messages, tools, temperature, max_tokens, timeout, tool_choice)
+    except (LLMError, APIError):
+        fallback = _fallback(settings, task, overrides, resolved)
+        if fallback is None:
+            raise
+        budget.fallback(task, "error")
+        return chat(**call, overrides=fallback)
+
+
+def _chat_call(resolved: ResolvedModel, task: Task, cache: DiskCache, key: str, messages: Sequence[Mapping[str, Any]],
+               tools: Sequence[Mapping[str, Any]] | None, temperature: float, max_tokens: int, timeout: float | None,
+               tool_choice: str | None) -> ChatResponse:
     params: dict[str, Any] = {"model": resolved.model, "messages": list(messages), "temperature": temperature,
                               "max_tokens": max_tokens}
     if tools:
@@ -331,6 +401,8 @@ def chat(
     if not resp.choices:
         raise LLMError(f"No choices in response from {label}")
     choice = resp.choices[0]
+    if resolved.provider == "baseten" and resp.usage is not None:
+        budget.add(resp.usage.total_tokens or 0)  # counted whether or not the reply is usable
     if choice.finish_reason == "length":
         raise LLMError(f"{label} hit max_tokens={max_tokens}; raise {task.upper()}_MAX_TOKENS")
     message = choice.message

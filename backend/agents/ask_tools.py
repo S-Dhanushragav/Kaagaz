@@ -50,6 +50,8 @@ class _Strict(BaseModel):
 
 class AskTemplates(_Strict):
     language: str
+    brand: str  # the app's name as the UI spells it in this language
+    brand_wrong: list[str] = []  # regexes: other ways of naming the app that an answer must not use
     replies: dict[str, str]
     lines: dict[str, str]
     chips: dict[str, str]

@@ -76,6 +76,15 @@ class Settings(BaseSettings):
     baseten_api_key: SecretStr = SecretStr("")
     baseten_base_url: str = ""
     baseten_model: str = ""
+    # Daily token budget for Baseten across every task (Ask, back-translation, a photo second read or the fix planner
+    # when routed there); 0 = no Baseten calls. clients/budget.py.
+    baseten_daily_tokens: int = Field(2_000_000, ge=0)
+    # Tasks that are sent to Muse Spark (Meta Model API, META_<TASK>_MODEL) when Baseten fails or the budget is used
+    # up. Ask is not among them: it shows its friendly "unavailable" reply instead.
+    baseten_fallback_tasks: str = "vision,agent"
+    # Photo mode reads each document twice; the second read may go to another provider (e.g. baseten: a cross-model
+    # read by Muse Spark Open). Empty: the same as VISION_PROVIDER.
+    photo_second_read_provider: Provider | None = None
 
     segmenter: Literal["sam31_api", "sam3_modal"] = "sam31_api"
 
@@ -121,6 +130,7 @@ class Settings(BaseSettings):
         "agent_reasoning_effort",
         "text_reasoning_effort",
         "ask_reasoning_effort",
+        "photo_second_read_provider",
         mode="before",
     )
     @classmethod
@@ -142,6 +152,10 @@ class Settings(BaseSettings):
         """Speech-input language code -> the name Muse Voice Transcribe biases on (from ASR_LANGUAGES)."""
         pairs = (item.split(":", 1) for item in self.asr_languages.split(",") if ":" in item)
         return {code.strip(): name.strip() for code, name in pairs if code.strip() and name.strip()}
+
+    @property
+    def fallback_tasks(self) -> frozenset[str]:
+        return frozenset(t.strip() for t in self.baseten_fallback_tasks.split(",") if t.strip())
 
     @property
     def cache_path(self) -> Path:
