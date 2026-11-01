@@ -130,7 +130,11 @@ Phase 11 (commit 685671a):
 - [x] Ask in ta/te/kn: answers in the UI language, fact check for their digits, number words, eligibility, fees,
       offices and schemes; questions in another script refused by code (I, T, Ag)
 - [ ] Malayalam, Punjabi: skipped (several Phase 11 items needed rework; see below)
-Status: built and tested; not deployed or pushed. 752 backend tests, 32 frontend tests.
+Status: built, tested and deployed 2026-11-01 (Modal backend with six TTS models, Netlify frontend). 752 backend tests,
+32 frontend tests. Production check: healthy from cold in 16 s (six TTS models loaded in the background); sample family
+in Tamil: first spoken sentence 22.7 s, plan 29.3 s (Marathi 15.6 s / 19.8 s); a Tamil Ask answer in 11 s, its speech
+~13 s after the answer for a ~30 s answer (made ahead, so Listen waits only if tapped at once); the live site finishes the
+sample check in Tamil and Kannada at 360 px (Playwright). Commits: c38e2d7, 685671a, 4c85f72, dcbecdb, and the deploy notes.
 Translation: 362 strings per language; first pass ta 0/10, te 1/5, kn 1/3 (code failures / meaning mismatches); 26
 strings fixed on review (8 of them not flagged by any check); final ta 0/6 (5 are the back-translator reading காகஸ் as
 "Caucus"), te 1/1, kn 0/0 (docs/TRANSLATION_REPORT.md).

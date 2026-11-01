@@ -30,7 +30,7 @@ def wait_healthy(base: str, limit_s: float = 600) -> dict:
     while True:
         try:
             health = call(base, "GET", "/health", timeout=120)
-            if health.get("sample") and health.get("tts_models_loaded") in (3, None):
+            if health.get("sample") and (health.get("tts_models_loaded") is None or health["tts_models_loaded"] >= 6):
                 print(f"[{time.perf_counter() - start:6.1f} s] healthy: {health}")
                 return health
             print(f"[{time.perf_counter() - start:6.1f} s] starting: {health}")
@@ -81,7 +81,7 @@ def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("base_url")
-    parser.add_argument("--language", default="mr", choices=["mr", "hi", "en"])
+    parser.add_argument("--language", default="mr", choices=["mr", "hi", "en", "ta", "te", "kn"])
     parser.add_argument("--runs", type=int, default=1)
     args = parser.parse_args()
     base = args.base_url.rstrip("/")
