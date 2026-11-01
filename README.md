@@ -22,8 +22,10 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 
 ## Try it
 
-- **App:** https://kaagaz-demo.netlify.app (mobile-first; Marathi, Hindi, English, and machine-translated Tamil, Telugu and Kannada). "Try with a sample family" runs a
-  bundled sweep video of synthetic SPECIMEN documents; "Record your documents" uses the phone camera (up to 45 s).
+- **App:** https://kaagaz-demo.netlify.app (mobile-first; Marathi, Hindi, English, and machine-translated Tamil, Telugu and Kannada). "Try with a sample family" runs
+  seven synthetic SPECIMEN photos of one family (EV012, held out of the evals) through the real photo pipeline, one of
+  them deliberately shaky so the close-up loop shows; "Record your documents" uses the phone camera (up to 45 s).
+  `?sample=video` in the page address runs the older bundled sweep video (HH009) instead, for testing.
 - **Backend API:** https://s-dhanushragav--kaagaz-web.us-east.modal.run (`/health`; endpoints in
   [app/api/routes.py](backend/app/api/routes.py)).
 - The backend scales to zero when idle: the first request after a pause takes ~30 s to start (run
@@ -34,7 +36,8 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 Phases 0-11 are built, tested and deployed (752 backend tests and 32 frontend tests, no network). Last deploy
 1 Nov 2026: Tamil, Telugu and Kannada (voice in and out, Ask Kaagaz in all six languages), spoken answers unlocked on
 phones, earlier checks of a visit kept, and a daily Baseten budget with Muse Spark fallback are live on top of login and
-case file, the layout pass, real-input rescue and Ask Kaagaz. Next: Phase 12, freeze and submit.
+case file, the layout pass, real-input rescue and Ask Kaagaz. Phase 12 prep (built and tested locally, not deployed):
+the sample family on EV012's photos, a busy queue, a decoded-mask cache, a load test and a freeze checklist script.
 
 | Phase | What | Status |
 |---|---|---|
@@ -53,6 +56,7 @@ case file, the layout pass, real-input rescue and Ask Kaagaz. Next: Phase 12, fr
 | 9c | Real-input rescue: upright crops (text orientation), tracks split when documents are shown one at a time, cut-off documents read, duplicates merged; partial results ("Read clearly" / "Need a clearer photo", plan held when most are unclear) instead of a hard stop; photo mode (Add photos, up to 12, EXIF stripped, two agreeing reads) | Done, deployed |
 | 10 (part 1) | Ask Kaagaz, typed: an agent on Muse Spark Open (Baseten) answers questions about the 5 schemes and the family's check through read-only tools; every answer fact-checked by code before it is shown (numbers, schemes, offices, fees, eligibility from the rules engine only); sources, Listen, "Add a photo" chips, suggested questions; per-session and per-IP limits | Done, deployed |
 | 10 (part 2) | Ask by voice: push-to-talk mic (timer, level meter, 30 s), clip converted by ffmpeg and transcribed by Muse Voice Transcribe into the box to check before sending, spoken questions' answers played aloud; nothing of the audio kept, transcripts not cached or logged | Done, deployed |
+| 12 (prep) | Sample family on EV012's photos through photo mode (held out of the evals), "Kaagaz is busy, you're next in line" queue (MAX_RUNNING_CHECKS), decoded SAM masks cached (5.5 s -> 0.02 s each), load test, freeze checklist (`scripts/freeze_check.py`), Baseten budget 5M tokens a day | Built and tested locally; not deployed |
 | 11 | Tamil, Telugu, Kannada with voice in and out: Muse Spark translations back-translated and checked by Muse Spark Open (reviewed fixes, [report](docs/TRANSLATION_REPORT.md)), marked machine-translated; Ask and its fact check in all six languages; spoken answers unlocked on phones; Baseten daily budget with Muse Spark fallback | Done, deployed |
 
 Remaining phases: see [docs/ROADMAP.md](docs/ROADMAP.md).
@@ -167,6 +171,25 @@ real upload; target: first spoken sentence within 60 s)
   now shows as a progress bar). Full-size frames make "find" slower (29 s vs 19 s at 720p): frame sampling and
   mask decoding on CPU. The trade is deliberate: at 720p the ration card often could not be read (see below).
 - A cold container adds ~29 s or more (start + loading six TTS models): run `scripts/warmup.py` 5 minutes before a demo.
+
+**Phase 12 sample family and capacity** (local copy pinned to 4 CPU cores, in-memory store; not yet measured on Modal)
+- EV012 through photo mode, Marathi: nothing cached, first document 24.7 s and plan 62.0 s; cached, plan 13.6 s (first
+  spoken sentence ~9 s); the close-up of the blurred caste certificate reads clearly and re-plans in ~4 s. Its matrix shows
+  all four outcomes (eligible, fix first, check at office, not eligible).
+- SAM masks come back in Meta's compact format, decoded by Meta's pure-Python decoder: ~5.5 s of one core per document.
+  The decoded mask is now cached on disk by a hash of the payload (the SAM response holding it is cached already).
+- Simultaneous sample checks (cached model calls; time to plan, min / median / max; 0 errors at every level):
+
+| Checks at once | Before the mask cache | With the mask cache | Highest place in line |
+|---|---|---|---|
+| 1 | 44.0 s | 13.3 s | - |
+| 3 | 90.2 / 92.8 / 92.8 s | 18.4 / 18.4 / 18.4 s | - |
+| 5 | 120.2 / 122.9 / 150.7 s | 21.0 / 21.1 / 23.6 s | 1 |
+| 10 | 207.1 / 209.9 / 266.8 s | 26.4 / 30.2 / 36.7 s | 6 |
+
+- 10 Ask questions at once about the sample check (distinct, live Muse Spark Open calls): 6.5 / 7.3 / 10.0 s, 7
+  answers and 3 "not sure" (the fact check's fallback), 0 errors (eval/results/load_20261101-145850.json; the 4-core
+  numbers above are load_20261101-150916.json and load_20261101-151558.json).
 - Reading quality on phone-like video: at the current setting HH001 plans exactly its planted error; the HH009 upload
   caught the expired income certificate but not the name mismatch, because one Aadhaar card was unclear. That card is
   put on the close-up list, everything that depends on it (who is on the ration card, a "missing" Aadhaar card) waits
@@ -345,6 +368,8 @@ KAAGAZ_FRONTEND_ORIGIN=https://<site>.netlify.app modal deploy deploy/modal_app.
 (cd .cache && MSYS_NO_PATHCONV=1 modal volume put --force kaagaz-cache . /)   # optional: seed the model-call cache
                                                       # (sample runs free); files land at the volume root
 python scripts/warmup.py https://<workspace>--kaagaz-web.modal.run   # 5 minutes before any demo
+python scripts/warmup.py <URL> --language mr hi en ta te kn          # after a deploy: every language's sample cached
+python scripts/freeze_check.py --api <URL> --site https://<site>.netlify.app   # before and after every deploy
 ```
 
 - MMS-TTS models are baked into the image at build time; the model-call cache is a Modal Volume.
@@ -378,8 +403,11 @@ From `backend/` unless noted. Costs are for a cold cache; cached calls are free.
 | Ask Kaagaz eval, 30 questions (repo root) | `python eval/run_ask_eval.py` (recorded replies, free); `--live` re-records | free / ~210k Baseten tokens |
 | Voice questions eval (repo root): your recordings / synthetic | `python eval/run_asr_eval.py --clips <folder>` / `--synthetic` (`--no-answers`: recognition only) | < $0.01 Meta + ~190k Baseten tokens |
 | Voice round trip (repo root, `tts` extra) | `python eval/run_voice_roundtrip.py` | < $0.01 |
-| Warm up / time the deployed app (repo root) | `python scripts/warmup.py <backend URL>` | small |
-| Rebuild sample close-ups (repo root) | `python scripts/make_sample_closeups.py` | free (cached) |
+| Warm up / time the deployed app (repo root) | `python scripts/warmup.py <backend URL>` (`--language mr hi en ta te kn`) | small |
+| Freeze checklist (repo root): health, secrets, settings, sample, close-up, Ask, voice, login -> save -> delete, site | `python scripts/freeze_check.py --api <URL> --site <URL>` (`--local` for a local copy) | ~2 Ask calls |
+| Load test a local or staging copy (repo root) | `python scripts/load_test.py <URL> --checks 1 3 5 10 --asks 10` | ~10 Ask calls |
+| Rebuild the sample family (repo root) | `python scripts/make_sample_closeups.py --photos EV012 --unclear caste_certificate_m1` | free |
+| Rebuild the sample video's close-ups (repo root) | `python scripts/make_sample_closeups.py --video HH009` | free (cached) |
 | Frontend (from `frontend/`) | `npm run dev` / `npm run build` / `npm test` | free |
 
 Every eval script has `--dry-run` (or prints its call count) and saves a summary to `eval/results/` and per-document
@@ -445,7 +473,7 @@ data/
   fixes/          fix procedures (YAML, status and source per fact)
   templates/      voice sentences, scheme reasons and Ask replies per language (ta/te/kn generated), declaration draft
   translations/   reviewed fixes to the machine translations (scripts/translate.py)
-  sample/         bundled close-up photos for the sample family
+  sample/         the sample family's photos (EV012) and bundled close-ups (EV012, and HH009 for the sweep video)
 deploy/           Modal app (backend container)
 scripts/          warm-up / timing check, sample close-up builder
 synthetic/        document templates, generators (v1, v2), photo-like and video simulators, ground-truth helpers

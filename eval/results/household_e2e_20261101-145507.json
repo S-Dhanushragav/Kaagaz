@@ -1,0 +1,65 @@
+{
+  "mode": "e2e",
+  "model": "muse-spark-1.3",
+  "households": 29,
+  "planted": {
+    "name_mismatch": 7,
+    "dob_mismatch": 6,
+    "expired": 6,
+    "missing_document": 6,
+    "not_on_ration_card": 6
+  },
+  "caught": {
+    "name_mismatch": 7,
+    "dob_mismatch": 6,
+    "expired": 6,
+    "missing_document": 6,
+    "not_on_ration_card": 6
+  },
+  "catch_rate": 1.0,
+  "false_alarms": {
+    "name_mismatch": 11,
+    "not_on_ration_card": 1,
+    "missing_document": 1
+  },
+  "false_alarm_total": 13,
+  "false_alarm_causes": {
+    "misread": 13
+  },
+  "false_alarms_by_severity": {
+    "confirm": 7,
+    "blocker": 6
+  },
+  "planted_name_mismatch_severity": {
+    "blocker": 7
+  },
+  "planted_name_mismatch_not_blocker": [],
+  "other_issues": {},
+  "adjudicator_calls": 1,
+  "adjudicator_tokens": [
+    496,
+    1921
+  ],
+  "verification": true,
+  "verification_calls": 48,
+  "verification_tokens": [
+    60826,
+    30481
+  ],
+  "verification_cost_usd": 0.206,
+  "scheme_outcomes": {
+    "not_eligible": 423,
+    "eligible_on_documents": 66,
+    "check_at_office": 15,
+    "blocked_by_issues": 116
+  },
+  "reader": {
+    "documents": 219,
+    "prompt_tokens": 321608,
+    "completion_tokens": 116843,
+    "unreadable": 0,
+    "misclassified": 0,
+    "read_s": 0.6
+  },
+  "reader_cost_usd": 0.899
+}

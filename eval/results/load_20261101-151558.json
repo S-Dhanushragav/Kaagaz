@@ -1,0 +1,131 @@
+{
+ "base": "http://localhost:8000",
+ "language": "mr",
+ "load": {
+  "running_checks": 0,
+  "waiting_checks": 0,
+  "max_running_checks": 4
+ },
+ "levels": [
+  {
+   "checks": 1,
+   "first_document_s": {
+    "min": 6.6,
+    "median": 6.6,
+    "max": 6.6
+   },
+   "question_s": {
+    "min": 6.6,
+    "median": 6.6,
+    "max": 6.6
+   },
+   "plan_s": {
+    "min": 13.3,
+    "median": 13.3,
+    "max": 13.3
+   },
+   "max_queue_position": 0,
+   "errors": [],
+   "sessions": [
+    "2a02b87845c3"
+   ]
+  },
+  {
+   "checks": 3,
+   "first_document_s": {
+    "min": 6.6,
+    "median": 9.2,
+    "max": 9.2
+   },
+   "question_s": {
+    "min": 11.7,
+    "median": 11.8,
+    "max": 11.8
+   },
+   "plan_s": {
+    "min": 18.4,
+    "median": 18.4,
+    "max": 18.4
+   },
+   "max_queue_position": 0,
+   "errors": [],
+   "sessions": [
+    "9c549ed0fe6e",
+    "379fc2685a1d",
+    "71a417c6e72b"
+   ]
+  },
+  {
+   "checks": 5,
+   "first_document_s": {
+    "min": 9.2,
+    "median": 11.8,
+    "max": 17.0
+   },
+   "question_s": {
+    "min": 14.3,
+    "median": 14.4,
+    "max": 17.0
+   },
+   "plan_s": {
+    "min": 21.0,
+    "median": 21.1,
+    "max": 23.6
+   },
+   "max_queue_position": 1,
+   "errors": [],
+   "sessions": [
+    "bd65d2c2bd1a",
+    "550dc7948ab5",
+    "b1e41eea3616",
+    "af3bd0cf6272",
+    "3502fd2d2a90"
+   ]
+  },
+  {
+   "checks": 10,
+   "first_document_s": {
+    "min": 9.4,
+    "median": 18.4,
+    "max": 27.4
+   },
+   "question_s": {
+    "min": 14.5,
+    "median": 23.5,
+    "max": 30.0
+   },
+   "plan_s": {
+    "min": 26.4,
+    "median": 30.2,
+    "max": 36.7
+   },
+   "max_queue_position": 6,
+   "errors": [],
+   "sessions": [
+    "f9173cf7a5db",
+    "02c649e5b822",
+    "08a2682907b4",
+    "fc961a0db2ad",
+    "9962010395d5",
+    "9fc7edd60989",
+    "7148ba0031b6",
+    "8e3868364199",
+    "3047569c3acb",
+    "0ed17644e00b"
+   ]
+  }
+ ],
+ "ask": {
+  "asks": 10,
+  "answer_s": {
+   "min": 3.0,
+   "median": 3.1,
+   "max": 3.1
+  },
+  "kinds": {
+   "answer": 7,
+   "not_sure": 3
+  },
+  "errors": []
+ }
+}

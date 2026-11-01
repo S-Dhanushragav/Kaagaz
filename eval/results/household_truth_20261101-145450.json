@@ -1,0 +1,49 @@
+{
+  "mode": "truth",
+  "model": null,
+  "households": 29,
+  "planted": {
+    "name_mismatch": 7,
+    "dob_mismatch": 6,
+    "expired": 6,
+    "missing_document": 6,
+    "not_on_ration_card": 6
+  },
+  "caught": {
+    "name_mismatch": 7,
+    "dob_mismatch": 6,
+    "expired": 6,
+    "missing_document": 6,
+    "not_on_ration_card": 6
+  },
+  "catch_rate": 1.0,
+  "false_alarms": {},
+  "false_alarm_total": 0,
+  "false_alarm_causes": {},
+  "false_alarms_by_severity": {},
+  "planted_name_mismatch_severity": {
+    "blocker": 7
+  },
+  "planted_name_mismatch_not_blocker": [],
+  "other_issues": {},
+  "adjudicator_calls": 0,
+  "adjudicator_tokens": [
+    0,
+    0
+  ],
+  "verification": false,
+  "verification_calls": 0,
+  "verification_tokens": [
+    0,
+    0
+  ],
+  "verification_cost_usd": 0.0,
+  "scheme_outcomes": {
+    "not_eligible": 434,
+    "eligible_on_documents": 71,
+    "check_at_office": 15,
+    "blocked_by_issues": 95
+  },
+  "reader": {},
+  "reader_cost_usd": 0.0
+}

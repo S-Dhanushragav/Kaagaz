@@ -152,13 +152,34 @@ English name in brackets. Kannada TTS reads "ಕಾಗದ" fine; the Telugu voic
 Deploy note: TTS_MODEL_TA/TE/KN and ASR_LANGUAGES come from .env.example into the Modal image (models baked at build).
 
 ## Phase 12: Freeze and submit (Tue 4 - Wed 5 Nov)
+Prep (commit 86e6fc0 and the docs commit after it; built and tested locally, not deployed or pushed):
+- [x] Sample family switched to EV012's seven SPECIMEN photos through the real photo pipeline (no fixtures): one photo
+      (Dattatray's caste certificate) is motion-blurred on purpose so the close-up loop shows; its clean render is the
+      bundled close-up (clear, re-plan in ~4 s). The HH009 sweep video stays reachable (`?sample=video`, API
+      `{"source": "video"}`). EV012's matrix as read covers all four outcomes, so EV022 was not needed.
+- [x] EV012 held out of the evaluation set (eval/eval_set.py). Only the household eval ever scored it: truth 32/32 ->
+      31/31, 0 false alarms; e2e 32/32 -> 31/31, 13 false alarms (6 blocker, 7 confirm) before and after (all reads
+      cached). Fix planner, photo and Ask evals never used EV012 (unchanged).
+- [x] Capacity: a FIFO line for running checks (MAX_RUNNING_CHECKS=4) and "Kaagaz is busy, you're next in line" /
+      "number {n} in line" in the app; decoded SAM masks cached on disk (Meta's pure-Python decoder: ~5.5 s per
+      document -> 0.02 s); load test (scripts/load_test.py) on a local copy pinned to 4 cores: 1/3/5/10 sample checks
+      plan median 13.3/18.4/21.1/30.2 s, 0 errors (before the mask cache 44.0/92.8/122.9/209.9 s); 10 Ask questions at
+      once 6.5-10.0 s, 0 errors. BASETEN_DAILY_TOKENS default 5M.
+- [x] Freeze checklist script (scripts/freeze_check.py): /health, secrets and settings, Modal secret, the sample end to
+      end with the close-up loop and the four outcomes, Ask in mr, a voice question from a fixture clip, login -> save
+      -> delete, no Netlify badge and no third-party requests. Local copy: 12 passed, 0 failed, 1 skipped (Modal secret).
+- [x] Writeup draft (docs/WRITEUP.md) and demo script (docs/DEMO_SCRIPT.md), with placeholders for the owner
 - [ ] Final evals re-run; README numbers final (T)
-- [ ] Final deploy, then freeze: no redeploys during judging (T, D)
+- [ ] Final deploy, then freeze: no redeploys during judging (T, D). Before it: seed the cache volume with the EV012
+      entries, deploy with KAAGAZ_KEEP_WARM=1, `warmup.py --language mr hi en ta te kn`, `freeze_check.py`
 - [ ] Demo video: problem, sweep, thumbnails, question, plan in Marathi, close-up, returning
       user, Ask Kaagaz (I, M, D)
-- [ ] Writeup mapped to the rubric (I, M, T)
+- [ ] Writeup mapped to the rubric (I, M, T): draft done, placeholders open
 - [ ] X post and gallery link shared (V, CV)
-Status: not started. Commits: -
+Status: prep built and tested locally (756 backend tests, 32 frontend tests); not deployed.
+Changed: ta/te/kn for the two busy strings came from scripts/translate.py (0 code failures, back-translations matched);
+only those lines were kept, because a full re-run re-translated ~500 reviewed strings (chunk boundaries moved).
+Open: Modal timings for the EV012 sample (local only so far); the busy strings in hi/mr are machine-drafted.
 
 ## Only if time allows
 - [ ] Cross-model name verification: Muse Spark Open re-reads disputed names; kept only if the
@@ -177,4 +198,4 @@ Status: not started. Commits: -
 ## Owner tasks (not for Claude Code)
 - [x] Marathi templates reviewed by a native speaker
 - [ ] Real phone test with printed HH009 documents
-- [ ] Demo script (Mon), demo video (Tue), X post and submission (Wed)
+- [ ] Demo script (Mon; draft in docs/DEMO_SCRIPT.md), demo video (Tue), X post and submission (Wed)
