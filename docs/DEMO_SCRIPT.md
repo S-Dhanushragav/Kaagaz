@@ -28,6 +28,12 @@ you also use the backup take (see below).
 
 ## Beats
 
+### 0. Cold open (3 seconds, before beat 1)
+
+- **Shots:** the phone in hand, screen filling the frame: the schemes matrix of a finished Marathi check.
+- **On screen:** "Listen to all" already playing; the phone speaks the first plan sentence in Marathi over the matrix.
+- **Narration:** none (the phone's voice only). Record it from the warm sample check, then cut to beat 1.
+
 ### 1. A family's problem (~10% of T)
 
 - **Shots:** close-up of a table with a ration card, Aadhaar cards and certificates; a hand turning a page.
@@ -57,6 +63,8 @@ you also use the backup take (see below).
 - **Shots:** screen recording.
 - **On screen:** the card "Some documents need a clearer photo" → "Take a photo" of the listed document (or, in the
   backup take, "Use sample close-up" on the father's caste certificate) → "Reading the photo…" → the plan updates.
+- **If the live paper take has no unclear document:** use this beat from the sample backup take ("Use sample
+  close-up" on the father's caste certificate), and say so in the voice-over: "Here, from the sample family: ..."
 - **Narration:** "One certificate was too blurry to trust. Kaagaz doesn't guess: it asks for a clearer photo, reads
   it, and checks everything again in a few seconds."
 
@@ -70,11 +78,13 @@ you also use the backup take (see below).
   plain rules from official sources, never by the AI. The plan comes from a fixed list of real procedures, read
   aloud in Marathi."
 
-### 6. Ask Kaagaz by voice about a missing document (~15% of T)
+### 6. Ask Kaagaz by voice about Lata's date of birth (~15% of T)
 
 - **Shots:** screen recording; face or hand near the phone while speaking.
-- **On screen:** tap the mic ("Ask by voice") → ask in Marathi, e.g. "लता यांचे उत्पन्नाचे प्रमाणपत्र नसेल तर काय
-  करावे?" → tap to stop → "Check the words, then send." → "Send" → the answer plays by itself; show its sources.
+- **On screen:** tap the mic ("Ask by voice") → ask in Marathi the app's own suggested question for a date-of-birth
+  mismatch (`ask.suggestions.dob_mismatch`: "{member}: जन्मतारखेबद्दल काय करायचे?"): "लता दत्तात्रय कदम:
+  जन्मतारखेबद्दल काय करायचे?" (the same words appear as a suggested-question chip, so the viewer can compare) → tap to
+  stop → "Check the words, then send." → "Send" → the answer plays by itself; show its sources.
 - **Narration:** "Families can ask in their own words. Muse Voice Transcribe writes the question down so they can
   check it, and Muse Spark Open answers. Code checks every fact in the answer before it's shown."
 
