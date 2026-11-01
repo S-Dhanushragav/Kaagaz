@@ -111,13 +111,41 @@ Changed: spoken questions' transcripts are never written to the disk cache (priv
 Open: scheme YAML has no verified "where to apply" yet (the agent says to ask at the office; TODO for the developer).
 
 ## Phase 11: More Indian languages (Mon 3 Nov afternoon)
-- [ ] Tamil, Telugu, Kannada: voice in and out (I, M, D, CV)
-- [ ] Malayalam, Punjabi: text, buttons and speech out only (Muse Voice Transcribe does not
-      support them) (I, CV)
-- [ ] Translation pipeline: Muse Spark translates, Muse Spark Open back-translates, code checks
-      meaning, numbers and placeholders (M, T, OW)
-- [ ] Unreviewed languages labelled machine-translated in the app (I, T)
-Status: not started. Commits: -
+Before it, four fixes from the Phase 10 test (commit c38e2d7):
+- [x] Spoken answers on phones: one audio element for the app, unlocked inside the mic and Send taps; "Tap to listen"
+      if the browser still refuses; answer speech made on the server as soon as the answer exists (the ~5 s Listen delay)
+- [x] New check / Start over keeps the check on screen, with its answers and Ask thread, under "Earlier in this visit"
+- [x] Baseten daily token budget (BASETEN_DAILY_TOKENS, default 2M, all tasks; counts kept on disk, in /health); Ask
+      says "unavailable" when it is used up; vision and agent calls routed to Baseten fall back to Muse Spark when it
+      fails or the budget is used up (PHOTO_SECOND_READ_PROVIDER=baseten makes photo mode's second read a Muse Spark Open
+      read with that fallback; default: both reads by Muse Spark, as before)
+- [x] The app's name in Ask answers is the UI's own spelling (कागज, not कागद), checked per language
+Phase 11 (commit 685671a):
+- [x] Tamil, Telugu, Kannada: UI, plan, problems, Ask, chips, suggested questions, counts; voice in (ASR_LANGUAGES) and
+      out (MMS-TTS tam/tel/kan); names shown in Latin letters as on the documents, said in each script (I, M, D, CV)
+- [x] Translation pipeline (scripts/translate.py): Muse Spark translates with a glossary, Muse Spark Open
+      back-translates and compares meaning, code checks placeholders, numbers, the app's name, punctuation and script;
+      reviewed fixes in data/translations/fixes.yaml; report in docs/TRANSLATION_REPORT.md (M, T, OW)
+- [x] Unreviewed languages labelled machine-translated (in their own script, with a tooltip and a note in the chat) (I, T)
+- [x] Ask in ta/te/kn: answers in the UI language, fact check for their digits, number words, eligibility, fees,
+      offices and schemes; questions in another script refused by code (I, T, Ag)
+- [ ] Malayalam, Punjabi: skipped (several Phase 11 items needed rework; see below)
+Status: built and tested; not deployed or pushed. 752 backend tests, 32 frontend tests.
+Translation: 362 strings per language; first pass ta 0/10, te 1/5, kn 1/3 (code failures / meaning mismatches); 26
+strings fixed on review (8 of them not flagged by any check); final ta 0/6 (5 are the back-translator reading காகஸ் as
+"Caucus"), te 1/1, kn 0/0 (docs/TRANSLATION_REPORT.md).
+Ask eval (49 questions, 18 new in ta/te/kn): 48 handled right, 1 "not sure" (the model returned an empty reply twice),
+0 wrong answers shown (eval/results/ask_20261101-134752.json). Speech (synthetic MMS-TTS clips, 3 per language): WER
+ta 0.30 / te 0.50 / kn 0.18, CER 0.19 / 0.29 / 0.07, right answers 2/3, 3/3, 3/3 (eval/results/asr_20261101-134935.json).
+Playwright (local): sample check, one Ask question, Save this check (demo login), saved check, tick, Check again and
+the comparison in ta/te/kn at 360 and 1440 px: no overflow after two CSS fixes (big buttons wrap, matrix scheme names
+break between letters).
+Changed: rework was needed for the first translation prompt (spoken templates lost their punctuation), the brand rule
+(कागद and ಕಾಗದ also mean "paper"; now rejected only where they name the app), the fact check (zero-width joiners, near
+spellings of scheme names, Tamil "அல்ல"), a Bengali question answered in Tamil (now refused by code) and a Tamil question
+refused as "other language" (now sent back). Scheme names: official names transliterated by Muse Spark, with the
+English name in brackets. Kannada TTS reads "ಕಾಗದ" fine; the Telugu voice is the least clear in the ASR round trip.
+Deploy note: TTS_MODEL_TA/TE/KN and ASR_LANGUAGES come from .env.example into the Modal image (models baked at build).
 
 ## Phase 12: Freeze and submit (Tue 4 - Wed 5 Nov)
 - [ ] Final evals re-run; README numbers final (T)
@@ -136,11 +164,11 @@ Status: not started. Commits: -
 ## Meta models: before and after
 | Model | Before Phase 8 | After Phase 12 |
 |---|---|---|
-| Muse Spark 1.3 | Reader, name verifier, fix planner | Same, plus translation |
+| Muse Spark 1.3 | Reader, name verifier, fix planner | Same, plus translation (and the fallback for Baseten) |
 | Muse Spark Open (Baseten) | Borderline same-person calls | Ask Kaagaz agent, back-translation |
 | SAM 3.1 | Finding documents (hidden) | Same, visible in the UI |
 | Muse Voice Transcribe | File mode for answers | Plus live mode in the chat box |
-| MMS-TTS | 3 languages | 8 languages |
+| MMS-TTS | 3 languages | 6 languages (Malayalam, Punjabi skipped) |
 
 ## Owner tasks (not for Claude Code)
 - [x] Marathi templates reviewed by a native speaker

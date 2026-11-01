@@ -31,10 +31,10 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 
 ## Status
 
-Phases 0-10 are built, tested and deployed (584 backend tests and 18 frontend tests, no network). Last deploy
-1 Nov 2026: login and case file, the layout pass, real-input rescue and Ask Kaagaz (typed and spoken) are live;
-the sample family runs end to end in production (first spoken sentence 18 s, plan 23 s). Next: Phase 11, more
-Indian languages.
+Phases 0-10 are built, tested and deployed; Phase 11 (Tamil, Telugu, Kannada) is built and tested, not deployed yet
+(752 backend tests and 32 frontend tests, no network). Last deploy 1 Nov 2026: login and case file, the layout pass,
+real-input rescue and Ask Kaagaz (typed and spoken) are live; the sample family runs end to end in production (first
+spoken sentence 18 s, plan 23 s).
 
 | Phase | What | Status |
 |---|---|---|
@@ -53,6 +53,7 @@ Indian languages.
 | 9c | Real-input rescue: upright crops (text orientation), tracks split when documents are shown one at a time, cut-off documents read, duplicates merged; partial results ("Read clearly" / "Need a clearer photo", plan held when most are unclear) instead of a hard stop; photo mode (Add photos, up to 12, EXIF stripped, two agreeing reads) | Done, deployed |
 | 10 (part 1) | Ask Kaagaz, typed: an agent on Muse Spark Open (Baseten) answers questions about the 5 schemes and the family's check through read-only tools; every answer fact-checked by code before it is shown (numbers, schemes, offices, fees, eligibility from the rules engine only); sources, Listen, "Add a photo" chips, suggested questions; per-session and per-IP limits | Done, deployed |
 | 10 (part 2) | Ask by voice: push-to-talk mic (timer, level meter, 30 s), clip converted by ffmpeg and transcribed by Muse Voice Transcribe into the box to check before sending, spoken questions' answers played aloud; nothing of the audio kept, transcripts not cached or logged | Done, deployed |
+| 11 | Tamil, Telugu, Kannada with voice in and out: Muse Spark translations back-translated and checked by Muse Spark Open (reviewed fixes, [report](docs/TRANSLATION_REPORT.md)), marked machine-translated; Ask and its fact check in all six languages; spoken answers unlocked on phones; Baseten daily budget with Muse Spark fallback | Done, not deployed |
 
 Remaining phases: see [docs/ROADMAP.md](docs/ROADMAP.md).
 
