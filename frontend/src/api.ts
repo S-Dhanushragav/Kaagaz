@@ -3,7 +3,7 @@ import { photosSent } from './photos'
 
 export const API_URL: string = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000'
 
-export type Language = 'mr' | 'hi' | 'en'
+export type Language = 'mr' | 'hi' | 'en' | 'ta' | 'te' | 'kn'
 export type Stage = 'find_documents' | 'read_documents' | 'build_household' | 'check_rules' | 'plan_fixes' | 'speak'
 
 export interface Question {

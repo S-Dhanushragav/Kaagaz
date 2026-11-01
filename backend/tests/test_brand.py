@@ -30,6 +30,7 @@ def test_marathi_answer_calling_the_app_kagad_is_rejected(text: str) -> None:
     "कागजकडे याबद्दल माहिती नाही. कृपया कार्यालयात विचारा.",
     "तुमच्या कागदपत्रांनुसार काही अडचण नाही.",
     "या कागदावर नाव वेगळे आहे.",  # 'on this paper': an inflected noun, not the app
+    "एक कागद ओळखता आला नाही; त्याचा स्पष्ट फोटो द्या.",  # 'one paper could not be identified'
 ])
 def test_marathi_answer_with_the_ui_spelling_or_the_word_paper_passes(text: str) -> None:
     assert _brand_failures(text, "mr") == []
@@ -45,7 +46,29 @@ def test_hindi_and_english_spellings() -> None:
 @pytest.mark.parametrize("language", LANGUAGES)
 def test_brand_is_the_ui_app_name(language: str) -> None:
     """The templates' brand is exactly the app name the UI shows in that language."""
-    source = I18N.read_text(encoding="utf-8")
-    block = source if language == "en" else source[source.index(f"const {language}: Strings = {{"):]
-    shown = re.search(r"appName: '([^']+)'", block).group(1)
+    locale = I18N.parent / "locales" / f"{language}.ts"
+    if locale.exists():  # machine-translated languages (scripts/translate.py)
+        shown = re.search(r'"appName": "([^"]+)"', locale.read_text(encoding="utf-8")).group(1)
+    else:
+        source = I18N.read_text(encoding="utf-8")
+        block = source if language == "en" else source[source.index(f"const {language}: Strings = {{"):]
+        shown = re.search(r"appName: '([^']+)'", block).group(1)
     assert load_ask(language).brand == shown
+
+
+@pytest.mark.parametrize("text,language", [
+    ("காகஜ் இதைப் பற்றி தகவல் இல்லை.", "ta"),
+    ("కాగజు దగ్గర ఈ సమాచారం లేదు.", "te"),
+    ("ಕಾಗಜು ಬಳಿ ಈ ಮಾಹಿತಿ ಇಲ್ಲ.", "kn"),
+])
+def test_dravidian_answers_with_another_spelling_are_rejected(text: str, language: str) -> None:
+    assert _brand_failures(text, language)
+
+
+@pytest.mark.parametrize("text,language", [
+    ("காகஸிடம் இதைப் பற்றி தகவல் இல்லை.", "ta"),  # inflected brand, fine
+    ("కాగజ్ దగ్గర ఈ సమాచారం లేదు.", "te"),
+    ("ಕಾಗಜ್ ಬಳಿ ಈ ಮಾಹಿತಿ ಇಲ್ಲ. ಗುರುತು ಸಿಗದ ಕಾಗದ ಇದೆ.", "kn"),  # ಕಾಗದ: 'paper', not the app
+])
+def test_dravidian_answers_with_the_ui_spelling_pass(text: str, language: str) -> None:
+    assert not _brand_failures(text, language)

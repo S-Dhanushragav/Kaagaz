@@ -44,7 +44,7 @@ test('Marathi: singular for 1, plural for 2', () => {
 })
 
 test('every noun has both forms in every language, and they differ where the language inflects', () => {
-  for (const language of ['en', 'hi', 'mr'] as const) {
+  for (const language of ['en', 'hi', 'mr', 'ta', 'te', 'kn'] as const) {
     for (const noun of NOUNS) {
       assert.match(count(language, noun, 1), /^.*1.*$/)
       assert.match(count(language, noun, 2), /2/)
@@ -52,4 +52,38 @@ test('every noun has both forms in every language, and they differ where the lan
     }
   }
   for (const noun of NOUNS) assert.notEqual(count('en', noun, 1).replace('1', ''), count('en', noun, 2).replace('2', ''))
+})
+
+// Tamil, Telugu and Kannada (machine-translated, src/locales): the singular for exactly 1, the plural for 2
+test('Tamil: singular for 1, plural for 2', () => {
+  assert.equal(count('ta', 'person', 1), '1 நபர்')
+  assert.equal(count('ta', 'person', 2), '2 நபர்கள்')
+  assert.equal(count('ta', 'problemFound', 1), '1 சிக்கல்')
+  assert.equal(count('ta', 'problemFound', 2), '2 சிக்கல்கள்')
+  assert.equal(count('ta', 'stepOpen', 1), '1 படி மீதம் உள்ளது')
+  assert.equal(count('ta', 'stepOpen', 2), '2 படிகள் மீதம் உள்ளன')
+  assert.equal(count('ta', 'tryLeft', 1), '1 முயற்சி மீதம் உள்ளது')
+  assert.equal(count('ta', 'tryLeft', 2), '2 முயற்சிகள் மீதம் உள்ளன')
+})
+
+test('Telugu: singular for 1, plural for 2', () => {
+  assert.equal(count('te', 'person', 1), '1 వ్యక్తి')
+  assert.equal(count('te', 'person', 2), '2 మంది')
+  assert.equal(count('te', 'problemFound', 1), '1 సమస్య')
+  assert.equal(count('te', 'problemFound', 2), '2 సమస్యలు')
+  assert.equal(count('te', 'visitOpen', 1), '1 కార్యాలయ సందర్శన ఇంకా మిగిలి ఉంది')
+  assert.equal(count('te', 'visitOpen', 2), '2 కార్యాలయ సందర్శనలు ఇంకా మిగిలి ఉన్నాయి')
+  assert.equal(count('te', 'tryLeft', 1), '1 ప్రయత్నం మిగిలి ఉంది')
+  assert.equal(count('te', 'tryLeft', 2), '2 ప్రయత్నాలు మిగిలి ఉన్నాయి')
+})
+
+test('Kannada: singular for 1, plural for 2', () => {
+  assert.equal(count('kn', 'person', 1), '1 ವ್ಯಕ್ತಿ')
+  assert.equal(count('kn', 'person', 2), '2 ಜನ')
+  assert.equal(count('kn', 'problemFound', 1), '1 ಸಮಸ್ಯೆ')
+  assert.equal(count('kn', 'problemFound', 2), '2 ಸಮಸ್ಯೆಗಳು')
+  assert.equal(count('kn', 'stepOpen', 1), '1 ಹಂತ ಬಾಕಿ ಇದೆ')
+  assert.equal(count('kn', 'stepOpen', 2), '2 ಹಂತಗಳು ಬಾಕಿ ಇವೆ')
+  assert.equal(count('kn', 'tryLeft', 1), '1 ಪ್ರಯತ್ನ ಉಳಿದಿದೆ')
+  assert.equal(count('kn', 'tryLeft', 2), '2 ಪ್ರಯತ್ನಗಳು ಉಳಿದಿವೆ')
 })

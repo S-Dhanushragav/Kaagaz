@@ -1,10 +1,10 @@
 # Values provided by the developer from official sources. Do not edit from memory.
 id: pm_ujjwala
-name: {en: "PM Ujjwala", mr: "प्रधानमंत्री उज्ज्वला योजना", hi: "प्रधानमंत्री उज्ज्वला योजना"}
-short: {en: "Ujjwala", mr: "उज्ज्वला", hi: "उज्ज्वला"}
+name: {en: "PM Ujjwala", mr: "प्रधानमंत्री उज्ज्वला योजना", hi: "प्रधानमंत्री उज्ज्वला योजना", ta: "பிரதான்மந்திரி உஜ்ஜ்வலா யோஜனா (Ujjwala)", te: "ప్రధానమంత్రి ఉజ్జ్వలా యోజన (Ujjwala)", kn: "ಪ್ರಧಾನಮಂತ್ರಿ ಉಜ್ಜ್ವಲಾ ಯೋಜನಾ (Ujjwala)"}
+short: {en: "Ujjwala", mr: "उज्ज्वला", hi: "उज्ज्वला", ta: "உஜ்ஜ்வலா", te: "ఉజ్జ్వలా", kn: "ಉಜ್ಜ್ವಲಾ"}
 # One-line benefit for the app. en from the developer; hi/mr text machine-translated from it.
 benefit:
-  text: {en: "LPG gas connection", mr: "एलपीजी गॅस जोडणी", hi: "एलपीजी गैस कनेक्शन"}
+  text: {en: "LPG gas connection", mr: "एलपीजी गॅस जोडणी", hi: "एलपीजी गैस कनेक्शन", ta: "LPG கேஸ் இணைப்பு", te: "LPG గ్యాస్ కనెక్షన్", kn: "LPG ಗ್ಯಾಸ್ ಸಂಪರ್ಕ"}
   status: unverified
   source: developer
   source_url: null

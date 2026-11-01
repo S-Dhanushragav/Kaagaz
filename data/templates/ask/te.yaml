@@ -1,0 +1,40 @@
+# MACHINE-TRANSLATED by scripts/translate.py (Muse Spark; back-translated and checked with Muse Spark Open).
+# Not reviewed by a native speaker yet. Corrections go in data/translations/fixes.yaml, then re-run.
+# Placeholders stay labels ("{member}: ..."): no case endings on them.
+language: te
+brand: కాగజ్
+brand_wrong:
+- కాగజు
+- కాగాజ్
+- కాగస్
+- (?i)\bkaa?gh?aa?[zdj]\b
+replies:
+  out_of_scope: 'నేను మీ పత్రాల గురించి, ఈ 5 మహారాష్ట్ర పథకాల గురించి మాత్రమే సహాయం చేయగలను: లాడ్కీ బహీణ్ (Ladki Bahin), ఉజ్జ్వలా (Ujjwala), రమాయి (Ramai), సంజయ్ గాంధీ (Sanjay Gandhi) మరియు శ్రావణ్‌బాళ్ (Shravanbal). ఎవరు దరఖాస్తు చేయవచ్చు, ఏ పత్రాలు కావాలి, లేదా మీ పరిశీలనలో ఏమి తేలిందో అడగండి.'
+  id_number: నేను ఆధార్ లేదా ఇతర గుర్తింపు నంబర్లు చెప్పను, అడగను. మీకు ఏ పత్రాలు కావాలో, మీ పరిశీలనలో ఏమి తేలిందో చెప్పగలను.
+  other_language: నేను ఇంగ్లీష్, హిందీ, మరాఠీ, తమిళ్, తెలుగు లేదా కన్నడలో సమాధానం ఇవ్వగలను. దయచేసి ఈ భాషలలో ఒకదానిలో మళ్లీ అడగండి.
+  not_sure: 'నాకు ఖచ్చితంగా తెలియదు. మీ పరిశీలనలో ఇది ఉంది:'
+  not_sure_no_check: 'నాకు ఖచ్చితంగా తెలియదు. పథకం నియమాల ప్రకారం ఇది ఉంది:'
+  not_sure_nothing: నాకు ఖచ్చితంగా తెలియదు. దయచేసి కార్యాలయంలో అడగండి.
+  unavailable: క్షమించండి, ఇప్పుడు సమాధానం ఇవ్వలేకపోయాను. దయచేసి ఒక నిమిషం తర్వాత మళ్లీ ప్రయత్నించండి; మీ పరిశీలనకు ఏమీ కాదు.
+  check_at_office: 'దీనిలో కొంత అధికారిక సమాచారంతో ఇంకా నిర్ధారణ కాలేదు: కార్యాలయంలో అడిగి తెలుసుకోండి.'
+  limit: మీరు ఈ గంటలో చాలా ప్రశ్నలు అడిగారు. దయచేసి తర్వాత మళ్లీ ప్రయత్నించండి.
+lines:
+  outcome: '{member}, {scheme}: {reason}'
+  problem: '{member}: {reason}'
+  step: '{text}'
+  scheme: '{scheme}: {text}'
+chips:
+  photo: 'ఫోటో జోడించండి: {document}'
+  document_of: '{member}: {document}'
+  unknown: ఏ పత్రమో తెలియలేదు
+suggestions:
+  missing_document: '{member}: {document}: ఎక్కడ తీసుకోవాలి?'
+  unclear: '{member}: {document}: స్పష్టమైన ఫోటో ఎందుకు కావాలి?'
+  unclear_unknown: ఏ పత్రాలకు స్పష్టమైన ఫోటో కావాలి?
+  expired: '{member}: కొత్త ఆదాయ ధృవీకరణ పత్రం ఎందుకు కావాలి?'
+  name_mismatch: '{member}: పేరు స్పెల్లింగ్ గురించి ఏమి చేయాలి?'
+  dob_mismatch: '{member}: పుట్టిన తేదీ గురించి ఏమి చేయాలి?'
+  not_on_ration_card: '{member}: రేషన్ కార్డులో పేరు లేదు. ఏమి చేయాలి?'
+  office: '{office}: నేను అక్కడికి ఏమి తీసుకెళ్లాలి?'
+  which_missing: ఏ పత్రాలు లేవు?
+  schemes: '{member}: ఏ పథకాలకు దరఖాస్తు చేయవచ్చు?'

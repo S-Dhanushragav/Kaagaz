@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { deleteMe, type Language, type UserView } from '../api'
-import { LANGUAGE_NAMES, LANGUAGES, type Strings } from '../i18n'
+import { LANGUAGE_NAMES, LANGUAGES, MACHINE_TRANSLATED, STRINGS, type Strings } from '../i18n'
 import { Chevron, Person } from './Icons'
 
 // The logged-in account: number ending, language, log out, and "Delete my data" (with a confirmation).
@@ -55,7 +55,8 @@ export default function AccountMenu({ t, user, language, onLanguage, onLogout, o
           <div className="account-langs" role="group" aria-label={t.language}>
             {LANGUAGES.map((l) => (
               <button key={l} type="button" lang={l} aria-pressed={l === language}
-                className={l === language ? 'chip on' : 'chip'} onClick={() => onLanguage(l)}>{LANGUAGE_NAMES[l]}</button>
+                className={l === language ? 'chip on' : 'chip'} onClick={() => onLanguage(l)}
+                title={MACHINE_TRANSLATED.has(l) ? STRINGS[l].machineTranslatedNote : undefined}>{LANGUAGE_NAMES[l]}</button>
             ))}
           </div>
           <button type="button" role="menuitem" className="langmenu-item" onClick={() => { setOpen(false); onLogout() }}>{t.logOut}</button>

@@ -1,4 +1,5 @@
 import type { CatalogScheme, CheckSummary, Language, UserView } from '../api'
+import { devanagariNames } from '../languages'
 import type { Visit } from '../App'
 import type { Strings } from '../i18n'
 import { Close, Logo, Plus } from './Icons'
@@ -57,7 +58,7 @@ export default function Sidebar({ t, language, schemes, onNewCheck, onOpenScheme
         ) : checks.length === 0 ? <p className="sidebar-empty">{t.checksNone}</p> : (
           <ul className="check-list">
             {checks.map((c) => {
-              const head = c.head && (language === 'en' ? c.head.name_en ?? c.head.name_mr : c.head.name_mr ?? c.head.name_en)
+              const head = c.head && (devanagariNames(language) ? c.head.name_mr ?? c.head.name_en : c.head.name_en ?? c.head.name_mr)
               return (
                 <li key={c.id}>
                   <button type="button" className={c.id === openCheck ? 'check-link on' : 'check-link'} aria-current={c.id === openCheck}

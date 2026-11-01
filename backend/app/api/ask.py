@@ -32,10 +32,10 @@ from pydantic import BaseModel, Field
 from app.api.account import client_ip, optional_user
 from app.config import get_settings
 from app.sessions import SessionError
+from schemas.languages import LANGUAGES, Language, devanagari_names
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
-Language = Literal["en", "hi", "mr"]
 ANSWER_TTL_S = 3600
 MAX_ANSWERS = 2000
 TICKET_TTL_S = 600
@@ -232,7 +232,7 @@ def _keywords(language: str, ctx: Any) -> list[str] | None:
         return None
     words = [s.short.get(language) or s.short["en"] for s in load_schemes()]
     if ctx is not None:
-        names = [(m.name_en if language == "en" else m.name_mr) or m.name_en for m in ctx.data.members]  # its own script
+        names = [(m.name_mr if devanagari_names(language) else m.name_en) or m.name_en for m in ctx.data.members]
         words += [n.split()[0] for n in names if n and n.split()]
     return list(dict.fromkeys(words))
 
@@ -258,7 +258,7 @@ async def ask_transcribe(request: Request, audio: UploadFile = File(...), langua
         from agents.ask_tools import load_ask
 
         raise HTTPException(429, {"code": "limit", "message": load_ask(language).replies["limit"]
-                                  if language in ("en", "hi", "mr") else "Too many questions this hour."})
+                                  if language in LANGUAGES else "Too many questions this hour."})
     start = time.perf_counter()
     try:
         wav, seconds = await run_in_threadpool(to_wav16k, data, settings.max_question_audio_s)

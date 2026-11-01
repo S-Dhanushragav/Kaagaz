@@ -8,7 +8,7 @@ brand_wrong:  # an answer that names the app any of these ways is rejected (agen
 replies:
   out_of_scope: "I can only help with your documents and these 5 Maharashtra schemes: Ladki Bahin, PM Ujjwala, Ramai Awas, Sanjay Gandhi Niradhar and Shravanbal. Ask me who can apply, which documents are needed, or what your check found."
   id_number: "I never read out or ask for Aadhaar or other ID numbers. I can tell you which documents you need and what your check found."
-  other_language: "I can answer in English, Hindi or Marathi. Please ask again in one of these languages."
+  other_language: "I can answer in English, Hindi, Marathi, Tamil, Telugu or Kannada. Please ask again in one of these languages."
   not_sure: "I'm not sure. Here is what your check says:"
   not_sure_no_check: "I'm not sure. Here is what the scheme rules say:"
   not_sure_nothing: "I'm not sure. Please ask at the office."

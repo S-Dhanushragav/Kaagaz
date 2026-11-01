@@ -1,6 +1,7 @@
 /* Kaagaz: light and neutral. White chat, a very light grey sidebar, one grey for borders, near-black text.
    One accent (navy) for primary buttons and focus rings only. Status colours always come with their mark.
-   System fonts only (Devanagari included), one sans-serif family for everything. Touch targets at least 44-48 px.
+   System fonts (Devanagari included), plus Noto Sans Tamil/Telugu/Kannada fetched only for those languages (fonts.ts).
+   One sans-serif family for everything. Touch targets at least 44-48 px.
    Every colour is a variable here; every text/background pair meets WCAG AA (4.5:1 for text, 3:1 for controls). */
 :root {
   /* surfaces */
@@ -28,7 +29,7 @@
   --none: #85858f;
   --scrim: rgba(26, 26, 26, 0.4);
   --shadow: 0 8px 28px rgba(26, 26, 26, 0.12);
-  --sans: "Noto Sans", "Noto Sans Devanagari", "Nirmala UI", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --sans: "Noto Sans", "Noto Sans Devanagari", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Kannada", "Nirmala UI", "Segoe UI", system-ui, -apple-system, sans-serif;
   font-family: var(--sans);
   font-size: 17px;
   line-height: 1.55;
@@ -64,6 +65,8 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
 .button.danger { background: var(--bad); border-color: var(--bad); color: var(--on-accent); }
 .button.danger:hover:not(:disabled) { background: var(--bad); filter: brightness(1.1); }
 .button.big { min-height: 54px; font-size: 1.02rem; flex: 1 1 auto; white-space: nowrap; }
+/* Tamil, Telugu and Kannada labels are long words: big buttons wrap instead of running off a phone screen */
+html:is(:lang(ta), :lang(te), :lang(kn)) .button.big { white-space: normal; text-align: center; line-height: 1.3; }
 .button-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
 .icon-button {
   display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 10px;
@@ -134,6 +137,7 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
 .langmenu-item:hover { background: var(--fill); }
 .langmenu-item.selected { background: var(--fill-2); font-weight: 700; }
 .langmenu-item.selected::after { content: " ✓"; }
+.langmenu-item .mt-tag { display: block; font-size: 0.78rem; font-weight: 400; color: var(--ink-2); }
 .langmenu-soon { margin: 6px 14px; font-size: 0.85rem; color: var(--ink-2); }
 
 /* ---------- conversation: a centred reading column ---------- */
@@ -378,6 +382,8 @@ details summary { cursor: pointer; min-height: 44px; padding: 8px 0; font-weight
 .matrix-scheme:hover { background: var(--fill); }
 .matrix-member { text-align: left; font-size: 0.9rem; line-height: 1.3; vertical-align: middle; overflow-wrap: anywhere; }
 .matrix-member .tag { display: block; }
+/* scheme names in Tamil, Telugu and Kannada are single long words: break between letters rather than overflow */
+html:is(:lang(ta), :lang(te), :lang(kn)) .matrix-scheme { overflow-wrap: anywhere; }
 .cell {
   width: 100%; max-width: 96px; min-width: 0; height: 46px; border-radius: 10px; border: 1.5px solid; font-weight: 800; font-size: 1.15rem;
   display: inline-flex; align-items: center; justify-content: center;

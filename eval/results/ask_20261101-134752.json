@@ -1,0 +1,3202 @@
+{
+ "summary": {
+  "questions": 49,
+  "by_language": {
+   "en": 15,
+   "hi": 6,
+   "mr": 9,
+   "ta": 7,
+   "te": 6,
+   "kn": 6
+  },
+  "answered": 44,
+  "answered_correctly": 44,
+  "expected_answers": 44,
+  "correctly_refused": 4,
+  "expected_refusals": 5,
+  "not_sure": 1,
+  "unavailable": 0,
+  "fact_check_failures_caught": 2,
+  "wrong_answers_shown": 0,
+  "chips_offered_when_expected": "6/7",
+  "tokens": {
+   "prompt": 348963,
+   "completion": 26331
+  },
+  "mean_tokens_per_question": 7659,
+  "mean_seconds": 4.29,
+  "mode": "live",
+  "new_recordings": 135,
+  "per_language": {
+   "en": {
+    "questions": 15,
+    "answered_correctly": 14,
+    "correctly_refused": 1,
+    "not_sure": 0,
+    "wrong_answers_shown": 0,
+    "mean_tokens": 8421
+   },
+   "hi": {
+    "questions": 6,
+    "answered_correctly": 5,
+    "correctly_refused": 1,
+    "not_sure": 0,
+    "wrong_answers_shown": 0,
+    "mean_tokens": 6723
+   },
+   "mr": {
+    "questions": 9,
+    "answered_correctly": 7,
+    "correctly_refused": 1,
+    "not_sure": 1,
+    "wrong_answers_shown": 0,
+    "mean_tokens": 6777
+   },
+   "ta": {
+    "questions": 7,
+    "answered_correctly": 6,
+    "correctly_refused": 1,
+    "not_sure": 0,
+    "wrong_answers_shown": 0,
+    "mean_tokens": 8665
+   },
+   "te": {
+    "questions": 6,
+    "answered_correctly": 6,
+    "correctly_refused": 0,
+    "not_sure": 0,
+    "wrong_answers_shown": 0,
+    "mean_tokens": 6505
+   },
+   "kn": {
+    "questions": 6,
+    "answered_correctly": 6,
+    "correctly_refused": 0,
+    "not_sure": 0,
+    "wrong_answers_shown": 0,
+    "mean_tokens": 7993
+   }
+  }
+ },
+ "rows": [
+  {
+   "id": "s1",
+   "lang": "en",
+   "question": "Who can apply for Ladki Bahin?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Your check shows Ladki Bahin gives ₹1,500 per month. It is for women age 21 to 65 with family income up to ₹2,50,000. You need an income certificate, or a yellow or orange ration card can work instead. Kaagaz has no verified information on other conditions, so please check at the office.",
+   "note": null,
+   "sources": [
+    "https://myscheme.gov.in/schemes/mmlby"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 2,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 4290,
+    "completion_tokens": 267,
+    "total_tokens": 4557
+   },
+   "seconds": 2.36,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Ladki Bahin eligibility. Need to look up schemes.",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Ladki Bahin\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows Ladki Bahin gives ₹1,500 per month. It is for women age 21 to 65 with family income up to ₹2,50,000. You need an income certificate, or a yellow or orange ration card can work instead. Kaagaz has no verified information on other conditions, so please check at the office.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s2",
+   "lang": "hi",
+   "question": "लाडकी बहीण योजना में हर महीने कितने पैसे मिलते हैं?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "आपकी जाँच के अनुसार लाडकी बहीण योजना में ₹1,500 प्रति माह मिलते हैं। यह जानकारी सत्यापित है। पात्रता और आवेदन के लिए कार्यालय में पूछें।",
+   "note": null,
+   "sources": [
+    "https://myscheme.gov.in/schemes/mmlby"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 2,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 6543,
+    "completion_tokens": 321,
+    "total_tokens": 6864
+   },
+   "seconds": 3.01,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Ladki Bahin scheme monthly amount. Must look up schemes.\n\nWe need to call list_schemes and get_scheme_rules for Ladki Bahin.\n\n",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>We have benefit 1500 per month verified. Need get_scheme_rules to confirm details.",
+     "calls": [
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"ladki_bahin\"}"
+      }
+     ]
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"आपकी जाँच के अनुसार लाडकी बहीण योजना में ₹1,500 प्रति माह मिलते हैं। यह जानकारी सत्यापित है। पात्रता और आवेदन के लिए कार्यालय में पूछें।\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s3",
+   "lang": "mr",
+   "question": "श्रावणबाळ योजनेसाठी वयाची अट काय आहे?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "तुमच्या तपासणीनुसार श्रावणबाळ योजनेसाठी वय 65 वर्षे किंवा त्याहून जास्त असावे लागते. हा नियम तपासलेला आहे. इतर अटी आणि कागदपत्रांसाठी कार्यालयात विचारा.",
+   "note": null,
+   "sources": [
+    "https://gadchiroli.gov.in/?p=24007"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 2,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 6289,
+    "completion_tokens": 310,
+    "total_tokens": 6599
+   },
+   "seconds": 4.62,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Shravanbal scheme age condition. Need to lookup schemes.\n\nWe need to call list_schemes and get_scheme_rules for Shravanbal.\n\n",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"shravanbal\"}"
+      }
+     ]
+    },
+    {
+     "turn": 4,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"तुमच्या तपासणीनुसार श्रावणबाळ योजनेसाठी वय 65 वर्षे किंवा त्याहून जास्त असावे लागते. हा नियम तपासलेला आहे. इतर अटी आणि कागदपत्रांसाठी कार्यालयात विचारा.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s4",
+   "lang": "en",
+   "question": "What documents do I need for Ramai Awas?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Your check shows for Ramai Awas you need your own SC or Neo-Buddhist caste certificate and an income certificate. Kaagaz has no verified information on where to apply, so please ask at the office. Other conditions like residence and land are not verified, so check at the office too.",
+   "note": "Some of this is not confirmed by an official source yet: check it at the office.",
+   "sources": [
+    "https://www.zpsatara.gov.in/?p=9134",
+    "https://www.publicservicesmap.in/schemes/ramai-awas-(gharkul)-scheme-for-sc-%26-nav-buddha-(urban-and-rural)--rassnb?lang=en"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 3,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 15389,
+    "completion_tokens": 1273,
+    "total_tokens": 16662
+   },
+   "seconds": 8.46,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Ramai Awas documents. Need to look up schemes.\n\nWe must call list_schemes and get_scheme_rules.\n\n",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Ramai Awas\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>We need to answer about documents needed for Ramai Awas. From get_scheme_rules: required_documents: caste certificate, income certificate. Also applicant_category: applicant's own SC or NB caste certificate. Need to mention verified status. Also family income conflict, other proof needed unverified.\n\nWe must write in English, under 80 words, plain everyday words. Must cite sources? Requirement: every fact must come from tool result. We should not invent. Provide documents: caste certificate, income certificate. Also mention SC/NB.\n\nWe must not mention tools. Say your check shows? But no check attached. So answer only about 5 schemes.\n\nWe should say benefit: Grant to build a house (unverified). But question is documents.\n\nWe must keep under 80 words.\n\nWe should also note to check at office for unverified/conflict items.\n\nWe must call reply exactly once.\n\nFor Ramai Awas your check shows you need your own caste certificate showing SC or Neo-Buddhist and an income certificate. The benefit is a grant to build a house. Other rules like income limit and residence and land conditions are not verified, so please check them at the office.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": " to= self< |message|>We need to answer about documents needed for Ramai Awas. From get_scheme_rules: required_documents: caste certificate, income certificate. Also applicant_category: applicant's own SC or NB caste certificate. Need to mention verified status. Also family income conflict, other proof needed unverified.\n\nWe must write in English, under 80 words, plain everyday words. Must cite sources? The instruction says every fact must come from tool result. We should answer.\n\nWe need to mention documents: caste certificate, income certificate. Also note about SC/NB.\n\nWe should not mention unverified benefit? But we can mention benefit is grant to build house but unverified.\n\nWe must keep under 80 words.\n\nWe should say to check at office for unverified/conflict items.\n\nWe must call reply.\n\nYour check shows Kaagaz knows Ramai Awas gives a grant to build a house. For documents, Kaagaz has verified information that you need a caste certificate and an income certificate. The applicant needs their own SC or Neo-Buddhist caste certificate. For income limits, residence proof and land conditions, Kaagaz has no verified information, so please check at the office.",
+     "calls": []
+    },
+    {
+     "turn": 4,
+     "content": " to= self< |message|>We need to answer about documents needed for Ramai Awas. Based on tool results: Documents: caste certificate, income certificate. Both verified. Also need to mention benefit? The question: What documents do I need for Ramai Awas? Provide answer in English, under 80 words, plain everyday words.\n\nWe must ensure we cite verified status. Also note other rules: applicant's own SC or NB caste certificate. Family income up to 1,00,000 but conflict. Should mention to check at office for unverified.\n\nWe must not mention tools. Say your check shows etc. But no check attached, so answer only about 5 schemes.\n\nWe should answer: For Ramai Awas you need caste certificate and income certificate, applicant's own SC or NB certificate, etc. Also mention to check at office for other requirements like residence, land conditions.\n\nNeed to keep under 80 words.\n\nWe must call reply exactly once.\n\nFor Ramai Awas your check shows you need a caste certificate and an income certificate. The applicant's own SC or Neo-Buddhist caste certificate passes. Kaagaz has no verified information on other documents, and for residence and land conditions please check at the office.",
+     "calls": []
+    },
+    {
+     "turn": 5,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"ramai_awas\"}"
+      }
+     ]
+    },
+    {
+     "turn": 6,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows for Ramai Awas you need your own SC or Neo-Buddhist caste certificate and an income certificate. Kaagaz has no verified information on where to apply, so please ask at the office. Other conditions like residence and land are not verified, so check at the office too.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s5",
+   "lang": "hi",
+   "question": "संजय गांधी निराधार योजना के लिए आय सीमा क्या है?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "संजय गांधी निराधार अनुदान योजना के लिए कागज़ के अनुसार परिवार की आय ₹21,000 तक होनी चाहिए। उम्र 65 साल से कम का नियम भी है। अन्य शर्तों के लिए कार्यालय में पूछें।",
+   "note": "इसमें से कुछ बातें अभी किसी सरकारी स्रोत से पक्की नहीं हैं: कार्यालय में पुष्टि करें।",
+   "sources": [
+    "https://amravati.gov.in/scheme/sanjay-gandhi-niradhar-yojana/",
+    "https://gadchiroli.gov.in/?p=24007"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 3,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 9545,
+    "completion_tokens": 539,
+    "total_tokens": 10084
+   },
+   "seconds": 5.84,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Sanjay Gandhi Niradhar scheme income limit. Need to look up schemes.\n\nWe must call list_schemes and get_scheme_rules.\n\n",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Sanjay Gandhi Niradhar\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>We have income limit: ₹21,000. Need to answer in Hindi, under 80 words, plain everyday words. Must cite numbers as digits exactly as tool returned: 21,000. Also age rule verified but question is income limit. Provide answer.\n\nWe must not mention tools. Say your check shows? But no check attached. So answer about scheme generally. Provide income limit.\n\nWe should also note that benefit is monthly pension but unverified? The rule is verified true. So we can state income limit.\n\nWe must write in Hindi only.\n\nUnder 80 words.\n\nआपकी जाँच के अनुसार संजय गांधी निराधार अनुदान योजना के लिए परिवार की आय 21,000 रुपये तक होनी चाहिए। यह नियम जाँच में मिला है, अंतिम फैसला कार्यालय करेगा। अधिक जानकारी के लिए कार्यालय में पूछें।",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"sanjay_gandhi_niradhar\"}"
+      }
+     ]
+    },
+    {
+     "turn": 4,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"संजय गांधी निराधार अनुदान योजना के लिए कागज़ के अनुसार परिवार की आय ₹21,000 तक होनी चाहिए। उम्र 65 साल से कम का नियम भी है। अन्य शर्तों के लिए कार्यालय में पूछें।\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s6",
+   "lang": "mr",
+   "question": "प्रधानमंत्री उज्ज्वला योजनेचा लाभ काय आहे?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "तुमच्या तपासणीनुसार प्रधानमंत्री उज्ज्वला योजनेचा लाभ एलपीजी गॅस जोडणी असा दाखवला आहे, पण कागज कडे याबद्दल पडताळलेली माहिती नाही, त्यामुळे कार्यालयात खात्री करून घ्या.",
+   "note": "यातील काही माहिती अजून अधिकृत स्रोताकडून पक्की झालेली नाही: कार्यालयात खात्री करा.",
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 2,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 7152,
+    "completion_tokens": 826,
+    "total_tokens": 7978
+   },
+   "seconds": 5.06,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about PM Ujjwala benefit. Need to look up schemes.\n\nWe must call list_schemes and get_scheme_rules for PM Ujjwala.\n\n",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"PM Ujjwala\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>We need to answer in Marathi, under 80 words, plain everyday words. Benefit is LPG gas connection, but status unverified. So we must say to check at office? The instruction: If a rule or fact has verified false, say to check it at the office. Benefit verified false -> unverified. So we should say benefit is LPG gas connection but say to check at office? The note says Unverified rules: say to check at the office.\n\nWe should answer: प्रधानमंत्री उज्ज्वला योजनेचा लाभ एलपीजी गॅस जोडणी आहे, but since unverified, we should add \"याबाबत कार्यालयात चौकशी करा\" ?\n\nWe must not mention tools. Provide answer in Marathi.\n\nWe have benefit text: एलपीजी गॅस जोडणी\n\nWe should also maybe mention eligibility? Question only asks benefit. So answer benefit.\n\nWe must keep under 80 words.\n\nWe should say: कागज कडे असलेल्या माहितीनुसार ... but need to indicate unverified -> say to check at office.\n\nWe must not say free.\n\nProvide reply.तुमच्या तपासणीनुसार प्रधानमंत्री उज्ज्वला योजनेचा लाभ एलपीजी गॅस जोडणी आहे, असे कागजला माहित आहे. हा लाभ unverified आहे, त्यामुळे नक्की लाभ काय आहे याबाबत कार्यालयात चौकशी करा.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"तुमच्या तपासणीनुसार प्रधानमंत्री उज्ज्वला योजनेचा लाभ एलपीजी गॅस जोडणी असा दाखवला आहे, पण कागज कडे याबद्दल पडताळलेली माहिती नाही, त्यामुळे कार्यालयात खात्री करून घ्या.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s7",
+   "lang": "en",
+   "question": "Where do I apply for Shravanbal?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Your check shows Kaagaz has no verified information on where to apply for Shravanbal. Please ask at your local office for the correct place to apply.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 2,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 6388,
+    "completion_tokens": 608,
+    "total_tokens": 6996
+   },
+   "seconds": 5.65,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Shravanbal scheme where to apply. Need to look up scheme rules.\n\nWe must call list_schemes and get_scheme_rules.\n\n",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Shravanbal\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>We have scheme rules. where_to_apply is null, so we have no verified information on where to apply. Must say to ask at office. Also benefit is unverified, but we can mention? The instruction: Every fact must come from tool result. Benefit text is \"Monthly pension for people 65 and over\" but verified false, status unverified. Should we mention? The question is where to apply. We should say Kaagaz has no verified information on where to apply; say to ask at office.\n\nWe must answer in English, under 80 words, plain everyday words.\n\nWe should also mention eligibility rules? The question only where to apply. But we can provide context? Better to just answer where to apply: no verified info, ask at office.\n\nWe must not invent office location.\n\nWe should call reply with kind answer.\n\nYour check shows Shravanbal gives a monthly pension for people 65 and over, but Kaagaz has no verified information on where to apply for this scheme. Please ask at your local office for the correct place to apply.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows Kaagaz has no verified information on where to apply for Shravanbal. Please ask at your local office for the correct place to apply.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "s8",
+   "lang": "mr",
+   "question": "तुम्ही कोणत्या योजनांबद्दल सांगू शकता?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "कागज या पाच योजनांबद्दल सांगू शकतो: मुख्यमंत्री माझी लाडकी बहीण योजना - दरमहा ₹1,500, प्रधानमंत्री उज्ज्वला योजना - एलपीजी गॅस जोडणी, रमाई आवास योजना - घर बांधण्यासाठी अनुदान, संजय गांधी निराधार अनुदान योजना - दरमहा निवृत्तीवेतन, आणि श्रावणबाळ सेवा राज्य निवृत्तीवेतन योजना - 65 वर्षे व त्याहून अधिक वयाच्या व्यक्तींसाठी दरमहा निवृत्तीवेतन.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 2,
+   "tool_calls": 1,
+   "check_failures": [
+    "These numbers are not in the tool results: 1, 2, 3, 4. Use only numbers a tool returned (digits), or leave them out."
+   ],
+   "tokens": {
+    "prompt_tokens": 6182,
+    "completion_tokens": 583,
+    "total_tokens": 6765
+   },
+   "seconds": 3.4,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>We need to answer about which schemes Kaagaz knows. Need to call list_schemes first.",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"कागज या 5 योजनांबद्दल सांगू शकतो: 1) मुख्यमंत्री माझी लाडकी बहीण योजना - दरमहा ₹1,500, 2) प्रधानमंत्री उज्ज्वला योजना - एलपीजी गॅस जोडणी, 3) रमाई आवास योजना - घर बांधण्यासाठी अनुदान, 4) संजय गांधी निराधार अनुदान योजना - दरमहा निवृत्तीवेतन, 5) श्रावणबाळ सेवा राज्य निवृत्तीवेतन योजना - 65 वर्षे व त्याहून अधिक वयाच्या व्यक्तींसाठी दरमहा निवृत्तीवेतन.\", \"chips\": []}"
+      }
+     ]
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"कागज या पाच योजनांबद्दल सांगू शकतो: मुख्यमंत्री माझी लाडकी बहीण योजना - दरमहा ₹1,500, प्रधानमंत्री उज्ज्वला योजना - एलपीजी गॅस जोडणी, रमाई आवास योजना - घर बांधण्यासाठी अनुदान, संजय गांधी निराधार अनुदान योजना - दरमहा निवृत्तीवेतन, आणि श्रावणबाळ सेवा राज्य निवृत्तीवेतन योजना - 65 वर्षे व त्याहून अधिक वयाच्या व्यक्तींसाठी दरमहा निवृत्तीवेतन.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f1",
+   "lang": "en",
+   "question": "Which documents are missing?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Your check shows no documents are fully missing, but clearer photos are needed for Aditya Yogesh Bhosale's Aadhaar card, Savita Aditya Bhosale's Aadhaar card, and the ration card. Aditya's income certificate may need renewal, and one paper could not be identified. Lata Aditya Bhosale's name differs across documents — ask at the office what to do.",
+   "note": null,
+   "sources": [],
+   "chips": [
+    "Add a photo: Savita Aditya Bhosale: Aadhaar card",
+    "Add a photo: ration card",
+    "Add a photo: Aditya Yogesh Bhosale: Aadhaar card",
+    "Add a photo: paper not identified"
+   ],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 8390,
+    "completion_tokens": 484,
+    "total_tokens": 8874
+   },
+   "seconds": 3.48,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": true,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer which documents are missing. Need to call family tools.",
+     "calls": [
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows no documents are fully missing, but clearer photos are needed for Aditya Yogesh Bhosale's Aadhaar card, Savita Aditya Bhosale's Aadhaar card, and the ration card. Aditya's income certificate may need renewal, and one paper could not be identified. Lata Aditya Bhosale's name differs across documents — ask at the office what to do.\", \"chips\": [\"photo:doc03\", \"add:ration_card:-\", \"photo:doc06\", \"photo:doc08\"]}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f2",
+   "lang": "mr",
+   "question": "कोणत्या कागदपत्रांचा स्पष्ट फोटो लागतो?",
+   "expect": "answer",
+   "kind": "not_sure",
+   "text": "मला नक्की माहीत नाही. तुमच्या तपासणीत हे आहे: लता आदित्य भोसले: कागदपत्रांवर नावाची स्पेलिंग वेगळी आहे: आधी हे दुरुस्त करा.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 2,
+   "tool_calls": 3,
+   "check_failures": [
+    "The answer is empty.",
+    "The answer is empty."
+   ],
+   "tokens": {
+    "prompt_tokens": 8667,
+    "completion_tokens": 199,
+    "total_tokens": 8866
+   },
+   "seconds": 3.19,
+   "answered": false,
+   "correct": false,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": false,
+   "chips_ok": false,
+   "trace": [
+    {
+     "turn": 1,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_family",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f3",
+   "lang": "hi",
+   "question": "सविता का आधार कार्ड दोबारा क्यों चाहिए?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "आपकी जाँच में सविता आदित्य भोसले का आधार कार्ड साफ़ नहीं पढ़ा गया, इसलिए दोबारा साफ़ फोटो चाहिए। यह पहचान के लिए ज़रूरी है। कृपया अच्छी रोशनी में पूरा कार्ड साफ़ फोटो लें।",
+   "note": null,
+   "sources": [],
+   "chips": [
+    "फ़ोटो जोड़ें: सविता आदित्य भोसले: आधार कार्ड"
+   ],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5100,
+    "completion_tokens": 308,
+    "total_tokens": 5408
+   },
+   "seconds": 3.62,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": true,
+   "trace": [
+    {
+     "turn": 1,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"आपकी जाँच में सविता आदित्य भोसले का आधार कार्ड साफ़ नहीं पढ़ा गया, इसलिए दोबारा साफ़ फोटो चाहिए। यह पहचान के लिए ज़रूरी है। कृपया अच्छी रोशनी में पूरा कार्ड साफ़ फोटो लें।\", \"chips\": [\"photo:doc03\"]}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f4",
+   "lang": "en",
+   "question": "Why does Aditya need a new income certificate?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Your check shows Aditya Yogesh Bhosale's income certificate was issued on 27/02/2022, before 01/04/2026, so it may be too old and may need renewal. Check at the office if a new certificate is needed. Kaagaz has no information on fees or time limits for renewal.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5511,
+    "completion_tokens": 359,
+    "total_tokens": 5870
+   },
+   "seconds": 2.55,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer why Aditya needs new income certificate. Need to look up family, member results, problems, missing docs, plan, office facts.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"Aditya\"}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows Aditya Yogesh Bhosale's income certificate was issued on 27/02/2022, before 01/04/2026, so it may be too old and may need renewal. Check at the office if a new certificate is needed. Kaagaz has no information on fees or time limits for renewal.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f5",
+   "lang": "mr",
+   "question": "आदित्य यांना नवीन उत्पन्नाचा दाखला कुठे मिळेल?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "तुमच्या तपासणीत आदित्य योगेश भोसले यांचा उत्पन्नाचा दाखला नूतनीकरणाची गरज असल्याचे दिसते. नवीन दाखला तहसील कार्यालयातून मिळतो, आपले सरकार पोर्टलवर किंवा आपले सरकार सेवा केंद्रावर अर्ज करून. कायद्यानुसार यासाठी 15 दिवसांची मुदत आहे. कागजकडे फीची माहिती नाही, कार्यालयात विचारा.",
+   "note": null,
+   "sources": [
+    "https://ahmednagar.nic.in/en/right-to-service-act"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5039,
+    "completion_tokens": 363,
+    "total_tokens": 5402
+   },
+   "seconds": 2.78,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer where Aditya can get new income certificate. Need to look up family, member results, plan, office facts.\n\nWe need to call tools.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_office_facts",
+       "args": "{\"document_type\": \"income_certificate\"}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"तुमच्या तपासणीत आदित्य योगेश भोसले यांचा उत्पन्नाचा दाखला नूतनीकरणाची गरज असल्याचे दिसते. नवीन दाखला तहसील कार्यालयातून मिळतो, आपले सरकार पोर्टलवर किंवा आपले सरकार सेवा केंद्रावर अर्ज करून. कायद्यानुसार यासाठी 15 दिवसांची मुदत आहे. कागजकडे फीची माहिती नाही, कार्यालयात विचारा.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f6",
+   "lang": "en",
+   "question": "What do I take to the Tahsil office?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Your check shows for Aditya Yogesh Bhosale you need a new income certificate. Apply on the Aaple Sarkar portal or at an Aaple Sarkar Seva Kendra; the Tahsil office issues it and the law sets 15 days. For Lata Aditya Bhosale the name on the caste certificate is spelled differently, ask the office what to do.",
+   "note": null,
+   "sources": [
+    "https://ahmednagar.nic.in/en/right-to-service-act"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 6570,
+    "completion_tokens": 409,
+    "total_tokens": 6979
+   },
+   "seconds": 2.59,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      },
+      {
+       "tool": "get_office_facts",
+       "args": "{\"document_type\": null}"
+      },
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows for Aditya Yogesh Bhosale you need a new income certificate. Apply on the Aaple Sarkar portal or at an Aaple Sarkar Seva Kendra; the Tahsil office issues it and the law sets 15 days. For Lata Aditya Bhosale the name on the caste certificate is spelled differently, ask the office what to do.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f7",
+   "lang": "hi",
+   "question": "लता के नाम की स्पेलिंग अलग क्यों है?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "आपकी जाँच में लता आदित्य भोसले के नाम की स्पेलिंग जाति प्रमाण पत्र, पहचान पत्र और राशन कार्ड पर अलग-अलग मिली है। कागज़ यह नहीं बताता कि कौन सा सही है या कहाँ सुधार कराना है। योजना में परिवार से पूछा गया था कि सही स्पेलिंग कौन सी है, इसलिए ऑफिस में पूछें कि क्या करना है।",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5143,
+    "completion_tokens": 328,
+    "total_tokens": 5471
+   },
+   "seconds": 2.56,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer why Lata's name spelling different. Need to get family, problems, missing docs, plan.\n\nWe must call tools.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"आपकी जाँच में लता आदित्य भोसले के नाम की स्पेलिंग जाति प्रमाण पत्र, पहचान पत्र और राशन कार्ड पर अलग-अलग मिली है। कागज़ यह नहीं बताता कि कौन सा सही है या कहाँ सुधार कराना है। योजना में परिवार से पूछा गया था कि सही स्पेलिंग कौन सी है, इसलिए ऑफिस में पूछें कि क्या करना है।\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f8",
+   "lang": "en",
+   "question": "Where do I get a caste certificate?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Your check shows you can get a caste certificate from the Sub-Divisional Officer / Deputy Collector. Apply there for the certificate. The time limit is set by the district under the Right to Public Services Act — confirm details at the office.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 2,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 9772,
+    "completion_tokens": 681,
+    "total_tokens": 10453
+   },
+   "seconds": 4.83,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer where to get caste certificate. Need to call tools: get_office_facts for caste_certificate, also maybe get_family etc but question is general. Need to follow rules: look up first. Must call get_office_facts.\n\nAlso need list_schemes? But question is about caste certificate office. So get_office_facts with document_type caste_certificate.\n\nAlso need to ensure we provide verified info.\n\n",
+     "calls": [
+      {
+       "tool": "get_office_facts",
+       "args": "{\"document_type\": \"caste_certificate\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": "Your check shows you can get a caste certificate at the Sub-Divisional Officer / Deputy Collector. Apply there for a new certificate. The time limit is set by the district under the Right to Public Services Act, so confirm details at the office.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 4,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows you can get a caste certificate from the Sub-Divisional Officer / Deputy Collector. Apply there for the certificate. The time limit is set by the district under the Right to Public Services Act — confirm details at the office.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f9",
+   "lang": "mr",
+   "question": "रेशन कार्डचा फोटो पुन्हा का लागतो?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "तुमच्या तपासणीत रेशन कार्डचा फोटो अस्पष्ट आल्यामुळे वाचता आला नाही, म्हणून कागज पुन्हा स्पष्ट फोटो मागत आहे. हा फोटो स्वच्छ प्रकाशात, पूर्ण पान दिसेल असा घ्या. उत्पन्नाचा दाखला जुना असण्याची शक्यता आहे, ते कार्यालयात विचारा.",
+   "note": null,
+   "sources": [],
+   "chips": [
+    "फोटो जोडा: रेशन कार्ड"
+   ],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5199,
+    "completion_tokens": 361,
+    "total_tokens": 5560
+   },
+   "seconds": 2.56,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer why ration card photo needed again. Need to look up family tools.\n\nWe need to call get_family, get_problems, get_missing_documents, get_plan, get_office_facts etc.\n\nWe must answer in Marathi, under 80 words, plain.\n\nWe need to find why ration card photo needed.\n\nCall tools.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"तुमच्या तपासणीत रेशन कार्डचा फोटो अस्पष्ट आल्यामुळे वाचता आला नाही, म्हणून कागज पुन्हा स्पष्ट फोटो मागत आहे. हा फोटो स्वच्छ प्रकाशात, पूर्ण पान दिसेल असा घ्या. उत्पन्नाचा दाखला जुना असण्याची शक्यता आहे, ते कार्यालयात विचारा.\", \"chips\": [\"add:ration_card:-\"]}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f10",
+   "lang": "en",
+   "question": "What about the paper you could not identify?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Your check shows 1 paper that looked like a document but could not be identified. Kaagaz has no information on what it is. Please add a clearer photo of it so it can be checked, and also add clearer photos for the other unreadable documents.",
+   "note": null,
+   "sources": [],
+   "chips": [
+    "Add a photo: paper not identified",
+    "Add a photo: Savita Aditya Bhosale: Aadhaar card",
+    "Add a photo: ration card",
+    "Add a photo: Aditya Yogesh Bhosale: Aadhaar card"
+   ],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5137,
+    "completion_tokens": 313,
+    "total_tokens": 5450
+   },
+   "seconds": 2.2,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": true,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about paper could not identify. Need to get family tools: get_problems, get_missing_documents, get_family, get_plan etc.",
+     "calls": [
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows 1 paper that looked like a document but could not be identified. Kaagaz has no information on what it is. Please add a clearer photo of it so it can be checked, and also add clearer photos for the other unreadable documents.\", \"chips\": [\"photo:doc08\", \"photo:doc03\", \"add:ration_card:-\", \"photo:doc06\"]}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f11",
+   "lang": "hi",
+   "question": "क्या सविता लाडकी बहीण के लिए पात्र है?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "आपकी जाँच में सविता के लिए लाडकी बहीण पर अभी फैसला नहीं हुआ है, क्योंकि एक दस्तावेज़ साफ़ नहीं पढ़ा गया। पहचान पत्र की साफ़ फोटो दोबारा लें। आय प्रमाण पत्र 27/02/2022 का है, 01/04/2026 से पहले का होने से नया बनवाना पड़ सकता है, कार्यालय में पूछें। पात्रता का अंतिम फैसला कार्यालय करेगा।",
+   "note": null,
+   "sources": [
+    "https://myscheme.gov.in/schemes/mmlby"
+   ],
+   "chips": [
+    "फ़ोटो जोड़ें: सविता आदित्य भोसले: आधार कार्ड"
+   ],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 9737,
+    "completion_tokens": 527,
+    "total_tokens": 10264
+   },
+   "seconds": 4.07,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Savita eligibility for Ladki Bahin. Need to look up family, member results, scheme rules.\n\nWe must call tools first.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"सविता\"}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Ladki Bahin\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>We have member results: blocked_by_issues for ladki bahin. Need to get problems, missing docs, plan to explain what to fix.\n\nWe should call get_problems, get_missing_documents, get_plan.",
+     "calls": [
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"आपकी जाँच में सविता के लिए लाडकी बहीण पर अभी फैसला नहीं हुआ है, क्योंकि एक दस्तावेज़ साफ़ नहीं पढ़ा गया। पहचान पत्र की साफ़ फोटो दोबारा लें। आय प्रमाण पत्र 27/02/2022 का है, 01/04/2026 से पहले का होने से नया बनवाना पड़ सकता है, कार्यालय में पूछें। पात्रता का अंतिम फैसला कार्यालय करेगा।\", \"chips\": [\"photo:doc03\"]}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f12",
+   "lang": "en",
+   "question": "Is Lata eligible for any scheme?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Your check shows Lata Aditya Bhosale is not eligible on these documents for the 5 schemes checked. For Ladki Bahin age 12 is under 21, for Ujjwala under 18, for Shravanbal under 65, and for Ramai and Sanjay Gandhi family income ₹2,04,000 is above the limits. The office makes the final decision. Your check also shows the income certificate from 27/02/2022 may need renewal, check at the office.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5512,
+    "completion_tokens": 384,
+    "total_tokens": 5896
+   },
+   "seconds": 2.78,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Lata eligibility. Need to get family, member results, etc.\n\nWe must look up tools first.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"Lata\"}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows Lata Aditya Bhosale is not eligible on these documents for the 5 schemes checked. For Ladki Bahin age 12 is under 21, for Ujjwala under 18, for Shravanbal under 65, and for Ramai and Sanjay Gandhi family income ₹2,04,000 is above the limits. The office makes the final decision. Your check also shows the income certificate from 27/02/2022 may need renewal, check at the office.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f13",
+   "lang": "mr",
+   "question": "आम्हाला किती वेळा कार्यालयात जावे लागेल?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "तुमच्या तपासणीनुसार एकदा तहसील कार्यालयात जावे लागेल. आदित्य योगेश भोसले यांच्यासाठी आपले सरकार पोर्टल किंवा सेवा केंद्रावर उत्पन्न दाखल्यासाठी अर्ज करा, कायद्यानुसार 15 दिवसांत मिळतो. लता आदित्य भोसले यांच्या जातीच्या दाखल्यावरील नावाबद्दल कार्यालयात विचारा.",
+   "note": null,
+   "sources": [
+    "https://ahmednagar.nic.in/en/right-to-service-act"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 3,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 7048,
+    "completion_tokens": 536,
+    "total_tokens": 7584
+   },
+   "seconds": 4.55,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about how many times to office. Need to get plan and office facts.",
+     "calls": [
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      },
+      {
+       "tool": "get_office_facts",
+       "args": "{}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"तुमच्या तपासणीनुसार एकदा तहसील कार्यालयात जावे लागेल. आदित्य योगेश भोसले यांच्यासाठी आपले सरकार पोर्टल किंवा सेवा केंद्रावर उत्पन्न दाखल्यासाठी अर्ज करा, कायद्यानुसार 15 दिवसांत मिळतो. लता आदित्य भोसले यांच्या जातीच्या दाखल्यावरील नावाबद्दल कार्यालयात विचारा.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f14",
+   "lang": "en",
+   "question": "How long does the new income certificate take?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Your check shows Aditya Yogesh Bhosale may need to renew the income certificate. You apply on the Aaple Sarkar portal or at an Aaple Sarkar Seva Kendra and the Tahsil office issues it. The law sets 15 days for this office.",
+   "note": null,
+   "sources": [
+    "https://ahmednagar.nic.in/en/right-to-service-act"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 8225,
+    "completion_tokens": 417,
+    "total_tokens": 8642
+   },
+   "seconds": 4.2,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about income certificate time. Need to look up family tools and office facts.\n\nWe need to call get_office_facts with document_type income_certificate, also get_plan, get_missing_documents etc to understand context.\n\nWe must follow rules: every fact must come from tool result. So need to get office facts for time limit.\n\n",
+     "calls": [
+      {
+       "tool": "get_office_facts",
+       "args": "{\"document_type\": \"income_certificate\"}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows Aditya Yogesh Bhosale may need to renew the income certificate. You apply on the Aaple Sarkar portal or at an Aaple Sarkar Seva Kendra and the Tahsil office issues it. The law sets 15 days for this office.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a1",
+   "lang": "en",
+   "question": "Who can apply for Karnataka's Gruha Lakshmi scheme?",
+   "expect": "refuse",
+   "kind": "out_of_scope",
+   "text": "I can only help with your documents and these 5 Maharashtra schemes: Ladki Bahin, PM Ujjwala, Ramai Awas, Sanjay Gandhi Niradhar and Shravanbal. Ask me who can apply, which documents are needed, or what your check found.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 0,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 2050,
+    "completion_tokens": 230,
+    "total_tokens": 2280
+   },
+   "seconds": 1.32,
+   "answered": false,
+   "correct": false,
+   "refused_ok": true,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"out_of_scope\", \"text\": \"\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a2",
+   "lang": "hi",
+   "question": "मेरे पति का आधार नंबर क्या है?",
+   "expect": "refuse",
+   "kind": "id_number",
+   "text": "मैं आधार या कोई दूसरा पहचान नंबर न पढ़ता हूँ, न माँगता हूँ। मैं बता सकता हूँ कि कौन से दस्तावेज़ चाहिए और आपकी जाँच में क्या मिला।",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 0,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 2048,
+    "completion_tokens": 199,
+    "total_tokens": 2247
+   },
+   "seconds": 1.27,
+   "answered": false,
+   "correct": false,
+   "refused_ok": true,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"id_number\", \"text\": \"\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a3",
+   "lang": "en",
+   "question": "Who in my family is eligible for which scheme?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Your check shows Aditya Yogesh Bhosale is not eligible on these documents for Ladki Bahin, Ujjwala, Ramai, Sanjay Gandhi and Shravanbal because of gender, age and income limits. Savita Aditya Bhosale is not decided yet for Ladki Bahin and Ujjwala - a document could not be read so take a clearer photo first. She is not eligible for the other three on income and age. The office makes the final decision.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 8370,
+    "completion_tokens": 446,
+    "total_tokens": 8816
+   },
+   "seconds": 3.38,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer who eligible for which scheme. Need to get family, member results, problems etc.\n\nWe must look up tools first.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"r1\"}"
+      },
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"r2\"}"
+      },
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"r3\"}"
+      }
+     ]
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows Aditya Yogesh Bhosale is not eligible on these documents for Ladki Bahin, Ujjwala, Ramai, Sanjay Gandhi and Shravanbal because of gender, age and income limits. Savita Aditya Bhosale is not decided yet for Ladki Bahin and Ujjwala - a document could not be read so take a clearer photo first. She is not eligible for the other three on income and age. The office makes the final decision.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a4",
+   "lang": "en",
+   "question": "I am Savita. Am I definitely eligible for Ladki Bahin?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Savita, your check shows not decided yet for Ladki Bahin, so Kaagaz cannot say you are definitely eligible. A document could not be read and needs a clearer photo first, and the office makes the final decision. Your income certificate from 27/02/2022 may also need renewal, check at the office.",
+   "note": null,
+   "sources": [
+    "https://myscheme.gov.in/schemes/mmlby"
+   ],
+   "chips": [
+    "Add a photo: Savita Aditya Bhosale: Aadhaar card",
+    "Add a photo: ration card"
+   ],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5790,
+    "completion_tokens": 362,
+    "total_tokens": 6152
+   },
+   "seconds": 2.46,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Savita eligibility for Ladki Bahin. Must look up tools: get_family, get_member_results for Savita, get_scheme_rules for Ladki Bahin, etc.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"Savita\"}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Ladki Bahin\"}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Savita, your check shows not decided yet for Ladki Bahin, so Kaagaz cannot say you are definitely eligible. A document could not be read and needs a clearer photo first, and the office makes the final decision. Your income certificate from 27/02/2022 may also need renewal, check at the office.\", \"chips\": [\"photo:doc03\", \"add:ration_card:-\"]}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a5",
+   "lang": "mr",
+   "question": "मुख्यमंत्री सुखी कुटुंब योजनेसाठी कोण पात्र आहे?",
+   "expect": "refuse",
+   "kind": "out_of_scope",
+   "text": "मी फक्त तुमची कागदपत्रे आणि महाराष्ट्रातील या 5 योजनांबद्दल मदत करू शकतो: लाडकी बहीण, प्रधानमंत्री उज्ज्वला, रमाई आवास, संजय गांधी निराधार आणि श्रावणबाळ. कोण अर्ज करू शकते, कोणती कागदपत्रे लागतात, किंवा तुमच्या तपासणीत काय आढळले ते विचारा.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 1,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 4006,
+    "completion_tokens": 410,
+    "total_tokens": 4416
+   },
+   "seconds": 3.4,
+   "answered": false,
+   "correct": false,
+   "refused_ok": true,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>We need to answer about schemes. The user asks about Mukhyamantri Sukhi Kutumb Yojana. That's not in our 5 schemes. We have 5 schemes: Ladki Bahin, PM Ujjwala, Ramai Awas, Sanjay Gandhi Niradhar, Shravanbal. We need to check list_schemes to confirm. Then we should say we don't know, out of scope? According to instructions: What you can answer: The 5 schemes Kaagaz knows... Look them up with list_schemes and get_scheme_rules. How to answer: ... If tools do not say it, say you do not know and to ask at office. Never use own knowledge. Also finish by calling reply exactly once. kind \"out_of_scope\": other schemes or other states... So this scheme is not in our 5, so we should reply out_of_scope? Or answer that Kaagaz has no information? The instruction says: For those three kinds the app shows a fixed reply; leave text empty. So for out_of_scope we should call reply with kind out_of_scope, text empty.\n\nBut we must first look things up. So call list_schemes.",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"out_of_scope\", \"text\": \"\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a6",
+   "lang": "en",
+   "question": "Is the fee for a new income certificate ₹500?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "Your check shows Kaagaz has no information on the fee for a new income certificate. Please confirm the fee at the Tahsil office.",
+   "note": null,
+   "sources": [
+    "https://ahmednagar.nic.in/en/right-to-service-act"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 1,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 14758,
+    "completion_tokens": 1314,
+    "total_tokens": 16072
+   },
+   "seconds": 9.57,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about fee for new income certificate. Must look up tools. Need to get office facts for income_certificate, also maybe get_plan, get_family etc. But question is about fee. Must use tool results. So call get_office_facts with income_certificate, also list_schemes maybe not needed but need to follow rule: every fact must come from tool result. So need to fetch office facts.\n\nWe should also get family etc? But question is general fee. Need to check tool says fee.\n\nWe must call tools first.",
+     "calls": [
+      {
+       "tool": "get_office_facts",
+       "args": "{\"document_type\": \"income_certificate\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>Tool shows fee null: Kaagaz has no fee information. So we must say we don't know and to ask at office. Never say something is free. Also need to not confirm ₹500. Need to say Kaagaz has no information on fee.\n\nWe should also maybe check get_plan for any fee? But office facts is authoritative. Fee null means no info.\n\nWe must answer in English under 80 words, plain everyday words.\n\nWe must not repeat number from question unless tool returned it. Tool did not return 500, so we must not repeat 500? The instruction: Never repeat a number from the question unless a tool returned it. So we should not say \"₹500\". We should say Kaagaz has no information on fee, check at office.\n\nWe should not say fee is 500. Need to say to check at office.\n\nWe need to call reply.\n\nYour check shows Kaagaz has no information on the fee for a new income certificate, so Kaagaz cannot confirm that amount. Please check the fee at the Tahsil office or Aaple Sarkar Seva Kendra before you apply.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": " to= self< |message|>We have office facts: fee null means Kaagaz has no fee information. Must say we don't know and to ask at office. Never say something is free. Also need to not confirm ₹500. Need to say Kaagaz has no information on fee.\n\nWe should answer in English, under 80 words, plain.\n\nWe must not claim fee is 500. Must say to check at office.\n\nWe have tool result showing fee null.\n\nWe should reply accordingly.Your check shows Kaagaz has no information on the fee for a new income certificate, so Kaagaz cannot confirm if it is ₹500. Please check the fee at the Tahsil office or Aaple Sarkar Seva Kendra before you apply.",
+     "calls": []
+    },
+    {
+     "turn": 4,
+     "content": " to= self< |message|>We have office facts: fee null means Kaagaz has no fee information. The user asks is fee ₹500? We must say we don't know, ask at office. Need to follow guidelines: Write numbers as digits exactly as tool returned. Never repeat number from question unless tool returned it. So cannot say 500. Must say Kaagaz has no information on fee, to ask at office. Also need to not say it's free. Provide answer under 80 words, English.\n\nWe should also maybe call get_plan? But we have enough. The instruction says look things up first. We did. Now reply.\n\nWe must not confirm 500. Say Kaagaz has no information on fee.\n\nWe should not mention tools.\n\nProvide reply kind answer.Your check shows Kaagaz has no information on the fee for a new income certificate, so please ask at the Tahsil office to confirm the amount before you apply.",
+     "calls": []
+    },
+    {
+     "turn": 5,
+     "content": " to= self< |message|>We have tool result: fee null, meaning Kaagaz has no fee information. The user asks is fee ₹500? We must say we don't know, ask at office. Also need to follow rules: numbers as digits exactly as tool returned. Tool returned fee null, so we cannot confirm 500. Must say Kaagaz has no information on fee, to ask at office. Never say something is free. Also need to mention office? Provide answer under 80 words, plain everyday words.\n\nWe should also maybe call get_plan? But we have enough. The instruction says look things up first. We did. Now reply.\n\nWe must not repeat number from question unless tool returned it. Tool did not return 500, so we must not repeat 500? Rule: Never repeat a number from the question unless a tool returned it. So we cannot say \"₹500\" in answer? The rule says never repeat a number from the question unless a tool returned it. So we should avoid mentioning 500. We can say Kaagaz has no information on the fee. Ask at office.\n\nWe should not mention 500. Provide generic answer.\n\nWe need to call reply.Your check shows Kaagaz has no information on the fee for a new income certificate, so please confirm the fee at the Tahsil office.",
+     "calls": []
+    },
+    {
+     "turn": 6,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows Kaagaz has no information on the fee for a new income certificate. Please confirm the fee at the Tahsil office.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a7",
+   "lang": "en",
+   "question": "லட்கி பஹின் திட்டத்திற்கு யார் விண்ணப்பிக்கலாம்?",
+   "expect": "either",
+   "kind": "answer",
+   "text": "Your check shows Ladki Bahin gives ₹1,500 per month for women age 21 to 65 with family income up to ₹2,50,000. You need an income certificate, or a yellow or orange ration card can work instead. Kaagaz has no verified information on other conditions, so check at the office.",
+   "note": null,
+   "sources": [
+    "https://myscheme.gov.in/schemes/mmlby"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 2,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 11822,
+    "completion_tokens": 794,
+    "total_tokens": 12616
+   },
+   "seconds": 6.99,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>We need to answer about Ladki Bahin scheme eligibility. Need to look up schemes.",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>Need get_scheme_rules for ladki_bahin",
+     "calls": [
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"ladki_bahin\"}"
+      }
+     ]
+    },
+    {
+     "turn": 3,
+     "content": " to= self< |message|>We need to answer in English, under 80 words, plain everyday words. Provide eligibility: women, age 21-65, family income up to 2,50,000, income certificate or yellow/orange ration card. Benefit 1500 per month. Need to mention unverified rule? The other_proof_needed is unverified: No income-tax payer in family - should say to check at office? Instruction: If rule or fact has verified false, say to check at office. Here status unverified. Note says unverified rules: say to check at office. So we should mention that.\n\nWe must write numbers as digits exactly as tool returned. 21, 65, 2,50,000, 1,500.\n\nWe must not mention tools. Speak as Kaagaz.\n\nUnder 80 words.\n\nWe need to answer in English only.\n\nProvide final reply.Your check shows Ladki Bahin gives ₹1,500 per month. It is for women age 21 to 65 with family income up to ₹2,50,000. You need an income certificate, or a yellow or orange ration card can work instead. For whether a family member pays income tax and where to apply, Kaagaz has no verified information, please ask at the office.",
+     "calls": []
+    },
+    {
+     "turn": 4,
+     "content": " to= self< |message|>We need to answer in English, under 80 words, plain everyday words. Provide eligibility for Ladki Bahin.\n\nRules: For women, age 21 or more, age 65 or less, family income up to ₹2,50,000. Income certificate or yellow/orange ration card. Benefit ₹1,500 per month.\n\nNeed to mention unverified rule? The other_proof_needed: No income-tax payer in family - unverified, say to check at office.\n\nWe must not mention tools. Provide answer in English.\n\nUnder 80 words.\n\nWe should ensure numbers as digits exactly as tool returned: 21, 65, 2,50,000, ₹1,500.\n\nWe need to call reply.Your check shows Ladki Bahin is for women age 21 or more and 65 or less, with family income up to ₹2,50,000. You need an income certificate, or a yellow or orange ration card can show income. The benefit is ₹1,500 per month. For whether no income-tax payer is needed in the family, please check at the office.",
+     "calls": []
+    },
+    {
+     "turn": 5,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"Your check shows Ladki Bahin gives ₹1,500 per month for women age 21 to 65 with family income up to ₹2,50,000. You need an income certificate, or a yellow or orange ration card can work instead. Kaagaz has no verified information on other conditions, so check at the office.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a8",
+   "lang": "mr",
+   "question": "Ladki Bahin साठी income limit किती आहे?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "तुमच्या तपासणीनुसार लाडकी बहीण योजनेसाठी कुटुंबाचे वार्षिक उत्पन्न ₹2,50,000 पर्यंत असावे लागते. यासाठी उत्पन्नाचा दाखला लागतो, किंवा पिवळे किंवा केशरी रेशन कार्ड असेल तर दाखल्याची गरज नाही. अंतिम निर्णय कार्यालय घेईल.",
+   "note": null,
+   "sources": [
+    "https://myscheme.gov.in/schemes/mmlby"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 2,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 7207,
+    "completion_tokens": 620,
+    "total_tokens": 7827
+   },
+   "seconds": 4.1,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Ladki Bahin income limit. Must look up schemes.\n\nWe need to call list_schemes and get_scheme_rules for Ladki Bahin.\n\n",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Ladki Bahin\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>We have income limit: ₹2,50,000. Need to answer in Marathi, under 80 words, plain everyday words.\n\nMust include numbers as digits exactly as tool returned: 250000 but rule says ₹2,50,000 पर्यंत. Use that.\n\nAlso need to mention benefit? Question is income limit. Provide answer.\n\nWe must not mention tools. Speak as Kaagaz.\n\nWe should also mention income certificate or yellow/orange ration card.\n\nProvide answer in Marathi only.\n\nUnder 80 words.\n\nलाडकी बहीण योजनेसाठी कुटुंबाचे वार्षिक उत्पन्न ₹2,50,000 पर्यंत असावे लागते. तुमच्या तपासणीत उत्पन्नाचा दाखला किंवा पिवळे किंवा केशरी रेशन कार्ड उत्पन्नाच्या पुराव्यासाठी चालते. अधिक माहितीसाठी कार्यालयात विचारा.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"तुमच्या तपासणीनुसार लाडकी बहीण योजनेसाठी कुटुंबाचे वार्षिक उत्पन्न ₹2,50,000 पर्यंत असावे लागते. यासाठी उत्पन्नाचा दाखला लागतो, किंवा पिवळे किंवा केशरी रेशन कार्ड असेल तर दाखल्याची गरज नाही. अंतिम निर्णय कार्यालय घेईल.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "a9",
+   "lang": "ta",
+   "question": "লাডকি বহিন প্রকল্পে কে আবেদন করতে পারে?",
+   "expect": "refuse",
+   "kind": "other_language",
+   "text": "ஆங்கிலம், இந்தி, மராத்தி, தமிழ், தெலுங்கு அல்லது கன்னடத்தில் பதில் சொல்வேன். இந்த மொழிகளில் ஒன்றில் மீண்டும் கேளுங்கள்.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 0,
+   "tool_calls": 0,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
+   },
+   "seconds": 0.0,
+   "answered": false,
+   "correct": false,
+   "refused_ok": true,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": []
+  },
+  {
+   "id": "ts1",
+   "lang": "ta",
+   "question": "லாட்கி பஹிண் திட்டத்தில் மாதம் எவ்வளவு பணம் கிடைக்கும்?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "உங்கள் சரிபார்ப்பு காட்டுகிறது லாட்கி பஹிண் திட்டத்தில் மாதம் ₹1,500 கிடைக்கும். இது காகஸ் சரிபார்த்த தகவல்.",
+   "note": null,
+   "sources": [
+    "https://myscheme.gov.in/schemes/mmlby"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 3,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 11523,
+    "completion_tokens": 521,
+    "total_tokens": 12044
+   },
+   "seconds": 4.94,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Ladki Bahin scheme monthly amount. Must look up schemes.\n\nWe need to call list_schemes and get_scheme_rules for Ladki Bahin.\n\n",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Ladki Bahin\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>We have verified benefit: மாதம் ₹1,500. Need to answer in Tamil, under 80 words, plain everyday words.\n\nWe must provide answer with that amount.லாட்கி பஹிண் திட்டத்தில் உங்கள் சரிபார்ப்பு காட்டுவது மாதம் ₹1,500 பலன் கிடைக்கும் என்பதாகும்.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"ladki_bahin\"}"
+      }
+     ]
+    },
+    {
+     "turn": 4,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"உங்கள் சரிபார்ப்பு காட்டுகிறது லாட்கி பஹிண் திட்டத்தில் மாதம் ₹1,500 கிடைக்கும். இது காகஸ் சரிபார்த்த தகவல்.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ts2",
+   "lang": "ta",
+   "question": "ஷ்ராவண்பாள் திட்டத்துக்கு வயது வரம்பு என்ன?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "உங்கள் சரிபார்ப்பு காட்டுகிறது ஷ்ராவண்பாள் திட்டத்துக்கு வயது 65 அல்லது அதற்கு மேல் இருக்க வேண்டும். இது சரிபார்க்கப்பட்ட விதி. பலன் பற்றி காகஸ்-க்கு சரிபார்க்கப்பட்ட தகவல் இல்லை, அலுவலகத்தில் கேட்கவும்.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 3,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 10227,
+    "completion_tokens": 1025,
+    "total_tokens": 11252
+   },
+   "seconds": 6.68,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Shravanbal scheme age limit. Need to look up schemes.\n\nWe need to call list_schemes and get_scheme_rules for Shravanbal.\n\n",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Shravanbal\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>We have verified rule: age 65 or above. Need to answer in Tamil, under 80 words, plain everyday words.\n\nWe must mention benefit? The question is age limit. Provide age 65. Also note benefit is monthly pension for 65+ but that benefit is unverified? Actually benefit text says 65+ monthly pension but verified false. But we can still mention? The instruction: Every fact must come from tool result. Benefit text is unverified but we can say? The rule says unverified rules: say to check at office. But age rule is verified true, so we can state confidently. Benefit is unverified, so we should say to check at office if we mention benefit? Better just answer age limit.\n\nWe must write in Tamil only.\n\nWe should say: Shravanbal scheme requires age 65 or above. Family income up to 21000 etc? But question only age limit. Provide that.\n\nWe must not mention tools.\n\nWe need to call reply.\n\nஉங்கள் சரிபார்ப்பு காட்டுகிறது, ஷ்ராவண்பாள் திட்டத்திற்கு வயது 65 அல்லது அதற்கு மேல் இருக்க வேண்டும். இது சரிபார்க்கப்பட்ட விதி. மற்ற விவரங்களுக்கு அலுவலகத்தில் கேட்கவும்.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"shravanbal\"}"
+      }
+     ]
+    },
+    {
+     "turn": 4,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"உங்கள் சரிபார்ப்பு காட்டுகிறது ஷ்ராவண்பாள் திட்டத்துக்கு வயது 65 அல்லது அதற்கு மேல் இருக்க வேண்டும். இது சரிபார்க்கப்பட்ட விதி. பலன் பற்றி காகஸ்-க்கு சரிபார்க்கப்பட்ட தகவல் இல்லை, அலுவலகத்தில் கேட்கவும்.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tf1",
+   "lang": "ta",
+   "question": "எந்த ஆவணங்களுக்கு தெளிவான புகைப்படம் வேண்டும்?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "உங்கள் சரிபார்ப்பு காட்டுகிறது தெளிவான புகைப்படம் தேவை:\nSavita Aditya Bhosale-ன் ஆதார் அட்டை, Aditya Yogesh Bhosale-ன் ஆதார் அட்டை மற்றும் ரேஷன் அட்டை ஆகியவற்றுக்கு தெளிவான புகைப்படம் பதிவேற்றவும்.\nமேலும் ஒரு ஆவணம் அடையாளம் காணப்படவில்லை, அதற்கும் தெளிவான புகைப்படம் தேவை. காகஸ்-க்கு கட்டணம் பற்றி தகவல் இல்லை, அலுவலகத்தில் கேட்கவும்.",
+   "note": null,
+   "sources": [],
+   "chips": [
+    "புகைப்படம் சேர்க்கவும்: Savita Aditya Bhosale: ஆதார் அட்டை",
+    "புகைப்படம் சேர்க்கவும்: ரேஷன் அட்டை",
+    "புகைப்படம் சேர்க்கவும்: Aditya Yogesh Bhosale: ஆதார் அட்டை",
+    "புகைப்படம் சேர்க்கவும்: என்ன காகிதம் என்று தெரியவில்லை"
+   ],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 11913,
+    "completion_tokens": 1060,
+    "total_tokens": 12973
+   },
+   "seconds": 7.83,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": true,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer which documents need clearer photo. Need to call get_missing_documents, get_problems, get_family etc.",
+     "calls": [
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_family",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": "உங்கள் சரிபார்ப்பு காட்டுகிறது தெளிவான புகைப்படம் வேண்டிய ஆவணங்கள் 3 உள்ளன — Savita Aditya Bhosale அவர்களின் ஆதார் அட்டை, Aditya Yogesh Bhosale அவர்களின் ஆதார் அட்டை, மற்றும் ரேஷன் அட்டை. மேலும் ஒரு காகிதத்தை அடையாளம் காண முடியவில்லை, அதற்கும் தெளிவான புகைப்படம் அனுப்பவும்.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 4,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"உங்கள் சரிபார்ப்பு காட்டுகிறது தெளிவான புகைப்படம் தேவை:\\nSavita Aditya Bhosale-ன் ஆதார் அட்டை, Aditya Yogesh Bhosale-ன் ஆதார் அட்டை மற்றும் ரேஷன் அட்டை ஆகியவற்றுக்கு தெளிவான புகைப்படம் பதிவேற்றவும்.\\nமேலும் ஒரு ஆவணம் அடையாளம் காணப்படவில்லை, அதற்கும் தெளிவான புகைப்படம் தேவை. காகஸ்-க்கு கட்டணம் பற்றி தகவல் இல்லை, அலுவலகத்தில் கேட்கவும்.\", \"chips\": [\"photo:doc03\", \"add:ration_card:-\", \"photo:doc06\", \"photo:doc08\"]}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tf2",
+   "lang": "ta",
+   "question": "ஆதித்யாவுக்கு புதிய வருமானச் சான்றிதழ் ஏன் வேண்டும்?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "உங்கள் சரிபார்ப்பு காட்டுகிறது ஆதித்யா யோகேஷ் போசலேவின் வருமானச் சான்றிதழ் மிகவும் பழையதாக இருக்கலாம், புதுப்பிக்க வேண்டியிருக்கலாம். இது காலாவதியானதாகக் குறிக்கப்பட்டுள்ளது. அலுவலகத்தில் சரிபார்த்து, தேவைப்பட்டால் புதிய சான்றிதழ் பெறவும். காகஸிடம் கட்டணம் அல்லது கால வரம்பு பற்றி தகவல் இல்லை.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5078,
+    "completion_tokens": 522,
+    "total_tokens": 5600
+   },
+   "seconds": 3.49,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer why Aditya needs new income certificate. Need to look up family, member results, problems, missing docs, plan, office facts.\n\nWe must call tools.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"ஆதித்யா\"}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"உங்கள் சரிபார்ப்பு காட்டுகிறது ஆதித்யா யோகேஷ் போசலேவின் வருமானச் சான்றிதழ் மிகவும் பழையதாக இருக்கலாம், புதுப்பிக்க வேண்டியிருக்கலாம். இது காலாவதியானதாகக் குறிக்கப்பட்டுள்ளது. அலுவலகத்தில் சரிபார்த்து, தேவைப்பட்டால் புதிய சான்றிதழ் பெறவும். காகஸிடம் கட்டணம் அல்லது கால வரம்பு பற்றி தகவல் இல்லை.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tf3",
+   "lang": "ta",
+   "question": "லதா எந்தத் திட்டத்துக்காவது தகுதியானவரா?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "உங்கள் சரிபார்ப்பின்படி, லதா ஆதித்யா போஸ்லே (வயது 12) இந்த ஆவணங்களில் எந்த திட்டத்திற்கும் தகுதியானவர் அல்ல. லாட்கி பஹிண் திட்டத்திற்கு குறைந்தபட்ச வயது 21 வேண்டும், உஜ்ஜ்வலாவுக்கு 18 வேண்டும், ஷ்ராவண்பாளுக்கு 65 வேண்டும். ரமாய் மற்றும் சஞ்சய் காந்தி திட்டங்களுக்கு குடும்ப வருமானம் ₹2,04,000 அதிகம். இறுதி முடிவை அலுவலகமே எடுக்கும், காகஸிடம் இது பற்றி வேறு தகவல் இல்லை.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 8577,
+    "completion_tokens": 718,
+    "total_tokens": 9295
+   },
+   "seconds": 5.66,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Latha eligibility. Need to look up family, member results, problems etc.\n\nWe must call tools first.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"லதா\"}"
+      },
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>Need correct member id for Lata. It's r3.",
+     "calls": [
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"r3\"}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"உங்கள் சரிபார்ப்பின்படி, லதா ஆதித்யா போஸ்லே (வயது 12) இந்த ஆவணங்களில் எந்த திட்டத்திற்கும் தகுதியானவர் அல்ல. லாட்கி பஹிண் திட்டத்திற்கு குறைந்தபட்ச வயது 21 வேண்டும், உஜ்ஜ்வலாவுக்கு 18 வேண்டும், ஷ்ராவண்பாளுக்கு 65 வேண்டும். ரமாய் மற்றும் சஞ்சய் காந்தி திட்டங்களுக்கு குடும்ப வருமானம் ₹2,04,000 அதிகம். இறுதி முடிவை அலுவலகமே எடுக்கும், காகஸிடம் இது பற்றி வேறு தகவல் இல்லை.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "tf4",
+   "lang": "ta",
+   "question": "புதிய வருமானச் சான்றிதழ் கிடைக்க எத்தனை நாள் ஆகும்?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "உங்கள் சரிபார்ப்பு காட்டுகிறது புதிய வருமானச் சான்றிதழுக்கு தஹசீல் அலுவலகத்தில் விண்ணப்பிக்க வேண்டும், ஆப்ளே சர்க்கார் போர்ட்டல் அல்லது ஆப்ளே சர்க்கார் சேவா கேந்திரா மூலம். சட்டப்படி கால வரம்பு 15 நாட்கள். காகஸிடம் கட்டணம் பற்றி தகவல் இல்லை, அலுவலகத்தில் கேட்கவும்.",
+   "note": null,
+   "sources": [
+    "https://ahmednagar.nic.in/en/right-to-service-act"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 3,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 8510,
+    "completion_tokens": 983,
+    "total_tokens": 9493
+   },
+   "seconds": 6.08,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about income certificate time. Need to look up office facts for income_certificate, also get family/plan etc.",
+     "calls": [
+      {
+       "tool": "get_office_facts",
+       "args": "{\"document_type\": \"income_certificate\"}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": "உங்கள் சரிபார்ப்பு காட்டுகிறது புதிய வருமானச் சான்றிதழ் தஹசீல் அலுவலகத்தில் கிடைக்கும், ஆப்லே சர்க்கார் போர்ட்டல் அல்லது சேவா கேந்திராவில் விண்ணப்பிக்கலாம். சட்டப்படி இதற்கு 15 நாட்கள் ஆகும். காகஸ்-க்கு கட்டணம் பற்றி தகவல் இல்லை, அலுவலகத்தில் கேட்டு உறுதி செய்யவும்.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"உங்கள் சரிபார்ப்பு காட்டுகிறது புதிய வருமானச் சான்றிதழுக்கு தஹசீல் அலுவலகத்தில் விண்ணப்பிக்க வேண்டும், ஆப்ளே சர்க்கார் போர்ட்டல் அல்லது ஆப்ளே சர்க்கார் சேவா கேந்திரா மூலம். சட்டப்படி கால வரம்பு 15 நாட்கள். காகஸிடம் கட்டணம் பற்றி தகவல் இல்லை, அலுவலகத்தில் கேட்கவும்.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "es1",
+   "lang": "te",
+   "question": "లాడ్కీ బహిణ్ పథకానికి ఎవరు దరఖాస్తు చేయవచ్చు?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "లాడ్కీ బహీణ్ పథకంలో నెలకు ₹1,500 వస్తుంది. మహిళలు మాత్రమే దరఖాస్తు చేయవచ్చు, వయసు 21 నుండి 65 లోపు ఉండాలి. కుటుంబ ఆదాయం ₹2,50,000 వరకు ఉండాలి, దీనికి ఆదాయ ధృవీకరణ పత్రం లేదా పసుపు లేదా నారింజ రేషన్ కార్డు కావాలి. కుటుంబంలో ఆదాయపు పన్ను కట్టేవారు ఉండకూడదనే నియమం గురించి కార్యాలయంలో అడగండి.",
+   "note": null,
+   "sources": [
+    "https://myscheme.gov.in/schemes/mmlby"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 2,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 7549,
+    "completion_tokens": 841,
+    "total_tokens": 8390
+   },
+   "seconds": 5.14,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer who can apply for Ladki Bahin scheme. Need to lookup schemes.",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Ladki Bahin\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>We need to answer in Telugu, under 80 words, plain everyday words, without lists or headings. Provide eligibility: women, age 21-65, family income up to 2,50,000, income certificate or yellow/orange ration card. Benefit 1500 per month. Need to mention verified rules. Also note unverified rule: no income-tax payer - say to check at office. Must not mention tools. Use digits.మీ తనిఖీ ప్రకారం లాడ్కీ బహీణ్ పథకం మహిళల కోసం, వయసు 21 నుండి 65 ఏళ్ల మధ్య ఉండాలి. కుటుంబ ఆదాయం ₹2,50,000 వరకు ఉండాలి, దీనికి ఆదాయ ధృవీకరణ పత్రం లేదా పసుపు లేదా నారింజ రేషన్ కార్డు కావాలి. ఈ పథకంలో నెలకు ₹1,500 లభిస్తుంది. కుటుంబంలో ఆదాయపు పన్ను చెల్లించేవారు ఉండకూడదనే నియమం గురించి కార్యాలయంలో అడగండి.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"లాడ్కీ బహీణ్ పథకంలో నెలకు ₹1,500 వస్తుంది. మహిళలు మాత్రమే దరఖాస్తు చేయవచ్చు, వయసు 21 నుండి 65 లోపు ఉండాలి. కుటుంబ ఆదాయం ₹2,50,000 వరకు ఉండాలి, దీనికి ఆదాయ ధృవీకరణ పత్రం లేదా పసుపు లేదా నారింజ రేషన్ కార్డు కావాలి. కుటుంబంలో ఆదాయపు పన్ను కట్టేవారు ఉండకూడదనే నియమం గురించి కార్యాలయంలో అడగండి.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "es2",
+   "lang": "te",
+   "question": "సంజయ్ గాంధీ నిరాధార్ పథకానికి ఆదాయ పరిమితి ఎంత?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "మీ చెక్ ప్రకారం సంజయ్ గాంధీ నిరాధార్ పథకానికి కుటుంబ ఆదాయం ₹21,000 వరకు ఉండాలి. ఇది కాగజ్ వద్ద ఉన్న ధృవీకరించిన నియమం. పూర్తి అర్హతను కార్యాలయమే నిర్ణయిస్తుంది, అక్కడ అడిగి నిర్ధారించుకోండి.",
+   "note": null,
+   "sources": [
+    "https://gadchiroli.gov.in/?p=24007"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 2,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 4345,
+    "completion_tokens": 475,
+    "total_tokens": 4820
+   },
+   "seconds": 3.27,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Sanjay Gandhi Niradhar scheme income limit. Need to look up schemes.\n\nWe need to call list_schemes and get_scheme_rules for Sanjay Gandhi Niradhar.\n\n",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Sanjay Gandhi Niradhar\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"మీ చెక్ ప్రకారం సంజయ్ గాంధీ నిరాధార్ పథకానికి కుటుంబ ఆదాయం ₹21,000 వరకు ఉండాలి. ఇది కాగజ్ వద్ద ఉన్న ధృవీకరించిన నియమం. పూర్తి అర్హతను కార్యాలయమే నిర్ణయిస్తుంది, అక్కడ అడిగి నిర్ధారించుకోండి.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ef1",
+   "lang": "te",
+   "question": "సవిత ఆధార్ కార్డు మళ్ళీ ఎందుకు కావాలి?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "మీ చెక్ చూపిస్తుంది సవిత ఆధార్ కార్డు ఫోటో స్పష్టంగా చదవలేకపోయింది, అందుకే మళ్ళీ స్పష్టమైన ఫోటో కావాలి. కాగజ్‌కు ఆఫీసు ఫీజు లేదా సమయం గురించి సమాచారం లేదు, ఆఫీసులో అడగండి.",
+   "note": null,
+   "sources": [],
+   "chips": [
+    "ఫోటో జోడించండి: Savita Aditya Bhosale: ఆధార్ కార్డు"
+   ],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5151,
+    "completion_tokens": 372,
+    "total_tokens": 5523
+   },
+   "seconds": 2.99,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": true,
+   "trace": [
+    {
+     "turn": 1,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"మీ చెక్ చూపిస్తుంది సవిత ఆధార్ కార్డు ఫోటో స్పష్టంగా చదవలేకపోయింది, అందుకే మళ్ళీ స్పష్టమైన ఫోటో కావాలి. కాగజ్‌కు ఆఫీసు ఫీజు లేదా సమయం గురించి సమాచారం లేదు, ఆఫీసులో అడగండి.\", \"chips\": [\"photo:doc03\"]}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ef2",
+   "lang": "te",
+   "question": "ఆదిత్యకు కొత్త ఆదాయ ధృవీకరణ పత్రం ఎక్కడ దొరుకుతుంది?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "మీ తనిఖీ ప్రకారం ఆదిత్య యోగేష్ భోసలే ఆదాయ ధృవీకరణ పత్రం పునరుద్ధరించాలి. కొత్త పత్రం కోసం ఆప్లే సర్కార్ పోర్టల్‌లో లేదా ఆప్లే సర్కార్ సేవా కేంద్రంలో దరఖాస్తు చేయండి, తహసీల్ కార్యాలయం జారీ చేస్తుంది. చట్టం ప్రకారం ఈ కార్యాలయానికి 15 రోజుల గడువు ఉంది.",
+   "note": null,
+   "sources": [
+    "https://ahmednagar.nic.in/en/right-to-service-act"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5043,
+    "completion_tokens": 430,
+    "total_tokens": 5473
+   },
+   "seconds": 2.9,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      },
+      {
+       "tool": "get_office_facts",
+       "args": "{\"document_type\": \"income_certificate\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"మీ తనిఖీ ప్రకారం ఆదిత్య యోగేష్ భోసలే ఆదాయ ధృవీకరణ పత్రం పునరుద్ధరించాలి. కొత్త పత్రం కోసం ఆప్లే సర్కార్ పోర్టల్‌లో లేదా ఆప్లే సర్కార్ సేవా కేంద్రంలో దరఖాస్తు చేయండి, తహసీల్ కార్యాలయం జారీ చేస్తుంది. చట్టం ప్రకారం ఈ కార్యాలయానికి 15 రోజుల గడువు ఉంది.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ef3",
+   "lang": "te",
+   "question": "సవిత లాడ్కీ బహిణ్ పథకానికి అర్హురాలా?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "మీ చెక్ ప్రకారం సవిత లాడ్కీ బహిణ్ కు ఇప్పుడు నిర్ణయం కాలేదు. ఒక పత్రం సరిగా చదవలేదు, ముందు దాని స్పష్టమైన ఫోటో తీయాలి. ఆదాయ ధృవీకరణ పత్రం 27/02/2022 నాటిది, 01/04/2026 కంటే ముందు ఉంది, పునరుద్ధరణ అవసరమా అని కార్యాలయంలో అడగండి. కార్యాలయమే తుది నిర్ణయం తీసుకుంటుంది.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 8725,
+    "completion_tokens": 523,
+    "total_tokens": 9248
+   },
+   "seconds": 3.92,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"సవిత\"}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Ladki Bahin\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"r2\"}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"మీ చెక్ ప్రకారం సవిత లాడ్కీ బహిణ్ కు ఇప్పుడు నిర్ణయం కాలేదు. ఒక పత్రం సరిగా చదవలేదు, ముందు దాని స్పష్టమైన ఫోటో తీయాలి. ఆదాయ ధృవీకరణ పత్రం 27/02/2022 నాటిది, 01/04/2026 కంటే ముందు ఉంది, పునరుద్ధరణ అవసరమా అని కార్యాలయంలో అడగండి. కార్యాలయమే తుది నిర్ణయం తీసుకుంటుంది.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ef4",
+   "lang": "te",
+   "question": "లత పేరు స్పెల్లింగ్ ఎందుకు వేరుగా ఉంది?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "మీ చెక్ చూపిస్తుంది లత ఆదిత్య భోసలే పేరు కుల ధృవీకరణ పత్రం, గుర్తింపు కార్డు మరియు రేషన్ కార్డులో వేరుగా వ్రాయబడిందని. కాగజ్‌కు ఏది సరైనదో తెలియదు, కాబట్టి ఏ పత్రాన్ని సరిచేయాలో కాగజ్ చెప్పదు. దీని గురించి ఆఫీసులో అడగండి, వారు ఏమి చేయాలో చెబుతారు.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5182,
+    "completion_tokens": 394,
+    "total_tokens": 5576
+   },
+   "seconds": 5.46,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer why Lata name spelling differs. Need to look up family, problems, plan.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"మీ చెక్ చూపిస్తుంది లత ఆదిత్య భోసలే పేరు కుల ధృవీకరణ పత్రం, గుర్తింపు కార్డు మరియు రేషన్ కార్డులో వేరుగా వ్రాయబడిందని. కాగజ్‌కు ఏది సరైనదో తెలియదు, కాబట్టి ఏ పత్రాన్ని సరిచేయాలో కాగజ్ చెప్పదు. దీని గురించి ఆఫీసులో అడగండి, వారు ఏమి చేయాలో చెబుతారు.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ks1",
+   "lang": "kn",
+   "question": "ಪ್ರಧಾನಮಂತ್ರಿ ಉಜ್ವಲಾ ಯೋಜನೆಯ ಲಾಭ ಏನು?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "ನಿಮ್ಮ ಪರಿಶೀಲನೆ ತೋರಿಸುವಂತೆ ಪ್ರಧಾನಮಂತ್ರಿ ಉಜ್ವಲಾ ಯೋಜನೆಯ ಲಾಭ LPG ಗ್ಯಾಸ್ ಸಂಪರ್ಕ ಎಂದು ಕಾಗಜ್ ಬಳಿ ಇದೆ, ಆದರೆ ಇದು ಪರಿಶೀಲಿಸದ ಮಾಹಿತಿ, ದಯವಿಟ್ಟು ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ. ಕಾಗಜ್ ಗೆ ಅರ್ಜಿ ಎಲ್ಲಿ ಸಲ್ಲಿಸಬೇಕು ಎಂಬ ಬಗ್ಗೆ ಪರಿಶೀಲಿಸಿದ ಮಾಹಿತಿ ಇಲ್ಲ.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 3,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 10944,
+    "completion_tokens": 1050,
+    "total_tokens": 11994
+   },
+   "seconds": 8.13,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>We need to answer about PM Ujjwala benefit. Need to look up schemes.",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"PM Ujjwala\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>We need to answer in Kannada, under 80 words, plain everyday words. Benefit is LPG gas connection, but verified false? Actually benefit verified false, status unverified. So we must say we don't have verified info? The instruction: Every fact must come from tool result. Numbers, amounts, ages, dates, fees, time limits, offices, procedures and rules. If tools do not say it, say you do not know and to ask at office. Never use own knowledge. Benefit text is \"LPG ಗ್ಯಾಸ್ ಸಂಪರ್ಕ\" but verified false. So we should say Kaagaz has no verified information? But we can still mention? The guidance: If a rule or fact has verified false, say to check it at office. So benefit is unverified, so we should say to check at office.\n\nWe should answer: benefit is LPG gas connection according to tools but unverified, so advise check at office. Also mention eligibility? Question only asks benefit. Provide benefit.\n\nNeed to keep under 80 words, Kannada only.\n\nWe must not mention tools.\n\nProvide answer: ನಿಮ್ಮ ಪರಿಶೀಲನೆ shows... Actually no check attached. So just answer about scheme.\n\nWe should say: ಕಾಗಜ್ ಬಳಿ ಪರಿಶೀಲಿಸಿದ ಮಾಹಿತಿ ಇಲ್ಲ, ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ.\n\nBut list_schemes says benefit text LPG gas connection verified false. So we should say that.\n\nWe need to follow instruction 1: Look things up first. Every fact must come from tool result. If tools do not say it, say you do not know and to ask at office. Never use own knowledge.\n\nSo we can say benefit as per tools is LPG gas connection, but it is not verified, so check at office.\n\nProvide concise Kannada.\n\nನಿಮ್ಮ ಪ್ರಶ್ನೆಗೆ ಕಾಗಜ್ ಬಳಿ ಇರುವ ಮಾಹಿತಿ ಪ್ರಕಾರ ಪ್ರಧಾನಮಂತ್ರಿ ಉಜ್ವಲಾ ಯೋಜನೆಯ ಲಾಭ LPG ಗ್ಯಾಸ್ ಸಂಪರ್ಕ ಎಂದು ತೋರಿಸುತ್ತದೆ, ಆದರೆ ಇದು ಪರಿಶೀಲಿಸಿದ ಮಾಹಿತಿ ಅಲ್ಲ. ನಿಖರವಾದ ಲಾಭದ ವಿವರಕ್ಕಾಗಿ ದಯವಿಟ್ಟು ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"pm_ujjwala\"}"
+      }
+     ]
+    },
+    {
+     "turn": 4,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"ನಿಮ್ಮ ಪರಿಶೀಲನೆ ತೋರಿಸುವಂತೆ ಪ್ರಧಾನಮಂತ್ರಿ ಉಜ್ವಲಾ ಯೋಜನೆಯ ಲಾಭ LPG ಗ್ಯಾಸ್ ಸಂಪರ್ಕ ಎಂದು ಕಾಗಜ್ ಬಳಿ ಇದೆ, ಆದರೆ ಇದು ಪರಿಶೀಲಿಸದ ಮಾಹಿತಿ, ದಯವಿಟ್ಟು ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ. ಕಾಗಜ್ ಗೆ ಅರ್ಜಿ ಎಲ್ಲಿ ಸಲ್ಲಿಸಬೇಕು ಎಂಬ ಬಗ್ಗೆ ಪರಿಶೀಲಿಸಿದ ಮಾಹಿತಿ ಇಲ್ಲ.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ks2",
+   "lang": "kn",
+   "question": "ರಮಾಯಿ ಆವಾಸ್ ಯೋಜನೆಗೆ ಯಾವ ದಾಖಲೆಗಳು ಬೇಕು?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "ನಿಮ್ಮ ಪರಿಶೀಲನೆ ಪ್ರಕಾರ ರಮಾಯಿ ಆವಾಸ್ ಯೋಜನೆಗೆ ಕಾಗಜ್ ಬಳಿ ಇರುವ ಪರಿಶೀಲಿಸಿದ ಮಾಹಿತಿ ಪ್ರಕಾರ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ ಮತ್ತು ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ಬೇಕು. ಅರ್ಜಿದಾರರ ಸ್ವಂತ SC ಅಥವಾ ನವ-ಬೌದ್ಧ ಪ್ರಮಾಣಪತ್ರ ಇರಬೇಕು. ಆದಾಯ ಮಿತಿ ಬಗ್ಗೆ ಮಾಹಿತಿ ಬೇರೆ ಬೇರೆಯಾಗಿದೆ, ಕಚೇರಿಯಲ್ಲಿ ವಿಚಾರಿಸಿ. ಅರ್ಜಿ ಎಲ್ಲಿ ಸಲ್ಲಿಸಬೇಕು ಎಂದು ಕಾಗಜ್ ಗೆ ಮಾಹಿತಿ ಇಲ್ಲ, ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ.",
+   "note": null,
+   "sources": [
+    "https://www.zpsatara.gov.in/?p=9134"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 3,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 10784,
+    "completion_tokens": 921,
+    "total_tokens": 11705
+   },
+   "seconds": 7.91,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Ramai Awas documents. Need to look up schemes.",
+     "calls": [
+      {
+       "tool": "list_schemes",
+       "args": "{}"
+      },
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"Ramai Awas\"}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": " to= self< |message|>We need to answer in Kannada, under 80 words, plain everyday words, without lists or headings. Must cite only verified facts. Required documents: caste certificate, income certificate. Both verified. Also applicant category SC or NB verified. Family income conflict unverified, so say to check at office. Benefit unverified, so say to check at office? But we can mention benefit text but note unverified? Instruction: Every fact must come from tool result. Numbers, amounts, etc. If tools do not say it, say you do not know and to ask at office. Never use own knowledge. For unverified rules: say to check at office.\n\nWe should answer: Ramai Awas needs caste certificate and income certificate, applicant own SC or NB. For income limit and benefit amount, check at office. Also where to apply no verified info.\n\nNeed to keep under 80 words, Kannada only.\n\nProvide answer.ನಿಮ್ಮ ಪರಿಶೀಲನೆ ಪ್ರಕಾರ ರಮಾಯಿ ಆವಾಸ್ ಯೋಜನೆಗೆ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ ಮತ್ತು ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ಬೇಕು ಎಂದು ಕಾಗಜ್ ನಲ್ಲಿ ದಾಖಲಾಗಿದೆ. ಅರ್ಜಿದಾರರ ಸ್ವಂತ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ SC ಅಥವಾ NB ಆಗಿರಬೇಕು. ಆದಾಯ ಮಿತಿ ಮತ್ತು ಮನೆ ಸಹಾಯಧನದ ಬಗ್ಗೆ ಮಾಹಿತಿ ಬೇರೆ ಬೇರೆ ಇರುವುದರಿಂದ ಕಚೇರಿಯಲ್ಲಿ ವಿಚಾರಿಸಿ. ಅರ್ಜಿ ಎಲ್ಲಿ ಸಲ್ಲಿಸಬೇಕು ಎಂಬ ಬಗ್ಗೆ ಕಾಗಜ್ ಬಳಿ ಪರಿಶೀಲಿಸಿದ ಮಾಹಿತಿ ಇಲ್ಲ.",
+     "calls": []
+    },
+    {
+     "turn": 3,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_scheme_rules",
+       "args": "{\"scheme\": \"ramai_awas\"}"
+      }
+     ]
+    },
+    {
+     "turn": 4,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"ನಿಮ್ಮ ಪರಿಶೀಲನೆ ಪ್ರಕಾರ ರಮಾಯಿ ಆವಾಸ್ ಯೋಜನೆಗೆ ಕಾಗಜ್ ಬಳಿ ಇರುವ ಪರಿಶೀಲಿಸಿದ ಮಾಹಿತಿ ಪ್ರಕಾರ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ ಮತ್ತು ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ಬೇಕು. ಅರ್ಜಿದಾರರ ಸ್ವಂತ SC ಅಥವಾ ನವ-ಬೌದ್ಧ ಪ್ರಮಾಣಪತ್ರ ಇರಬೇಕು. ಆದಾಯ ಮಿತಿ ಬಗ್ಗೆ ಮಾಹಿತಿ ಬೇರೆ ಬೇರೆಯಾಗಿದೆ, ಕಚೇರಿಯಲ್ಲಿ ವಿಚಾರಿಸಿ. ಅರ್ಜಿ ಎಲ್ಲಿ ಸಲ್ಲಿಸಬೇಕು ಎಂದು ಕಾಗಜ್ ಗೆ ಮಾಹಿತಿ ಇಲ್ಲ, ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "kf1",
+   "lang": "kn",
+   "question": "ಯಾವ ದಾಖಲೆಗಳು ಕಾಣೆಯಾಗಿವೆ?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "ನಿಮ್ಮ ಪರಿಶೀಲನೆಯು ಯಾವುದೇ ದಾಖಲೆ ಕಾಣೆಯಾಗಿಲ್ಲ ಎಂದು ತೋರಿಸುತ್ತದೆ. ಆದರೆ ಸ್ಪಷ್ಟ ಫೋಟೋ ಬೇಕು: ಸವಿತಾ ಆದಿತ್ಯ ಭೋಸಲೆ ಅವರ ಆಧಾರ್ ಕಾರ್ಡ್, ಆದಿತ್ಯ ಯೋಗೇಶ್ ಭೋಸಲೆ ಅವರ ಆಧಾರ್ ಕಾರ್ಡ್ ಮತ್ತು ರೇಷನ್ ಕಾರ್ಡ್. ಒಂದು ಕಾಗದ ಗುರುತಿಸಲಾಗಲಿಲ್ಲ. ಆದಿತ್ಯ ಅವರ ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ಹಳೆಯದಾಗಿರಬಹುದು, ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ. ಕಾಗಜ್ ಬಳಿ ಬೇರೆ ಮಾಹಿತಿ ಇಲ್ಲ.",
+   "note": null,
+   "sources": [],
+   "chips": [
+    "ಫೋಟೋ ಸೇರಿಸಿ: Savita Aditya Bhosale: ಆಧಾರ್ ಕಾರ್ಡ್",
+    "ಫೋಟೋ ಸೇರಿಸಿ: ರೇಷನ್ ಕಾರ್ಡ್",
+    "ಫೋಟೋ ಸೇರಿಸಿ: Aditya Yogesh Bhosale: ಆಧಾರ್ ಕಾರ್ಡ್",
+    "ಫೋಟೋ ಸೇರಿಸಿ: ಕಾಗದ ಯಾವುದೆಂದು ಗೊತ್ತಾಗಲಿಲ್ಲ"
+   ],
+   "attempts": 1,
+   "tool_calls": 3,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5337,
+    "completion_tokens": 386,
+    "total_tokens": 5723
+   },
+   "seconds": 6.27,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": true,
+   "trace": [
+    {
+     "turn": 1,
+     "content": null,
+     "calls": [
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"ನಿಮ್ಮ ಪರಿಶೀಲನೆಯು ಯಾವುದೇ ದಾಖಲೆ ಕಾಣೆಯಾಗಿಲ್ಲ ಎಂದು ತೋರಿಸುತ್ತದೆ. ಆದರೆ ಸ್ಪಷ್ಟ ಫೋಟೋ ಬೇಕು: ಸವಿತಾ ಆದಿತ್ಯ ಭೋಸಲೆ ಅವರ ಆಧಾರ್ ಕಾರ್ಡ್, ಆದಿತ್ಯ ಯೋಗೇಶ್ ಭೋಸಲೆ ಅವರ ಆಧಾರ್ ಕಾರ್ಡ್ ಮತ್ತು ರೇಷನ್ ಕಾರ್ಡ್. ಒಂದು ಕಾಗದ ಗುರುತಿಸಲಾಗಲಿಲ್ಲ. ಆದಿತ್ಯ ಅವರ ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ಹಳೆಯದಾಗಿರಬಹುದು, ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ. ಕಾಗಜ್ ಬಳಿ ಬೇರೆ ಮಾಹಿತಿ ಇಲ್ಲ.\", \"chips\": [\"photo:doc03\", \"add:ration_card:-\", \"photo:doc06\", \"photo:doc08\"]}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "kf2",
+   "lang": "kn",
+   "question": "ರೇಷನ್ ಕಾರ್ಡ್‌ನ ಫೋಟೋ ಮತ್ತೆ ಯಾಕೆ ಬೇಕು?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "ನಿಮ್ಮ ಪರಿಶೀಲನೆಯು ರೇಷನ್ ಕಾರ್ಡ್‌ನ ಫೋಟೋ ಸ್ಪಷ್ಟವಾಗಿ ಓದಲು ಆಗಲಿಲ್ಲ ಎಂದು ತೋರಿಸುತ್ತದೆ, ಆದ್ದರಿಂದ ಕಾಗಜ್‌ಗೆ ಮತ್ತೆ ಸ್ಪಷ್ಟ ಫೋಟೋ ಬೇಕು. ಇದು ಎಲ್ಲಾ ಪುಟಗಳು ಕಾಣುವಂತೆ, ಬೆಳಕು ಚೆನ್ನಾಗಿರುವಂತೆ ತೆಗೆಯಿರಿ. ಇದರ ಜೊತೆಗೆ ಸವಿತಾ ಮತ್ತು ಆದಿತ್ಯ ಅವರ ಆಧಾರ್ ಫೋಟೋ ಕೂಡ ಸ್ಪಷ್ಟ ಬೇಕು.",
+   "note": null,
+   "sources": [],
+   "chips": [
+    "ಫೋಟೋ ಸೇರಿಸಿ: ರೇಷನ್ ಕಾರ್ಡ್",
+    "ಫೋಟೋ ಸೇರಿಸಿ: Savita Aditya Bhosale: ಆಧಾರ್ ಕಾರ್ಡ್",
+    "ಫೋಟೋ ಸೇರಿಸಿ: Aditya Yogesh Bhosale: ಆಧಾರ್ ಕಾರ್ಡ್"
+   ],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5225,
+    "completion_tokens": 415,
+    "total_tokens": 5640
+   },
+   "seconds": 4.39,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer why ration card photo needed again. Need to look up family tools.\n\nWe need to call get_family, get_problems, get_missing_documents, get_plan etc.\n\nWe must answer in Kannada, under 80 words, plain everyday words.\n\nWe need to find why ration card photo needed.\n\nCall tools.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"ನಿಮ್ಮ ಪರಿಶೀಲನೆಯು ರೇಷನ್ ಕಾರ್ಡ್‌ನ ಫೋಟೋ ಸ್ಪಷ್ಟವಾಗಿ ಓದಲು ಆಗಲಿಲ್ಲ ಎಂದು ತೋರಿಸುತ್ತದೆ, ಆದ್ದರಿಂದ ಕಾಗಜ್‌ಗೆ ಮತ್ತೆ ಸ್ಪಷ್ಟ ಫೋಟೋ ಬೇಕು. ಇದು ಎಲ್ಲಾ ಪುಟಗಳು ಕಾಣುವಂತೆ, ಬೆಳಕು ಚೆನ್ನಾಗಿರುವಂತೆ ತೆಗೆಯಿರಿ. ಇದರ ಜೊತೆಗೆ ಸವಿತಾ ಮತ್ತು ಆದಿತ್ಯ ಅವರ ಆಧಾರ್ ಫೋಟೋ ಕೂಡ ಸ್ಪಷ್ಟ ಬೇಕು.\", \"chips\": [\"add:ration_card:-\", \"photo:doc03\", \"photo:doc06\"]}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "kf3",
+   "lang": "kn",
+   "question": "ಲತಾ ಯಾವುದಾದರೂ ಯೋಜನೆಗೆ ಅರ್ಹಳೇ?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "ನಿಮ್ಮ ಪರಿಶೀಲನೆಯು ಲತಾ ಆದಿತ್ಯ ಭೋಸಲೆ ಅವರಿಗೆ 12 ವರ್ಷ ಎಂದು ತೋರಿಸುತ್ತದೆ. ಅವರ ಹೆಸರು ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ, ಗುರುತಿನ ಚೀಟಿ ಮತ್ತು ರೇಷನ್ ಕಾರ್ಡ್‌ನಲ್ಲಿ ಬೇರೆ ಬೇರೆಯಾಗಿ ಬರೆಯಲ್ಪಟ್ಟಿದೆ, ಆದ್ದರಿಂದ ಅರ್ಹತೆ ಇನ್ನೂ ನಿರ್ಧರಿಸಲ್ಪಟ್ಟಿಲ್ಲ. ಕಾಗಜ್ ಬಳಿ ಈ ದಾಖಲೆಗಳ ಆಧಾರದ ಮೇಲೆ ಯಾವುದೇ ಯೋಜನೆಯ ಫಲಿತಾಂಶವಿಲ್ಲ. ಮೊದಲು ಹೆಸರಿನ ವ್ಯತ್ಯಾಸವನ್ನು ಕಚೇರಿಯಲ್ಲಿ ಪರಿಶೀಲಿಸಿ ಸರಿಪಡಿಸಿ.",
+   "note": null,
+   "sources": [],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 5014,
+    "completion_tokens": 437,
+    "total_tokens": 5451
+   },
+   "seconds": 3.81,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer about Lata eligibility. Need to get family, member results, etc.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_member_results",
+       "args": "{\"member\": \"ಲತಾ\"}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"ನಿಮ್ಮ ಪರಿಶೀಲನೆಯು ಲತಾ ಆದಿತ್ಯ ಭೋಸಲೆ ಅವರಿಗೆ 12 ವರ್ಷ ಎಂದು ತೋರಿಸುತ್ತದೆ. ಅವರ ಹೆಸರು ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ, ಗುರುತಿನ ಚೀಟಿ ಮತ್ತು ರೇಷನ್ ಕಾರ್ಡ್‌ನಲ್ಲಿ ಬೇರೆ ಬೇರೆಯಾಗಿ ಬರೆಯಲ್ಪಟ್ಟಿದೆ, ಆದ್ದರಿಂದ ಅರ್ಹತೆ ಇನ್ನೂ ನಿರ್ಧರಿಸಲ್ಪಟ್ಟಿಲ್ಲ. ಕಾಗಜ್ ಬಳಿ ಈ ದಾಖಲೆಗಳ ಆಧಾರದ ಮೇಲೆ ಯಾವುದೇ ಯೋಜನೆಯ ಫಲಿತಾಂಶವಿಲ್ಲ. ಮೊದಲು ಹೆಸರಿನ ವ್ಯತ್ಯಾಸವನ್ನು ಕಚೇರಿಯಲ್ಲಿ ಪರಿಶೀಲಿಸಿ ಸರಿಪಡಿಸಿ.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "kf4",
+   "lang": "kn",
+   "question": "ತಹಸೀಲ್ ಕಚೇರಿಗೆ ಏನು ತೆಗೆದುಕೊಂಡು ಹೋಗಬೇಕು?",
+   "expect": "answer",
+   "kind": "answer",
+   "text": "ನಿಮ್ಮ ಪರಿಶೀಲನೆ ತೋರಿಸುವಂತೆ ತಹಸೀಲ್ ಕಚೇರಿಗೆ ಹೋಗುವುದು ಆದಿತ್ಯ ಯೋಗೇಶ್ ಭೋಸಲೆ ಅವರ ಹೊಸ ಆದಾಯ ಪ್ರಮಾಣಪತ್ರಕ್ಕಾಗಿ. ಆಪ್ಲೆ ಸರ್ಕಾರ್ ಪೋರ್ಟಲ್ ಅಥವಾ ಆಪ್ಲೆ ಸರ್ಕಾರ್ ಸೇವಾ ಕೇಂದ್ರದಲ್ಲಿ ಅರ್ಜಿ ಮಾಡಿ, ತಹಸೀಲ್ ಕಚೇರಿ ನೀಡುತ್ತದೆ, ಕಾನೂನಿನಂತೆ 15 ದಿನಗಳು. ಲತಾ ಅವರ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರದ ಹೆಸರಿನ ವ್ಯತ್ಯಾಸದ ಬಗ್ಗೆ ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ. ಕಾಗಜ್ ಬಳಿ ಏನು ತೆಗೆದುಕೊಂಡು ಹೋಗಬೇಕು ಎಂಬ ಮಾಹಿತಿ ಇಲ್ಲ, ಕಚೇರಿಯಲ್ಲಿ ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.",
+   "note": null,
+   "sources": [
+    "https://ahmednagar.nic.in/en/right-to-service-act"
+   ],
+   "chips": [],
+   "attempts": 1,
+   "tool_calls": 4,
+   "check_failures": [],
+   "tokens": {
+    "prompt_tokens": 6957,
+    "completion_tokens": 487,
+    "total_tokens": 7444
+   },
+   "seconds": 4.48,
+   "answered": true,
+   "correct": true,
+   "refused_ok": false,
+   "wrong_shown": false,
+   "forbidden": [],
+   "required_ok": true,
+   "chips_ok": null,
+   "trace": [
+    {
+     "turn": 1,
+     "content": " to= self<|message|>Need to answer what to take to tahsil office. Need to get family, plan, office facts, missing docs, problems.\n\nWe need to call tools.",
+     "calls": [
+      {
+       "tool": "get_family",
+       "args": "{}"
+      },
+      {
+       "tool": "get_plan",
+       "args": "{}"
+      },
+      {
+       "tool": "get_office_facts",
+       "args": "{}"
+      },
+      {
+       "tool": "get_missing_documents",
+       "args": "{}"
+      },
+      {
+       "tool": "get_problems",
+       "args": "{}"
+      }
+     ]
+    },
+    {
+     "turn": 2,
+     "content": null,
+     "calls": [
+      {
+       "tool": "reply",
+       "args": "{\"kind\": \"answer\", \"text\": \"ನಿಮ್ಮ ಪರಿಶೀಲನೆ ತೋರಿಸುವಂತೆ ತಹಸೀಲ್ ಕಚೇರಿಗೆ ಹೋಗುವುದು ಆದಿತ್ಯ ಯೋಗೇಶ್ ಭೋಸಲೆ ಅವರ ಹೊಸ ಆದಾಯ ಪ್ರಮಾಣಪತ್ರಕ್ಕಾಗಿ. ಆಪ್ಲೆ ಸರ್ಕಾರ್ ಪೋರ್ಟಲ್ ಅಥವಾ ಆಪ್ಲೆ ಸರ್ಕಾರ್ ಸೇವಾ ಕೇಂದ್ರದಲ್ಲಿ ಅರ್ಜಿ ಮಾಡಿ, ತಹಸೀಲ್ ಕಚೇರಿ ನೀಡುತ್ತದೆ, ಕಾನೂನಿನಂತೆ 15 ದಿನಗಳು. ಲತಾ ಅವರ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರದ ಹೆಸರಿನ ವ್ಯತ್ಯಾಸದ ಬಗ್ಗೆ ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ. ಕಾಗಜ್ ಬಳಿ ಏನು ತೆಗೆದುಕೊಂಡು ಹೋಗಬೇಕು ಎಂಬ ಮಾಹಿತಿ ಇಲ್ಲ, ಕಚೇರಿಯಲ್ಲಿ ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.\", \"chips\": []}"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -28,18 +28,20 @@ from agents.ask_check import Evidence, _schemes_in, check
 from agents.ask_tools import REPLY_TOOL, AskToolBox, Chip, FamilyContext, load_ask, member_name, scheme_short
 from agents.catalog import scheme_card
 from agents.reasons import load_reasons
+from agents.speech import SCRIPTS, say_in_script
 from agents.voice import load_voice
 from app.config import get_settings
 from clients.llm import ChatResponse, EmptyResponse, LLMError, TokenUsage, chat
 from rules.loader import load_schemes
+from schemas.languages import ENGLISH_NAMES
 from vision.text import redact_identity_numbers
 
 logger = logging.getLogger(__name__)
 
 PROMPT = (Path(__file__).resolve().parents[1] / "prompts" / "ask.md").read_text(encoding="utf-8")
-LANGUAGE_NAMES = {"en": "English", "hi": "Hindi", "mr": "Marathi"}
-LAKH = {"en": "lakh", "hi": "लाख", "mr": "लाख"}
-RUPEES = {"en": "rupees", "hi": "रुपये", "mr": "रुपये"}
+LANGUAGE_NAMES = ENGLISH_NAMES
+LAKH = {"en": "lakh", "hi": "लाख", "mr": "लाख", "ta": "லட்சம்", "te": "లక్షల", "kn": "ಲಕ್ಷ"}
+RUPEES = {"en": "rupees", "hi": "रुपये", "mr": "रुपये", "ta": "ரூபாய்", "te": "రూపాయలు", "kn": "ರೂಪಾಯಿ"}
 MAX_TURNS = 8
 FIXED_KINDS = ("out_of_scope", "id_number", "other_language")
 Kind = Literal["answer", "out_of_scope", "id_number", "other_language", "not_sure", "unavailable"]
@@ -158,13 +160,15 @@ def tools(state: AskState, config: RunnableConfig) -> AskState:
     return {"messages": messages, "tool_calls": count, "pending": [], "status": "think"}
 
 
-def evidence(toolbox: AskToolBox) -> Evidence:
+def evidence(toolbox: AskToolBox, language: str = "en") -> Evidence:
     ctx = toolbox.ctx
     ev = Evidence(used=toolbox.used)
     if ctx is None:
         return ev
     for m in ctx.data.members:
         names = [n for n in (m.name_en, m.name_mr) if n]
+        if language in SCRIPTS and m.name_mr:  # how a model may write the name in Tamil, Telugu or Kannada
+            names.append(say_in_script(m.name_mr, language))
         ev.members[m.member_id] = [*names, *(n.split()[0] for n in names if n.split())]
     looked_up = {u["result"].get("member_id") for u in toolbox.used if u["tool"] == "get_member_results"}
     for o in ctx.data.outcomes:
@@ -177,10 +181,16 @@ def check_reply(state: AskState, config: RunnableConfig) -> AskState:
     rt = _rt(config)
     reply = state["reply"] or {}
     attempts = state.get("attempts", 0) + 1
-    if reply.get("kind") in FIXED_KINDS:
+    if reply.get("kind") == "other_language" and rt.get("indic_question"):
+        # written in Devanagari, Tamil, Telugu or Kannada: one of the six languages, so it is answered
+        failures = ["Wrong kind: the question is written in Hindi, Marathi, Tamil, Telugu or Kannada, which Kaagaz "
+                    "answers. Do not use kind other_language: look up what is needed and reply with kind answer, in "
+                    f"{LANGUAGE_NAMES[rt['language']]}."]
+    elif reply.get("kind") in FIXED_KINDS:
         return {"status": "done", "attempts": attempts}
-    failures = (["reply arguments were not valid JSON"] if reply.get("invalid")
-                else check(reply.get("text", ""), rt["language"], evidence(rt["toolbox"])))
+    else:
+        failures = (["reply arguments were not valid JSON"] if reply.get("invalid")
+                        else check(reply.get("text", ""), rt["language"], evidence(rt["toolbox"], rt["language"])))
     if not failures:
         return {"status": "done", "attempts": attempts}
     all_failures = [*state.get("failures", []), *failures]
@@ -343,8 +353,26 @@ def answer_speech(text: str, language: str) -> str:
 
 # ---------- entry point ----------
 
+# Letters of the six languages' scripts (Latin, Devanagari, Tamil, Telugu, Kannada); any other letter is another language
+OWN_LETTERS = re.compile(r"[A-Za-zऀ-ॿ஀-௿ఀ-౿ಀ-೿]")
+OTHER_LETTERS = re.compile(r"[^\W\d_A-Za-zऀ-ॿ஀-௿ఀ-౿ಀ-೿]")
+
+
+def indic_script(question: str) -> bool:
+    """Mostly Devanagari, Tamil, Telugu or Kannada letters: certainly one of the six languages."""
+    indic = len(re.findall(r"[ऀ-ॿ஀-௿ఀ-౿ಀ-೿]", question))
+    return indic > len(re.findall(r"[A-Za-z]", question)) and not other_script(question)
+
+
+def other_script(question: str) -> bool:
+    """Mostly written in another script (Bengali, Gujarati, Gurmukhi, Odia, Malayalam, Urdu ...)."""
+    own, other = len(OWN_LETTERS.findall(question)), len(OTHER_LETTERS.findall(question))
+    return other > own
+
 def ask(question: str, language: str, ctx: FamilyContext | None = None, *, llm: Chat = chat,
         timeout_s: float | None = None, max_tool_calls: int | None = None) -> AskAnswer:
+    if other_script(question):  # written in a script none of the six languages use: the fixed reply, no model call
+        return AskAnswer(kind="other_language", text=load_ask(language).replies["other_language"])
     settings = get_settings()
     timeout_s = settings.ask_timeout_s if timeout_s is None else timeout_s
     max_tool_calls = settings.ask_max_tool_calls if max_tool_calls is None else max_tool_calls
@@ -358,6 +386,7 @@ def ask(question: str, language: str, ctx: FamilyContext | None = None, *, llm: 
     state: AskState = {"messages": [{"role": "system", "content": system}, {"role": "user", "content": question}],
                        "status": "think", "tool_calls": 0, "attempts": 0, "turns": 0, "usage": {}, "trace": []}
     config = {"configurable": {"toolbox": toolbox, "llm": llm, "deadline": start + timeout_s, "language": language,
+                               "indic_question": indic_script(question),
                                "max_tool_calls": max_tool_calls}, "recursion_limit": 40}
     final: AskState = graph().invoke(state, config)
     t = load_ask(language)

@@ -1,10 +1,10 @@
 # Values provided by the developer from official sources. Do not edit from memory.
 id: ramai_awas
-name: {en: "Ramai Awas", mr: "रमाई आवास योजना", hi: "रमाई आवास योजना"}
-short: {en: "Ramai", mr: "रमाई", hi: "रमाई"}
+name: {en: "Ramai Awas", mr: "रमाई आवास योजना", hi: "रमाई आवास योजना", ta: "ரமாய் ஆவாஸ் யோஜனா (Ramai)", te: "రమాయి ఆవాస్ యోజన (Ramai)", kn: "ರಮಾಯಿ ಆವಾಸ್ ಯೋಜನಾ (Ramai)"}
+short: {en: "Ramai", mr: "रमाई", hi: "रमाई", ta: "ரமாய்", te: "రమాయి", kn: "ರಮಾಯಿ"}
 # One-line benefit for the app. en from the developer; hi/mr text machine-translated from it.
 benefit:
-  text: {en: "Grant to build a house", mr: "घर बांधण्यासाठी अनुदान", hi: "घर बनाने के लिए अनुदान"}
+  text: {en: "Grant to build a house", mr: "घर बांधण्यासाठी अनुदान", hi: "घर बनाने के लिए अनुदान", ta: "வீடு கட்ட உதவித் தொகை", te: "ఇల్లు కట్టుకోవడానికి సహాయం", kn: "ಮನೆ ಕಟ್ಟಲು ಸಹಾಯಧನ"}
   status: unverified
   source: developer
   source_url: null

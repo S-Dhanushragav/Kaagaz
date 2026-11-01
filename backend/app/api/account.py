@@ -20,6 +20,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
+from schemas.languages import Language
 from app.auth import AuthError, AuthService
 from app.casefile import full, summary
 from storage.models import User
@@ -27,7 +28,6 @@ from storage.store import StoreUnavailable
 
 router = APIRouter()
 logger = logging.getLogger("kaagaz.auth")
-Language = Literal["en", "hi", "mr"]
 
 
 def auth(request: Request) -> AuthService:

@@ -1,0 +1,72 @@
+# MACHINE-TRANSLATED by scripts/translate.py (Muse Spark; back-translated and checked with Muse Spark Open).
+# Not reviewed by a native speaker yet. Corrections go in data/translations/fixes.yaml, then re-run.
+language: ta
+words:
+  F: ஒரு பெண்
+  M: ஒரு ஆண்
+  yellow: மஞ்சள்
+  orange: ஆரஞ்சு
+  white: வெள்ளை
+  identity_card: ஆதார் அட்டை
+  ration_card: ரேஷன் அட்டை
+missing:
+  ration_card: ரேஷன் அட்டை
+  income_certificate: வருமானச் சான்றிதழ்
+  caste_certificate: சாதிச் சான்றிதழ்
+  identity_card: '{name}: ஆதார் அட்டை'
+  age_unknown: '{name}: வயது (படிக்க முடியவில்லை)'
+reasons:
+  gender.unknown: பாலினம் தெரியவில்லை.
+  gender.pass: '{gender}: பாலினம். தேவைப்படி சரியாக உள்ளது.'
+  gender.fail: '{needs}: தேவை. இந்த திட்டம் இவர்களுக்கு மட்டும்தான்.'
+  age.unknown: வயது தெரியவில்லை.
+  age.doubtful: ஆவணங்களுக்கு இடையே பிறந்த தேதி வேறுபடுகிறது.
+  age_min.pass: 'வயது போதும். {age}: வயது. {limit}: குறைந்த வயது.'
+  age_min.fail: 'வயது போதாது. {age}: வயது. {limit}: குறைந்த வயது.'
+  age_max.pass: 'வயது சரியாக உள்ளது. {age}: வயது. {limit}: அதிக வயது.'
+  age_max.fail: 'வயது அதிகமாக உள்ளது. {age}: வயது. {limit}: அதிக வயது.'
+  age_below.pass: 'வயது குறைவாக உள்ளது, சரி. {age}: வயது. {limit}: வயது வரம்பு.'
+  age_below.fail: 'வயது குறைவாக இல்லை. {age}: வயது. {limit}: வயது வரம்பு.'
+  income.card: 'வருமானச் சான்றிதழ் இல்லை. ஆனால் ரேஷன் அட்டை வருமானத்திற்கு ஏற்கப்படும், நாங்கள் படித்தபடி. {card}: ரேஷன் அட்டை.'
+  income.missing: வருமானச் சான்றிதழ் இல்லை.
+  income.present: வருமானச் சான்றிதழ் உள்ளது.
+  income.unreadable: வருமானச் சான்றிதழில் வருமானம் தெரியவில்லை.
+  income.doubtful: வருமானச் சான்றிதழில் பிழை உள்ளது. முதலில் அதை சரி செய்யுங்கள்.
+  income_max.pass: 'குடும்ப வருமானம் வரம்புக்குள் உள்ளது. {income}: வருமானம். {limit}: வரம்பு.'
+  income_max.fail: 'குடும்ப வருமானம் வரம்பை விட அதிகம். {income}: வருமானம். {limit}: வரம்பு.'
+  income_bands.pass: 'குடும்ப வருமானம் இதற்குள் உள்ளது. {income}: வருமானம். {limit}: வரம்பு.'
+  income_bands.fail: 'குடும்ப வருமானம் இதை விட அதிகம். {income}: வருமானம். {limit}: வரம்பு.'
+  income_bands.check_at_office: 'குடும்ப வருமானம்: {income}. வரம்பு: {low} முதல் {high} வரை. வரம்பு பற்றி வெவ்வேறு தகவல் உள்ளது.'
+  caste_household.pass: 'குடும்பத்திடம் சாதிச் சான்றிதழ் உள்ளது: {categories}.'
+  caste_household.blocked: 'சாதிச் சான்றிதழில் பிரச்சனை உள்ளது: {categories}. முதலில் இதை சரி செய்யுங்கள்.'
+  caste_household.needs_other_proof: 'சாதிச் சான்றிதழ் இல்லை: {categories}. வேறு வழியில் தகுதி பெற வேறு ஆதாரம் வேண்டும்.'
+  caste_applicant.check_at_office: 'எங்கள் படிப்பின்படி, சாதிச் சான்றிதழ் குடும்பத்தில் வேறு ஒருவரிடம் மட்டும் உள்ளது: {categories}.'
+  caste_applicant.none: அவருக்கு சொந்த சாதிச் சான்றிதழ் இல்லை.
+  caste_applicant.blocked: அவருடைய சாதிச் சான்றிதழில் பிரச்சனை உள்ளது. முதலில் இதை சரி செய்யுங்கள்.
+  caste_applicant.pass: 'அவருடைய சொந்த சாதிச் சான்றிதழ்: {categories}.'
+  caste_applicant.fail: 'அவருடைய சாதிப் பிரிவு: {have}. தேவையான பிரிவு: {categories}. இது பொருந்தவில்லை.'
+  documents.missing: 'இல்லாத ஆவணங்கள்: {items}.'
+  documents.pass: தேவையான ஆவணங்கள் உள்ளன.
+  validity.warning: 'வருமானச் சான்றிதழ் வழங்கிய நாள்: {issued}. தேவையான நாள்: {since}. இதற்கு முன் வழங்கப்பட்டுள்ளது. புதுப்பிக்க வேண்டி இருக்கலாம். அலுவலகத்தில் கேளுங்கள்.'
+issues:
+  name_mismatch: ஆவணங்களில் பெயர் வெவ்வேறாக உள்ளது. முதலில் இதை சரி செய்யுங்கள்.
+  dob_mismatch: ஆவணங்களில் பிறந்த தேதி வெவ்வேறாக உள்ளது. முதலில் இதை சரி செய்யுங்கள்.
+  not_on_ration_card: ரேஷன் அட்டையில் பெயர் இல்லை. முதலில் இதை சரி செய்யுங்கள்.
+  missing_document: ஒரு ஆவணம் இல்லை. முதலில் இதை சரி செய்யுங்கள்.
+  unreadable: ஒரு ஆவணத்தை படிக்க முடியவில்லை. முதலில் தெளிவான புகைப்படம் எடுங்கள்.
+  expired: வருமானச் சான்றிதழ் மிகவும் பழையதாக இருக்கலாம்.
+confirm: தயவு செய்து ஒப்பிட்டுப் பாருங்கள். ஆவணங்களில் பெயர் வெவ்வேறாக இருக்கலாம்.
+catalog:
+  gender.F: பெண்களுக்கு.
+  gender.M: ஆண்களுக்கு.
+  age_min: 'வயது: {limit} அல்லது அதற்கு மேல்.'
+  age_max: 'வயது: {limit} அல்லது அதற்குக் குறைவு.'
+  age_below: 'வயது: {limit} க்கும் கீழ்.'
+  income_max: 'குடும்ப வருமானம்: {limit} வரை.'
+  income_bands: 'குடும்ப வருமானம்: {low} வரை; {low} முதல் {high} வரை என்று வெவ்வேறு தகவல்கள் உள்ளன.'
+  caste_household: 'குடும்பத்தில் ஒருவருக்கு சாதிச் சான்றிதழ்: {categories}. இல்லை என்றால் வேறு ஆதாரம் வேண்டும்.'
+  caste_applicant: 'விண்ணப்பிப்பவரின் சொந்த சாதிச் சான்றிதழ்: {categories}.'
+  documents: 'ஆவணங்கள்: {items}.'
+  income_certificate_unless_card: 'வருமானச் சான்றிதழ் அல்லது ரேஷன் அட்டை: {cards}.'
+  every_adult_identity_card: ரேஷன் அட்டையில் உள்ள ஒவ்வொரு வயது வந்தவரின் ஆதார் அட்டை
+  or: அல்லது

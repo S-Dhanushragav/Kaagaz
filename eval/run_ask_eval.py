@@ -1,4 +1,4 @@
-"""Ask Kaagaz eval: 30 questions (eval/ask_questions.yaml) in en/hi/mr on the 5 schemes and the sample family.
+"""Ask Kaagaz eval: 49 questions (eval/ask_questions.yaml) in en/hi/mr/ta/te/kn on the 5 schemes and the sample family.
 
 Usage (from the repo root, with the backend venv):
     python eval/run_ask_eval.py            # offline: replays the recorded model replies (eval/fixtures/ask/llm.json)
@@ -27,6 +27,7 @@ sys.path[:0] = [str(ROOT / "backend"), str(ROOT)]
 from agents.ask import ask  # noqa: E402
 from agents.ask_tools import FamilyContext  # noqa: E402
 from clients.cache import make_key  # noqa: E402
+from schemas.languages import LANGUAGES  # noqa: E402
 from clients.llm import ChatResponse, EmptyResponse, LLMError, chat  # noqa: E402
 
 QUESTIONS = ROOT / "eval" / "ask_questions.yaml"
@@ -118,7 +119,7 @@ def main() -> None:
         llm.save(prune=not args.only)
 
     n = len(rows)
-    by_lang = {lang: sum(r["lang"] == lang for r in rows) for lang in ("en", "hi", "mr")}
+    by_lang = {lang: sum(r["lang"] == lang for r in rows) for lang in LANGUAGES}
     summary = {
         "questions": n, "by_language": by_lang,
         "answered": sum(r["answered"] for r in rows),
@@ -136,6 +137,12 @@ def main() -> None:
         "mean_tokens_per_question": round(sum(r["tokens"]["total_tokens"] for r in rows) / max(n, 1)),
         "mean_seconds": round(sum(r["seconds"] for r in rows) / max(n, 1), 2),
         "mode": "live" if args.live else "replay", "new_recordings": llm.new,
+        "per_language": {lang: {"questions": len(rs), "answered_correctly": sum(r["correct"] for r in rs),
+                                "correctly_refused": sum(r["refused_ok"] for r in rs),
+                                "not_sure": sum(r["kind"] == "not_sure" for r in rs),
+                                "wrong_answers_shown": sum(r["wrong_shown"] for r in rs),
+                                "mean_tokens": round(sum(r["tokens"]["total_tokens"] for r in rs) / max(len(rs), 1))}
+                         for lang in LANGUAGES if (rs := [r for r in rows if r["lang"] == lang])},
     }
     print(json.dumps(summary, ensure_ascii=False, indent=1))
     RESULTS.mkdir(exist_ok=True)

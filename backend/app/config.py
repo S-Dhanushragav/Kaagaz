@@ -66,9 +66,8 @@ class Settings(BaseSettings):
     meta_ask_model: str = ""  # only if ASK_PROVIDER=meta
     meta_transcribe_model: str = ""  # used by clients/transcribe.py
     asr_keyword_languages: str = "en"  # comma-separated: languages that send keyword biasing (it hurt hi/mr)
-    # Speech input languages: code:name the API biases on (its English language names). Add a language here only;
-    # e.g. ",ta:Tamil,te:Telugu,kn:Kannada" (Phase 11).
-    asr_languages: str = "en:English,hi:Hindi,mr:Marathi"
+    # Speech input languages: code:name the API biases on (its English language names). Add a language here only.
+    asr_languages: str = "en:English,hi:Hindi,mr:Marathi,ta:Tamil,te:Telugu,kn:Kannada"
     max_question_audio_s: float = Field(30.0, gt=0)  # spoken Ask questions (the app stops recording at 30 s)
     meta_segment_model: str = ""  # used by clients/segmenter.py (not built yet)
 
@@ -112,6 +111,9 @@ class Settings(BaseSettings):
     tts_model_en: str = ""
     tts_model_hi: str = ""
     tts_model_mr: str = ""
+    tts_model_ta: str = ""
+    tts_model_te: str = ""
+    tts_model_kn: str = ""
 
     # Ask Kaagaz (agents/ask.py, app/api/ask.py)
     ask_per_session_hour: int = Field(20, ge=0)  # questions per session (or saved check) per hour

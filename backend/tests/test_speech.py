@@ -81,3 +81,21 @@ def test_rupees_and_screen_text() -> None:
     assert speech_text("कायद्याने या कार्यालयासाठी 15 दिवस ठरवले आहेत.", "mr") == "कायद्याने या कार्यालयासाठी पंधरा दिवस ठरवले आहेत."
     assert speech_text("No numbers here.", "en") == "No numbers here."
     assert number_words(123456, "en") == "one two three four five six"  # out of range: digit by digit
+
+
+def test_tamil_telugu_kannada_voices_get_names_in_their_own_script() -> None:
+    """MMS-TTS ta/te/kn read only their script: Latin and Devanagari names are written in it, for the voice only."""
+    from agents.speech import say_in_script
+
+    assert say_in_script("Savita Aditya Bhosale: சவிதா", "ta") == "ஸவிதா அதித்யா போஸலே: சவிதா"
+    assert say_in_script("सविता रमेश पवार", "te") == "సవితా రమేశ్ పవార్"  # a Marathi name's final 'a' is not said
+    assert say_in_script("Lata", "kn") == "ಲತಾ"
+    assert "ஶ" not in say_in_script("शंकर", "ta")  # the Tamil voice has no ஶ: ஷ instead
+    assert say_in_script("லாட்கி பஹிண் (Ladki Bahin) திட்டம்", "ta") == "லாட்கி பஹிண் திட்டம்"  # bracket not read out
+    assert say_in_script("Savita", "mr") == "Savita"  # other languages unchanged
+
+
+def test_tamil_numbers_are_spelled_out_for_speech() -> None:
+    from agents.speech import speech_text
+
+    assert speech_text("15 நாட்கள்", "ta") == "பதினைந்து நாட்கள்"

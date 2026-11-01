@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Language } from '../api'
-import { LANGUAGE_NAMES, LANGUAGES, type Strings } from '../i18n'
+import { LANGUAGE_NAMES, LANGUAGES, MACHINE_TRANSLATED, STRINGS, type Strings } from '../i18n'
 import { Chevron, Globe } from './Icons'
 
-// An expandable list: three languages now, more in Phase 11.
+// An expandable list of the languages. Machine-translated ones say so, in their own script, with a tooltip.
 export default function LanguageMenu({ t, language, onChange }: { t: Strings; language: Language; onChange: (l: Language) => void }) {
   const [open, setOpen] = useState(false)
   const root = useRef<HTMLDivElement>(null)
@@ -29,8 +29,10 @@ export default function LanguageMenu({ t, language, onChange }: { t: Strings; la
           {LANGUAGES.map((l) => (
             <button key={l} type="button" role="option" aria-selected={l === language} lang={l}
               className={l === language ? 'langmenu-item selected' : 'langmenu-item'}
+              title={MACHINE_TRANSLATED.has(l) ? STRINGS[l].machineTranslatedNote : undefined}
               onClick={() => { onChange(l); setOpen(false) }}>
-              {LANGUAGE_NAMES[l]}
+              <span>{LANGUAGE_NAMES[l]}</span>
+              {MACHINE_TRANSLATED.has(l) && <span className="mt-tag">{STRINGS[l].machineTranslated}</span>}
             </button>
           ))}
           <p className="langmenu-soon">{t.moreLanguagesSoon}</p>

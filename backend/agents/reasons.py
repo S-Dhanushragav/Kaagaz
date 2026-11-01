@@ -13,6 +13,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict
 
 from rules.engine import RuleResult, SchemeResult
+from schemas.languages import devanagari_names
 
 REASONS_DIR = Path(__file__).resolve().parents[2] / "data" / "templates" / "reasons"
 MONEY = {"income", "limit", "low", "high"}
@@ -55,7 +56,7 @@ def inr(amount: int | float) -> str:
 
 
 def _name(item: dict[str, Any], language: str) -> str:
-    name = item.get("name_mr") if language != "en" else item.get("name_en")
+    name = item.get("name_mr") if devanagari_names(language) else item.get("name_en")
     return name or item.get("name_en") or item.get("name_mr") or item.get("member_id", "")
 
 

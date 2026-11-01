@@ -1,0 +1,225 @@
+# MACHINE-TRANSLATED by scripts/translate.py (Muse Spark; back-translated and checked with Muse Spark Open).
+# Not reviewed by a native speaker yet. Corrections go in data/translations/fixes.yaml, then re-run.
+# Placeholders: {office} {bring} {fee} {time_limit} {caution} {member} {documents}. numbers/answers: spoken words (Muse Spark).
+language: kn
+documents:
+  ration_card: ರೇಷನ್ ಕಾರ್ಡ್
+  identity_card: ಆಧಾರ್ ಕಾರ್ಡ್
+  income_certificate: ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ
+  caste_certificate: ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ
+unverified: ದಯವಿಟ್ಟು ಇದನ್ನು ಕಚೇರಿಯಲ್ಲಿ ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.
+household: ನಿಮ್ಮ ಕುಟುಂಬ
+not_on_card: ರೇಷನ್ ಕಾರ್ಡ್‌ನಲ್ಲಿ ಹೆಸರಿಲ್ಲದ ವ್ಯಕ್ತಿ
+card_member: 'ರೇಷನ್ ಕಾರ್ಡ್‌ನಲ್ಲಿ ಸದಸ್ಯ ಸಂಖ್ಯೆ: {n}'
+options:
+  same: ಒಂದೇ
+  different: ಬೇರೆ ಬೇರೆ
+  not sure: ಗೊತ್ತಿಲ್ಲ
+law_sets: ಕಾನೂನು ಈ ಕಚೇರಿಗೆ {time_limit} ಸಮಯ ನೀಡಿದೆ.
+procedures:
+  aadhaar_name_correction: '{member}: ಆಧಾರ್ ಕಾರ್ಡ್ ನಲ್ಲಿ ಹೆಸರು ಸರಿಪಡಿಸಲು ಹೋಗಿ. ಕಚೇರಿ: {office}. ಶುಲ್ಕ: {fee}. {caution}'
+  aadhaar_dob_correction: '{member}: ಆಧಾರ್ ಕಾರ್ಡ್ ನಲ್ಲಿ ಹುಟ್ಟಿದ ದಿನಾಂಕ ಸರಿಪಡಿಸಲು ಹೋಗಿ. ಕಚೇರಿ: {office}. ತೆಗೆದುಕೊಂಡು ಹೋಗಿ: {bring}. {caution}'
+  ration_card_name_correction: '{member}: ರೇಷನ್ ಕಾರ್ಡ್ ನಲ್ಲಿ ಹೆಸರು ಸರಿಪಡಿಸಲು ಹೋಗಿ. ಕಚೇರಿ: {office}. ತೆಗೆದುಕೊಂಡು ಹೋಗಿ: {bring}. ಶುಲ್ಕ: {fee}.'
+  ration_card_add_member: '{member}: ಈ ವ್ಯಕ್ತಿಯ ಹೆಸರನ್ನು ರೇಷನ್ ಕಾರ್ಡ್ ಗೆ ಸೇರಿಸಲು ಕೇಳಿ. ಕಚೇರಿ: {office}. ತೆಗೆದುಕೊಂಡು ಹೋಗಿ: {bring}. {caution}'
+  income_certificate_new: 'ಹೊಸ ಆದಾಯ ಪ್ರಮಾಣಪತ್ರಕ್ಕೆ ಆಪ್ಲೆ ಸರ್ಕಾರ್ ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ಅಥವಾ ಆಪ್ಲೆ ಸರ್ಕಾರ್ ಸೇವಾ ಕೇಂದ್ರದಲ್ಲಿ ಅರ್ಜಿ ಕೊಡಿ. ಕೊಡುವ ಕಚೇರಿ: {office}. ಕಾನೂನು ಈ ಕಚೇರಿಗೆ {time_limit} ಸಮಯ ನೀಡಿದೆ.'
+  caste_certificate_new: '{member}: ಜಾತಿ ಪ್ರಮಾಣಪತ್ರಕ್ಕೆ ಅರ್ಜಿ ಕೊಡಿ. ಕಚೇರಿ: {office}. ಇದನ್ನು ಮೊದಲು ಶುರು ಮಾಡಿ, ಇದಕ್ಕೆ ಹೆಚ್ಚು ಸಮಯ ಬೇಕು. {caution}'
+  aadhaar_enrolment: '{member}: ಹೊಸ ಆಧಾರ್ ಕಾರ್ಡ್ ಮಾಡಿಸಲು ಹೋಗಿ. ಕಚೇರಿ: {office}.'
+  self_declaration: '{member}: {documents}: ಈ ಹೆಸರುಗಳು ಒಂದೇ ವ್ಯಕ್ತಿಯದ್ದು ಎಂದು ಬರೆದು ಕೊಡಬಹುದು. {caution}'
+ask_at_office:
+  name_mismatch: '{member}: {documents}: ಇದರಲ್ಲಿ ಹೆಸರು ಇತರ ಕಾಗದಗಳಿಗಿಂತ ಬೇರೆ ರೀತಿ ಇದೆ. ಕಚೇರಿಯಲ್ಲಿ ಏನು ಮಾಡಬೇಕು ಎಂದು ಕೇಳಿ.'
+  dob_mismatch: '{member}: {documents}: ಇದರಲ್ಲಿ ಹುಟ್ಟಿದ ದಿನಾಂಕ ಇತರ ಕಾಗದಗಳಿಗಿಂತ ಬೇರೆ ಇದೆ. ಕಚೇರಿಯಲ್ಲಿ ಏನು ಮಾಡಬೇಕು ಎಂದು ಕೇಳಿ.'
+  not_on_ration_card: '{member}: {documents}: ಇದರಲ್ಲಿ ಈ ವ್ಯಕ್ತಿಯ ಹೆಸರು ಇಲ್ಲ. ಕಚೇರಿಯಲ್ಲಿ ಏನು ಮಾಡಬೇಕು ಎಂದು ಕೇಳಿ.'
+  missing_document: '{member}: {documents}: ಇದು ಸಿಕ್ಕಿಲ್ಲ. ಕಚೇರಿಯಲ್ಲಿ ಏನು ಮಾಡಬೇಕು ಎಂದು ಕೇಳಿ.'
+  expired: '{member}: {documents}: ಇದು ತುಂಬಾ ಹಳೆಯದು ಇರಬಹುದು. ಕಚೇರಿಯಲ್ಲಿ ಏನು ಮಾಡಬೇಕು ಎಂದು ಕೇಳಿ.'
+  default: '{member}: {documents}: ಇದರ ಬಗ್ಗೆ ಕಚೇರಿಯಲ್ಲಿ ಏನು ಮಾಡಬೇಕು ಎಂದು ಕೇಳಿ.'
+questions:
+  which_is_correct: '{member}: {documents}: ಇವುಗಳಲ್ಲಿ ಯಾವುದು ಸರಿ?'
+  compare: '{member}: {documents}: ದಯವಿಟ್ಟು ಇವೆರಡನ್ನು ನೋಡಿ. ಅವು ಒಂದೇ ಅಥವಾ ಬೇರೆ ಬೇರೆ?'
+values:
+  Aadhaar Seva Kendra (nearest): ಆಧಾರ್ ಸೇವಾ ಕೇಂದ್ರ (ಹತ್ತಿರದ)
+  Aadhaar Seva Kendra: ಆಧಾರ್ ಸೇವಾ ಕೇಂದ್ರ
+  Ration card / Tahsil supply office: ರೇಷನ್ ಕಾರ್ಡ್ / ತಹಸೀಲ್ ಸರಬರಾಜು ಕಚೇರಿ
+  Supply office, or the Ration Card Management System online: ಸರಬರಾಜು ಕಚೇರಿ, ಅಥವಾ ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ರೇಷನ್ ಕಾರ್ಡ್ ನಿರ್ವಹಣಾ ವ್ಯವಸ್ಥೆ
+  Tahsil office: ತಹಸೀಲ್ ಕಚೇರಿ
+  Sub-Divisional Officer / Deputy Collector: ಉಪವಿಭಾಗಾಧಿಕಾರಿ / ಉಪ ಜಿಲ್ಲಾಧಿಕಾರಿ
+  Proof of date of birth (e.g. birth certificate): ಹುಟ್ಟಿದ ದಿನಾಂಕದ ಪುರಾವೆ (ಉದಾ. ಜನನ ಪ್ರಮಾಣಪತ್ರ)
+  Gazette notice of the name change, or birth certificate (whichever applies): ಹೆಸರು ಬದಲಾವಣೆಯ ಗೆಜೆಟ್ ಸೂಚನೆ, ಅಥವಾ ಜನನ ಪ್ರಮಾಣಪತ್ರ (ಯಾವುದು ಅನ್ವಯಿಸುತ್ತದೋ ಅದು)
+  Proof for the person being added (e.g. birth certificate for a newborn, marriage certificate for a spouse): ಸೇರಿಸುವ ವ್ಯಕ್ತಿಯ ಪುರಾವೆ (ಉದಾ. ಹೊಸದಾಗಿ ಹುಟ್ಟಿದ ಮಗುವಿಗೆ ಜನನ ಪ್ರಮಾಣಪತ್ರ, ಸಂಗಾತಿಗೆ ಮದುವೆ ಪ್ರಮಾಣಪತ್ರ)
+  about Rs 75: ಸುಮಾರು ₹75
+  Rs 2: ₹2
+  15 days (Maharashtra Right to Public Services Act): 15 ದಿನಗಳು
+  The name on Aadhaar can be updated only twice in a lifetime.: ಆಧಾರ್‌ನಲ್ಲಿ ಹೆಸರನ್ನು ಜೀವನದಲ್ಲಿ ಎರಡು ಬಾರಿ ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.
+  ? The date of birth on Aadhaar can be updated only once in a lifetime. If the limit is used, a grievance and a visit to the UIDAI regional office with strong documents is needed.
+  : ಆಧಾರ್‌ನಲ್ಲಿ ಹುಟ್ಟಿದ ದಿನಾಂಕವನ್ನು ಜೀವನದಲ್ಲಿ ಒಮ್ಮೆ ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು. ಮಿತಿ ಮುಗಿದಿದ್ದರೆ, ದೂರು ನೀಡಬೇಕು ಮತ್ತು ಬಲವಾದ ದಾಖಲೆಗಳೊಂದಿಗೆ UIDAI ಪ್ರಾದೇಶಿಕ ಕಚೇರಿಗೆ ಹೋಗಬೇಕು.
+  Confirm at the office which documents are needed.: ಯಾವ ದಾಖಲೆಗಳು ಬೇಕು ಎಂದು ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.
+  The time limit is set by the district under the Right to Public Services Act.: ಸಾರ್ವಜನಿಕ ಸೇವೆಗಳ ಹಕ್ಕು ಕಾಯ್ದೆಯಡಿ ಜಿಲ್ಲೆಯು ಸಮಯದ ಮಿತಿಯನ್ನು ನಿಗದಿ ಮಾಡುತ್ತದೆ.
+  Acceptance of the declaration is up to the office.: ಘೋಷಣಾಪತ್ರವನ್ನು ಒಪ್ಪಿಕೊಳ್ಳುವುದು ಕಚೇರಿಗೆ ಬಿಟ್ಟದ್ದು.
+numbers:
+  words:
+  - ಸೊನ್ನೆ
+  - ಒಂದು
+  - ಎರಡು
+  - ಮೂರು
+  - ನಾಲ್ಕು
+  - ಐದು
+  - ಆರು
+  - ಏಳು
+  - ಎಂಟು
+  - ಒಂಬತ್ತು
+  - ಹತ್ತು
+  - ಹನ್ನೊಂದು
+  - ಹನ್ನೆರಡು
+  - ಹದಿಮೂರು
+  - ಹದಿನಾಲ್ಕು
+  - ಹದಿನೈದು
+  - ಹದಿನಾರು
+  - ಹದಿನೇಳು
+  - ಹದಿನೆಂಟು
+  - ಹತ್ತೊಂಬತ್ತು
+  - ಇಪ್ಪತ್ತು
+  - ಇಪ್ಪತ್ತೊಂದು
+  - ಇಪ್ಪತ್ತೆರಡು
+  - ಇಪ್ಪತ್ತಮೂರು
+  - ಇಪ್ಪತ್ತನಾಲ್ಕು
+  - ಇಪ್ಪತ್ತೈದು
+  - ಇಪ್ಪತ್ತಾರು
+  - ಇಪ್ಪತ್ತೇಳು
+  - ಇಪ್ಪತ್ತೆಂಟು
+  - ಇಪ್ಪತ್ತೊಂಬತ್ತು
+  - ಮೂವತ್ತು
+  - ಮೂವತ್ತೊಂದು
+  - ಮೂವತ್ತೆರಡು
+  - ಮೂವತ್ತಮೂರು
+  - ಮೂವತ್ತನಾಲ್ಕು
+  - ಮೂವತ್ತೈದು
+  - ಮೂವತ್ತಾರು
+  - ಮೂವತ್ತೇಳು
+  - ಮೂವತ್ತೆಂಟು
+  - ಮೂವತ್ತೊಂಬತ್ತು
+  - ನಲವತ್ತು
+  - ನಲವತ್ತೊಂದು
+  - ನಲವತ್ತೆರಡು
+  - ನಲವತ್ತಮೂರು
+  - ನಲವತ್ತನಾಲ್ಕು
+  - ನಲವತ್ತೈದು
+  - ನಲವತ್ತಾರು
+  - ನಲವತ್ತೇಳು
+  - ನಲವತ್ತೆಂಟು
+  - ನಲವತ್ತೊಂಬತ್ತು
+  - ಐವತ್ತು
+  - ಐವತ್ತೊಂದು
+  - ಐವತ್ತೆರಡು
+  - ಐವತ್ತಮೂರು
+  - ಐವತ್ತನಾಲ್ಕು
+  - ಐವತ್ತೈದು
+  - ಐವತ್ತಾರು
+  - ಐವತ್ತೇಳು
+  - ಐವತ್ತೆಂಟು
+  - ಐವತ್ತೊಂಬತ್ತು
+  - ಅರವತ್ತು
+  - ಅರವತ್ತೊಂದು
+  - ಅರವತ್ತೆರಡು
+  - ಅರವತ್ತಮೂರು
+  - ಅರವತ್ತನಾಲ್ಕು
+  - ಅರವತ್ತೈದು
+  - ಅರವತ್ತಾರು
+  - ಅರವತ್ತೇಳು
+  - ಅರವತ್ತೆಂಟು
+  - ಅರವತ್ತೊಂಬತ್ತು
+  - ಎಪ್ಪತ್ತು
+  - ಎಪ್ಪತ್ತೊಂದು
+  - ಎಪ್ಪತ್ತೆರಡು
+  - ಎಪ್ಪತ್ತಮೂರು
+  - ಎಪ್ಪತ್ತನಾಲ್ಕು
+  - ಎಪ್ಪತ್ತೈದು
+  - ಎಪ್ಪತ್ತಾರು
+  - ಎಪ್ಪತ್ತೇಳು
+  - ಎಪ್ಪತ್ತೆಂಟು
+  - ಎಪ್ಪತ್ತೊಂಬತ್ತು
+  - ಎಂಬತ್ತು
+  - ಎಂಬತ್ತೊಂದು
+  - ಎಂಬತ್ತೆರಡು
+  - ಎಂಬತ್ತಮೂರು
+  - ಎಂಬತ್ತನಾಲ್ಕು
+  - ಎಂಬತ್ತೈದು
+  - ಎಂಬತ್ತಾರು
+  - ಎಂಬತ್ತೇಳು
+  - ಎಂಬತ್ತೆಂಟು
+  - ಎಂಬತ್ತೊಂಬತ್ತು
+  - ತೊಂಬತ್ತು
+  - ತೊಂಬತ್ತೊಂದು
+  - ತೊಂಬತ್ತೆರಡು
+  - ತೊಂಬತ್ತಮೂರು
+  - ತೊಂಬತ್ತನಾಲ್ಕು
+  - ತೊಂಬತ್ತೈದು
+  - ತೊಂಬತ್ತಾರು
+  - ತೊಂಬತ್ತೇಳು
+  - ತೊಂಬತ್ತೆಂಟು
+  - ತೊಂಬತ್ತೊಂಬತ್ತು
+  hundreds:
+  - ನೂರು
+  - ಇನ್ನೂರು
+  - ಮುನ್ನೂರು
+  - ನಾನ್ನೂರು
+  - ಐನೂರು
+  - ಆರುನೂರು
+  - ಏಳುನೂರು
+  - ಎಂಟುನೂರು
+  - ಒಂಬೈನೂರು
+  thousand: ಸಾವಿರ
+  century: '{n} ನೂರ'
+  months:
+  - ಜನವರಿ
+  - ಫೆಬ್ರವರಿ
+  - ಮಾರ್ಚ್
+  - ಏಪ್ರಿಲ್
+  - ಮೇ
+  - ಜೂನ್
+  - ಜುಲೈ
+  - ಆಗಸ್ಟ್
+  - ಸೆಪ್ಟೆಂಬರ್
+  - ಅಕ್ಟೋಬರ್
+  - ನವೆಂಬರ್
+  - ಡಿಸೆಂಬರ್
+answers:
+  labels:
+  - ನಂಬರ್ ಒಂದು
+  - ನಂಬರ್ ಎರಡು
+  - ನಂಬರ್ ಮೂರು
+  - ನಂಬರ್ ನಾಲ್ಕು
+  - ನಂಬರ್ ಐದು
+  option: '{label}: {option}.'
+  instruction: ದಯವಿಟ್ಟು ನಂಬರ್ ಒಂದು, ನಂಬರ್ ಎರಡು ಹೀಗೆ ಹೇಳಿ.
+  retry: ಕ್ಷಮಿಸಿ, ನನಗೆ ಅರ್ಥವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ನಂಬರ್ ಒಂದು, ನಂಬರ್ ಎರಡು ಹೀಗೆ ಹೇಳಿ.
+  buttons: ದಯವಿಟ್ಟು ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಪರದೆಯ ಮೇಲೆ ಒತ್ತಿ.
+  numbers:
+  - - ಮೊದಲನೆಯದು
+    - ಮೊದಲು
+    - ಮೊದಲನೇದು
+    - ನಂಬರ್ ಒಂದು
+  - - ಎರಡನೆಯದು
+    - ಎರಡನೇದು
+    - ಎರಡನೇ
+    - ನಂಬರ್ ಎರಡು
+    - ಎರಡು
+  - - ಮೂರನೆಯದು
+    - ಮೂರನೇದು
+    - ಮೂರನೇ
+    - ನಂಬರ್ ಮೂರು
+    - ಮೂರು
+  - - ನಾಲ್ಕನೆಯದು
+    - ನಾಲ್ಕನೇದು
+    - ನಾಲ್ಕನೇ
+    - ನಂಬರ್ ನಾಲ್ಕು
+    - ನಾಲ್ಕು
+  - - ಐದನೆಯದು
+    - ಐದನೇದು
+    - ಐದನೇ
+    - ನಂಬರ್ ಐದು
+    - ಐದು
+  not_sure:
+  - ಗೊತ್ತಿಲ್ಲ
+  - ನನಗೆ ಗೊತ್ತಿಲ್ಲ
+  - ಖಚಿತವಿಲ್ಲ
+  - ನನಗೆ ಖಚಿತವಿಲ್ಲ
+  - ತಿಳಿದಿಲ್ಲ

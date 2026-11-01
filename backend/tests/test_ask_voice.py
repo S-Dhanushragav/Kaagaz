@@ -66,9 +66,10 @@ def test_speech_languages_come_from_configuration(monkeypatch) -> None:
     from clients.transcribe import transcribe
 
     s = get_settings()
-    assert s.asr_language_names == {"en": "English", "hi": "Hindi", "mr": "Marathi"}
-    monkeypatch.setattr(s, "asr_languages", "en:English,hi:Hindi,mr:Marathi,ta:Tamil,te:Telugu,kn:Kannada")
-    assert s.asr_language_names["ta"] == "Tamil" and len(s.asr_language_names) == 6
+    assert s.asr_language_names == {"en": "English", "hi": "Hindi", "mr": "Marathi", "ta": "Tamil", "te": "Telugu",
+                                    "kn": "Kannada"}
+    monkeypatch.setattr(s, "asr_languages", "en:English,hi:Hindi")
+    assert s.asr_language_names == {"en": "English", "hi": "Hindi"}  # a language is added or removed here only
     monkeypatch.setattr(s, "meta_transcribe_model", "m")
     monkeypatch.setattr(s, "meta_base_url", "https://example.invalid")
     with pytest.raises(TranscribeError, match="ASR_LANGUAGES"):
@@ -134,7 +135,7 @@ def test_transcribe_errors_are_friendly(api, monkeypatch) -> None:
     from app.audio import AudioError
 
     client, _ = api
-    assert _post(client, language="ta").json()["detail"]["code"] == "language"
+    assert _post(client, language="bn").json()["detail"]["code"] == "language"  # not in ASR_LANGUAGES
 
     def silent(data, max_s):
         raise AudioError("silent", "nothing was heard")

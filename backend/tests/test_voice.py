@@ -118,15 +118,15 @@ def test_office_referral_cautions_exist_in_the_knowledge_base() -> None:
 
 @pytest.mark.parametrize("language", LANGUAGES)
 def test_document_names_are_only_ever_a_label(language: str) -> None:
-    """'{documents}' is followed by ':' (a label) or is a stand-alone list in a question (after ':' or '?'):
-    it never needs an inflected form. Exception: the ask-at-the-office sentences in English (no inflection) and Hindi
-    (the four document names are masculine and keep their form before पर / का)."""
+    """'{documents}' is followed by ':' (a label), or stands alone as a list after a label ('పత్రాలు: {documents}.') or
+    in a question (after ':' or '?'): it never needs an inflected form. Exception: the ask-at-the-office sentences in
+    English (no inflection) and Hindi (the four document names are masculine and keep their form before पर / का)."""
     for name, template in _all_templates(language).items():
         if name.startswith("ask_at_office.") and language in ("en", "hi"):
             continue
         for m in re.finditer(r"\{documents\}", template):
             after, before = template[m.end():m.end() + 1], template[:m.start()].rstrip()
-            assert after == ":" or (name.startswith("questions.") and before.endswith((":", "?"))), (name, template)
+            assert after == ":" or (before.endswith(":") and after in ".:")                 or (name.startswith("questions.") and before.endswith((":", "?"))), (name, template)
 
 
 def _eval_issues() -> list[PlannerIssue]:
@@ -195,7 +195,8 @@ def test_person_labels_never_call_an_unknown_person_your_family(language: str) -
     assert member_text(unnamed.model_copy(update={"member_id": "r3"}), language) == t.card_member.format(n=3)
     assert member_text(unnamed.model_copy(update={"member_id": None}), language) == t.household  # household-level
     named = ISSUE.model_copy(update={"member_id": "x1"})
-    assert member_text(named, language) == ("Sunil Ramesh Patil" if language == "en" else "सुनील रमेश पाटील")
+    # names as on the documents: Devanagari in Hindi and Marathi, Latin letters elsewhere (schemas/languages.py)
+    assert member_text(named, language) == ("सुनील रमेश पाटील" if language in ("hi", "mr") else "Sunil Ramesh Patil")
 
 
 def test_ask_at_the_office_says_what_the_problem_is() -> None:

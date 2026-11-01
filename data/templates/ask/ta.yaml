@@ -1,0 +1,40 @@
+# MACHINE-TRANSLATED by scripts/translate.py (Muse Spark; back-translated and checked with Muse Spark Open).
+# Not reviewed by a native speaker yet. Corrections go in data/translations/fixes.yaml, then re-run.
+# Placeholders stay labels ("{member}: ..."): no case endings on them.
+language: ta
+brand: காகஸ்
+brand_wrong:
+- காகஜ்
+- காகாஸ்
+- காக்ஸ்
+- (?i)\bkaa?gh?aa?[zdj]\b
+replies:
+  out_of_scope: 'உங்கள் ஆவணங்களுக்கும், இந்த 5 மகாராஷ்டிரா திட்டங்களுக்கும் மட்டும் நான் உதவ முடியும்: லாட்கி பஹிண் (Ladki Bahin), உஜ்ஜ்வலா (Ujjwala), ரமாய் (Ramai), சஞ்சய் காந்தி (Sanjay Gandhi) மற்றும் ஷ்ராவண்பாள் (Shravanbal). யார் விண்ணப்பிக்கலாம், என்ன ஆவணங்கள் வேண்டும், உங்கள் சோதனையில் என்ன வந்தது என்று கேளுங்கள்.'
+  id_number: ஆதார் எண், வேறு அடையாள எண் எதையும் நான் சொல்லவும் மாட்டேன், கேட்கவும் மாட்டேன். உங்களுக்கு என்ன ஆவணங்கள் வேண்டும், உங்கள் சோதனையில் என்ன வந்தது என்று சொல்வேன்.
+  other_language: ஆங்கிலம், இந்தி, மராத்தி, தமிழ், தெலுங்கு அல்லது கன்னடத்தில் பதில் சொல்வேன். இந்த மொழிகளில் ஒன்றில் மீண்டும் கேளுங்கள்.
+  not_sure: 'எனக்கு உறுதியாகத் தெரியவில்லை. உங்கள் சோதனையில் வந்தது இது:'
+  not_sure_no_check: 'எனக்கு உறுதியாகத் தெரியவில்லை. திட்ட விதிகளில் உள்ளது இது:'
+  not_sure_nothing: எனக்கு உறுதியாகத் தெரியவில்லை. தயவுசெய்து அலுவலகத்தில் கேளுங்கள்.
+  unavailable: மன்னிக்கவும், இப்போது பதில் சொல்ல முடியவில்லை. ஒரு நிமிடம் கழித்து மீண்டும் முயலுங்கள்; உங்கள் சோதனைக்கு எந்த பாதிப்பும் இல்லை.
+  check_at_office: 'இதில் சில இன்னும் அதிகாரப்பூர்வமாக உறுதி செய்யப்படவில்லை: அலுவலகத்தில் சரிபாருங்கள்.'
+  limit: இந்த ஒரு மணி நேரத்தில் நிறைய கேட்டுவிட்டீர்கள். தயவுசெய்து சிறிது நேரம் கழித்து மீண்டும் முயலுங்கள்.
+lines:
+  outcome: '{member}, {scheme}: {reason}'
+  problem: '{member}: {reason}'
+  step: '{text}'
+  scheme: '{scheme}: {text}'
+chips:
+  photo: 'புகைப்படம் சேர்க்கவும்: {document}'
+  document_of: '{member}: {document}'
+  unknown: என்ன காகிதம் என்று தெரியவில்லை
+suggestions:
+  missing_document: '{member}: {document}: எங்கே வாங்குவது?'
+  unclear: '{member}: {document}: ஏன் தெளிவான புகைப்படம் வேண்டும்?'
+  unclear_unknown: எந்த ஆவணங்களுக்கு தெளிவான புகைப்படம் வேண்டும்?
+  expired: '{member}: புதிய வருமானச் சான்றிதழ் ஏன் வேண்டும்?'
+  name_mismatch: '{member}: பெயர் ஆவணங்களில் வேறு வேறு எழுத்துக்கூட்டலில் உள்ளது. என்ன செய்வது?'
+  dob_mismatch: '{member}: பிறந்த தேதி பற்றி என்ன செய்வது?'
+  not_on_ration_card: '{member}: ரேஷன் அட்டையில் பெயர் இல்லை. என்ன செய்வது?'
+  office: '{office}: அங்கு நான் என்ன எடுத்துச் செல்ல வேண்டும்?'
+  which_missing: எந்த ஆவணங்கள் இல்லை?
+  schemes: '{member}: எந்த திட்டங்களுக்கு விண்ணப்பிக்கலாம்?'

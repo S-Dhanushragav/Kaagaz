@@ -1,6 +1,9 @@
 // UI strings. Hindi and Marathi are MACHINE-DRAFTED and need review by a native speaker.
 // (Spoken sentences and plan text come from the backend's templates, not from here.)
 import type { Language } from './api'
+import { strings as kn } from './locales/kn.ts'
+import { strings as ta } from './locales/ta.ts'
+import { strings as te } from './locales/te.ts'
 
 const en = {
   appName: 'Kaagaz',
@@ -75,6 +78,8 @@ const en = {
   checksEmpty: "Your earlier checks will be kept here once you log in.",
   language: "Language",
   moreLanguagesSoon: "More Indian languages soon",
+  machineTranslated: "machine-translated",
+  machineTranslatedNote: "Translated by a computer and not yet checked by a native speaker. Some words may sound unusual.",
   welcome: "Namaste. I check your family's welfare documents against 5 schemes, find problems, and tell you what to do, in your language.",
   startPrompt: "Record your documents with the camera, add photos of them, or first try a sample family.",
   askPlaceholder: "Ask about your schemes",
@@ -266,6 +271,8 @@ const hi: Strings = {
   checksEmpty: "लॉग इन करने पर आपकी पिछली जाँचें यहाँ रहेंगी।",
   language: "भाषा",
   moreLanguagesSoon: "और भारतीय भाषाएँ जल्द",
+  machineTranslated: "मशीन से अनुवादित",
+  machineTranslatedNote: "कंप्यूटर से अनुवाद किया गया है और अभी किसी मूल भाषी ने जाँचा नहीं है। कुछ शब्द अटपटे लग सकते हैं।",
   welcome: "नमस्ते। मैं आपके परिवार के कल्याण दस्तावेज़ों को 5 योजनाओं के नियमों से जाँचता हूँ, समस्याएँ ढूँढता हूँ, और आपकी भाषा में बताता हूँ कि क्या करना है।",
   startPrompt: "कैमरे से अपने दस्तावेज़ रिकॉर्ड करें, उनकी फ़ोटो जोड़ें, या पहले नमूना परिवार आज़माएँ।",
   askPlaceholder: "अपनी योजनाओं के बारे में पूछें",
@@ -455,6 +462,8 @@ const mr: Strings = {
   checksEmpty: "लॉग इन केल्यावर तुमच्या आधीच्या तपासण्या इथे राहतील.",
   language: "भाषा",
   moreLanguagesSoon: "आणखी भारतीय भाषा लवकरच",
+  machineTranslated: "यंत्राने अनुवादित",
+  machineTranslatedNote: "संगणकाने अनुवाद केला आहे आणि अजून मूळ भाषकाने तपासलेला नाही. काही शब्द वेगळे वाटू शकतात.",
   welcome: "नमस्कार. मी तुमच्या कुटुंबाची कल्याण योजनांची कागदपत्रे 5 योजनांच्या नियमांशी तपासतो, अडचणी शोधतो, आणि तुमच्या भाषेत काय करायचे ते सांगतो.",
   startPrompt: "कॅमेऱ्याने तुमची कागदपत्रे रेकॉर्ड करा, त्यांचे फोटो जोडा, किंवा आधी नमुना कुटुंब वापरून पाहा.",
   askPlaceholder: "तुमच्या योजनांबद्दल विचारा",
@@ -571,7 +580,9 @@ const mr: Strings = {
   cameraResolution: "कॅमेरा: {w}×{h}",
 }
 
-export const STRINGS: Record<Language, Strings> = { en, hi, mr }
-export const LANGUAGES: Language[] = ['mr', 'hi', 'en']
-export const LANGUAGE_NAMES: Record<Language, string> = { mr: 'मराठी', hi: 'हिंदी', en: 'English' }
+export const STRINGS: Record<Language, Strings> = { en, hi, mr, ta, te, kn }
+export const LANGUAGES: Language[] = ['mr', 'hi', 'en', 'ta', 'te', 'kn']
+export const LANGUAGE_NAMES: Record<Language, string> = { mr: 'मराठी', hi: 'हिंदी', en: 'English', ta: 'தமிழ்', te: 'తెలుగు', kn: 'ಕನ್ನಡ' }
+// Not reviewed by a native speaker: the language menu marks them "machine-translated" (in their own script)
+export const MACHINE_TRANSLATED: ReadonlySet<Language> = new Set(['ta', 'te', 'kn'])
 export type { Strings }

@@ -19,13 +19,13 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, Uplo
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, Field
 
+from schemas.languages import Language
 from app.api.account import current_user, optional_user
 from app.config import get_settings
 from app.feedback import Feedback, record
 from app.sessions import SessionError, SessionManager
 
 router = APIRouter()
-Language = Literal["en", "hi", "mr"]
 CHUNK = 1024 * 1024
 MAX_AUDIO_BYTES = 2 * 1024 * 1024  # ~60 s of 16 kHz mono WAV; answers are a few seconds
 MAX_PHOTO_BYTES = 15 * 1024 * 1024

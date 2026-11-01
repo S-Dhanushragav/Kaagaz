@@ -12,6 +12,7 @@ from app.api.account import router as account_router
 from app.api.ask import AskService, router as ask_router
 from app.api.routes import router
 from app.auth import AuthService, auth_keys
+from schemas.languages import LANGUAGES
 from app.config import get_settings
 from app.sessions import SessionManager
 from storage import make_store
@@ -24,7 +25,7 @@ def _preload_tts() -> None:
         from clients.tts import TTSError, _load, model_id
     except ImportError:
         return
-    for language in ("mr", "hi", "en"):
+    for language in LANGUAGES:
         try:
             _load(model_id(language))
         except (TTSError, OSError) as e:

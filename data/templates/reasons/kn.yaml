@@ -1,0 +1,72 @@
+# MACHINE-TRANSLATED by scripts/translate.py (Muse Spark; back-translated and checked with Muse Spark Open).
+# Not reviewed by a native speaker yet. Corrections go in data/translations/fixes.yaml, then re-run.
+language: kn
+words:
+  F: ಒಬ್ಬ ಮಹಿಳೆ
+  M: ಒಬ್ಬ ಪುರುಷ
+  yellow: ಹಳದಿ
+  orange: ಕಿತ್ತಳೆ
+  white: ಬಿಳಿ
+  identity_card: ಆಧಾರ್ ಕಾರ್ಡ್
+  ration_card: ರೇಷನ್ ಕಾರ್ಡ್
+missing:
+  ration_card: ರೇಷನ್ ಕಾರ್ಡ್
+  income_certificate: ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ
+  caste_certificate: ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ
+  identity_card: '{name}: ಆಧಾರ್ ಕಾರ್ಡ್'
+  age_unknown: '{name}: ವಯಸ್ಸು (ಓದಲು ಆಗುತ್ತಿಲ್ಲ)'
+reasons:
+  gender.unknown: ಲಿಂಗ ಗೊತ್ತಾಗಲಿಲ್ಲ.
+  gender.pass: '{gender}: ನಿಯಮದ ಹಾಗೆ ಸರಿ ಇದೆ.'
+  gender.fail: 'ಈ ಯೋಜನೆ ಇವರಿಗೆ ಮಾತ್ರ: {needs}.'
+  age.unknown: ವಯಸ್ಸು ಗೊತ್ತಾಗಲಿಲ್ಲ.
+  age.doubtful: ಹುಟ್ಟಿದ ದಿನಾಂಕ ದಾಖಲೆಗಳಲ್ಲಿ ಬೇರೆ ಬೇರೆ ಇದೆ.
+  age_min.pass: 'ವಯಸ್ಸು: {age}. ಕನಿಷ್ಠ ವಯಸ್ಸು: {limit}. ವಯಸ್ಸು ಸರಿ ಇದೆ.'
+  age_min.fail: 'ವಯಸ್ಸು: {age}. ಕನಿಷ್ಠ ವಯಸ್ಸು: {limit}. ವಯಸ್ಸು ಕಡಿಮೆ ಇದೆ.'
+  age_max.pass: 'ವಯಸ್ಸು: {age}. ಗರಿಷ್ಠ ವಯಸ್ಸು: {limit}. ವಯಸ್ಸು ಸರಿ ಇದೆ.'
+  age_max.fail: 'ವಯಸ್ಸು: {age}. ಗರಿಷ್ಠ ವಯಸ್ಸು: {limit}. ವಯಸ್ಸು ಜಾಸ್ತಿ ಇದೆ.'
+  age_below.pass: 'ವಯಸ್ಸು: {age}. ಮಿತಿ: {limit}. ವಯಸ್ಸು ಮಿತಿಗಿಂತ ಕಡಿಮೆ ಇದೆ.'
+  age_below.fail: 'ವಯಸ್ಸು: {age}. ಮಿತಿ: {limit}. ವಯಸ್ಸು ಮಿತಿಗಿಂತ ಕಡಿಮೆ ಇಲ್ಲ.'
+  income.card: 'ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ಇಲ್ಲ. ಆದರೆ ರೇಷನ್ ಕಾರ್ಡ್: {card}. ಆದಾಯಕ್ಕೆ ಇದು ನಡೆಯುತ್ತದೆ (ನಾವು ಓದಿದ್ದು).'
+  income.missing: ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ಇಲ್ಲ.
+  income.present: ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ಇದೆ.
+  income.unreadable: ಪ್ರಮಾಣಪತ್ರದಲ್ಲಿ ಆದಾಯ ಗೊತ್ತಾಗಲಿಲ್ಲ.
+  income.doubtful: ಆದಾಯ ಪ್ರಮಾಣಪತ್ರದಲ್ಲಿ ತಪ್ಪು ಇದೆ. ಮೊದಲು ಅದನ್ನು ಸರಿ ಮಾಡಿ.
+  income_max.pass: 'ಕುಟುಂಬದ ಆದಾಯ: {income}. ಮಿತಿ: {limit}. ಆದಾಯ ಮಿತಿಯೊಳಗೆ ಇದೆ.'
+  income_max.fail: 'ಕುಟುಂಬದ ಆದಾಯ: {income}. ಮಿತಿ: {limit}. ಆದಾಯ ಮಿತಿಗಿಂತ ಜಾಸ್ತಿ ಇದೆ.'
+  income_bands.pass: 'ಕುಟುಂಬದ ಆದಾಯ: {income}. ಮಿತಿ: {limit}. ಆದಾಯ ಮಿತಿಯೊಳಗೆ ಇದೆ.'
+  income_bands.fail: 'ಕುಟುಂಬದ ಆದಾಯ: {income}. ಮಿತಿ: {limit}. ಆದಾಯ ಮಿತಿಗಿಂತ ಜಾಸ್ತಿ ಇದೆ.'
+  income_bands.check_at_office: 'ಕುಟುಂಬದ ಆದಾಯ: {income}. ಮೊತ್ತವು {low} ಮತ್ತು {high} ನಡುವೆ ಇದೆ. ಮಿತಿ ಬಗ್ಗೆ ಮಾಹಿತಿ ಬೇರೆ ಬೇರೆ ಇದೆ.'
+  caste_household.pass: '{categories}: ಈ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ ಕುಟುಂಬದ ಬಳಿ ಇದೆ.'
+  caste_household.blocked: '{categories}: ಈ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರದಲ್ಲಿ ತಪ್ಪಿದೆ. ಮೊದಲು ಇದನ್ನು ಸರಿಪಡಿಸಿ.'
+  caste_household.needs_other_proof: '{categories}: ಈ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ ಇಲ್ಲ. ಬೇರೆ ರೀತಿಯಲ್ಲಿ ಅರ್ಹತೆ ಪಡೆಯಲು ಬೇರೆ ಪುರಾವೆ ಬೇಕು.'
+  caste_applicant.check_at_office: '{categories}: ನಾವು ಓದಿದಂತೆ, ಈ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ ಬೇರೆ ಕುಟುಂಬದವರ ಬಳಿ ಮಾತ್ರ ಇದೆ.'
+  caste_applicant.none: ಅವರ ಹೆಸರಿನಲ್ಲಿ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ ಇಲ್ಲ.
+  caste_applicant.blocked: ಅವರ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರದಲ್ಲಿ ತಪ್ಪಿದೆ. ಮೊದಲು ಇದನ್ನು ಸರಿಪಡಿಸಿ.
+  caste_applicant.pass: 'ಅವರ ಸ್ವಂತ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ: {categories}.'
+  caste_applicant.fail: ಅವರ ಜಾತಿ ವರ್ಗ ({have}) {categories} ಅಲ್ಲ.
+  documents.missing: 'ಇಲ್ಲದಿರುವುದು: {items}.'
+  documents.pass: ಬೇಕಾದ ದಾಖಲೆಗಳು ಇವೆ.
+  validity.warning: 'ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ನೀಡಿದ ದಿನಾಂಕ: {issued}. ಮಿತಿ ದಿನಾಂಕ: {since}. ಇದು ಹಳೆಯದಾಗಿರಬಹುದು: ಇದನ್ನು ಹೊಸದಾಗಿ ಮಾಡಿಸಬೇಕಾಗಬಹುದು. ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ.'
+issues:
+  name_mismatch: 'ದಾಖಲೆಗಳಲ್ಲಿ ಹೆಸರು ಬೇರೆ ಬೇರೆ ಇದೆ: ಮೊದಲು ಇದನ್ನು ಸರಿಪಡಿಸಿ.'
+  dob_mismatch: 'ದಾಖಲೆಗಳಲ್ಲಿ ಹುಟ್ಟಿದ ದಿನಾಂಕ ಬೇರೆ ಬೇರೆ ಇದೆ: ಮೊದಲು ಇದನ್ನು ಸರಿಪಡಿಸಿ.'
+  not_on_ration_card: 'ರೇಷನ್ ಕಾರ್ಡ್ ನಲ್ಲಿ ಹೆಸರು ಇಲ್ಲ: ಮೊದಲು ಇದನ್ನು ಸರಿಪಡಿಸಿ.'
+  missing_document: 'ಒಂದು ದಾಖಲೆ ಇಲ್ಲ: ಮೊದಲು ಇದನ್ನು ಸರಿಪಡಿಸಿ.'
+  unreadable: 'ಒಂದು ದಾಖಲೆ ಓದಲು ಆಗಲಿಲ್ಲ: ಮೊದಲು ಸ್ಪಷ್ಟ ಫೋಟೋ ತೆಗೆಯಿರಿ.'
+  expired: ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ಹಳೆಯದಾಗಿರಬಹುದು.
+confirm: 'ದಯವಿಟ್ಟು ಹೋಲಿಸಿ ನೋಡಿ: ದಾಖಲೆಗಳಲ್ಲಿ ಹೆಸರು ಬೇರೆ ಬೇರೆ ಇರಬಹುದು.'
+catalog:
+  gender.F: ಮಹಿಳೆಯರಿಗೆ.
+  gender.M: ಪುರುಷರಿಗೆ.
+  age_min: 'ವಯಸ್ಸು: {limit} ಅಥವಾ ಹೆಚ್ಚು.'
+  age_max: 'ವಯಸ್ಸು: {limit} ಅಥವಾ ಕಡಿಮೆ.'
+  age_below: 'ವಯಸ್ಸು: {limit} ವರ್ಷಕ್ಕಿಂತ ಕಡಿಮೆ.'
+  income_max: 'ಕುಟುಂಬದ ಆದಾಯ: {limit} ವರೆಗೆ.'
+  income_bands: 'ಕುಟುಂಬದ ಆದಾಯ: {low} ವರೆಗೆ; {low} ಮತ್ತು {high} ನಡುವೆ ಮಾಹಿತಿ ಬೇರೆ ಬೇರೆ ಇದೆ.'
+  caste_household: 'ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ: {categories}. ಕುಟುಂಬದಲ್ಲಿ ಯಾರ ಬಳಿಯಾದರೂ ಇರಬೇಕು; ಇಲ್ಲದಿದ್ದರೆ ಬೇರೆ ಪುರಾವೆ ಬೇಕು.'
+  caste_applicant: 'ಅರ್ಜಿದಾರರ ಸ್ವಂತ ಜಾತಿ ಪ್ರಮಾಣಪತ್ರ: {categories}.'
+  documents: 'ದಾಖಲೆಗಳು: {items}.'
+  income_certificate_unless_card: 'ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ, ಅಥವಾ ರೇಷನ್ ಕಾರ್ಡ್: {cards}.'
+  every_adult_identity_card: ರೇಷನ್ ಕಾರ್ಡ್‌ನಲ್ಲಿರುವ ಪ್ರತಿ ವಯಸ್ಕರ ಆಧಾರ್ ಕಾರ್ಡ್
+  or: ಅಥವಾ

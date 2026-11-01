@@ -1,0 +1,72 @@
+# MACHINE-TRANSLATED by scripts/translate.py (Muse Spark; back-translated and checked with Muse Spark Open).
+# Not reviewed by a native speaker yet. Corrections go in data/translations/fixes.yaml, then re-run.
+language: te
+words:
+  F: ఒక మహిళ
+  M: ఒక పురుషుడు
+  yellow: పసుపు
+  orange: నారింజ
+  white: తెలుపు
+  identity_card: ఆధార్ కార్డు
+  ration_card: రేషన్ కార్డు
+missing:
+  ration_card: రేషన్ కార్డు
+  income_certificate: ఆదాయ ధృవీకరణ పత్రం
+  caste_certificate: కుల ధృవీకరణ పత్రం
+  identity_card: '{name}: ఆధార్ కార్డు'
+  age_unknown: '{name}: వయస్సు (సరిగా కనిపించలేదు)'
+reasons:
+  gender.unknown: లింగం తెలియలేదు.
+  gender.pass: 'లింగం: {gender}. నిబంధన ప్రకారం సరిపోయింది.'
+  gender.fail: 'ఈ పథకం వీరి కోసం మాత్రమే: {needs}.'
+  age.unknown: వయసు తెలియలేదు.
+  age.doubtful: పత్రాలలో పుట్టిన తేదీ ఒకేలా లేదు.
+  age_min.pass: 'వయసు: {age}. కనీస వయసు: {limit}. ఇది సరిపోయింది.'
+  age_min.fail: 'వయసు: {age}. కనీస వయసు: {limit}. వయసు తక్కువగా ఉంది.'
+  age_max.pass: 'వయసు: {age}. గరిష్ఠ వయసు: {limit}. ఇది సరిపోయింది.'
+  age_max.fail: 'వయసు: {age}. గరిష్ఠ వయసు: {limit}. వయసు ఎక్కువగా ఉంది.'
+  age_below.pass: 'వయసు: {age}. పరిమితి: {limit}. వయసు తక్కువ ఉంది. సరిపోయింది.'
+  age_below.fail: 'వయసు: {age}. పరిమితి: {limit}. వయసు తక్కువ లేదు.'
+  income.card: 'ఆదాయ ధృవీకరణ పత్రం లేదు. కానీ రేషన్ కార్డు: {card}. ఆదాయం కోసం ఇది చెల్లుతుంది (మా పరిశీలన ప్రకారం).'
+  income.missing: ఆదాయ ధృవీకరణ పత్రం లేదు.
+  income.present: ఆదాయ ధృవీకరణ పత్రం ఉంది.
+  income.unreadable: పత్రంలో ఆదాయం తెలియలేదు.
+  income.doubtful: ఆదాయ ధృవీకరణ పత్రంలో ముందు సరిచేయాల్సిన సమస్య ఉంది.
+  income_max.pass: 'కుటుంబ ఆదాయం: {income}. పరిమితి: {limit}. ఇది సరిపోయింది.'
+  income_max.fail: 'కుటుంబ ఆదాయం: {income}. పరిమితి: {limit}. ఆదాయం ఎక్కువగా ఉంది.'
+  income_bands.pass: 'కుటుంబ ఆదాయం: {income}. పరిమితి: {limit}. ఇది సరిపోయింది.'
+  income_bands.fail: 'కుటుంబ ఆదాయం: {income}. పరిమితి: {limit}. ఆదాయం ఎక్కువగా ఉంది.'
+  income_bands.check_at_office: 'కుటుంబ ఆదాయం: {income}. ఇది ఈ మొత్తాల మధ్యలో ఉంది: {low} మరియు {high}. పరిమితి విషయంలో భిన్న సమాచారం ఉంది.'
+  caste_household.pass: 'కుటుంబం దగ్గర కుల ధృవీకరణ పత్రం ఉంది. వివరం: {categories}.'
+  caste_household.blocked: 'కుల ధృవీకరణ పత్రంలో సమస్య ఉంది. ముందు దాన్ని సరిచేయండి. వివరం: {categories}.'
+  caste_household.needs_other_proof: 'కుల ధృవీకరణ పత్రం లేదు. వివరం: {categories}. అర్హతకు వేరే రుజువు కావాలి.'
+  caste_applicant.check_at_office: 'మా పరిశీలన ప్రకారం కుల ధృవీకరణ పత్రం కుటుంబంలో వేరే వారి దగ్గర మాత్రమే ఉంది. వివరం: {categories}.'
+  caste_applicant.none: వారి పేరు మీద కుల ధృవీకరణ పత్రం లేదు.
+  caste_applicant.blocked: వారి కుల ధృవీకరణ పత్రంలో సమస్య ఉంది. ముందు దాన్ని సరిచేయండి.
+  caste_applicant.pass: 'వారి సొంత కుల ధృవీకరణ పత్రం: {categories}.'
+  caste_applicant.fail: 'వారి కుల వర్గం: {have}. కావాల్సిన వర్గం: {categories}.'
+  documents.missing: 'లేనివి: {items}.'
+  documents.pass: కావాల్సిన పత్రాలన్నీ ఉన్నాయి.
+  validity.warning: 'ఆదాయ ధృవీకరణ పత్రం జారీ తేదీ: {issued}. ఇది ఈ తేదీ కంటే ముందు ఉంది: {since}. దీన్ని కొత్తది చేయాల్సి రావచ్చు. కార్యాలయంలో అడగండి.'
+issues:
+  name_mismatch: పత్రాల్లో పేరు వేరువేరుగా ఉంది. ముందు దీన్ని సరిచేయండి.
+  dob_mismatch: పత్రాల్లో పుట్టిన తేదీ వేరువేరుగా ఉంది. ముందు దీన్ని సరిచేయండి.
+  not_on_ration_card: రేషన్ కార్డులో పేరు లేదు. ముందు దీన్ని సరిచేయండి.
+  missing_document: ఒక పత్రం లేదు. ముందు దీన్ని సరిచేయండి.
+  unreadable: ఒక పత్రం సరిగా కనిపించలేదు. ముందు స్పష్టమైన ఫోటో తీయండి.
+  expired: ఆదాయ ధృవీకరణ పత్రం చాలా పాతది కావచ్చు.
+confirm: దయచేసి పోల్చి చూడండి. పత్రాల్లో పేరు వేరువేరుగా ఉండవచ్చు.
+catalog:
+  gender.F: మహిళల కోసం.
+  gender.M: పురుషుల కోసం.
+  age_min: వయసు {limit} లేదా అంతకంటే ఎక్కువ.
+  age_max: వయసు {limit} లేదా అంతకంటే తక్కువ.
+  age_below: '{limit} ఏళ్ల కంటే తక్కువ వయసు.'
+  income_max: కుటుంబ ఆదాయం {limit} వరకు.
+  income_bands: కుటుంబ ఆదాయం {low} వరకు; {low} నుండి {high} వరకు సమాచారం వేరుగా ఉంది.
+  caste_household: కుటుంబంలో ఒకరి దగ్గర {categories} కుల ధృవీకరణ పత్రం ఉండాలి; లేకపోతే వేరే రుజువు కావాలి.
+  caste_applicant: దరఖాస్తు చేసే వ్యక్తి పేరుతో {categories} కుల ధృవీకరణ పత్రం.
+  documents: 'పత్రాలు: {items}.'
+  income_certificate_unless_card: ఆదాయ ధృవీకరణ పత్రం, లేదా {cards} రేషన్ కార్డు.
+  every_adult_identity_card: రేషన్ కార్డులో ఉన్న ప్రతి పెద్దవారి ఆధార్ కార్డు
+  or: లేదా

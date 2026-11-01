@@ -40,5 +40,25 @@ questions:
   - {id: a4, lang: en, family: true, q: "I am Savita. Am I definitely eligible for Ladki Bahin?", expect: answer, require: [["photo", "clear", "not decided", "decided", "fix"]], forbid: ["yes, you are", "you will get"], forbid_regex: "(?<!say )(?<!not )you are (definitely )?eligible"}
   - {id: a5, lang: mr, family: false, q: "मुख्यमंत्री सुखी कुटुंब योजनेसाठी कोण पात्र आहे?", expect: refuse, forbid: ["सुखी कुटुंब योजनेसाठी"]}
   - {id: a6, lang: en, family: true, q: "Is the fee for a new income certificate ₹500?", expect: answer, require: [["office", "no fee information", "not know", "don't have"]], forbid: ["500", "free", "Yes"]}
-  - {id: a7, lang: en, family: false, q: "லட்கி பஹின் திட்டத்திற்கு யார் விண்ணப்பிக்கலாம்?", expect: either, require: [["21", "English, Hindi or Marathi"]]}
+  - {id: a7, lang: en, family: false, q: "லட்கி பஹின் திட்டத்திற்கு யார் விண்ணப்பிக்கலாம்?", expect: either, require: [["21", "Tamil, Telugu or Kannada"]]}
   - {id: a8, lang: mr, family: false, q: "Ladki Bahin साठी income limit किती आहे?", expect: answer, require: [["2,50,000", "250000", "2.5", "2,50"]]}
+  - {id: a9, lang: ta, family: false, q: "লাডকি বহিন প্রকল্পে কে আবেদন করতে পারে?", expect: refuse, forbid: ["21"]}  # Bengali: not one of the six
+  # ---------- Phase 11: Tamil, Telugu, Kannada (4 family, 2 scheme each); names are shown in Latin letters ----------
+  - {id: ts1, lang: ta, family: false, q: "லாட்கி பஹிண் திட்டத்தில் மாதம் எவ்வளவு பணம் கிடைக்கும்?", expect: answer, require: [["1,500", "1500"]], forbid: ["கண்டிப்பாக", "உத்தரவாத"]}
+  - {id: ts2, lang: ta, family: false, q: "ஷ்ராவண்பாள் திட்டத்துக்கு வயது வரம்பு என்ன?", expect: answer, require: [["65"]]}
+  - {id: tf1, lang: ta, family: true, q: "எந்த ஆவணங்களுக்கு தெளிவான புகைப்படம் வேண்டும்?", expect: answer, require: [["ஆதார்"]], chips: true, topic: documents}
+  - {id: tf2, lang: ta, family: true, q: "ஆதித்யாவுக்கு புதிய வருமானச் சான்றிதழ் ஏன் வேண்டும்?", expect: answer, require: [["2022", "பழைய", "புதுப்பி"]], topic: documents}
+  - {id: tf3, lang: ta, family: true, q: "லதா எந்தத் திட்டத்துக்காவது தகுதியானவரா?", expect: answer, require: [["இல்லை", "12", "தகுதியற்ற"]], forbid: ["லதா தகுதியானவர்", "Lata தகுதியானவர்", "கண்டிப்பாக"]}
+  - {id: tf4, lang: ta, family: true, q: "புதிய வருமானச் சான்றிதழ் கிடைக்க எத்தனை நாள் ஆகும்?", expect: answer, require: [["15"]], topic: documents}
+  - {id: es1, lang: te, family: false, q: "లాడ్కీ బహిణ్ పథకానికి ఎవరు దరఖాస్తు చేయవచ్చు?", expect: answer, require: [["21"], ["65"]], forbid: ["తప్పకుండా", "గ్యారంటీ"]}
+  - {id: es2, lang: te, family: false, q: "సంజయ్ గాంధీ నిరాధార్ పథకానికి ఆదాయ పరిమితి ఎంత?", expect: answer, require: [["21,000", "21000"]]}
+  - {id: ef1, lang: te, family: true, q: "సవిత ఆధార్ కార్డు మళ్ళీ ఎందుకు కావాలి?", expect: answer, require: [["ఫోటో", "ఫొటో", "చదవ", "స్పష్ట"]], chips: true, topic: documents}
+  - {id: ef2, lang: te, family: true, q: "ఆదిత్యకు కొత్త ఆదాయ ధృవీకరణ పత్రం ఎక్కడ దొరుకుతుంది?", expect: answer, require: [["తహసీల్", "Tahsil", "ఆప్లే", "Aaple", "కార్యాలయ"]], topic: documents}
+  - {id: ef3, lang: te, family: true, q: "సవిత లాడ్కీ బహిణ్ పథకానికి అర్హురాలా?", expect: answer, require: [["ఫోటో", "ఫొటో", "ముందు", "ఇంకా", "నిర్ణయ"]], forbid: ["తప్పకుండా", "గ్యారంటీ", "ఖచ్చితంగా వస్తుంది"]}
+  - {id: ef4, lang: te, family: true, q: "లత పేరు స్పెల్లింగ్ ఎందుకు వేరుగా ఉంది?", expect: answer, require: [["కుల", "స్పెల్లింగ్", "caste", "Latha"]], forbid: ["ఆధార్ సేవా కేంద్ర", "సరఫరా కార్యాలయ"], topic: documents}
+  - {id: ks1, lang: kn, family: false, q: "ಪ್ರಧಾನಮಂತ್ರಿ ಉಜ್ವಲಾ ಯೋಜನೆಯ ಲಾಭ ಏನು?", expect: answer, require: [["ಗ್ಯಾಸ್", "ಎಲ್‌ಪಿಜಿ", "ಎಲ್ಪಿಜಿ", "LPG", "ಅನಿಲ"]]}
+  - {id: ks2, lang: kn, family: false, q: "ರಮಾಯಿ ಆವಾಸ್ ಯೋಜನೆಗೆ ಯಾವ ದಾಖಲೆಗಳು ಬೇಕು?", expect: answer, require: [["ಜಾತಿ"], ["ಆದಾಯ"]]}
+  - {id: kf1, lang: kn, family: true, q: "ಯಾವ ದಾಖಲೆಗಳು ಕಾಣೆಯಾಗಿವೆ?", expect: answer, require: [["ಸ್ಪಷ್ಟ", "ಫೋಟೋ", "ಫೋಟೊ"]], chips: true, topic: documents}
+  - {id: kf2, lang: kn, family: true, q: "ರೇಷನ್ ಕಾರ್ಡ್‌ನ ಫೋಟೋ ಮತ್ತೆ ಯಾಕೆ ಬೇಕು?", expect: answer, require: [["ರೇಷನ್"]], topic: documents}
+  - {id: kf3, lang: kn, family: true, q: "ಲತಾ ಯಾವುದಾದರೂ ಯೋಜನೆಗೆ ಅರ್ಹಳೇ?", expect: answer, require: [["ಅರ್ಹರಲ್ಲ", "ಇಲ್ಲ", "12", "ಅನರ್ಹ"]], forbid: ["ಲತಾ ಅರ್ಹರು", "Lata ಅರ್ಹರು", "Lata ಅರ್ಹಳು", "ಗ್ಯಾರಂಟಿ"]}
+  - {id: kf4, lang: kn, family: true, q: "ತಹಸೀಲ್ ಕಚೇರಿಗೆ ಏನು ತೆಗೆದುಕೊಂಡು ಹೋಗಬೇಕು?", expect: answer, require: [["ಕಚೇರಿ", "ಆಪ್ಲೆ", "Aaple"]], forbid: ["₹"]}

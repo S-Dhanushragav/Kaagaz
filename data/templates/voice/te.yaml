@@ -1,0 +1,224 @@
+# MACHINE-TRANSLATED by scripts/translate.py (Muse Spark; back-translated and checked with Muse Spark Open).
+# Not reviewed by a native speaker yet. Corrections go in data/translations/fixes.yaml, then re-run.
+# Placeholders: {office} {bring} {fee} {time_limit} {caution} {member} {documents}. numbers/answers: spoken words (Muse Spark).
+language: te
+documents:
+  ration_card: రేషన్ కార్డు
+  identity_card: ఆధార్ కార్డు
+  income_certificate: ఆదాయ ధృవీకరణ పత్రం
+  caste_certificate: కుల ధృవీకరణ పత్రం
+unverified: దీన్ని దయచేసి కార్యాలయంలో అడిగి తెలుసుకోండి.
+household: మీ కుటుంబం
+not_on_card: రేషన్ కార్డులో పేరు లేని వ్యక్తి
+card_member: రేషన్ కార్డులో సభ్యుడు నంబర్ {n}
+options:
+  same: ఒకటే
+  different: వేరు
+  not sure: తెలియదు
+law_sets: 'చట్టం ప్రకారం ఈ కార్యాలయానికి గడువు: {time_limit}.'
+procedures:
+  aadhaar_name_correction: '{member}: ఆధార్ కార్డు లో పేరు సరిచేయించడానికి వెళ్లండి. కార్యాలయం: {office}. ఫీజు: {fee}. {caution}'
+  aadhaar_dob_correction: '{member}: ఆధార్ కార్డు లో పుట్టిన తేదీ సరిచేయించడానికి వెళ్లండి. కార్యాలయం: {office}. వెంట తీసుకెళ్లండి: {bring}. {caution}'
+  ration_card_name_correction: '{member}: రేషన్ కార్డు లో పేరు సరిచేయించడానికి వెళ్లండి. కార్యాలయం: {office}. వెంట తీసుకెళ్లండి: {bring}. ఫీజు: {fee}.'
+  ration_card_add_member: '{member}: ఈ వ్యక్తి పేరు రేషన్ కార్డు లో చేర్చమని అడగండి. కార్యాలయం: {office}. వెంట తీసుకెళ్లండి: {bring}. {caution}'
+  income_certificate_new: 'కొత్త ఆదాయ ధృవీకరణ పత్రం కోసం దరఖాస్తు చేయండి. ఆప్లే సర్కార్ పోర్టల్ లో లేదా ఆప్లే సర్కార్ సేవా కేంద్రం లో చేయండి. ఇచ్చే కార్యాలయం: {office}. చట్టం ప్రకారం ఈ కార్యాలయానికి గడువు: {time_limit}.'
+  caste_certificate_new: '{member}: కుల ధృవీకరణ పత్రం కోసం దరఖాస్తు చేయండి. కార్యాలయం: {office}. ఈ పని ముందుగా మొదలుపెట్టండి. దీనికి ఎక్కువ సమయం పడుతుంది. {caution}'
+  aadhaar_enrolment: '{member}: కొత్త ఆధార్ కార్డు కోసం వెళ్లండి. కార్యాలయం: {office}.'
+  self_declaration: '{member}: పత్రాలు: {documents}. ఈ పేర్లన్నీ ఒకే వ్యక్తివే అని రాసి ఇవ్వవచ్చు. {caution}'
+ask_at_office:
+  name_mismatch: '{member}: పత్రాలు: {documents}. వీటిలో పేరు స్పెల్లింగ్ వారి మిగతా పత్రాల కంటే వేరుగా ఉంది. ఏమి చేయాలో కార్యాలయంలో అడగండి.'
+  dob_mismatch: '{member}: పత్రాలు: {documents}. వీటిలో పుట్టిన తేదీ వేరుగా ఉంది. మిగతా పత్రాలలో వేరుగా ఉంది. కార్యాలయం లో ఏమి చేయాలో అడగండి.'
+  not_on_ration_card: '{member}: పత్రాలు: {documents}. వీటిలో ఈ వ్యక్తి పేరు లేదు. కార్యాలయం లో ఏమి చేయాలో అడగండి.'
+  missing_document: '{member}: పత్రాలు: {documents}. ఇవి కనిపించలేదు. కార్యాలయం లో ఏమి చేయాలో అడగండి.'
+  expired: '{member}: పత్రాలు: {documents}. ఇవి చాలా పాతవి కావచ్చు. కార్యాలయం లో ఏమి చేయాలో అడగండి.'
+  default: '{member}: పత్రాలు: {documents}. దీని గురించి కార్యాలయం లో ఏమి చేయాలో అడగండి.'
+questions:
+  which_is_correct: '{member}: పత్రాలు: {documents}. వీటిలో ఏది సరైనది?'
+  compare: '{member}: పత్రాలు: {documents}. దయచేసి వీటిని పోల్చి చూడండి. అవి ఒకటేనా లేక వేరేనా?'
+values:
+  Aadhaar Seva Kendra (nearest): ఆధార్ సేవా కేంద్రం (దగ్గరిది)
+  Aadhaar Seva Kendra: ఆధార్ సేవా కేంద్రం
+  Ration card / Tahsil supply office: రేషన్ కార్డు / తహసీల్ సరఫరా కార్యాలయం
+  Supply office, or the Ration Card Management System online: సరఫరా కార్యాలయం, లేదా ఆన్‌లైన్‌లో రేషన్ కార్డు మేనేజ్‌మెంట్ సిస్టమ్
+  Tahsil office: తహసీల్ కార్యాలయం
+  Sub-Divisional Officer / Deputy Collector: సబ్-డివిజనల్ అధికారి / డిప్యూటీ కలెక్టర్
+  Proof of date of birth (e.g. birth certificate): పుట్టిన తేదీకి రుజువు (ఉదాహరణకు బర్త్ సర్టిఫికెట్)
+  Gazette notice of the name change, or birth certificate (whichever applies): పేరు మారిన గెజిట్ నోటీసు, లేదా బర్త్ సర్టిఫికెట్ (మీకు ఏది వర్తిస్తే అది).
+  Proof for the person being added (e.g. birth certificate for a newborn, marriage certificate for a spouse): పేరు చేరుస్తున్న వ్యక్తి రుజువు (ఉదాహరణకు పుట్టిన బిడ్డకు బర్త్ సర్టిఫికెట్, భార్య లేదా భర్తకు పెళ్లి సర్టిఫికెట్).
+  about Rs 75: సుమారు ₹75
+  Rs 2: ₹2
+  15 days (Maharashtra Right to Public Services Act): 15 రోజులు
+  The name on Aadhaar can be updated only twice in a lifetime.: ఆధార్‌లో పేరును జీవితంలో రెండు సార్లు మాత్రమే మార్చుకోవచ్చు.
+  ? The date of birth on Aadhaar can be updated only once in a lifetime. If the limit is used, a grievance and a visit to the UIDAI regional office with strong documents is needed.
+  : ఆధార్‌లో పుట్టిన తేదీని జీవితంలో ఒక్కసారి మాత్రమే మార్చుకోవచ్చు. పరిమితి అయిపోతే, ఫిర్యాదు చేయాలి మరియు బలమైన పత్రాలతో UIDAI ప్రాంతీయ కార్యాలయానికి వెళ్లాలి.
+  Confirm at the office which documents are needed.: ఏ పత్రాలు కావాలో కార్యాలయంలో అడిగి తెలుసుకోండి.
+  The time limit is set by the district under the Right to Public Services Act.: గడువును జిల్లా, ప్రజా సేవల హక్కు చట్టం కింద నిర్ణయిస్తుంది.
+  Acceptance of the declaration is up to the office.: మీ డిక్లరేషన్‌ను ఒప్పుకోవాలా వద్దా అనేది కార్యాలయం నిర్ణయిస్తుంది.
+numbers:
+  words:
+  - సున్నా
+  - ఒకటి
+  - రెండు
+  - మూడు
+  - నాలుగు
+  - ఐదు
+  - ఆరు
+  - ఏడు
+  - ఎనిమిది
+  - తొమ్మిది
+  - పది
+  - పదకొండు
+  - పన్నెండు
+  - పదమూడు
+  - పద్నాలుగు
+  - పదిహేను
+  - పదహారు
+  - పదిహేడు
+  - పద్దెనిమిది
+  - పందొమ్మిది
+  - ఇరవై
+  - ఇరవై ఒకటి
+  - ఇరవై రెండు
+  - ఇరవై మూడు
+  - ఇరవై నాలుగు
+  - ఇరవై ఐదు
+  - ఇరవై ఆరు
+  - ఇరవై ఏడు
+  - ఇరవై ఎనిమిది
+  - ఇరవై తొమ్మిది
+  - ముప్పై
+  - ముప్పై ఒకటి
+  - ముప్పై రెండు
+  - ముప్పై మూడు
+  - ముప్పై నాలుగు
+  - ముప్పై ఐదు
+  - ముప్పై ఆరు
+  - ముప్పై ఏడు
+  - ముప్పై ఎనిమిది
+  - ముప్పై తొమ్మిది
+  - నలభై
+  - నలభై ఒకటి
+  - నలభై రెండు
+  - నలభై మూడు
+  - నలభై నాలుగు
+  - నలభై ఐదు
+  - నలభై ఆరు
+  - నలభై ఏడు
+  - నలభై ఎనిమిది
+  - నలభై తొమ్మిది
+  - యాభై
+  - యాభై ఒకటి
+  - యాభై రెండు
+  - యాభై మూడు
+  - యాభై నాలుగు
+  - యాభై ఐదు
+  - యాభై ఆరు
+  - యాభై ఏడు
+  - యాభై ఎనిమిది
+  - యాభై తొమ్మిది
+  - అరవై
+  - అరవై ఒకటి
+  - అరవై రెండు
+  - అరవై మూడు
+  - అరవై నాలుగు
+  - అరవై ఐదు
+  - అరవై ఆరు
+  - అరవై ఏడు
+  - అరవై ఎనిమిది
+  - అరవై తొమ్మిది
+  - డెబ్బై
+  - డెబ్బై ఒకటి
+  - డెబ్బై రెండు
+  - డెబ్బై మూడు
+  - డెబ్బై నాలుగు
+  - డెబ్బై ఐదు
+  - డెబ్బై ఆరు
+  - డెబ్బై ఏడు
+  - డెబ్బై ఎనిమిది
+  - డెబ్బై తొమ్మిది
+  - ఎనభై
+  - ఎనభై ఒకటి
+  - ఎనభై రెండు
+  - ఎనభై మూడు
+  - ఎనభై నాలుగు
+  - ఎనభై ఐదు
+  - ఎనభై ఆరు
+  - ఎనభై ఏడు
+  - ఎనభై ఎనిమిది
+  - ఎనభై తొమ్మిది
+  - తొంభై
+  - తొంభై ఒకటి
+  - తొంభై రెండు
+  - తొంభై మూడు
+  - తొంభై నాలుగు
+  - తొంభై ఐదు
+  - తొంభై ఆరు
+  - తొంభై ఏడు
+  - తొంభై ఎనిమిది
+  - తొంభై తొమ్మిది
+  hundreds:
+  - వంద
+  - రెండు వందలు
+  - మూడు వందలు
+  - నాలుగు వందలు
+  - ఐదు వందలు
+  - ఆరు వందలు
+  - ఏడు వందలు
+  - ఎనిమిది వందలు
+  - తొమ్మిది వందలు
+  thousand: వేలు
+  century: '{n} వందల'
+  months:
+  - జనవరి
+  - ఫిబ్రవరి
+  - మార్చి
+  - ఏప్రిల్
+  - మే
+  - జూన్
+  - జూలై
+  - ఆగస్టు
+  - సెప్టెంబర్
+  - అక్టోబర్
+  - నవంబర్
+  - డిసెంబర్
+answers:
+  labels:
+  - నంబర్ ఒకటి
+  - నంబర్ రెండు
+  - నంబర్ మూడు
+  - నంబర్ నాలుగు
+  - నంబర్ ఐదు
+  option: '{label}: {option}।'
+  instruction: దయచేసి నంబర్ ఒకటి, నంబర్ రెండు అని చెప్పండి।
+  retry: క్షమించండి, నాకు అర్థం కాలేదు। దయచేసి నంబర్ ఒకటి, నంబర్ రెండు అని చెప్పండి।
+  buttons: దయచేసి మీ సమాధానాన్ని స్క్రీన్ మీద నొక్కండి।
+  numbers:
+  - - మొదటి
+    - మొదటిది
+    - నంబర్ ఒకటి
+    - ఒకటి
+  - - రెండవ
+    - రెండో
+    - రెండవది
+    - నంబర్ రెండు
+    - రెండు
+  - - మూడవ
+    - మూడో
+    - మూడవది
+    - నంబర్ మూడు
+    - మూడు
+  - - నాలుగవ
+    - నాలుగో
+    - నాలుగవది
+    - నంబర్ నాలుగు
+    - నాలుగు
+  - - ఐదవ
+    - ఐదో
+    - ఐదవది
+    - నంబర్ ఐదు
+    - ఐదు
+  not_sure:
+  - నాకు తెలియదు
+  - నాకు ఖచ్చితంగా తెలియదు
+  - నాకు గుర్తు లేదు
+  - చెప్పలేను

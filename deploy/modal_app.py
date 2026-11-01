@@ -19,7 +19,6 @@ import modal
 
 ROOT = Path(__file__).resolve().parents[1]
 REMOTE = "/root/kaagaz"
-TTS_MODELS = ("facebook/mms-tts-mar", "facebook/mms-tts-hin", "facebook/mms-tts-eng")
 KEEP_WARM = int(os.environ.get("KAAGAZ_KEEP_WARM", "0"))
 FRONTEND_ORIGIN = os.environ.get("KAAGAZ_FRONTEND_ORIGIN", "")
 
@@ -49,12 +48,13 @@ def _dependencies() -> list[str]:
 # local files are read only on the machine that deploys.
 SETTINGS = _settings() if modal.is_local() else {}
 DEPENDENCIES = _dependencies() if modal.is_local() else []
+TTS_MODELS = sorted(v for k, v in SETTINGS.items() if k.startswith("TTS_MODEL_"))  # one MMS-TTS model per language
 
 
-def _download_tts_models() -> None:
+def _download_tts_models(models: list[str]) -> None:
     from transformers import AutoTokenizer, VitsModel
 
-    for model in TTS_MODELS:
+    for model in models:
         VitsModel.from_pretrained(model)
         AutoTokenizer.from_pretrained(model)
 
@@ -65,7 +65,7 @@ image = (
     .pip_install("torch", index_url="https://download.pytorch.org/whl/cpu")
     .pip_install(*DEPENDENCIES)
     .env(SETTINGS)
-    .run_function(_download_tts_models)
+    .run_function(_download_tts_models, kwargs={"models": TTS_MODELS})
     .add_local_dir(ROOT / "backend", f"{REMOTE}/backend",
                    ignore=[".venv", "**/__pycache__", ".pytest_cache", "*.egg-info", "tests"])
     .add_local_dir(ROOT / "data", f"{REMOTE}/data")

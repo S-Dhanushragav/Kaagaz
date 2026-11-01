@@ -8,7 +8,8 @@ finder's result with image bytes) stay out of the state, in graph/runtime.py.
 import operator
 from typing import Annotated, Any, Literal, TypedDict
 
-Language = Literal["en", "hi", "mr"]
+from schemas.languages import Language
+
 STAGES = ("find_documents", "read_documents", "build_household", "check_rules", "plan_fixes", "speak")
 
 

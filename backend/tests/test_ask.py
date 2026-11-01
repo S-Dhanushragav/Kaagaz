@@ -383,3 +383,27 @@ def test_answer_speech_is_made_ahead_of_listen(tmp_path: Path) -> None:
     assert service.speech(answer_id) == tmp_path / "1.wav"
     assert made == [("उत्तर", "mr")]
     assert AskService(speaker=speaker, ready=lambda: False).speech("x") is None  # not ready: made on Listen
+
+
+def test_a_question_in_another_script_gets_the_fixed_reply_without_a_model_call() -> None:
+    """Bengali or Gujarati (not one of the six languages): refused by code, even if the model would have answered."""
+    from agents.ask import ask
+    from agents.ask_tools import load_ask
+
+    def no_model(*a, **k):
+        raise AssertionError("the model must not be called")
+
+    for q in ("লাডকি বহিন প্রকল্পে কে আবেদন করতে পারে?", "લાડકી બહેન માટે કોણ અરજી કરી શકે?"):
+        answer = ask(q, "ta", llm=no_model)
+        assert answer.kind == "other_language" and answer.text == load_ask("ta").replies["other_language"]
+
+
+def test_a_tamil_question_is_answered_even_if_the_model_calls_it_another_language() -> None:
+    """Questions in Devanagari, Tamil, Telugu or Kannada are always one of the six languages: 'other_language' is sent
+    back, and the answer that follows is shown (a Latin-script question keeps the model's call: it may be Spanish)."""
+    answer = "லாட்கி பஹிண் திட்டம் பெண்களுக்கானது."
+    llm = FakeLLM(_reply("", kind="other_language"), _reply(answer))
+    a = ask("லாட்கி பஹிண் திட்டம் யாருக்கு?", "ta", llm=llm)
+    assert a.kind == "answer" and a.text == answer and a.attempts == 2
+    llm = FakeLLM(_reply("", kind="other_language"))
+    assert ask("¿Quién puede solicitar Ladki Bahin?", "en", llm=llm).kind == "other_language"

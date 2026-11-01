@@ -1,9 +1,10 @@
 // Names for people and documents, shared by the chat, the result cards and the household panel.
 import type { Language, Member, SchemeResult, SessionView } from './api'
+import { devanagariNames } from './languages.ts'
 import type { Strings } from './i18n'
 
 export function memberName(m: Member, language: Language, t: Strings): string {
-  const name = language === 'en' ? m.name_en ?? m.name_mr : m.name_mr ?? m.name_en
+  const name = devanagariNames(language) ? m.name_mr ?? m.name_en : m.name_en ?? m.name_mr
   if (name) return name
   return m.on_ration_card ? t.cardMember.replace('{n}', m.member_id.replace(/^r/, '')) : t.personNotOnCard
 }
@@ -23,7 +24,7 @@ export function docOwner(view: SessionView, docId: string, language: Language, t
   const f = (ex?.fields ?? {}) as Record<string, unknown>
   const en = (f.name_en as string | undefined) ?? live?.name_en ?? undefined
   const mr = (f.name_mr as string | undefined) ?? live?.name_mr ?? undefined
-  return (language === 'en' ? en ?? mr : mr ?? en) ?? null
+  return (devanagariNames(language) ? mr ?? en : en ?? mr) ?? null
 }
 
 // 'Aadhaar card: Savita Aditya Bhosale' from the member it belongs to or the name read on it; else

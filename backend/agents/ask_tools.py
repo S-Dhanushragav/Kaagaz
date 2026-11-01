@@ -22,11 +22,13 @@ from agents.catalog import scheme_card
 from agents.tools import load_fixes
 from agents.voice import load_voice
 from rules.loader import Scheme, load_schemes
+from schemas.languages import devanagari_names
 from storage.models import CheckData, CheckRecord, StoredFact
 from vision.text import comparison_key
 
 ASK_DIR = Path(__file__).resolve().parents[2] / "data" / "templates" / "ask"
-NAME_LIMIT = 60  # characters of a name read from a document passed to the model
+NAME_LIMIT = 60
+DOCUMENT_WORD = {"en": "document", "hi": "दस्तावेज़", "mr": "कागदपत्र", "ta": "ஆவணம்", "te": "పత్రం", "kn": "ದಾಖಲೆ"}  # characters of a name read from a document passed to the model
 
 OUTCOME_MEANING = {
     "eligible_on_documents": "eligible on these documents (only the office decides)",
@@ -118,12 +120,12 @@ def member_name(ctx: FamilyContext, member_id: str | None, language: str) -> str
     m = next((m for m in ctx.data.members if m.member_id == member_id), None)
     if m is None:
         return None
-    return _clip((m.name_en or m.name_mr) if language == "en" else (m.name_mr or m.name_en))
+    return _clip((m.name_mr or m.name_en) if devanagari_names(language) else (m.name_en or m.name_mr))
 
 
 def document_name(doc_type: str | None, language: str) -> str:
     docs = load_voice(language).documents
-    return docs.get(doc_type or "", {"en": "document", "hi": "दस्तावेज़", "mr": "कागदपत्र"}[language])
+    return docs.get(doc_type or "", DOCUMENT_WORD.get(language, "document"))
 
 
 def scheme_short(scheme_id: str, language: str) -> str:

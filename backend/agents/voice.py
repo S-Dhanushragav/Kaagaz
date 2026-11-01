@@ -1,4 +1,4 @@
-"""Voice sentences for the fix plan, from templates in data/templates/voice/{en,hi,mr}.yaml.
+"""Voice sentences for the fix plan, from templates in data/templates/voice/<language>.yaml.
 
 No model writes these sentences. Each is a template filled from a verified plan step: every placeholder
 value is a knowledge-base fact (shown in the language's wording), a member's name, or document display
@@ -15,12 +15,14 @@ import yaml
 from pydantic import BaseModel, ConfigDict
 
 from schemas.fixes import Fact, FixStep, PlannerIssue
+from schemas.languages import LANGUAGES as ALL_LANGUAGES
+from schemas.languages import devanagari_names
 from vision.text import comparison_key
 
 from agents.tools import MISMATCHES, NOT_SURE, load_fixes, wrong_doc_types
 
 VOICE_DIR = Path(__file__).resolve().parents[2] / "data" / "templates" / "voice"
-LANGUAGES = ("en", "hi", "mr")
+LANGUAGES = ALL_LANGUAGES
 PLACEHOLDERS = frozenset({"office", "bring", "fee", "time_limit", "caution", "member", "documents"})
 DEVANAGARI = re.compile(r"[ऀ-ॿ]")
 # Cautions that already tell the family to check at the office: no extra "confirm at the office" after them.
@@ -101,7 +103,7 @@ def member_text(issue: PlannerIssue | None, language: str) -> str:
     t = load_voice(language)
     if issue is None or issue.member_id is None:
         return t.household
-    name = issue.member_name_mr if language != "en" and issue.member_name_mr else issue.member_name
+    name = issue.member_name_mr if devanagari_names(language) and issue.member_name_mr else issue.member_name
     if name:
         return name
     if issue.member_id.startswith("r") and issue.member_id[1:].isdigit():
@@ -120,7 +122,8 @@ def _in_script(value: str, devanagari: bool) -> str | None:
 
 def shown_values(issue: PlannerIssue, language: str) -> dict[str, str]:
     """Each document's value in the script that shows the difference (the language's own script first)."""
-    for dev in (language != "en", language == "en"):
+    first = devanagari_names(language)
+    for dev in (first, not first):
         candidate = {d: _in_script(v, dev) for d, v in issue.values.items()}
         if all(candidate.values()) and len({comparison_key(v) for v in candidate.values()}) > 1:
             return candidate
@@ -134,8 +137,9 @@ def shown_value(value: str, issue: PlannerIssue, language: str) -> str:
 
 
 def english_only(issue: PlannerIssue, language: str) -> bool:
-    """In Hindi or Marathi: the values differ only in Latin script, which these voices cannot say."""
-    if language == "en" or not issue.values:
+    """In Hindi or Marathi: the values differ only in Latin script, which these voices cannot say. (Languages that show
+    names in Latin letters read the options out, like English.)"""
+    if not devanagari_names(language) or not issue.values:
         return False
     return not any(DEVANAGARI.search(v) or not re.search(r"[A-Za-z]", v) for v in shown_values(issue, language).values())
 

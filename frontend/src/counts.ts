@@ -1,13 +1,16 @@
 // Every "number + noun" the app shows goes through count(), with a singular and a plural form per language.
-// (Hindi and Marathi drafts are MACHINE-DRAFTED like the other UI strings; English, Hindi and Marathi all use
-// the singular for exactly 1 and the plural otherwise, 0 included.)
+// (Hindi and Marathi drafts are MACHINE-DRAFTED like the other UI strings; Tamil, Telugu and Kannada are machine-translated.
+// Every language here uses the singular for exactly 1 and the plural otherwise, 0 included.)
 import type { Language } from './api'
+import { counts as kn } from './locales/kn.ts'
+import { counts as ta } from './locales/ta.ts'
+import { counts as te } from './locales/te.ts'
 
 export type Noun = 'step' | 'stepOpen' | 'problemFound' | 'visitOpen' | 'person' | 'secondsTaken' | 'tryLeft'
 
-type Forms = { one: string; other: string } // {n} is the number
+export type Forms = { one: string; other: string } // {n} is the number
 
-const FORMS: Record<Language, Record<Noun, Forms>> = {
+export const FORMS: Record<Language, Record<Noun, Forms>> = {
   en: {
     step: { one: '1 step', other: '{n} steps' },
     stepOpen: { one: '1 step open', other: '{n} steps open' },
@@ -35,6 +38,7 @@ const FORMS: Record<Language, Record<Noun, Forms>> = {
     secondsTaken: { one: '1 सेकंदात', other: '{n} सेकंदांत' },
     tryLeft: { one: '1 प्रयत्न बाकी', other: '{n} प्रयत्न बाकी' },
   },
+  ta, te, kn, // machine-translated (scripts/translate.py), in src/locales
 }
 
 export function count(language: Language, noun: Noun, n: number): string {

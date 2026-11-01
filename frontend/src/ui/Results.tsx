@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import { devanagariNames } from '../languages'
 import { audioUrl, type Language, type PlannerIssue, type SessionView, type Shown, type Step, type StepDisplay } from '../api'
 import { playAll, stop, useAudio } from '../audio'
 import type { Strings } from '../i18n'
@@ -131,7 +132,7 @@ export function ProblemsCard({ t, view, language }: { t: Strings; view: SessionV
   if (!hh) return null
   const who = (i: PlannerIssue) => {
     const m = hh.members.find((x) => x.member_id === i.member_id)
-    return m ? memberName(m, language, t) : (language === 'en' ? i.member_name : i.member_name_mr ?? i.member_name)
+    return m ? memberName(m, language, t) : (devanagariNames(language) ? i.member_name_mr ?? i.member_name : i.member_name)
   }
   const label = (ids: string[]) => ids.map((d) => docLabel(view, d, ids, language, t).replace(/:.*$/, '')).join(', ')
   const missing = (i: PlannerIssue) => (i.document_type && t.docTypes[i.document_type]) || ''

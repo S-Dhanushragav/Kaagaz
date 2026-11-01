@@ -1,10 +1,10 @@
 # Values provided by the developer from official sources. Do not edit from memory.
 id: ladki_bahin
-name: {en: "Ladki Bahin", mr: "मुख्यमंत्री माझी लाडकी बहीण योजना", hi: "मुख्यमंत्री माझी लाडकी बहीण योजना"}
-short: {en: "Ladki Bahin", mr: "लाडकी बहीण", hi: "लाडकी बहीण"}
+name: {en: "Ladki Bahin", mr: "मुख्यमंत्री माझी लाडकी बहीण योजना", hi: "मुख्यमंत्री माझी लाडकी बहीण योजना", ta: "முக்யமந்திரி மாஜி லாட்கி பஹிண் யோஜனா (Ladki Bahin)", te: "ముఖ్యమంత్రి మాఝీ లాడ్కీ బహీణ్ యోజన (Ladki Bahin)", kn: "ಮುಖ್ಯಮಂತ್ರಿ ಮಾಝಿ ಲಾಡಕಿ ಬಹಿಣ್ ಯೋಜನಾ (Ladki Bahin)"}
+short: {en: "Ladki Bahin", mr: "लाडकी बहीण", hi: "लाडकी बहीण", ta: "லாட்கி பஹிண்", te: "లాడ్కీ బహీణ్", kn: "ಲಾಡಕಿ ಬಹಿಣ್"}
 # One-line benefit for the app. en from the developer; hi/mr text machine-translated from it.
 benefit:
-  text: {en: "₹1,500 per month", mr: "दरमहा ₹1,500", hi: "₹1,500 प्रति माह"}
+  text: {en: "₹1,500 per month", mr: "दरमहा ₹1,500", hi: "₹1,500 प्रति माह", ta: "மாதம் ₹1,500", te: "నెలకు ₹1,500", kn: "ತಿಂಗಳಿಗೆ ₹1,500"}
   status: verified
   source: myscheme.gov.in
   source_url: "https://myscheme.gov.in/schemes/mmlby"

@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types --no-warnings --test src/counts.test.ts src/casefile.test.ts src/labels.test.ts src/photos.test.ts src/recording.test.ts"
+    "test": "node --experimental-strip-types --no-warnings --test src/i18n.test.ts src/counts.test.ts src/casefile.test.ts src/labels.test.ts src/photos.test.ts src/recording.test.ts"
   },
   "dependencies": {
     "react": "^19.3.1",

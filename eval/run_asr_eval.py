@@ -2,13 +2,14 @@
 
 Usage (from the repo root, with the backend venv):
     python eval/run_asr_eval.py --clips <folder>        # your recordings (see below)
-    python eval/run_asr_eval.py --synthetic             # MMS-TTS clips of 12 questions (a weak proxy for real voices)
+    python eval/run_asr_eval.py --synthetic             # MMS-TTS clips of 21 questions (a weak proxy for real voices)
+    add --languages ta te kn to run only those languages' clips
     add --no-answers to skip asking Kaagaz (recognition only; no Baseten tokens)
 
 A clips folder holds audio files (.wav .webm .m4a .mp4 .ogg .mp3) and either `clips.yaml`:
     clips:
       - {file: mr_age.m4a, lang: mr, text: "लाडकी बहीण योजनेसाठी वयाची अट काय आहे?", family: false, require: [["21"]]}
-or, per clip, a `<name>.txt` with the exact words spoken and a language prefix in the file name (mr_, hi_, en_).
+or, per clip, a `<name>.txt` with the exact words spoken and a language prefix in the file name (mr_, hi_, en_, ta_ ...).
 `family: true` asks about the sample family (eval/fixtures/ask/sample_family.json); `require` (optional): groups of
 alternatives that must appear in the answer.
 
@@ -45,7 +46,7 @@ from clients.transcribe import EVAL_SETTINGS, transcribe  # noqa: E402
 
 AUDIO = {".wav", ".webm", ".m4a", ".mp4", ".ogg", ".mp3", ".aac"}
 RESULTS = ROOT / "eval" / "results"
-DIGITS = str.maketrans("०१२३४५६७८९", "0123456789")
+DIGITS = str.maketrans("०१२३४५६७८९௦௧௨௩௪௫௬௭௮௯౦౧౨౩౪౫౬౭౮౯೦೧೨೩೪೫೬೭೮೯", "0123456789" * 4)
 
 SYNTHETIC = [  # spoken by MMS-TTS; mixed speech is written in Devanagari (the voices read only their own script)
     {"lang": "mr", "text": "लाडकी बहीण योजनेसाठी वयाची अट काय आहे?", "family": False, "require": [["21"]]},
@@ -62,12 +63,25 @@ SYNTHETIC = [  # spoken by MMS-TTS; mixed speech is written in Devanagari (the v
     {"lang": "en", "text": "Why does Savita need a clearer photo of her Aadhaar card?", "family": True, "require": [["photo"]]},
     {"lang": "en", "text": "How long does the new income certificate take?", "family": True, "require": [["15"]]},
     {"lang": "en", "text": "Where do I get a caste certificate?", "family": True, "require": [["Sub-Divisional", "office"]]},
+    # Phase 11: 3 per language, each with a family name (Savita, Aditya) or scheme name in the language's script
+    {"lang": "ta", "text": "லாட்கி பஹிண் திட்டத்துக்கு வயது வரம்பு என்ன?", "family": False, "require": [["21"]]},
+    {"lang": "ta", "text": "சவிதாவின் ஆதார் அட்டைக்கு ஏன் தெளிவான புகைப்படம் வேண்டும்?", "family": True,
+     "require": [["புகைப்பட", "படம்", "போட்டோ"]]},
+    {"lang": "ta", "text": "சஞ்சய் காந்தி நிராதார் திட்டத்துக்கு வருமான வரம்பு என்ன?", "family": False,
+     "require": [["21,000", "21000"]]},
+    {"lang": "te", "text": "లాడ్కీ బహిణ్ పథకానికి వయస్సు పరిమితి ఎంత?", "family": False, "require": [["21"]]},
+    {"lang": "te", "text": "సవితా ఆధార్ కార్డుకు స్పష్టమైన ఫోటో ఎందుకు కావాలి?", "family": True, "require": [["ఫోటో", "ఫొటో"]]},
+    {"lang": "te", "text": "సంజయ్ గాంధీ నిరాధార్ పథకానికి ఆదాయ పరిమితి ఎంత?", "family": False, "require": [["21,000", "21000"]]},
+    {"lang": "kn", "text": "ಲಾಡ್ಕಿ ಬಹಿಣ್ ಯೋಜನೆಗೆ ವಯಸ್ಸಿನ ಮಿತಿ ಏನು?", "family": False, "require": [["21"]]},
+    {"lang": "kn", "text": "ಸವಿತಾ ಅವರ ಆಧಾರ್ ಕಾರ್ಡ್‌ಗೆ ಸ್ಪಷ್ಟ ಫೋಟೋ ಏಕೆ ಬೇಕು?", "family": True, "require": [["ಫೋಟೋ", "ಫೋಟೊ"]]},
+    {"lang": "kn", "text": "ಆದಿತ್ಯ ಅವರಿಗೆ ಹೊಸ ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ಎಲ್ಲಿ ಸಿಗುತ್ತದೆ?", "family": True,
+     "require": [["ತಹಸೀಲ್", "ಆಪ್ಲೆ ಸರ್ಕಾರ್", "ಕಚೇರಿ"]]},
 ]
 
 
 def normalize(text: str) -> list[str]:
     text = unicodedata.normalize("NFC", text).translate(DIGITS).casefold().replace("़", "")  # nukta: ड़ = ड
-    return [w for w in re.sub(r"[^\wऀ-ॿ]+", " ", text).split() if w]
+    return [w for w in re.sub(r"[^\wऀ-ൿ]+", " ", text).split() if w]
 
 
 def edits(ref: list, hyp: list) -> int:
@@ -94,7 +108,7 @@ def clips_from_folder(folder: Path) -> list[dict[str, Any]]:
     return out
 
 
-def synthetic_clips(folder: Path) -> list[dict[str, Any]]:
+def synthetic_clips(folder: Path, languages: list[str] | None = None) -> list[dict[str, Any]]:
     """TTS each question, with silence around it as a person would leave, as WebM/Opus like Android Chrome sends."""
     import subprocess
 
@@ -102,6 +116,8 @@ def synthetic_clips(folder: Path) -> list[dict[str, Any]]:
 
     out = []
     for n, c in enumerate(SYNTHETIC, 1):
+        if languages and c["lang"] not in languages:
+            continue
         speech = synthesize(c["text"], c["lang"])
         path = folder / f"{c['lang']}_{n:02d}.webm"
         subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(speech.path), "-af", "adelay=500,apad=pad_dur=1",
@@ -132,12 +148,13 @@ def main() -> None:
     source.add_argument("--clips", type=Path, help="folder of recordings")
     source.add_argument("--synthetic", action="store_true", help="MMS-TTS clips of 12 questions")
     parser.add_argument("--no-answers", action="store_true", help="recognition only")
+    parser.add_argument("--languages", nargs="+", help="only these languages' synthetic clips")
     args = parser.parse_args()
 
     family = FamilyContext.model_validate_json((ROOT / "eval" / "fixtures" / "ask" / "sample_family.json")
                                                .read_text(encoding="utf-8"))
     with tempfile.TemporaryDirectory(prefix="kaagaz-asr-") as tmp:
-        clips = synthetic_clips(Path(tmp)) if args.synthetic else clips_from_folder(args.clips)
+        clips = synthetic_clips(Path(tmp), args.languages) if args.synthetic else clips_from_folder(args.clips)
         if not clips:
             raise SystemExit("no clips found (see the usage at the top of this file)")
         rows = []

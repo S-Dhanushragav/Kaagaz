@@ -1,0 +1,40 @@
+# MACHINE-TRANSLATED by scripts/translate.py (Muse Spark; back-translated and checked with Muse Spark Open).
+# Not reviewed by a native speaker yet. Corrections go in data/translations/fixes.yaml, then re-run.
+# Placeholders stay labels ("{member}: ..."): no case endings on them.
+language: kn
+brand: ಕಾಗಜ್
+brand_wrong:
+- ಕಾಗಜು
+- ಕಾಗಾಜ್
+- ಕಾಗಸ್
+- (?i)\bkaa?gh?aa?[zdj]\b
+replies:
+  out_of_scope: 'ನಿಮ್ಮ ಕಾಗದಗಳು ಮತ್ತು ಈ 5 ಮಹಾರಾಷ್ಟ್ರ ಯೋಜನೆಗಳ ಬಗ್ಗೆ ಮಾತ್ರ ನಾನು ಸಹಾಯ ಮಾಡಬಲ್ಲೆ: ಲಾಡಕಿ ಬಹಿಣ್ (Ladki Bahin), ಉಜ್ಜ್ವಲಾ (Ujjwala), ರಮಾಯಿ (Ramai), ಸಂಜಯ್ ಗಾಂಧಿ (Sanjay Gandhi) ಮತ್ತು ಶ್ರಾವಣಬಾಳ್ (Shravanbal). ಯಾರು ಅರ್ಜಿ ಹಾಕಬಹುದು, ಯಾವ ಕಾಗದಗಳು ಬೇಕು, ಅಥವಾ ನಿಮ್ಮ ಪರಿಶೀಲನೆಯಲ್ಲಿ ಏನು ಬಂದಿದೆ ಎಂದು ಕೇಳಿ.'
+  id_number: ನಾನು ಆಧಾರ್ ಅಥವಾ ಬೇರೆ ಗುರುತಿನ ಸಂಖ್ಯೆಗಳನ್ನು ಹೇಳುವುದಿಲ್ಲ, ಕೇಳುವುದೂ ಇಲ್ಲ. ನಿಮಗೆ ಯಾವ ಕಾಗದಗಳು ಬೇಕು ಮತ್ತು ನಿಮ್ಮ ಪರಿಶೀಲನೆಯಲ್ಲಿ ಏನು ಬಂದಿದೆ ಎಂದು ಹೇಳಬಲ್ಲೆ.
+  other_language: ನಾನು ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ, ಮರಾಠಿ, ತಮಿಳು, ತೆಲುಗು ಅಥವಾ ಕನ್ನಡದಲ್ಲಿ ಉತ್ತರ ಕೊಡಬಲ್ಲೆ. ದಯವಿಟ್ಟು ಈ ಭಾಷೆಗಳಲ್ಲಿ ಒಂದರಲ್ಲಿ ಮತ್ತೆ ಕೇಳಿ.
+  not_sure: 'ನನಗೆ ಖಚಿತವಾಗಿ ಗೊತ್ತಿಲ್ಲ. ನಿಮ್ಮ ಪರಿಶೀಲನೆಯಲ್ಲಿ ಇರುವುದು ಇದು:'
+  not_sure_no_check: 'ನನಗೆ ಖಚಿತವಾಗಿ ಗೊತ್ತಿಲ್ಲ. ಯೋಜನೆ ನಿಯಮಗಳಲ್ಲಿ ಇರುವುದು ಇದು:'
+  not_sure_nothing: ನನಗೆ ಖಚಿತವಾಗಿ ಗೊತ್ತಿಲ್ಲ. ದಯವಿಟ್ಟು ಕಚೇರಿಯಲ್ಲಿ ಕೇಳಿ.
+  unavailable: ಕ್ಷಮಿಸಿ, ಈಗ ಉತ್ತರ ಕೊಡಲು ಆಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಒಂದು ನಿಮಿಷ ಬಿಟ್ಟು ಮತ್ತೆ ಕೇಳಿ. ನಿಮ್ಮ ಪರಿಶೀಲನೆಗೆ ಏನೂ ಆಗಿಲ್ಲ.
+  check_at_office: 'ಇದರಲ್ಲಿ ಸ್ವಲ್ಪ ಭಾಗ ಅಧಿಕೃತ ಮೂಲದಿಂದ ಇನ್ನೂ ಖಚಿತವಾಗಿಲ್ಲ: ಕಚೇರಿಯಲ್ಲಿ ಇದನ್ನು ಕೇಳಿ.'
+  limit: ನೀವು ಈ ಗಂಟೆಯಲ್ಲಿ ತುಂಬಾ ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಿದ್ದೀರಿ. ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಕೇಳಿ.
+lines:
+  outcome: '{member}, {scheme}: {reason}'
+  problem: '{member}: {reason}'
+  step: '{text}'
+  scheme: '{scheme}: {text}'
+chips:
+  photo: 'ಫೋಟೋ ಸೇರಿಸಿ: {document}'
+  document_of: '{member}: {document}'
+  unknown: ಕಾಗದ ಯಾವುದೆಂದು ಗೊತ್ತಾಗಲಿಲ್ಲ
+suggestions:
+  missing_document: '{member}: {document}: ಇದನ್ನು ಎಲ್ಲಿ ಪಡೆಯುವುದು?'
+  unclear: '{member}: {document}: ಫೋಟೋ ಯಾಕೆ ಸ್ಪಷ್ಟವಾಗಿ ಬೇಕು?'
+  unclear_unknown: ಯಾವ ದಾಖಲೆಗಳಿಗೆ ಸ್ಪಷ್ಟ ಫೋಟೋ ಬೇಕು?
+  expired: '{member}: ಹೊಸ ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ಏಕೆ ಬೇಕು?'
+  name_mismatch: '{member}: ಹೆಸರಿನ ಕಾಗುಣಿತದ ಬಗ್ಗೆ ಏನು ಮಾಡೋಣ?'
+  dob_mismatch: '{member}: ಹುಟ್ಟಿದ ದಿನಾಂಕದ ಬಗ್ಗೆ ಏನು ಮಾಡೋಣ?'
+  not_on_ration_card: '{member}: ರೇಷನ್ ಕಾರ್ಡ್‌ನಲ್ಲಿ ಹೆಸರು ಇಲ್ಲ. ಏನು ಮಾಡೋಣ?'
+  office: '{office}: ಅಲ್ಲಿಗೆ ಏನು ತೆಗೆದುಕೊಂಡು ಹೋಗಬೇಕು?'
+  which_missing: ಯಾವ ದಾಖಲೆಗಳು ಇಲ್ಲ?
+  schemes: '{member}: ಯಾವ ಯೋಜನೆಗಳಿಗೆ ಅರ್ಜಿ ಹಾಕಬಹುದು?'

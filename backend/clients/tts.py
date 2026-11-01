@@ -1,7 +1,7 @@
-﻿"""Speech output: Meta MMS-TTS (VITS) for English, Hindi and Marathi, run locally on CPU.
+﻿"""Speech output: Meta MMS-TTS (VITS) for English, Hindi, Marathi, Tamil, Telugu and Kannada, run locally on CPU.
 
-Models come from TTS_MODEL_EN / TTS_MODEL_HI / TTS_MODEL_MR (facebook/mms-tts-eng, -hin, -mar; all
-CC-BY-NC 4.0, non-commercial). Both Indic models read Devanagari directly (no uroman). Needs the optional
+Models come from TTS_MODEL_<LANGUAGE> (facebook/mms-tts-eng, -hin, -mar, -tam, -tel, -kan; all CC-BY-NC 4.0,
+non-commercial). The Indic models read their own script directly (no uroman). Needs the optional
 `tts` extra (torch, transformers). Input should be speech text (agents.speech.speech_text: numbers spelled
 out). Output: 16-bit mono WAV at the model's rate (16 kHz), cached on disk by (model, text): the same
 sentence is synthesized once. A fixed seed makes the output repeatable.
@@ -24,7 +24,7 @@ from app.config import get_settings
 
 logger = logging.getLogger(__name__)
 
-Language = Literal["en", "hi", "mr"]
+Language = str  # a code in schemas.languages.LANGUAGES
 SEED = 0
 PAUSE_S = 0.25  # silence between sentences
 SENTENCE_END = re.compile(r"(?<=[.?!।])\s+")

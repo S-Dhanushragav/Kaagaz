@@ -1,0 +1,84 @@
+# Reviewed corrections to machine translations (scripts/translate.py applies them, then back-translates and checks
+# them again). One entry per string key: the corrected text and why. Reviewer: Claude Code (not a native speaker):
+# only clear errors are fixed here; uncertain ones are listed in the Phase 11 report instead.
+ta:
+  ui.tagline:
+    text: "உங்கள் குடும்பத்தின் நலத்திட்ட ஆவணங்களைச் சரிபார்த்து, பிரச்சனைகளைச் சரிசெய்யும் திட்டத்தைப் பெறுங்கள்."
+    why: "dropped 'welfare' and 'a plan'"
+  ui.noDocuments:
+    text: "ஆவணங்கள் எதுவும் கிடைக்கவில்லை. உங்கள் காகிதங்களின் புகைப்படங்களைச் சேர்க்கவும், அல்லது மீண்டும் வீடியோ எடுக்கவும்."
+    why: "பதிவு செய்யவும் also reads as 'register': 'record a video again'"
+  reasons.reasons.age.doubtful:
+    text: "ஆவணங்களுக்கு இடையே பிறந்த தேதி வேறுபடுகிறது."
+    why: "said 'different in every document'"
+  voice.procedures.caste_certificate_new:
+    text: "{member}: சாதிச் சான்றிதழுக்கு விண்ணப்பிக்க வேண்டிய இடம்: {office}. இதை முதலில் தொடங்குங்கள்; இதற்குத்தான் அதிக நாள் ஆகும். {caution}"
+    why: "lost 'it takes the longest'"
+  ask.suggestions.name_mismatch:
+    text: "{member}: பெயர் ஆவணங்களில் வேறு வேறு எழுத்துக்கூட்டலில் உள்ளது. என்ன செய்வது?"
+    why: "said the name has a spelling mistake; the app only knows the spellings differ"
+  voice.card_member:
+    text: "ரேஷன் அட்டையில் உறுப்பினர் எண் {n}"
+    why: "read as '{n}: a member on the ration card'"
+  counts.stepOpen.one:
+    text: "1 படி மீதம் உள்ளது"
+    why: "'1 step is open' (literal)"
+  counts.stepOpen.other:
+    text: "{n} படிகள் மீதம் உள்ளன"
+    why: "'steps are open' (literal)"
+te:
+  ui.tagline:
+    text: "మీ కుటుంబ సంక్షేమ పత్రాలను పరిశీలించి, సమస్యలను సరిచేసే ప్రణాళికను పొందండి."
+    why: "dropped 'welfare' and 'a plan'; 'check' read as 'look after'"
+  ui.stages.build_household:
+    text: "పత్రాలను వ్యక్తులతో సరిపోలుస్తున్నాం"
+    why: "said 'adding people', not matching"
+  ui.issueTypes.expired:
+    text: "ధృవీకరణ పత్రం మరీ పాతది కావచ్చు"
+    why: "said 'very old', not 'too old'"
+  scheme.shravanbal.benefit:
+    text: "65 ఏళ్లు, ఆపై వయస్సు ఉన్నవారికి ప్రతి నెలా పింఛను"
+    why: "said 'over 65'; the rule is 65 and over"
+  voice.ask_at_office.name_mismatch:
+    text: "{member}: పత్రాలు: {documents}. వీటిలో పేరు స్పెల్లింగ్ వారి మిగతా పత్రాల కంటే వేరుగా ఉంది. ఏమి చేయాలో కార్యాలయంలో అడగండి."
+    why: "the same sentence twice"
+  voice.card_member:
+    text: "రేషన్ కార్డులో సభ్యుడు నంబర్ {n}"
+    why: "read as 'member on the ration card: {n}'"
+  counts.stepOpen.one:
+    text: "1 పని మిగిలి ఉంది"
+    why: "'1 step is open' (literal)"
+  counts.stepOpen.other:
+    text: "{n} పనులు మిగిలి ఉన్నాయి"
+    why: "'steps are open' (literal)"
+  counts.tryLeft.one:
+    text: "1 ప్రయత్నం మిగిలి ఉంది"
+    why: "a full stop inside a count"
+  counts.tryLeft.other:
+    text: "{n} ప్రయత్నాలు మిగిలి ఉన్నాయి"
+    why: "a full stop inside a count"
+  counts.visitOpen.one:
+    text: "1 కార్యాలయ సందర్శన ఇంకా మిగిలి ఉంది"
+    why: "కార్యాలయం సందర్శన: the compound takes కార్యాలయ"
+  counts.visitOpen.other:
+    text: "{n} కార్యాలయ సందర్శనలు ఇంకా మిగిలి ఉన్నాయి"
+    why: "కార్యాలయం సందర్శనలు: the compound takes కార్యాలయ"
+kn:
+  ui.tagline:
+    text: "ನಿಮ್ಮ ಕುಟುಂಬದ ಕಲ್ಯಾಣ ದಾಖಲೆಗಳನ್ನು ಪರಿಶೀಲಿಸಿ, ಸಮಸ್ಯೆಗಳನ್ನು ಸರಿಪಡಿಸಲು ಮಾಡಬೇಕಾದ ಕೆಲಸಗಳ ಪಟ್ಟಿ ಪಡೆಯಿರಿ."
+    why: "dropped 'welfare' and 'a plan'"
+  ui.issueTypes.expired:
+    text: "ಪ್ರಮಾಣಪತ್ರ ತುಂಬಾ ಹಳೆಯದಾಗಿರಬಹುದು"
+    why: "said 'may be old', not 'too old'"
+  ui.unidentifiedMany:
+    text: "ಇನ್ನೂ {n} ವಸ್ತುಗಳು ದಾಖಲೆಗಳಂತೆ ಕಂಡವು, ಆದರೆ ಓದಲು ಆಗಲಿಲ್ಲ. ಅವುಗಳಲ್ಲಿ ದಾಖಲೆ ಇದ್ದರೆ ಅದರ ಫೋಟೋ ಸೇರಿಸಿ."
+    why: "dropped 'more': read as the total"
+  scheme.shravanbal.benefit:
+    text: "65 ವರ್ಷ ಮತ್ತು ಅದಕ್ಕಿಂತ ಹೆಚ್ಚಿನ ವಯಸ್ಸಿನವರಿಗೆ ಮಾಸಿಕ ಪಿಂಚಣಿ"
+    why: "said 'above 65'; the rule is 65 and over"
+  voice.law_sets:
+    text: "ಕಾನೂನು ಈ ಕಚೇರಿಗೆ {time_limit} ಸಮಯ ನೀಡಿದೆ."
+    why: "read as 'the time in the law for this office'; a time limit is only said as 'the law sets ... for this office'"
+  voice.procedures.income_certificate_new:
+    text: "ಹೊಸ ಆದಾಯ ಪ್ರಮಾಣಪತ್ರಕ್ಕೆ ಆಪ್ಲೆ ಸರ್ಕಾರ್ ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ಅಥವಾ ಆಪ್ಲೆ ಸರ್ಕಾರ್ ಸೇವಾ ಕೇಂದ್ರದಲ್ಲಿ ಅರ್ಜಿ ಕೊಡಿ. ಕೊಡುವ ಕಚೇರಿ: {office}. ಕಾನೂನು ಈ ಕಚೇರಿಗೆ {time_limit} ಸಮಯ ನೀಡಿದೆ."
+    why: "the time limit must be said exactly as voice.law_sets (tests/test_voice.py)"

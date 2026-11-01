@@ -6,8 +6,10 @@ import {
   type UserView,
 } from './api'
 import { play, stop, unlock } from './audio'
+import { loadScriptFont } from './fonts'
+import { devanagariNames } from './languages'
 import { preparePhoto } from './photos'
-import { STRINGS } from './i18n'
+import { MACHINE_TRANSLATED, STRINGS } from './i18n'
 import AccountMenu from './ui/AccountMenu'
 import { AskThread, Suggestions, type AskItem } from './ui/Ask'
 import Chat, { type Answered, type Check } from './ui/Chat'
@@ -153,6 +155,7 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('kaagaz.lang', language)
     document.documentElement.lang = language
+    loadScriptFont(language)
   }, [language])
 
   useEffect(() => {
@@ -238,7 +241,7 @@ export default function App() {
   const keep = (others: Visit[] = visits): Visit[] => {
     if (check.kind !== 'session' || center.kind !== 'live' || !view || view.status === 'error') return others
     const first = view.household?.members[0]
-    const head = first ? (language === 'en' ? first.name_en ?? first.name_mr : first.name_mr ?? first.name_en) : null
+    const head = first ? (devanagariNames(language) ? first.name_mr ?? first.name_en : first.name_en ?? first.name_mr) : null
     const earlier = others.find((v) => v.id === check.id)
     const visit: Visit = { id: check.id, at: earlier?.at ?? new Date().toISOString(), head, check, answered, asks }
     return [visit, ...others.filter((v) => v.id !== check.id)].slice(0, 5)
@@ -379,6 +382,7 @@ export default function App() {
         <div className="conversation" ref={scroller}>
           <div className="conversation-inner">
             {flash && <p className="flash" role="status">{flash}</p>}
+            {MACHINE_TRANSLATED.has(language) && <p className="system-note">{t.machineTranslatedNote}</p>}
             {center.kind === 'past' ? (
               <PastCheck t={t} language={language} check={center.check} schemes={schemes} focus={center.focus}
                 onTick={(s, d) => void onTick(s, d)} onCheckAgain={checkAgain} narrow={narrow} onOpenScheme={setOpenScheme} />
