@@ -37,11 +37,11 @@ arrives weeks later. Most of the people affected can't easily read forms, so Kaa
 
 ## Status
 
-Phases 0-11 are built, tested and deployed (752 backend tests and 32 frontend tests, no network). Last deploy
-1 Nov 2026: Tamil, Telugu and Kannada (voice in and out, Ask Kaagaz in all six languages), spoken answers unlocked on
-phones, earlier checks of a visit kept, and a daily Baseten budget with Muse Spark fallback are live on top of login and
-case file, the layout pass, real-input rescue and Ask Kaagaz. Phase 12 prep (built and tested locally, not deployed):
-the sample family on EV012's photos, a busy queue, a decoded-mask cache, a load test and a freeze checklist script.
+Phases 0-12 are built, tested and deployed (756 backend tests and 32 frontend tests, no network). Phase 12 is live:
+the sample family on EV012's photos, the busy queue (4 checks at once), the decoded-mask cache and the 5M-token
+Baseten daily budget, on top of Tamil, Telugu and Kannada (voice in and out, Ask Kaagaz in all six languages), login
+and case file, the layout pass, real-input rescue and Ask Kaagaz. The load test and freeze checklist script are in
+`scripts/`.
 
 | Phase | What | Status |
 |---|---|---|
@@ -60,8 +60,8 @@ the sample family on EV012's photos, a busy queue, a decoded-mask cache, a load 
 | 9c | Real-input rescue: upright crops (text orientation), tracks split when documents are shown one at a time, cut-off documents read, duplicates merged; partial results ("Read clearly" / "Need a clearer photo", plan held when most are unclear) instead of a hard stop; photo mode (Add photos, up to 12, EXIF stripped, two agreeing reads) | Done, deployed |
 | 10 (part 1) | Ask Kaagaz, typed: an agent on Muse Spark Open (Baseten) answers questions about the 5 schemes and the family's check through read-only tools; every answer fact-checked by code before it is shown (numbers, schemes, offices, fees, eligibility from the rules engine only); sources, Listen, "Add a photo" chips, suggested questions; per-session and per-IP limits | Done, deployed |
 | 10 (part 2) | Ask by voice: push-to-talk mic (timer, level meter, 30 s), clip converted by ffmpeg and transcribed by Muse Voice Transcribe into the box to check before sending, spoken questions' answers played aloud; nothing of the audio kept, transcripts not cached or logged | Done, deployed |
-| 12 (prep) | Sample family on EV012's photos through photo mode (held out of the evals), "Kaagaz is busy, you're next in line" queue (MAX_RUNNING_CHECKS), decoded SAM masks cached (5.5 s -> 0.02 s each), load test, freeze checklist (`scripts/freeze_check.py`), Baseten budget 5M tokens a day | Built and tested locally; not deployed |
 | 11 | Tamil, Telugu, Kannada with voice in and out: Muse Spark translations back-translated and checked by Muse Spark Open (reviewed fixes, [report](docs/TRANSLATION_REPORT.md)), marked machine-translated; Ask and its fact check in all six languages; spoken answers unlocked on phones; Baseten daily budget with Muse Spark fallback | Done, deployed |
+| 12 | Sample family on EV012's photos through photo mode (held out of the evals), "Kaagaz is busy, you're next in line" queue (MAX_RUNNING_CHECKS), decoded SAM masks cached (5.5 s -> 0.02 s each), load test, freeze checklist (`scripts/freeze_check.py`), Baseten budget 5M tokens a day | Done, deployed |
 
 Remaining phases: see [docs/ROADMAP.md](docs/ROADMAP.md).
 
